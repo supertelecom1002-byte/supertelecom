@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.3",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "super-telecom-hub",
+      "version": "0.1.0",
+      "title": "Super Telecom Hub"
+    },
+    "tools": [
+      {
+        "name": "list_repair_services",
+        "title": "List repair services",
+        "description": "List every mobile repair service offered by Super Telecom in Giridih, with slug, short summary, price range and typical turnaround time.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_repair_service",
+        "title": "Get repair service details",
+        "description": "Get full details for one Super Telecom repair service: intro, benefits, repair process, supported brands, FAQs, price range and duration.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "description": "Service slug, e.g. 'screen-replacement'. Use list_repair_services to discover slugs."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_blog_posts",
+        "title": "List blog posts",
+        "description": "List Super Telecom blog articles about mobile repair in Giridih, with slug, title, date and excerpt.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_blog_post",
+        "title": "Get blog post",
+        "description": "Get the full text of one Super Telecom blog article by its slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "description": "Blog post slug. Use list_blog_posts to discover slugs."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_store_info",
+        "title": "Get store info",
+        "description": "Get Super Telecom's public shop details: address in Giridih, phone, WhatsApp, email, opening hours, Google Maps link and rating.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

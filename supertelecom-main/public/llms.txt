@@ -1,0 +1,22 @@
+# Super Telecom
+
+> Professional mobile repair and second-hand smartphone store in Giridih, Jharkhand — 10+ years of trusted service for screen replacement, battery replacement, motherboard repair, refurbished phones and premium mobile accessories.
+
+Super Telecom is a Giridih-based repair shop and retailer. Same-day repairs for all major brands (iPhone, Samsung, Xiaomi, Realme, OPPO, Vivo, OnePlus, Motorola, Nokia), warranty-backed refurbished smartphones, and a wide range of accessories including chargers, cables, covers, tempered glass and power banks.
+
+## Pages
+
+- [Home](/): Services overview, refurbished phones, accessories, gallery, reviews, FAQ and contact.
+- [Repair prices](/pricing): Brand-wise estimated prices for screen, battery and charging-port repairs.
+- [Repair services](/services): Directory of mobile repair services available in Giridih.
+- [Blog](/blog): Local repair guides, price guidance and practical phone-care advice.
+- [Store information](/#visit): Address, opening hours, phone, WhatsApp and directions.
+
+## Entity details
+
+- Business: Super Telecom
+- Address: Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301, India
+- Hours: Monday–Sunday, 9:00 AM–9:00 PM
+- Phone: +91 80029 03643
+- Email: supertelecom1002@gmail.com
+- Services: Screen and display replacement, batteries, charging ports, motherboard and IC repair, water-damage recovery, software repair, data recovery, camera, speaker, microphone and dead-phone repair.
