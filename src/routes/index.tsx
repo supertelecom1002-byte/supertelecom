@@ -252,20 +252,20 @@ function Hero() {
     <section id="top" className="relative isolate min-h-screen w-full overflow-hidden">
       {/* Fullscreen cinematic background video */}
       <video
-        src={heroVideoAsset.url}
+        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
         poster={heroImg}
         autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
-        aria-label="Cinematic tour of the Super Telecom mobile repair shop in Giridih"
+        preload="auto"
+        aria-label="Cinematic repair video at Super Telecom Giridih"
         className="absolute inset-0 -z-10 h-full w-full object-cover"
-        style={{ filter: "brightness(1.3) contrast(1.15) saturate(1.1)" }}
       />
-      {/* Premium dark overlay for readability (lighter) */}
-      <div className="absolute inset-0 -z-10 bg-black/30" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-background/20 to-background/80" />
+      {/* Subtle dark cyan overlay for 100% readability */}
+      <div className="absolute inset-0 -z-10 bg-slate-950/75" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/85 via-cyan-950/35 to-slate-950/95" />
+      <div className="absolute inset-0 -z-10 bg-cyan-950/20 backdrop-blur-[0.5px]" />
 
       <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 pt-32 pb-24 text-center sm:px-6">
         <div className="animate-fade-up inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-white/80">
