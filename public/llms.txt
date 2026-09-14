@@ -15,8 +15,10 @@ Super Telecom is a Giridih-based repair shop and retailer. Same-day repairs for 
 ## Entity details
 
 - Business: Super Telecom
+- Website: https://www.supertelecom.shop
 - Address: Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301, India
+- Geo coordinates: 24.1843, 86.3075
 - Hours: Monday–Sunday, 9:00 AM–9:00 PM
 - Phone: +91 80029 03643
 - Email: supertelecom1002@gmail.com
-- Services: Screen and display replacement, batteries, charging ports, motherboard and IC repair, water-damage recovery, software repair, data recovery, camera, speaker, microphone and dead-phone repair.
+- Services: Smartphone display & screen replacement, chip-level motherboard micro-soldering, BGA IC replacement, battery and charging port replacement, water damage ultrasonic revival, dead phone recovery, software flashing, second-hand certified refurbished phones, and premium mobile accessories.

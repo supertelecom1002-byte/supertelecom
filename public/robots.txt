@@ -1,7 +1,14 @@
 User-agent: *
 Allow: /
-Disallow: /.mcp/
-Disallow: /mcp
-Disallow: /.well-known/
 
-Sitemap: https://supertelecom.lovable.app/sitemap.xml
+# Allow AI Search Crawlers for Generative Engine Optimization
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://www.supertelecom.shop/sitemap.xml
