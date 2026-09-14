@@ -13,7 +13,6 @@ import heroImg from "@/assets/hero-repair.jpg";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { AiChat } from "@/components/AiChat";
-import { AIVideoGenerator } from "@/components/AIVideoGenerator";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -133,7 +132,6 @@ function HomePage() {
         <TrustBar />
         <About />
         <Services />
-        <AIVideoGenerator />
         <WhyUs />
         <Gallery />
         <Testimonials />
