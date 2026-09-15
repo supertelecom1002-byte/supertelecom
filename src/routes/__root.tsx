@@ -143,6 +143,74 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           }],
           sameAs: ["https://maps.app.goo.gl/mu5XXCehEpocaZWY9"],
           slogan: "Professional Mobile Repair & Second-Hand Smartphone Store in Giridih",
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: "Mobile Repair Services",
+            itemListElement: [
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Smartphone Display & Screen Replacement",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Chip-Level Motherboard Micro-Soldering",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Battery & Charging Port Replacement",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Water Damage Diagnostics & Ultrasonic Revival",
+                },
+              },
+            ],
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "@id": `${SITE_URL}/#faq`,
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Where is Super Telecom located in Giridih?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Super Telecom is located at Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301. We provide mobile phone repair, battery replacement, and accessories.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What services does Super Telecom provide in Giridih?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "We provide same-day screen replacements, battery replacements, charging port repairs, chip-level motherboard micro-soldering, water damage revival, and tested refurbished phones.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Do you repair water-damaged and dead phones in Giridih?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes, Super Telecom provides diagnostic testing, ultrasonic cleaning, and motherboard IC micro-soldering for dead or water-damaged devices.",
+              },
+            },
+          ],
         }),
       },
       {
@@ -151,8 +219,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Super Telecom",
-           url: `${SITE_URL}/`,
-           publisher: { "@id": `${SITE_URL}/#business` },
+          url: `${SITE_URL}/`,
+          publisher: { "@id": `${SITE_URL}/#business` },
         }),
       },
       {
@@ -161,8 +229,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Super Telecom",
-           url: `${SITE_URL}/`,
-           logo: `${SITE_URL}/favicon.png`,
+          url: `${SITE_URL}/`,
+          logo: `${SITE_URL}/favicon.png`,
           contactPoint: {
             "@type": "ContactPoint",
             telephone: "+918002903643",
