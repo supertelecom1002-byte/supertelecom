@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# Allow AI Search Crawlers for Generative Engine Optimization
+# Directives for AI Generative Search Engines
 User-agent: Google-Extended
 Allow: /
 
@@ -9,6 +9,9 @@ User-agent: GPTBot
 Allow: /
 
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
 Allow: /
 
 Sitemap: https://www.supertelecom.shop/sitemap.xml
