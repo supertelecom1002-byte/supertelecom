@@ -36,7 +36,7 @@ export const SERVICES: ServiceInfo[] = [
     process: [
       "Walk in or WhatsApp us photos of the damage",
       "Free on-the-spot diagnosis and quote",
-      "Certified technician replaces the display",
+      "Skilled technician replaces the display",
       "Quality check + water-resistance sealing",
       "Handover with bill and warranty card",
     ],
@@ -69,7 +69,7 @@ export const SERVICES: ServiceInfo[] = [
     process: [
       "Bring your phone to Barganda Road, Giridih",
       "Free battery diagnosis and quote",
-      "Certified replacement with proper sealing",
+      "Professional replacement with proper sealing",
       "Full-charge cycle & health verification",
       "Warranty card handed over with the device",
     ],
@@ -89,7 +89,7 @@ export const SERVICES: ServiceInfo[] = [
     title: "Mobile Motherboard Repair in Giridih | Chip-Level Repair",
     description: "Expert chip-level motherboard repair in Giridih. Super Telecom fixes dead phones, no-power, no-charging & IC issues on iPhone, Samsung, Xiaomi & all brands.",
     keywords: "Motherboard Repair Giridih, Chip Level Repair Giridih, PCB Repair Giridih, Dead Mobile Repair Giridih",
-    short: "Chip-level repairs by certified technicians.",
+    short: "Chip-level repairs by skilled technicians.",
     intro:
       "Motherboard problems are the most complex — dead phone, no display, no charging, no network. Super Telecom in Giridih runs a full chip-level (BGA) repair lab with microscopes, hot-air stations and rework tools. Our senior technicians have 10+ years of PCB repair experience.",
     benefits: [
@@ -97,7 +97,7 @@ export const SERVICES: ServiceInfo[] = [
       "Microscope-based BGA/IC rework",
       "Dead phone & no-power recovery",
       "Transparent go/no-go diagnosis in 24 hrs",
-      "Only certified Giridih shop with a full rework lab",
+      "Giridih shop with a dedicated rework lab",
     ],
     process: [
       "Free diagnosis at Barganda Road, Giridih",
@@ -254,9 +254,9 @@ export const SERVICES: ServiceInfo[] = [
     title: "Second Hand Mobile in Giridih | Refurbished Phones with Warranty",
     description: "Buy quality-tested second hand & refurbished smartphones in Giridih at Super Telecom. iPhone, Samsung, Xiaomi & more — all with warranty and bill.",
     keywords: "Second Hand Mobile Giridih, Used Mobile Shop Giridih, Refurbished Phones Giridih, Old iPhone Giridih",
-    short: "Certified refurbished phones with warranty.",
+    short: "Tested refurbished phones with warranty.",
     intro:
-      "Looking for a second-hand mobile in Giridih? Super Telecom stocks a wide range of tested and certified refurbished smartphones — iPhone, Samsung, Xiaomi/Redmi, Realme, OPPO, Vivo, OnePlus and more. Every phone is checked for battery health, display, cameras, sensors and network before it is sold, and comes with a warranty.",
+      "Looking for a second-hand mobile in Giridih? Super Telecom stocks a wide range of tested and inspected refurbished smartphones — iPhone, Samsung, Xiaomi/Redmi, Realme, OPPO, Vivo, OnePlus and more. Every phone is checked for battery health, display, cameras, sensors and network before it is sold, and comes with a warranty.",
     benefits: [
       "Every phone tested on 30+ points",
       "Battery health, cameras & network verified",
@@ -366,7 +366,7 @@ export const SERVICES: ServiceInfo[] = [
     process: [
       "Visit our Giridih store with bill & ID",
       "Free diagnosis and quote",
-      "Unlock done by certified technician",
+      "Unlock done by experienced technician",
       "Phone tested & set up with new account",
       "Handover with invoice",
     ],

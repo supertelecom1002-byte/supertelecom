@@ -67,8 +67,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const SITE_TITLE = "Super Telecom — #1 Mobile Repair Shop in Giridih | Chip-Level & Screen Replacement";
-const SITE_DESC = "Giridih's premier smartphone repair lab. Same-day cracked screen replacement, battery health fixes, chip-level BGA micro-soldering, and certified refurbished phones at Super Telecom, Giridih.";
+const SITE_TITLE = "Super Telecom | Mobile Repair Shop in Giridih, Jharkhand";
+const SITE_DESC = "Trusted mobile repair shop on Barganda Road, Giridih, Jharkhand. Same-day screen replacement, battery replacement, motherboard chip-level repair, and quality mobile accessories.";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESC },
       { name: "author", content: "Super Telecom" },
-      { name: "keywords", content: "Mobile Repair Shop Giridih, Best Mobile Repair Shop Giridih, Phone Repair Giridih, Mobile Repair Near Me, Second Hand Mobile Giridih, Used Mobile Shop Giridih, iPhone Repair Giridih, Samsung Repair Giridih, Android Repair Giridih, Screen Replacement Giridih, Battery Replacement Giridih, Charging Port Repair Giridih, Water Damage Repair Giridih, Motherboard Repair Giridih, Mobile Accessories Giridih, Super Telecom Giridih" },
+      { name: "keywords", content: "Mobile Repair in Giridih, Phone Repair Shop Giridih, iPhone Repair Giridih, Screen Replacement Giridih, Battery Replacement Giridih, Motherboard Repair Giridih, Super Telecom Giridih" },
       { name: "geo.region", content: "IN-JH" },
       { name: "geo.placename", content: "Giridih, Jharkhand" },
       { name: "geo.position", content: "24.1843;86.3075" },
       { name: "ICBM", content: "24.1843, 86.3075" },
-      { property: "og:title", content: "Super Telecom — Best Mobile Repair Shop in Giridih" },
-      { property: "og:description", content: "Expert chip-level repair, water damage recovery, and display replacements in Giridih. Reliable, fast, and transparent pricing." },
+      { property: "og:title", content: "Super Telecom | Mobile Repair Shop in Giridih, Jharkhand" },
+      { property: "og:description", content: "Trusted mobile repair shop on Barganda Road, Giridih, Jharkhand. Same-day screen replacement, battery replacement, motherboard chip-level repair, and quality mobile accessories." },
       { property: "og:type", content: "business.business" },
       { property: "og:url", content: `${SITE_URL}` },
       { property: "og:image", content: `${SITE_URL}/og-image.png` },

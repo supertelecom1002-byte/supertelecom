@@ -403,7 +403,7 @@ function About() {
               happy customers across Jharkhand.
             </p>
             <p className="mt-4 text-muted-foreground">
-              Our team of certified technicians combines industry-leading tools with genuine spare
+              Our team of skilled technicians combines professional repair tools with high-grade spare
               parts to deliver repairs you can trust. From cracked screens and dead batteries to
               motherboard-level IC work, we fix it right the first time — at honest, transparent
               prices.
@@ -499,11 +499,11 @@ function Services() {
               <Smartphone className="h-8 w-8 text-primary" />
               <h3 className="mt-4 font-display text-2xl font-bold">Second-Hand Smartphones</h3>
               <p className="mt-3 text-muted-foreground">
-                Certified used smartphones — tested, cleaned and warranty-backed. We buy, sell and
+                Quality used smartphones — tested, cleaned and warranty-backed. We buy, sell and
                 exchange phones at the fairest price in Giridih.
               </p>
               <ul className="mt-5 space-y-2 text-sm">
-                {["Certified & quality-tested devices", "Buy, sell & phone exchange", "Fair, transparent pricing", "Short-term warranty on every phone"].map((x) => (
+                {["Thoroughly quality-tested devices", "Buy, sell & phone exchange", "Fair, transparent pricing", "Short-term warranty on every phone"].map((x) => (
                   <li key={x} className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> {x}</li>
                 ))}
               </ul>
