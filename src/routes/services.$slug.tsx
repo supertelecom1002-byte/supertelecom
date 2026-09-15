@@ -3,6 +3,7 @@ import { Phone, MessageCircle, MapPin, ArrowRight, Check, ChevronRight, Star, Cl
 import { SERVICES, type ServiceInfo } from "@/data/services";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { BrandLogo } from "@/components/BrandLogo";
+import { ServiceAnswerBlock } from "@/components/ServiceAnswerBlock";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 
 const PHONE = "+918002903643";
@@ -195,6 +196,14 @@ function ServicePage() {
             </div>
           </aside>
         </section>
+
+        {/* Reusable Direct Answer Box for AI Citation & High Intent Conversion */}
+        <ServiceAnswerBlock
+          question={`Need ${service.name.toLowerCase()} in Giridih?`}
+          answer={service.intro}
+          symptoms={service.benefits.slice(0, 4)}
+          turnaround={`${service.duration} · Estimated ${service.priceRange}`}
+        />
 
         {/* Benefits */}
         <section className="mt-14">
