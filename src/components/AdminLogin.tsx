@@ -1,16 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Shield, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { BrandLogo } from "@/components/BrandLogo";
 
 export const AdminLogin: React.FC = () => {
   const { user, isAdmin, loading, error, signInWithGoogle } = useAdminAuth();
+  const navigate = useNavigate();
+  const hasNavigatedRef = useRef(false);
 
   useEffect(() => {
-    if (isAdmin && typeof window !== "undefined") {
-      window.location.href = "/admin";
+    // If isAdmin is already true, navigate to /admin once. Do not loop.
+    if (isAdmin && !hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+      navigate({ to: "/admin" });
     }
-  }, [isAdmin]);
+  }, [isAdmin, navigate]);
 
   const handleGoogleSignIn = async () => {
     try {

@@ -19,6 +19,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  // Ensure loading starts as true
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +47,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     let mounted = true;
 
-    // Initial session verification
+    // Initial session verification - only set loading = false after both session & admin_users queries complete
     const initAuth = async () => {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
@@ -76,13 +77,15 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       } catch (e) {
         console.warn("Auth initialization error:", e);
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     initAuth();
 
-    // Subscribe to auth state updates
+    // Subscribe to auth state updates: NO window.location.reload() or window.location.href here!
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
         if (!mounted) return;
@@ -95,28 +98,33 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         }
 
         setLoading(true);
-        if (newSession?.user?.email) {
-          const authorized = await checkAdminStatus(newSession.user.email);
-          if (!mounted) return;
+        try {
+          if (newSession?.user?.email) {
+            const authorized = await checkAdminStatus(newSession.user.email);
+            if (!mounted) return;
 
-          if (authorized) {
-            setSession(newSession);
-            setUser(newSession.user);
-            setIsAdmin(true);
-            setError(null);
+            if (authorized) {
+              setSession(newSession);
+              setUser(newSession.user);
+              setIsAdmin(true);
+              setError(null);
+            } else {
+              setError("Access Denied: You are not an authorized administrator");
+              await supabase.auth.signOut();
+              setSession(null);
+              setUser(null);
+              setIsAdmin(false);
+            }
           } else {
-            setError("Access Denied: You are not an authorized administrator");
-            await supabase.auth.signOut();
             setSession(null);
             setUser(null);
             setIsAdmin(false);
           }
-        } else {
-          setSession(null);
-          setUser(null);
-          setIsAdmin(false);
+        } finally {
+          if (mounted) {
+            setLoading(false);
+          }
         }
-        setLoading(false);
       }
     );
 

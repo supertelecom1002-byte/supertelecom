@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Film,
@@ -53,12 +54,14 @@ export const AdminDashboard: React.FC = () => {
   const [contentSaving, setContentSaving] = useState<boolean>(false);
   const [contentStatus, setContentStatus] = useState<{ success?: string; error?: string } | null>(null);
 
+  const navigate = useNavigate();
+
   // Redirect guard
   useEffect(() => {
-    if (!authLoading && !isAdmin && typeof window !== "undefined") {
-      window.location.href = "/admin/login";
+    if (!authLoading && !isAdmin) {
+      navigate({ to: "/admin/login" });
     }
-  }, [isAdmin, authLoading]);
+  }, [isAdmin, authLoading, navigate]);
 
   // Load Feed Posts
   const fetchFeedPosts = async () => {
