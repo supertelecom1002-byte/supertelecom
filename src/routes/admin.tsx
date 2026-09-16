@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 
 export const Route = createFileRoute("/admin")({
@@ -12,6 +12,13 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminLayout() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLoginPage = pathname.startsWith("/admin/login");
+
+  if (isLoginPage) {
+    return <Outlet />;
+  }
+
   return (
     <ProtectedRoute>
       <Outlet />

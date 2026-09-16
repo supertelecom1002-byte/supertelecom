@@ -7,6 +7,9 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin/login")) {
+      return;
+    }
     // Only redirect to /admin/login when loading === false AND !isAdmin
     if (!loading && !isAdmin) {
       navigate({ to: "/admin/login" });
@@ -24,10 +27,16 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
   }
 
   if (!isAdmin) {
-    return null;
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-cyan-400 font-mono text-sm">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent mr-3" />
+        Redirecting to Admin Login...
+      </div>
+    );
   }
 
   return <>{children}</>;
 };
 
 export default ProtectedRoute;
+
