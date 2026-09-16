@@ -12,6 +12,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { AdminAuthProvider } from "@/context/AdminAuthContext";
 
 function NotFoundComponent() {
   return (
@@ -276,8 +277,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <CookieBanner />
+      <AdminAuthProvider>
+        <Outlet />
+        <CookieBanner />
+      </AdminAuthProvider>
     </QueryClientProvider>
   );
 }

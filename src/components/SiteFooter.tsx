@@ -68,6 +68,7 @@ const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "Visit Our Store", to: "/", hash: "visit" },
   { label: "Cookie Policy", to: "/cookie-policy" },
   { label: "Sitemap", to: "/sitemap" },
+  { label: "Admin Portal", to: "/admin/login" },
 ];
 
 const FOOTER_FAQS: [string, string][] = [
