@@ -3,6 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { Shield, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { BrandLogo } from "@/components/BrandLogo";
+import { isSupabaseConfigured } from "@/lib/supabaseClient";
+
 
 export const AdminLogin: React.FC = () => {
   const { user, isAdmin, loading, error, signInWithGoogle } = useAdminAuth();
@@ -58,8 +60,22 @@ export const AdminLogin: React.FC = () => {
             </div>
           )}
 
+          {/* Notice when Supabase credentials are missing */}
+          {!isSupabaseConfigured && (
+            <div className="mt-6 w-full rounded-xl border border-cyan-500/40 bg-cyan-950/40 p-3.5 text-left text-xs text-cyan-200 flex items-start gap-3 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+              <AlertTriangle className="h-5 w-5 text-cyan-400 flex-none mt-0.5" />
+              <div>
+                <p className="font-semibold text-cyan-300">Supabase Setup Required</p>
+                <p className="mt-0.5 text-cyan-200/80 leading-relaxed">
+                  To enable Google login, set your real <code className="bg-slate-900 px-1 py-0.5 rounded text-cyan-300">VITE_SUPABASE_URL</code> and <code className="bg-slate-900 px-1 py-0.5 rounded text-cyan-300">VITE_SUPABASE_ANON_KEY</code> in project environment variables.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* User Already Signed In as Non-Admin */}
           {user && !isAdmin && !error && (
+
             <div className="mt-6 w-full rounded-xl border border-amber-500/40 bg-amber-950/50 p-3.5 text-left text-xs text-amber-200 flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-amber-400 flex-none mt-0.5" />
               <div>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+
 
 interface AdminAuthContextType {
   user: User | null;
@@ -136,6 +137,12 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const signInWithGoogle = async () => {
     setError(null);
+
+    if (!isSupabaseConfigured) {
+      setError("Supabase project is not yet configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment.");
+      return;
+    }
+
     const redirectUrl = typeof window !== "undefined"
       ? `${window.location.origin}/admin`
       : undefined;
@@ -152,6 +159,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       throw signInError;
     }
   };
+
 
   const signOut = async () => {
     setError(null);
