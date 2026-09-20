@@ -20,6 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/services/display-replacement-giridih", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
           { path: "/services/iphone-repair-specialist-giridih", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
           { path: "/services/motherboard-chip-level-repair-giridih", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
+          { path: "/services/water-damage-mobile-repair-giridih", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
           { path: "/services/battery-charging-port-repair-giridih", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
           { path: "/locations/barganda-road-mobile-repair", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
 

@@ -1,17 +1,15 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/*
 
-# Directives for AI Generative Search Engines
-User-agent: Google-Extended
+User-agent: Googlebot
 Allow: /
 
 User-agent: GPTBot
 Allow: /
 
 User-agent: PerplexityBot
-Allow: /
-
-User-agent: ClaudeBot
 Allow: /
 
 Sitemap: https://www.supertelecom.shop/sitemap.xml

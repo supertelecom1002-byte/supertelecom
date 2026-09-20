@@ -33,6 +33,7 @@ import { Route as ServicesBatteryChargingPortRepairGiridihRouteImport } from './
 import { Route as ServicesDisplayReplacementGiridihRouteImport } from './routes/services.display-replacement-giridih'
 import { Route as ServicesIphoneRepairSpecialistGiridihRouteImport } from './routes/services.iphone-repair-specialist-giridih'
 import { Route as ServicesMotherboardChipLevelRepairGiridihRouteImport } from './routes/services.motherboard-chip-level-repair-giridih'
+import { Route as ServicesWaterDamageMobileRepairGiridihRouteImport } from './routes/services.water-damage-mobile-repair-giridih'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const IndexRoute = IndexRouteImport.update({
@@ -162,6 +163,12 @@ const ServicesMotherboardChipLevelRepairGiridihRoute =
     path: '/motherboard-chip-level-repair-giridih',
     getParentRoute: () => ServicesRoute,
   } as any)
+const ServicesWaterDamageMobileRepairGiridihRoute =
+  ServicesWaterDamageMobileRepairGiridihRouteImport.update({
+    id: '/water-damage-mobile-repair-giridih',
+    path: '/water-damage-mobile-repair-giridih',
+    getParentRoute: () => ServicesRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
   '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
   '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
+  '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -215,6 +223,7 @@ export interface FileRoutesByTo {
   '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
   '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
   '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
+  '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -243,6 +252,7 @@ export interface FileRoutesById {
   '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
   '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
   '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
+  '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/services/display-replacement-giridih'
     | '/services/iphone-repair-specialist-giridih'
     | '/services/motherboard-chip-level-repair-giridih'
+    | '/services/water-damage-mobile-repair-giridih'
     | '/admin/'
     | '/blog/'
     | '/services/'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/services/display-replacement-giridih'
     | '/services/iphone-repair-specialist-giridih'
     | '/services/motherboard-chip-level-repair-giridih'
+    | '/services/water-damage-mobile-repair-giridih'
     | '/admin'
     | '/blog'
     | '/services'
@@ -323,6 +335,7 @@ export interface FileRouteTypes {
     | '/services/display-replacement-giridih'
     | '/services/iphone-repair-specialist-giridih'
     | '/services/motherboard-chip-level-repair-giridih'
+    | '/services/water-damage-mobile-repair-giridih'
     | '/admin/'
     | '/blog/'
     | '/services/'
@@ -516,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesMotherboardChipLevelRepairGiridihRouteImport
       parentRoute: typeof ServicesRoute
     }
+    '/services/water-damage-mobile-repair-giridih': {
+      id: '/services/water-damage-mobile-repair-giridih'
+      path: '/water-damage-mobile-repair-giridih'
+      fullPath: '/services/water-damage-mobile-repair-giridih'
+      preLoaderRoute: typeof ServicesWaterDamageMobileRepairGiridihRouteImport
+      parentRoute: typeof ServicesRoute
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -569,6 +589,7 @@ interface ServicesRouteChildren {
   ServicesDisplayReplacementGiridihRoute: typeof ServicesDisplayReplacementGiridihRoute
   ServicesIphoneRepairSpecialistGiridihRoute: typeof ServicesIphoneRepairSpecialistGiridihRoute
   ServicesMotherboardChipLevelRepairGiridihRoute: typeof ServicesMotherboardChipLevelRepairGiridihRoute
+  ServicesWaterDamageMobileRepairGiridihRoute: typeof ServicesWaterDamageMobileRepairGiridihRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
@@ -582,6 +603,8 @@ const ServicesRouteChildren: ServicesRouteChildren = {
     ServicesIphoneRepairSpecialistGiridihRoute,
   ServicesMotherboardChipLevelRepairGiridihRoute:
     ServicesMotherboardChipLevelRepairGiridihRoute,
+  ServicesWaterDamageMobileRepairGiridihRoute:
+    ServicesWaterDamageMobileRepairGiridihRoute,
   ServicesIndexRoute: ServicesIndexRoute,
 }
 
