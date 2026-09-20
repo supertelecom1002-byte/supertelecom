@@ -14,6 +14,7 @@ import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { AiChat } from "@/components/AiChat";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
+import { BeforeAfterSlider } from "@/components/public/BeforeAfterSlider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -135,6 +136,7 @@ function HomePage() {
         <Services />
         <WhyUs />
         <Gallery />
+        <BeforeAfterSlider />
         <DailyUpdatesSection />
         <Testimonials />
         <FAQ />

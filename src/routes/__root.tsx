@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
+import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
 
 function NotFoundComponent() {
   return (
@@ -278,6 +279,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AdminAuthProvider>
+        <AnnouncementBanner />
         <Outlet />
         <CookieBanner />
       </AdminAuthProvider>
