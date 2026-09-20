@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { Menu, Edit3, Sparkles, ExternalLink } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { BrandLogo } from "@/components/BrandLogo";
 import { AdminSidebar, type AdminTab } from "@/components/admin/AdminSidebar";
@@ -82,7 +82,38 @@ export const AdminDashboard: React.FC = () => {
       />
 
       {/* Main Content Workspace */}
-      <main className="flex-1 p-4 sm:p-8 lg:p-10 max-w-7xl w-full overflow-x-hidden">
+      <main className="flex-1 p-4 sm:p-8 lg:p-10 max-w-7xl w-full overflow-x-hidden space-y-8">
+        {/* Prominent Live Visual In-Place Editor Banner */}
+        <div className="relative overflow-hidden p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-cyan-950/80 via-slate-900/90 to-slate-900 border border-cyan-500/40 shadow-[0_0_25px_rgba(6,182,212,0.2)] flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-400 shadow-inner flex-none">
+              <Edit3 className="h-6 w-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-extrabold text-white">Visual Website Live Editor</h2>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
+                  In-Place WYSIWYG
+                </span>
+              </div>
+              <p className="mt-1 text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+                Browse the live Super Telecom site and click on any text, heading, or image to edit it directly in-place with instant preview.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/?edit=true"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all transform hover:scale-[1.03] active:scale-95 flex-none"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span>Open Live Visual Editor</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+
         {activeTab === "audit" && (
           <AuditDashboard onNavigateTab={(tab) => setActiveTab(tab)} />
         )}

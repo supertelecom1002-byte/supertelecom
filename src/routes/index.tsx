@@ -15,6 +15,7 @@ import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { AiChat } from "@/components/AiChat";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
 import { BeforeAfterSlider } from "@/components/public/BeforeAfterSlider";
+import { EditableBlock } from "@/components/admin/visual/EditableBlock";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -183,12 +184,12 @@ function Nav() {
       <div className="hidden border-b border-border bg-surface md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1.5 text-[11px] tracking-wide text-muted-foreground">
           <div className="flex items-center gap-5">
-            <span className="inline-flex items-center gap-1.5"><MapPin className="h-3 w-3 text-primary" /> Barganda Road, Giridih</span>
-            <span className="inline-flex items-center gap-1.5"><Clock className="h-3 w-3 text-primary" /> Open Daily 9:00 AM – 9:00 PM</span>
+            <span className="inline-flex items-center gap-1.5"><MapPin className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_address" defaultValue="Barganda Road, Giridih" /></span>
+            <span className="inline-flex items-center gap-1.5"><Clock className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_timings" defaultValue="Open Daily 9:00 AM – 9:00 PM" /></span>
           </div>
           <div className="flex items-center gap-5">
             <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <Mail className="h-3 w-3 text-primary" /> {EMAIL}
+              <Mail className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_email" defaultValue={EMAIL} />
             </a>
             <span className="inline-flex items-center gap-1.5 text-foreground"><Star className="h-3 w-3 fill-primary text-primary" /> 5.0 Google Rating</span>
           </div>
@@ -274,33 +275,44 @@ function Hero() {
       <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 pt-32 pb-24 text-center sm:px-6">
         <div className="animate-fade-up inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-white/80">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
-          Trusted by 2 Lakh+ customers · 10+ years in Giridih
+          <EditableBlock contentKey="hero_badge" defaultValue="Trusted by 2 Lakh+ customers · 10+ years in Giridih" />
         </div>
 
-        <h1 className="animate-fade-up mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl">
-          Super Telecom — Mobile Repair Shop in Giridih
-        </h1>
-        <p className="animate-fade-up mt-4 font-display text-lg text-white/90 sm:text-2xl">
-          Display, battery &amp; chip-level repairs · Second-hand phones · Accessories
-        </p>
+        <EditableBlock
+          contentKey="hero_title"
+          defaultValue="Super Telecom — Mobile Repair Shop in Giridih"
+          as="h1"
+          className="animate-fade-up mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
+        />
 
-        <p className="animate-fade-up mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
-          Professional Mobile Repair · Motherboard Repair · Second-Hand Phones · New Smartphones ·
-          Accessories · Fast Same-Day Service
-        </p>
+        <EditableBlock
+          contentKey="hero_subtitle"
+          defaultValue="Display, battery & chip-level repairs · Second-hand phones · Accessories"
+          as="p"
+          type="textarea"
+          className="animate-fade-up mt-4 font-display text-lg text-white/90 sm:text-2xl"
+        />
+
+        <EditableBlock
+          contentKey="hero_description"
+          defaultValue="Professional Mobile Repair · Motherboard Repair · Second-Hand Phones · New Smartphones · Accessories · Fast Same-Day Service"
+          as="p"
+          type="textarea"
+          className="animate-fade-up mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base"
+        />
 
         <div className="animate-fade-up mt-8 flex flex-wrap items-center justify-center gap-3">
           <a
             href="#contact"
             className="inline-flex items-center rounded-full bg-gradient-brand px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.04]"
           >
-            <Calendar className="mr-2 h-4 w-4" /> Book Repair
+            <Calendar className="mr-2 h-4 w-4" /> <EditableBlock contentKey="hero_cta_book" defaultValue="Book Repair" />
           </a>
           <a
             href={`tel:${PHONE}`}
             className="inline-flex items-center rounded-full border border-white/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/15 hover:shadow-glow"
           >
-            <Phone className="mr-2 h-4 w-4" /> Call Now
+            <Phone className="mr-2 h-4 w-4" /> <EditableBlock contentKey="hero_cta_call" defaultValue="Call Now" />
           </a>
           <a
             href={`https://wa.me/${WHATSAPP}`}
@@ -374,7 +386,7 @@ function TrustBar() {
   );
 }
 
-function SectionHeader({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
+function SectionHeader({ eyebrow, title, sub }: { eyebrow: React.ReactNode; title: React.ReactNode; sub?: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-2xl text-center">
       <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-primary">
@@ -477,8 +489,8 @@ function Services() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader
           eyebrow="What we do"
-          title="Complete mobile care under one roof"
-          sub="From screen swaps to chip-level IC work, second-hand smartphones to premium accessories — we've got every mobile need covered."
+          title={<EditableBlock contentKey="services_title" defaultValue="Complete mobile care under one roof" />}
+          sub={<EditableBlock contentKey="services_sub" defaultValue="From screen swaps to chip-level IC work, second-hand smartphones to premium accessories — we've got every mobile need covered." type="textarea" />}
         />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {REPAIR_SERVICES.map(([Icon, title, desc]) => (
@@ -761,11 +773,11 @@ function Contact() {
         />
         <div className="mt-14 grid gap-8 lg:grid-cols-5">
           <div className="space-y-4 lg:col-span-2">
-            <ContactCard icon={Phone} label="Call us" value={PHONE_DISPLAY} href={`tel:${PHONE}`} />
-            <ContactCard icon={MessageCircle} label="WhatsApp" value="Chat with our team" href={`https://wa.me/${WHATSAPP}`} />
-            <ContactCard icon={MapPin} label="Visit us" value="Super Telecom, Giridih, Jharkhand" href={MAPS} />
-            <ContactCard icon={Clock} label="Hours" value="Mon–Sun · 9:00 AM – 9:00 PM" />
-            <ContactCard icon={Mail} label="Email" value={EMAIL} href={`mailto:${EMAIL}`} />
+            <ContactCard icon={Phone} label="Call us" value={<EditableBlock contentKey="contact_phone" defaultValue={PHONE_DISPLAY} />} href={`tel:${PHONE}`} />
+            <ContactCard icon={MessageCircle} label="WhatsApp" value={<EditableBlock contentKey="contact_whatsapp_text" defaultValue="Chat with our team" />} href={`https://wa.me/${WHATSAPP}`} />
+            <ContactCard icon={MapPin} label="Visit us" value={<EditableBlock contentKey="contact_address_full" defaultValue="Super Telecom, Giridih, Jharkhand" />} href={MAPS} />
+            <ContactCard icon={Clock} label="Hours" value={<EditableBlock contentKey="contact_hours_full" defaultValue="Mon–Sun · 9:00 AM – 9:00 PM" />} />
+            <ContactCard icon={Mail} label="Email" value={<EditableBlock contentKey="contact_email" defaultValue={EMAIL} />} href={`mailto:${EMAIL}`} />
           </div>
 
           <form

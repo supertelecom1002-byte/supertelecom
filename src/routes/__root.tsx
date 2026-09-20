@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
+import { VisualEditorProvider } from "@/context/VisualEditorContext";
+import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
 
 function NotFoundComponent() {
   return (
@@ -279,9 +281,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AdminAuthProvider>
-        <AnnouncementBanner />
-        <Outlet />
-        <CookieBanner />
+        <VisualEditorProvider>
+          <AnnouncementBanner />
+          <Outlet />
+          <LiveEditorBar />
+          <CookieBanner />
+        </VisualEditorProvider>
       </AdminAuthProvider>
     </QueryClientProvider>
   );
