@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
+import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -25,8 +26,13 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as ApiChatStreamRouteImport } from './routes/api/chat-stream'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as LocationsBargandaRoadMobileRepairRouteImport } from './routes/locations.barganda-road-mobile-repair'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as ServicesBatteryChargingPortRepairGiridihRouteImport } from './routes/services.battery-charging-port-repair-giridih'
+import { Route as ServicesDisplayReplacementGiridihRouteImport } from './routes/services.display-replacement-giridih'
+import { Route as ServicesIphoneRepairSpecialistGiridihRouteImport } from './routes/services.iphone-repair-specialist-giridih'
+import { Route as ServicesMotherboardChipLevelRepairGiridihRouteImport } from './routes/services.motherboard-chip-level-repair-giridih'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +53,11 @@ const BlogRoute = BlogRouteImport.update({
 const CookiePolicyRoute = CookiePolicyRouteImport.update({
   id: '/cookie-policy',
   path: '/cookie-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsRoute = LocationsRouteImport.update({
+  id: '/locations',
+  path: '/locations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -111,6 +122,12 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const LocationsBargandaRoadMobileRepairRoute =
+  LocationsBargandaRoadMobileRepairRouteImport.update({
+    id: '/barganda-road-mobile-repair',
+    path: '/barganda-road-mobile-repair',
+    getParentRoute: () => LocationsRoute,
+  } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -121,6 +138,30 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ServicesRoute,
 } as any)
+const ServicesBatteryChargingPortRepairGiridihRoute =
+  ServicesBatteryChargingPortRepairGiridihRouteImport.update({
+    id: '/battery-charging-port-repair-giridih',
+    path: '/battery-charging-port-repair-giridih',
+    getParentRoute: () => ServicesRoute,
+  } as any)
+const ServicesDisplayReplacementGiridihRoute =
+  ServicesDisplayReplacementGiridihRouteImport.update({
+    id: '/display-replacement-giridih',
+    path: '/display-replacement-giridih',
+    getParentRoute: () => ServicesRoute,
+  } as any)
+const ServicesIphoneRepairSpecialistGiridihRoute =
+  ServicesIphoneRepairSpecialistGiridihRouteImport.update({
+    id: '/iphone-repair-specialist-giridih',
+    path: '/iphone-repair-specialist-giridih',
+    getParentRoute: () => ServicesRoute,
+  } as any)
+const ServicesMotherboardChipLevelRepairGiridihRoute =
+  ServicesMotherboardChipLevelRepairGiridihRouteImport.update({
+    id: '/motherboard-chip-level-repair-giridih',
+    path: '/motherboard-chip-level-repair-giridih',
+    getParentRoute: () => ServicesRoute,
+  } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -133,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
+  '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRouteWithChildren
@@ -143,7 +185,12 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
+  '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
+  '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
+  '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -152,6 +199,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cookie-policy': typeof CookiePolicyRoute
+  '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/sitemap': typeof SitemapRoute
@@ -161,7 +209,12 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
+  '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
+  '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
+  '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -173,6 +226,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
+  '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRouteWithChildren
@@ -183,7 +237,12 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
+  '/services/display-replacement-giridih': typeof ServicesDisplayReplacementGiridihRoute
+  '/services/iphone-repair-specialist-giridih': typeof ServicesIphoneRepairSpecialistGiridihRoute
+  '/services/motherboard-chip-level-repair-giridih': typeof ServicesMotherboardChipLevelRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -196,6 +255,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/cookie-policy'
+    | '/locations'
     | '/mcp'
     | '/pricing'
     | '/services'
@@ -206,7 +266,12 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
+    | '/services/battery-charging-port-repair-giridih'
+    | '/services/display-replacement-giridih'
+    | '/services/iphone-repair-specialist-giridih'
+    | '/services/motherboard-chip-level-repair-giridih'
     | '/admin/'
     | '/blog/'
     | '/services/'
@@ -215,6 +280,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cookie-policy'
+    | '/locations'
     | '/mcp'
     | '/pricing'
     | '/sitemap'
@@ -224,7 +290,12 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
+    | '/services/battery-charging-port-repair-giridih'
+    | '/services/display-replacement-giridih'
+    | '/services/iphone-repair-specialist-giridih'
+    | '/services/motherboard-chip-level-repair-giridih'
     | '/admin'
     | '/blog'
     | '/services'
@@ -235,6 +306,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/cookie-policy'
+    | '/locations'
     | '/mcp'
     | '/pricing'
     | '/services'
@@ -245,7 +317,12 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
+    | '/services/battery-charging-port-repair-giridih'
+    | '/services/display-replacement-giridih'
+    | '/services/iphone-repair-specialist-giridih'
+    | '/services/motherboard-chip-level-repair-giridih'
     | '/admin/'
     | '/blog/'
     | '/services/'
@@ -257,6 +334,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
   CookiePolicyRoute: typeof CookiePolicyRoute
+  LocationsRoute: typeof LocationsRouteWithChildren
   McpRoute: typeof McpRoute
   PricingRoute: typeof PricingRoute
   ServicesRoute: typeof ServicesRouteWithChildren
@@ -296,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/cookie-policy'
       fullPath: '/cookie-policy'
       preLoaderRoute: typeof CookiePolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations': {
+      id: '/locations'
+      path: '/locations'
+      fullPath: '/locations'
+      preLoaderRoute: typeof LocationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -382,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/locations/barganda-road-mobile-repair': {
+      id: '/locations/barganda-road-mobile-repair'
+      path: '/barganda-road-mobile-repair'
+      fullPath: '/locations/barganda-road-mobile-repair'
+      preLoaderRoute: typeof LocationsBargandaRoadMobileRepairRouteImport
+      parentRoute: typeof LocationsRoute
+    }
     '/services/': {
       id: '/services/'
       path: '/'
@@ -394,6 +486,34 @@ declare module '@tanstack/react-router' {
       path: '/$slug'
       fullPath: '/services/$slug'
       preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/battery-charging-port-repair-giridih': {
+      id: '/services/battery-charging-port-repair-giridih'
+      path: '/battery-charging-port-repair-giridih'
+      fullPath: '/services/battery-charging-port-repair-giridih'
+      preLoaderRoute: typeof ServicesBatteryChargingPortRepairGiridihRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/display-replacement-giridih': {
+      id: '/services/display-replacement-giridih'
+      path: '/display-replacement-giridih'
+      fullPath: '/services/display-replacement-giridih'
+      preLoaderRoute: typeof ServicesDisplayReplacementGiridihRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/iphone-repair-specialist-giridih': {
+      id: '/services/iphone-repair-specialist-giridih'
+      path: '/iphone-repair-specialist-giridih'
+      fullPath: '/services/iphone-repair-specialist-giridih'
+      preLoaderRoute: typeof ServicesIphoneRepairSpecialistGiridihRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/services/motherboard-chip-level-repair-giridih': {
+      id: '/services/motherboard-chip-level-repair-giridih'
+      path: '/motherboard-chip-level-repair-giridih'
+      fullPath: '/services/motherboard-chip-level-repair-giridih'
+      preLoaderRoute: typeof ServicesMotherboardChipLevelRepairGiridihRouteImport
       parentRoute: typeof ServicesRoute
     }
     '/.mcp/invoke-tool/$tool': {
@@ -430,13 +550,38 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface LocationsRouteChildren {
+  LocationsBargandaRoadMobileRepairRoute: typeof LocationsBargandaRoadMobileRepairRoute
+}
+
+const LocationsRouteChildren: LocationsRouteChildren = {
+  LocationsBargandaRoadMobileRepairRoute:
+    LocationsBargandaRoadMobileRepairRoute,
+}
+
+const LocationsRouteWithChildren = LocationsRoute._addFileChildren(
+  LocationsRouteChildren,
+)
+
 interface ServicesRouteChildren {
   ServicesSlugRoute: typeof ServicesSlugRoute
+  ServicesBatteryChargingPortRepairGiridihRoute: typeof ServicesBatteryChargingPortRepairGiridihRoute
+  ServicesDisplayReplacementGiridihRoute: typeof ServicesDisplayReplacementGiridihRoute
+  ServicesIphoneRepairSpecialistGiridihRoute: typeof ServicesIphoneRepairSpecialistGiridihRoute
+  ServicesMotherboardChipLevelRepairGiridihRoute: typeof ServicesMotherboardChipLevelRepairGiridihRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
 const ServicesRouteChildren: ServicesRouteChildren = {
   ServicesSlugRoute: ServicesSlugRoute,
+  ServicesBatteryChargingPortRepairGiridihRoute:
+    ServicesBatteryChargingPortRepairGiridihRoute,
+  ServicesDisplayReplacementGiridihRoute:
+    ServicesDisplayReplacementGiridihRoute,
+  ServicesIphoneRepairSpecialistGiridihRoute:
+    ServicesIphoneRepairSpecialistGiridihRoute,
+  ServicesMotherboardChipLevelRepairGiridihRoute:
+    ServicesMotherboardChipLevelRepairGiridihRoute,
   ServicesIndexRoute: ServicesIndexRoute,
 }
 
@@ -449,6 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
   CookiePolicyRoute: CookiePolicyRoute,
+  LocationsRoute: LocationsRouteWithChildren,
   McpRoute: McpRoute,
   PricingRoute: PricingRoute,
   ServicesRoute: ServicesRouteWithChildren,
