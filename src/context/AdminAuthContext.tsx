@@ -143,14 +143,10 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return;
     }
 
-    const redirectUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/admin`
-      : undefined;
-
     const { error: signInError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: redirectUrl,
+        redirectTo: `${window.location.origin}/admin`,
       },
     });
 
