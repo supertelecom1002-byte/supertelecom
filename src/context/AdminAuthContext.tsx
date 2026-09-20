@@ -24,8 +24,8 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const checkAdminStatus = async (email?: string | null): Promise<boolean> => {
-    if (!email) return false;
+  const checkAdminStatus = async (email?: string | null): Promise<{ authorized: boolean; error?: string }> => {
+    if (!email) return { authorized: false, error: "No email provided" };
     try {
       const { data, error: queryError } = await supabase
         .from("admin_users")
@@ -36,12 +36,12 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       if (queryError) {
         console.warn("admin_users check error:", queryError.message);
-        return false;
+        return { authorized: false, error: `Database error: ${queryError.message}` };
       }
-      return !!data;
-    } catch (err) {
+      return { authorized: !!data };
+    } catch (err: any) {
       console.warn("admin_users check exception:", err);
-      return false;
+      return { authorized: false, error: err?.message || "Verification failed" };
     }
   };
 
@@ -55,7 +55,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         if (!mounted) return;
 
         if (initialSession?.user?.email) {
-          const authorized = await checkAdminStatus(initialSession.user.email);
+          const { authorized, error: checkError } = await checkAdminStatus(initialSession.user.email);
           if (!mounted) return;
 
           if (authorized) {
@@ -64,7 +64,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setIsAdmin(true);
             setError(null);
           } else {
-            setError("Access Denied: You are not an authorized administrator");
+            setError(checkError || "Access Denied: You are not an authorized administrator");
             await supabase.auth.signOut();
             setSession(null);
             setUser(null);
@@ -101,7 +101,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setLoading(true);
         try {
           if (newSession?.user?.email) {
-            const authorized = await checkAdminStatus(newSession.user.email);
+            const { authorized, error: checkError } = await checkAdminStatus(newSession.user.email);
             if (!mounted) return;
 
             if (authorized) {
@@ -110,7 +110,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               setIsAdmin(true);
               setError(null);
             } else {
-              setError("Access Denied: You are not an authorized administrator");
+              setError(checkError || "Access Denied: You are not an authorized administrator");
               await supabase.auth.signOut();
               setSession(null);
               setUser(null);
