@@ -16,6 +16,8 @@ import { AiChat } from "@/components/AiChat";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
 import { BeforeAfterSlider } from "@/components/public/BeforeAfterSlider";
 import { EditableBlock } from "@/components/admin/visual/EditableBlock";
+import { PricingMatrix } from "@/components/PricingMatrix";
+import { LocalFaqSection, LOCAL_AEO_FAQS } from "@/components/LocalFaqSection";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -24,13 +26,15 @@ import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Mobile Repair in Giridih | Super Telecom" },
-      { name: "description", content: "Mobile repair shop in Giridih, Jharkhand for screen, battery, charging port, IC and software repair. Super Telecom also offers phone unlocking and accessories." },
-      { property: "og:title", content: "Mobile Repair in Giridih | Super Telecom" },
-      { property: "og:description", content: "Mobile repair shop in Giridih, Jharkhand for screen, battery, charging port, IC and software repair. Super Telecom also offers phone unlocking and accessories." },
+      { title: "Super Telecom | Best Mobile Repair Shop in Giridih | Barganda Road" },
+      { name: "description", content: "Professional smartphone repair in Giridih. Instant display replacement, motherboard IC repair, and battery fixes at Super Telecom, Barganda Road (Near Shivam Clinic). Call +91 80029 03643." },
+      { property: "og:title", content: "Super Telecom | Best Mobile Repair Shop in Giridih | Barganda Road" },
+      { property: "og:description", content: "Professional smartphone repair in Giridih. Instant display replacement, motherboard IC repair, and battery fixes at Super Telecom, Barganda Road (Near Shivam Clinic). Call +91 80029 03643." },
       { property: "og:url", content: `${SITE_URL}/` },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Super Telecom | Best Mobile Repair Shop in Giridih | Barganda Road" },
+      { name: "twitter:description", content: "Professional smartphone repair in Giridih. Instant display replacement, motherboard IC repair, and battery fixes at Super Telecom, Barganda Road (Near Shivam Clinic). Call +91 80029 03643." },
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
@@ -42,11 +46,18 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: FAQS.map(([q, a]) => ({
-            "@type": "Question",
-            name: q,
-            acceptedAnswer: { "@type": "Answer", text: a },
-          })),
+          mainEntity: [
+            ...LOCAL_AEO_FAQS.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+            ...FAQS.map(([q, a]) => ({
+              "@type": "Question",
+              name: q,
+              acceptedAnswer: { "@type": "Answer", text: a },
+            })),
+          ],
         }),
       },
       {
@@ -63,11 +74,12 @@ export const Route = createFileRoute("/")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": ["LocalBusiness", "ElectronicsStore"],
+          "@type": ["MobilePhoneRepairShop", "LocalBusiness"],
           "@id": `${SITE_URL}/#business`,
           name: "Super Telecom",
+          alternateName: "Super Telecom Mobile Repairing Centre Giridih",
           description:
-            "Mobile repair shop in Giridih, Jharkhand for screen, battery, charging port, IC and software repair. Super Telecom also offers phone unlocking and accessories.",
+            "Professional smartphone repair in Giridih. Instant display replacement, motherboard IC repair, and battery fixes at Super Telecom, Barganda Road (Near Shivam Clinic). Call +91 80029 03643.",
           image: `${SITE_URL}/favicon.png`,
           telephone: "+918002903643",
           email: "supertelecom1002@gmail.com",
@@ -75,13 +87,13 @@ export const Route = createFileRoute("/")({
           priceRange: "₹₹",
           address: {
             "@type": "PostalAddress",
-            streetAddress: STORE_STREET_ADDRESS,
+            streetAddress: "Barganda Road, Near Shivam Clinic",
             addressLocality: "Giridih",
             addressRegion: "Jharkhand",
             postalCode: "815301",
             addressCountry: "IN",
           },
-          geo: { "@type": "GeoCoordinates", latitude: 24.1854, longitude: 86.304 },
+          geo: { "@type": "GeoCoordinates", latitude: 24.1856, longitude: 86.3056 },
           hasMap: "https://maps.app.goo.gl/mu5XXCehEpocaZWY9",
           openingHoursSpecification: [
             {
@@ -95,11 +107,73 @@ export const Route = createFileRoute("/")({
                 "Saturday",
                 "Sunday",
               ],
-              opens: "09:00",
-              closes: "21:00",
+              opens: "10:00",
+              closes: "21:30",
             },
           ],
           areaServed: { "@type": "City", name: "Giridih" },
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name: "Mobile Repair Services Giridih",
+            itemListElement: [
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Screen Replacement",
+                  description: "Cracked or broken display replacement for iPhone and Android with same-day warranty.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "999",
+                  maxPrice: "9999",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Motherboard IC Repair",
+                  description: "Chip-level BGA micro-soldering, short circuit, and dead phone motherboard recovery.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "799",
+                  maxPrice: "3500",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Battery Replacement",
+                  description: "High-backup original battery replacement with testing and up to 90 days warranty.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "899",
+                  maxPrice: "2499",
+                },
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Water Damage Restoration",
+                  description: "Ultrasonic chemical cleaning and component-level short circuit fix.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "500",
+                  maxPrice: "2500",
+                },
+              },
+            ],
+          },
         }),
       },
     ],
@@ -135,12 +209,14 @@ function HomePage() {
         <TrustBar />
         <About />
         <Services />
+        <PricingMatrix />
         <WhyUs />
         <Gallery />
         <BeforeAfterSlider />
         <DailyUpdatesSection />
         <Testimonials />
         <FAQ />
+        <LocalFaqSection />
         <Contact />
         <VisitStore />
 

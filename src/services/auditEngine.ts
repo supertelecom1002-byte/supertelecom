@@ -249,7 +249,7 @@ export async function runWebsiteAudit(): Promise<AuditReport> {
             types.forEach((t) => schemaTypes.push(t));
             if (
               types.some((t) =>
-                ["LocalBusiness", "ElectronicsStore", "ElectronicsRepairShop", "Store"].includes(t)
+                ["LocalBusiness", "ElectronicsStore", "ElectronicsRepairShop", "MobilePhoneRepairShop", "Store"].includes(t)
               )
             ) {
               foundLocalBusiness = true;
