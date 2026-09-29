@@ -14,7 +14,10 @@ import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { AiChat } from "@/components/AiChat";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
-import { BeforeAfterSlider } from "@/components/public/BeforeAfterSlider";
+import { Hero } from "@/components/Hero";
+import { LabTrustStrip } from "@/components/interactive/LabTrustStrip";
+import { RepairEstimator } from "@/components/interactive/RepairEstimator";
+import { BeforeAfterSlider } from "@/components/interactive/BeforeAfterSlider";
 import { EditableBlock } from "@/components/admin/visual/EditableBlock";
 import { PricingMatrix } from "@/components/PricingMatrix";
 import { LocalFaqSection, LOCAL_AEO_FAQS } from "@/components/LocalFaqSection";
@@ -217,6 +220,7 @@ function HomePage() {
       <Nav />
       <main id="main">
         <Hero />
+        <LabTrustStrip />
         {/* Mobile Horizontal Scroll Category Chips directly under Hero */}
         <div className="border-b border-border/40 bg-slate-950/85 backdrop-blur-md py-2 md:hidden">
           <ServiceChips
@@ -224,6 +228,7 @@ function HomePage() {
             onSelectCategory={handleSelectCategory}
           />
         </div>
+        <RepairEstimator />
         <AiChat />
         <TrustBar />
         <About />
@@ -354,7 +359,7 @@ function Nav() {
                 {/* 5 Service Silos Direct Access */}
                 <div className="mt-5">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold block mb-2.5">
-                    ⚡ Top Service Silos (1-Tap)
+                    Top Service Silos (1-Tap)
                   </span>
                   <div className="grid grid-cols-1 gap-2">
                     {[
@@ -432,119 +437,6 @@ function Nav() {
     </header>
   );
 }
-
-function Hero() {
-  return (
-    <section id="top" className="relative isolate min-h-screen w-full overflow-hidden">
-      {/* Fullscreen cinematic background video */}
-      <video
-        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-        poster={heroImg}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        aria-label="Cinematic repair video at Super Telecom Giridih"
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-      />
-      {/* Subtle dark cyan overlay for 100% readability */}
-      <div className="absolute inset-0 -z-10 bg-slate-950/75" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/85 via-cyan-950/35 to-slate-950/95" />
-      <div className="absolute inset-0 -z-10 bg-cyan-950/20 backdrop-blur-[0.5px]" />
-
-      <div className="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 pt-32 pb-24 text-center sm:px-6">
-        <div className="animate-fade-up inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-white/80">
-          <Sparkles className="h-3.5 w-3.5 text-primary" />
-          <EditableBlock contentKey="hero_badge" defaultValue="Trusted by 2 Lakh+ customers · 10+ years in Giridih" />
-        </div>
-
-        <EditableBlock
-          contentKey="hero_title"
-          defaultValue="Super Telecom — Mobile Repair Shop in Giridih"
-          as="h1"
-          className="animate-fade-up mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
-        />
-
-        <EditableBlock
-          contentKey="hero_subtitle"
-          defaultValue="Display, battery & chip-level repairs · Second-hand phones · Accessories"
-          as="p"
-          type="textarea"
-          className="animate-fade-up mt-4 font-display text-lg text-white/90 sm:text-2xl"
-        />
-
-        <EditableBlock
-          contentKey="hero_description"
-          defaultValue="Professional Mobile Repair · Motherboard Repair · Second-Hand Phones · New Smartphones · Accessories · Fast Same-Day Service"
-          as="p"
-          type="textarea"
-          className="animate-fade-up mt-4 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base"
-        />
-
-        <div className="animate-fade-up mt-8 flex flex-wrap items-center justify-center gap-3">
-          <a
-            href="#contact"
-            className="inline-flex items-center rounded-full bg-gradient-brand px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.04]"
-          >
-            <Calendar className="mr-2 h-4 w-4" /> <EditableBlock contentKey="hero_cta_book" defaultValue="Book Repair" />
-          </a>
-          <a
-            href={`tel:${PHONE}`}
-            className="inline-flex items-center rounded-full border border-white/40 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all hover:bg-white/15 hover:shadow-glow"
-          >
-            <Phone className="mr-2 h-4 w-4" /> <EditableBlock contentKey="hero_cta_call" defaultValue="Call Now" />
-          </a>
-          <a
-            href={`https://wa.me/${WHATSAPP}`}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center rounded-full glass px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10"
-          >
-            <MessageCircle className="mr-2 h-4 w-4 text-emerald-400" /> WhatsApp
-          </a>
-          <a
-            href={`mailto:${EMAIL}`}
-            className="inline-flex items-center rounded-full glass px-7 py-3.5 text-sm font-semibold text-white hover:bg-white/10"
-          >
-            <Mail className="mr-2 h-4 w-4 text-primary" /> Email Us
-          </a>
-        </div>
-
-        <div className="animate-fade-up mt-6 flex items-center gap-2 text-sm text-white/80">
-          <div className="flex text-yellow-400" aria-hidden>
-            {"★★★★★"}
-          </div>
-          <span>Trusted by 2 Lakh+ Happy Customers</span>
-        </div>
-
-        <dl className="animate-fade-up mt-12 grid w-full max-w-2xl grid-cols-3 gap-3 sm:gap-4">
-          {[
-            ["10+", "Years"],
-            ["1M+", "Repairs"],
-            ["5.0★", "Rating"],
-          ].map(([n, l]) => (
-            <div key={l} className="rounded-2xl glass p-4">
-              <dt className="font-display text-2xl font-bold text-gradient">{n}</dt>
-              <dd className="mt-1 text-[10px] uppercase tracking-wider text-white/70 sm:text-xs">
-                {l}
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <a
-          href="#services"
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 transition-colors hover:text-white"
-          aria-label="Scroll to services"
-        >
-          <ChevronDown className="h-6 w-6 animate-bounce" />
-        </a>
-      </div>
-    </section>
-  );
-}
-
 
 function TrustBar() {
   const items = [
@@ -626,7 +518,7 @@ function About() {
               ["10+", "Years of experience"],
               ["2 Lakh+", "Happy customers"],
               ["1M+", "Repairs completed"],
-              ["5.0★", "Customer rating"],
+              ["5.0", "Customer rating"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">
                 <div className="font-display text-4xl font-bold text-gradient sm:text-5xl">{n}</div>
@@ -777,7 +669,7 @@ function WhyUs() {
     [Sparkles, "Affordable Pricing", "Fair, transparent pricing with no hidden charges."],
     [Clock, "Fast Service", "Most repairs completed the same day."],
     [Shield, "Trusted Local Business", "Loved by 2 Lakh+ happy customers across Giridih."],
-    [Star, "Customer Satisfaction", "5.0★ average rating from real Google reviews."],
+    [Star, "Customer Satisfaction", "5.0 average rating from real Google reviews."],
     [Cable, "Latest Equipment", "Modern tools for chip-level and micro-soldering work."],
   ];
   return (
@@ -922,7 +814,7 @@ type BookingSummary = {
 
 function buildWhatsAppUrl(b: BookingSummary) {
   const lines = [
-    "Namaste Super Telecom 👋",
+    "Namaste Super Telecom,",
     "Maine website se booking request bheji hai:",
     "",
     `Naam: ${b.name}`,
@@ -1028,12 +920,12 @@ function Contact() {
               disabled={submitting || sent}
               className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
             >
-              {sent ? "Request sent ✓" : submitting ? "Sending…" : (<><Send className="mr-2 h-4 w-4" /> Send booking request</>)}
+              {sent ? (<><Check className="mr-2 h-4 w-4" /> Request Sent</>) : submitting ? "Sending…" : (<><Send className="mr-2 h-4 w-4" /> Send booking request</>)}
             </button>
             {sent && booking && (
               <div className="mt-5 rounded-2xl border border-primary/30 bg-primary/5 p-5">
-                <p className="text-sm font-semibold text-foreground">
-                  ✓ Request received — our team has it now
+                <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-emerald-400" /> Request received — our team has it now
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Tap below to get an instant WhatsApp confirmation on your phone. We usually call back within minutes.
@@ -1280,8 +1172,8 @@ function VisitStore() {
                     <a href={`tel:${PHONE}`} className="hover:text-foreground">{PHONE_DISPLAY}</a>
                   </div>
                   <div className="flex items-center gap-3 text-muted-foreground">
-                    <Star className="h-4 w-4 text-primary" />
-                    <span>5.0★ · 2 Lakh+ happy customers</span>
+                    <Star className="h-4 w-4 text-primary fill-primary" />
+                    <span>5.0 Rating · 2 Lakh+ happy customers</span>
                   </div>
                 </div>
 

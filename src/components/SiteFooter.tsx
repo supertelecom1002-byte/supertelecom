@@ -83,7 +83,7 @@ const COUNTERS: { value: number; suffix: string; label: string; decimals?: numbe
   { value: 10, suffix: "+", label: "Years Experience" },
   { value: 1, suffix: "M+", label: "Repairs Completed" },
   { value: 200, suffix: "K+", label: "Happy Customers" },
-  { value: 5.0, suffix: "★", label: "Google Rating", decimals: 1 },
+  { value: 5.0, suffix: " / 5", label: "Google Rating", decimals: 1 },
 ];
 
 const BADGES = [

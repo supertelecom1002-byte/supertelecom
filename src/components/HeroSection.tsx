@@ -6,6 +6,7 @@ import {
   MessageCircle,
   Mail,
   ChevronDown,
+  Star,
 } from "lucide-react";
 import heroImg from "@/assets/hero-repair.jpg";
 
@@ -97,10 +98,12 @@ export const HeroSection: React.FC = () => {
 
         {/* Star Rating Social Proof */}
         <div className="animate-fade-up mt-6 flex items-center gap-2 text-sm text-slate-200">
-          <div className="flex text-amber-400 text-base" aria-hidden>
-            ★★★★★
+          <div className="flex text-amber-400 gap-0.5" aria-hidden>
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+            ))}
           </div>
-          <span className="font-medium">5.0★ Google Rating · 2 Lakh+ Happy Customers</span>
+          <span className="font-medium">5.0 Google Rating · 2 Lakh+ Happy Customers</span>
         </div>
 
         {/* Highlights Counter Grid */}
@@ -108,7 +111,7 @@ export const HeroSection: React.FC = () => {
           {[
             ["10+", "Years Experience"],
             ["1M+", "Repairs Completed"],
-            ["5.0★", "Customer Rating"],
+            ["5.0", "Customer Rating"],
           ].map(([n, l]) => (
             <div
               key={l}

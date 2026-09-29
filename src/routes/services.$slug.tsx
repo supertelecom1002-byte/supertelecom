@@ -177,7 +177,7 @@ function ServicePage() {
             <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-primary" /> {service.duration}</span>
               <span className="inline-flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> Warranty backed</span>
-              <span className="inline-flex items-center gap-1.5"><Star className="h-4 w-4 text-primary" /> 5.0★ rated in Giridih</span>
+              <span className="inline-flex items-center gap-1.5"><Star className="h-4 w-4 text-primary fill-primary" /> 5.0 rated in Giridih</span>
             </div>
           </div>
 

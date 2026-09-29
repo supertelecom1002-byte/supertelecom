@@ -108,8 +108,8 @@ export const LocalFaqSection: React.FC = () => {
                   className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 select-none focus:outline-none"
                 >
                   <div className="flex items-start gap-3.5">
-                    <span className="p-1.5 rounded-xl bg-cyan-950 border border-cyan-500/30 text-cyan-400 mt-0.5 flex-none">
-                      <HelpCircle className="h-4 w-4" />
+                    <span className="w-7 h-7 rounded-lg bg-cyan-950/80 border border-cyan-500/30 text-cyan-400 font-mono text-[11px] font-bold flex items-center justify-center mt-0.5 flex-none shadow-sm">
+                      {String(idx + 1).padStart(2, "0")}
                     </span>
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-white leading-snug">
