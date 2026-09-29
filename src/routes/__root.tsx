@@ -16,6 +16,8 @@ import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
 import { VisualEditorProvider } from "@/context/VisualEditorContext";
 import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
+import { MobileBottomBar } from "@/components/mobile/MobileBottomBar";
+
 
 function NotFoundComponent() {
   return (
@@ -78,7 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" },
+      { name: "theme-color", content: "#030712" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "google-site-verification", content: "l1EAStfsD16e2zvMmw3t88DhWnxcSgdPtPBms5L0bus" },
       { name: "google-site-verification", content: "jIBP6ThFnLXcw6dMR7Q4JRbuLJIVjHsquFt4DxgLVxk" },
       { title: SITE_TITLE },
@@ -99,7 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESC },
-      { name: "theme-color", content: "#0f1b3d" },
+
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
@@ -269,7 +274,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
-      <body>
+      <body className="pb-20 md:pb-0 min-h-screen">
         {children}
         <Scripts />
       </body>
@@ -286,12 +291,14 @@ function RootComponent() {
           <AnnouncementBanner />
           <Outlet />
           <LiveEditorBar />
+          <MobileBottomBar />
           <CookieBanner />
         </VisualEditorProvider>
       </AdminAuthProvider>
     </QueryClientProvider>
   );
 }
+
 
 function CookieBanner() {
   const [visible, setVisible] = useState(false);

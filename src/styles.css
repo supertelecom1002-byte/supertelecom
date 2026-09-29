@@ -148,7 +148,10 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     background: var(--background);
     color: var(--color-foreground);
@@ -156,7 +159,28 @@
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+  button, a {
+    touch-action: manipulation;
+  }
+
+  /* Prevent automatic iOS / Chrome zoom-in on mobile form inputs */
+  @media (max-width: 767px) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
 }
+
+/* Custom utility for clean horizontal swipe containers without scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 
 @utility glass {
   background: var(--glass-bg);

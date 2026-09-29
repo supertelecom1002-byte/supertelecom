@@ -22,6 +22,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
+import { ServiceChips } from "@/components/mobile/ServiceChips";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -199,16 +201,33 @@ const FAQS: [string, string][] = [
 ];
 
 function HomePage() {
+  const [serviceCategory, setServiceCategory] = useState<string>("all");
+
+  const handleSelectCategory = (cat: string) => {
+    setServiceCategory(cat);
+    const el = document.getElementById("services");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <BackgroundFX />
       <Nav />
       <main id="main">
         <Hero />
+        {/* Mobile Horizontal Scroll Category Chips directly under Hero */}
+        <div className="border-b border-border/40 bg-slate-950/85 backdrop-blur-md py-2 md:hidden">
+          <ServiceChips
+            activeCategory={serviceCategory}
+            onSelectCategory={handleSelectCategory}
+          />
+        </div>
         <AiChat />
         <TrustBar />
         <About />
-        <Services />
+        <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
         <PricingMatrix />
         <WhyUs />
         <Gallery />
@@ -219,8 +238,8 @@ function HomePage() {
         <LocalFaqSection />
         <Contact />
         <VisitStore />
-
       </main>
+
       <Footer />
       <FloatingActions />
     </div>
@@ -299,31 +318,117 @@ function Nav() {
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border md:hidden"
+              className="inline-flex h-11 w-11 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-border bg-slate-900/60 md:hidden active:scale-95 transition-transform"
             >
               {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
+        {/* Slide-over Mobile Drawer with Backdrop Blur & Service Silos */}
         {open && (
-          <nav className="border-t border-border px-4 pb-4 pt-2 md:hidden">
-            {links.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className="block rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              >
-                {label}
-              </a>
-            ))}
-            <div className="mt-2 flex items-center gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 text-primary" /> Barganda Road, Giridih · 9 AM – 9 PM
+          <div className="fixed inset-0 z-50 md:hidden">
+            {/* Backdrop Blur Overlay */}
+            <div
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity animate-fade-in"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Slide-over Drawer Panel */}
+            <div className="fixed inset-y-0 right-0 w-[86%] max-w-sm bg-slate-950 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl z-10 overflow-y-auto">
+              <div>
+                {/* Header */}
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <BrandLogo size="sm" to="/" />
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    aria-label="Close menu drawer"
+                    className="flex items-center justify-center min-h-[48px] min-w-[48px] rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white active:scale-95 transition-all"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* 5 Service Silos Direct Access */}
+                <div className="mt-5">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold block mb-2.5">
+                    ⚡ Top Service Silos (1-Tap)
+                  </span>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { title: "Screen & Display Replacement", href: "/services/screen-replacement", icon: Smartphone },
+                      { title: "Battery & Charging Port Repair", href: "/services/battery-replacement", icon: Battery },
+                      { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-repair", icon: Cpu },
+                      { title: "Water Damage Revival", href: "/services/water-damage-repair", icon: Droplet },
+                      { title: "Apple iPhone Specialist Care", href: "/services/iphone-repair", icon: ShieldCheck },
+                    ].map((silo) => (
+                      <Link
+                        key={silo.href}
+                        to={silo.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-200 hover:text-cyan-300 hover:border-cyan-500/40 active:scale-95 transition-all min-h-[48px]"
+                      >
+                        <silo.icon className="h-4 w-4 text-cyan-400 flex-none" />
+                        <span className="truncate">{silo.title}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation Links */}
+                <div className="mt-6 border-t border-slate-800/80 pt-4">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-2">
+                    Sections & Pricing
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {[
+                      ...links,
+                      ["Rates & Pricing", "#pricing-matrix"],
+                    ].map(([label, href]) => (
+                      <a
+                        key={href}
+                        href={href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
+                      >
+                        <span>{label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Drawer Bottom Actions */}
+              <div className="mt-6 pt-5 border-t border-slate-800 space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href={`tel:${PHONE}`}
+                    className="flex items-center justify-center gap-2 py-3 px-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs active:scale-95 transition-all min-h-[48px]"
+                  >
+                    <Phone className="h-4 w-4" /> Call Now
+                  </a>
+                  <a
+                    href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20quick%20mobile%20repair%20help`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-2 py-3 px-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs active:scale-95 transition-all min-h-[48px]"
+                  >
+                    <MessageCircle className="h-4 w-4" /> WhatsApp
+                  </a>
+                </div>
+
+                <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-1">
+                  <MapPin className="h-3.5 w-3.5 text-primary flex-none" />
+                  <span>Barganda Road, Giridih · Open Daily 9 AM – 9 PM</span>
+                </div>
+              </div>
             </div>
-          </nav>
+          </div>
         )}
       </div>
+
     </header>
   );
 }
@@ -535,21 +640,21 @@ function About() {
   );
 }
 
-const REPAIR_SERVICES: Array<[any, string, string]> = [
-  [Smartphone, "Screen & Display", "Screen replacement, display repair, touch & LCD fixes for all brands."],
-  [Battery, "Battery Replacement", "Genuine batteries with warranty. Fixes drain & backup issues."],
-  [Zap, "Charging Port", "Charging port repair, charging issue diagnosis and clean-up."],
-  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio."],
-  [Mic, "Microphone", "Mic repair for call clarity, voice notes and video recording."],
-  [Camera, "Camera Repair", "Front/rear camera, lens replacement and focus issue fixes."],
-  [Cpu, "Motherboard & IC", "Advanced motherboard, IC and chip-level repairs by experts."],
-  [Wifi, "Network Issues", "SIM slot, network, signal and connectivity troubleshooting."],
-  [Download, "Software & Flashing", "Software install, updates, flashing and boot loop repair."],
-  [Droplet, "Water Damage", "Water-damaged and dead phone recovery with ultrasonic cleaning."],
-  [Fingerprint, "Fingerprint & Face", "Fingerprint sensor and face unlock repair and calibration."],
-  [RefreshCw, "Performance Fix", "Hanging, heating and slow-phone optimization and cleanup."],
-  [HardDrive, "Data Recovery", "Recover contacts, photos and backup before/after repairs."],
-  [Wrench, "Buttons & Ports", "Power, volume, home button, SIM tray and memory slot repair."],
+const REPAIR_SERVICES: Array<[any, string, string, string]> = [
+  [Smartphone, "Screen & Display", "Screen replacement, display repair, touch & LCD fixes for all brands.", "screen"],
+  [Battery, "Battery Replacement", "Genuine batteries with warranty. Fixes drain & backup issues.", "battery"],
+  [Zap, "Charging Port", "Charging port repair, charging issue diagnosis and clean-up.", "battery"],
+  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio.", "screen"],
+  [Mic, "Microphone", "Mic repair for call clarity, voice notes and video recording.", "other"],
+  [Camera, "Camera Repair", "Front/rear camera, lens replacement and focus issue fixes.", "iphone"],
+  [Cpu, "Motherboard & IC", "Advanced motherboard, IC and chip-level repairs by experts.", "motherboard"],
+  [Wifi, "Network Issues", "SIM slot, network, signal and connectivity troubleshooting.", "motherboard"],
+  [Download, "Software & Flashing", "Software install, updates, flashing and boot loop repair.", "motherboard"],
+  [Droplet, "Water Damage", "Water-damaged and dead phone recovery with ultrasonic cleaning.", "water"],
+  [Fingerprint, "Fingerprint & Face", "Fingerprint sensor and face unlock repair and calibration.", "iphone"],
+  [RefreshCw, "Performance Fix", "Hanging, heating and slow-phone optimization and cleanup.", "motherboard"],
+  [HardDrive, "Data Recovery", "Recover contacts, photos and backup before/after repairs.", "motherboard"],
+  [Wrench, "Buttons & Ports", "Power, volume, home button, SIM tray and memory slot repair.", "battery"],
 ];
 
 const ACCESSORY_CATEGORIES = [
@@ -559,7 +664,23 @@ const ACCESSORY_CATEGORIES = [
   "Ring Holders, Tripods & Selfie Sticks",
 ];
 
-function Services() {
+function Services({
+  activeCategory = "all",
+  onSelectCategory,
+}: {
+  activeCategory?: string;
+  onSelectCategory?: (cat: string) => void;
+}) {
+  const filteredServices = REPAIR_SERVICES.filter(([Icon, title, desc, cat]) => {
+    if (activeCategory === "all") return true;
+    if (activeCategory === "screen") return cat === "screen" || title.toLowerCase().includes("screen") || title.toLowerCase().includes("display");
+    if (activeCategory === "iphone") return cat === "iphone" || title.toLowerCase().includes("camera") || title.toLowerCase().includes("fingerprint") || title.toLowerCase().includes("face");
+    if (activeCategory === "motherboard") return cat === "motherboard" || title.toLowerCase().includes("motherboard") || title.toLowerCase().includes("ic") || title.toLowerCase().includes("software") || title.toLowerCase().includes("data");
+    if (activeCategory === "battery") return cat === "battery" || title.toLowerCase().includes("battery") || title.toLowerCase().includes("charging") || title.toLowerCase().includes("buttons");
+    if (activeCategory === "water") return cat === "water" || title.toLowerCase().includes("water");
+    return true;
+  });
+
   return (
     <section id="services" className="py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -568,9 +689,17 @@ function Services() {
           title={<EditableBlock contentKey="services_title" defaultValue="Complete mobile care under one roof" />}
           sub={<EditableBlock contentKey="services_sub" defaultValue="From screen swaps to chip-level IC work, second-hand smartphones to premium accessories — we've got every mobile need covered." type="textarea" />}
         />
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {REPAIR_SERVICES.map(([Icon, title, desc]) => (
-            <div key={title} className="group relative overflow-hidden rounded-3xl glass p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
+
+        {/* Category Filter Chips inside section */}
+        {onSelectCategory && (
+          <div className="mt-8 flex justify-center">
+            <ServiceChips activeCategory={activeCategory} onSelectCategory={onSelectCategory} />
+          </div>
+        )}
+
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredServices.map(([Icon, title, desc]) => (
+            <div key={title} className="group relative overflow-hidden rounded-3xl glass p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-brand opacity-0 blur-3xl transition-opacity group-hover:opacity-40" />
               <div className="relative">
                 <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-brand shadow-brand">
@@ -578,10 +707,22 @@ function Services() {
                 </div>
                 <h3 className="mt-5 font-display text-lg font-semibold">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+                  <span className="text-cyan-400 font-mono font-medium">Quick 30-min fix</span>
+                  <a
+                    href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20help%20with%20${encodeURIComponent(title)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                  >
+                    Enquire <ArrowRight className="h-3 w-3" />
+                  </a>
+                </div>
               </div>
             </div>
           ))}
         </div>
+
 
         {/* Second-hand & accessories */}
         <div className="mt-16 grid gap-6 lg:grid-cols-2">
@@ -980,7 +1121,8 @@ function FloatingActions() {
     return () => window.removeEventListener("scroll", on);
   }, []);
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
+    <div className="hidden md:flex fixed bottom-6 right-6 z-40 flex-col gap-3">
+
       <a
         href={`https://wa.me/${WHATSAPP}`}
         target="_blank"

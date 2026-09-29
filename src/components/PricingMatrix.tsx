@@ -156,12 +156,12 @@ export const PricingMatrix: React.FC = () => {
             </span>
           </div>
 
-          {/* Filter Pills */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          {/* Filter Pills with Horizontal Swipe on Mobile */}
+          <div className="mt-8 flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2 pb-2 md:flex-wrap md:justify-center px-2">
             <button
               type="button"
               onClick={() => setActiveCategory("all")}
-              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
+              className={`flex-none snap-start min-h-[44px] px-4 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-95 ${
                 activeCategory === "all"
                   ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -174,7 +174,7 @@ export const PricingMatrix: React.FC = () => {
                 key={c.id}
                 type="button"
                 onClick={() => setActiveCategory(c.id)}
-                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all ${
+                className={`flex-none snap-start min-h-[44px] px-4 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-95 ${
                   activeCategory === c.id
                     ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                     : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -184,6 +184,7 @@ export const PricingMatrix: React.FC = () => {
               </button>
             ))}
           </div>
+
         </div>
 
         {/* Structured Data Table for LLMs & AI Answer Engines */}
@@ -293,11 +294,12 @@ export const PricingMatrix: React.FC = () => {
                       href={buildQuoteUrl(row.service, row.deviceType)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full mt-2 inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md transition-transform active:scale-95"
+                      className="w-full mt-2 inline-flex items-center justify-center gap-2 min-h-[48px] py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md transition-transform active:scale-95"
                     >
-                      <MessageCircle className="h-3.5 w-3.5" />
+                      <MessageCircle className="h-4 w-4" />
                       <span>Get Instant Quote on WhatsApp</span>
                     </a>
+
                   </div>
                 ))}
               </div>
