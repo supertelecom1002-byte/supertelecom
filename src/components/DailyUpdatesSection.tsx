@@ -25,9 +25,9 @@ export interface DailyUpdate {
 const DEFAULT_UPDATES: DailyUpdate[] = [
   {
     id: "default-1",
-    title: "iPhone 14 Pro Max Logic Board IC Micro-Soldering",
+    title: "Logic Board Power IC Diagnostic Inspection",
     description:
-      "Repaired dead power management IC and shorted capacitors under high-magnification microscope. Restored 100% full functionality with genuine parts in 45 minutes.",
+      "Bench diagnosis of power management circuitry and surface-mount capacitors under high-magnification optical microscope at our Barganda Road lab.",
     media_url:
       "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1000&q=80",
     media_type: "image",
@@ -35,9 +35,9 @@ const DEFAULT_UPDATES: DailyUpdate[] = [
   },
   {
     id: "default-2",
-    title: "Samsung Galaxy S23 Ultra Curved AMOLED Display Glass Separation",
+    title: "Curved AMOLED Touch Glass Separation Procedure",
     description:
-      "Precision heated tungsten wire separation preserved the original factory AMOLED panel with zero bubbles and pristine touchscreen responsiveness.",
+      "Demonstration of heated precision wire separation to detach cracked outer touch glass while safeguarding the original AMOLED panel.",
     media_url:
       "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80",
     media_type: "image",
@@ -45,9 +45,9 @@ const DEFAULT_UPDATES: DailyUpdate[] = [
   },
   {
     id: "default-3",
-    title: "Ultrasonic Chemical Bath Revival for Water-Damaged Phone",
+    title: "Ultrasonic Chemical Bath for Liquid Damage",
     description:
-      "Deep ultrasonic transducer cleaning eliminated oxidation and mineral buildup from submerged motherboard traces before precision micro-reflow.",
+      "Transducer cleaning procedure removing oxidation and mineral buildup from submerged smartphone motherboard components before micro-soldering.",
     media_url:
       "https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=1000&q=80",
     media_type: "image",
@@ -119,14 +119,14 @@ export const DailyUpdatesSection: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse text-cyan-400" />
-            Live Workshop Stream
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            Latest Workshop Updates
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-display">
-            Daily Repair <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Photo &amp; Video Feed</span>
+            Technical Case Studies &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Bench Procedures</span>
           </h2>
           <p className="mt-4 text-slate-400 text-sm sm:text-base leading-relaxed">
-            Real-time workshop updates directly from our technician bench in Giridih — motherboard micro-soldering, display glass laminations, and component diagnoses.
+            Bench diagnostic procedures and repair demonstrations from our workshop at Barganda Road, Giridih — motherboard micro-soldering, display glass laminations, and component testing.
           </p>
         </div>
 
@@ -238,6 +238,13 @@ export const DailyUpdatesSection: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Transparent Procedural Disclaimer */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-slate-400 font-mono max-w-2xl mx-auto leading-relaxed">
+            Note: Workshop demonstrations illustrate diagnostic and repair techniques practiced at Super Telecom Giridih. Free physical inspection and price confirmation are provided before starting any device repair.
+          </p>
         </div>
       </div>
 

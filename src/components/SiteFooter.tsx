@@ -43,6 +43,17 @@ const SERVICE_LINKS: { label: string; to: string }[] = [
   { label: "Android Repair Giridih", to: "/services/android-repair" },
 ];
 
+const BRAND_LINKS: { label: string; to: string }[] = [
+  { label: "Apple iPhone Repair", to: "/brands/iphone" },
+  { label: "Samsung Galaxy Repair", to: "/brands/samsung" },
+  { label: "Xiaomi & POCO Repair", to: "/brands/xiaomi-redmi" },
+  { label: "Realme Repair Giridih", to: "/brands/realme" },
+  { label: "Vivo Smartphone Repair", to: "/brands/vivo" },
+  { label: "OPPO Smartphone Repair", to: "/brands/oppo" },
+  { label: "OnePlus Repair Giridih", to: "/brands/oneplus" },
+  { label: "All Supported Brands", to: "/brands" },
+];
+
 const BUY_SELL_LINKS: { label: string; to: string }[] = [
   { label: "Second Hand Mobile Giridih", to: "/services/second-hand-mobile" },
   { label: "Used iPhone in Giridih", to: "/services/second-hand-mobile" },
@@ -80,16 +91,16 @@ const FOOTER_FAQS: [string, string][] = [
 ];
 
 const COUNTERS: { value: number; suffix: string; label: string; decimals?: number }[] = [
-  { value: 10, suffix: "+", label: "Years Experience" },
-  { value: 1, suffix: "M+", label: "Repairs Completed" },
-  { value: 200, suffix: "K+", label: "Happy Customers" },
-  { value: 5.0, suffix: " / 5", label: "Google Rating", decimals: 1 },
+  { value: 10, suffix: "+", label: "Years in Giridih" },
+  { value: 25, suffix: "K+", label: "Repairs Handled" },
+  { value: 10, suffix: "K+", label: "Satisfied Customers" },
+  { value: 5.0, suffix: " / 5", label: "Customer Rating", decimals: 1 },
 ];
 
 const BADGES = [
   { Icon: Zap, label: "Fast Same-Day Service" },
   { Icon: ShieldCheck, label: "Warranty Available" },
-  { Icon: BadgeCheck, label: "Premium Original Parts" },
+  { Icon: BadgeCheck, label: "Premium Tested Parts" },
   { Icon: Wrench, label: "Expert Technicians" },
 ];
 
@@ -97,10 +108,13 @@ const PAYMENTS = ["UPI", "PhonePe", "Google Pay", "Paytm", "Visa", "MasterCard",
 
 function useInView<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
-  const [inView, setInView] = useState(false);
+  const [inView, setInView] = useState(true); // Default to true for robust SSR & crawlability
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -110,7 +124,7 @@ function useInView<T extends HTMLElement>() {
           }
         }
       },
-      { rootMargin: "80px", threshold: 0.15 },
+      { rootMargin: "100px 0px", threshold: 0.01 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -119,12 +133,15 @@ function useInView<T extends HTMLElement>() {
 }
 
 function Counter({ value, suffix, decimals = 0, active }: { value: number; suffix: string; decimals?: number; active: boolean }) {
-  const [n, setN] = useState(0);
+  const [n, setN] = useState(value); // Always initialize with real value to prevent 0 on SSR or slow scroll
+  const [hasAnimated, setHasAnimated] = useState(false);
+
   useEffect(() => {
-    if (!active) return;
+    if (!active || hasAnimated) return;
+    setHasAnimated(true);
     let raf = 0;
     const start = performance.now();
-    const dur = 1400;
+    const dur = 1000;
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / dur);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -133,7 +150,8 @@ function Counter({ value, suffix, decimals = 0, active }: { value: number; suffi
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [active, value]);
+  }, [active, value, hasAnimated]);
+
   return (
     <span>
       {n.toFixed(decimals)}
@@ -203,8 +221,8 @@ export function SiteFooter() {
               "Saturday",
               "Sunday",
             ],
-            opens: "09:00",
-            closes: "21:00",
+            opens: "10:00",
+            closes: "21:30",
           },
         ],
         areaServed: { "@type": "City", name: "Giridih" },
@@ -346,9 +364,10 @@ export function SiteFooter() {
             </div>
 
             {/* Link columns */}
-            <div className="grid gap-10 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-4">
               <FooterCol id="footer-services" title="Repair Services" items={SERVICE_LINKS} />
-              <FooterCol id="footer-buysell" title="Buy & Sell Phones" items={BUY_SELL_LINKS} />
+              <FooterCol id="footer-brands" title="Brand Hubs" items={BRAND_LINKS} />
+              <FooterCol id="footer-buysell" title="Buy & Sell" items={BUY_SELL_LINKS} />
               <FooterCol id="footer-quick" title="Quick Links" items={QUICK_LINKS} />
             </div>
 
@@ -373,11 +392,11 @@ export function SiteFooter() {
                 </div>
                 <div className="flex items-start gap-3">
                   <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <span>Monday – Sunday<br />9:00 AM – 9:00 PM</span>
+                  <span>Monday – Sunday<br />10:00 AM – 9:30 PM</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Star className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <span>5.0 rating from 500+ Google reviews</span>
+                  <Star className="mt-0.5 h-4 w-4 shrink-0 text-primary fill-primary" aria-hidden />
+                  <span>5.0 Customer Rating in Giridih</span>
                 </div>
               </address>
               <div className="mt-5 grid gap-2">

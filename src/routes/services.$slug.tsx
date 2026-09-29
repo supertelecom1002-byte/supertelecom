@@ -4,6 +4,7 @@ import { SERVICES, type ServiceInfo } from "@/data/services";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ServiceAnswerBlock } from "@/components/ServiceAnswerBlock";
+import { SiteFooter } from "@/components/SiteFooter";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 
 const PHONE = "+918002903643";
@@ -185,7 +186,7 @@ function ServicePage() {
             <div className="rounded-2xl border border-border/60 bg-card/60 p-6 shadow-elegant">
               <div className="text-sm font-semibold">Visit Super Telecom</div>
               <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Mon–Sun · 9 AM – 9 PM</p>
+              <p className="mt-1 text-sm text-muted-foreground">Mon–Sun · 10:00 AM – 9:30 PM</p>
               <div className="mt-4 text-sm">
                 <div className="text-muted-foreground">Estimated price</div>
                 <div className="font-display text-2xl font-bold text-gradient">{service.priceRange}</div>
@@ -203,6 +204,7 @@ function ServicePage() {
           answer={service.intro}
           symptoms={service.benefits.slice(0, 4)}
           turnaround={`${service.duration} · Estimated ${service.priceRange}`}
+          diagnosticSteps={service.process.slice(0, 3)}
         />
 
         {/* Benefits */}
@@ -328,12 +330,7 @@ function ServicePage() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-border/50 py-10">
-        <div className="mx-auto max-w-7xl px-4 text-center text-xs text-muted-foreground sm:px-6">
-          © {new Date().getFullYear()} Super Telecom · Mobile Repair Shop in Giridih, Jharkhand · {PHONE_DISPLAY}
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

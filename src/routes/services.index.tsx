@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight, ArrowRight, MapPin } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SERVICES } from "@/data/services";
 import { SITE_URL, STORE_ADDRESS } from "@/data/site";
 
@@ -71,7 +72,7 @@ function ServicesIndex() {
           ))}
         </div>
       </main>
-      <footer className="border-t border-border/50 py-10 text-center text-xs text-muted-foreground">© {new Date().getFullYear()} Super Telecom · {STORE_ADDRESS}</footer>
+      <SiteFooter />
     </div>
   );
 }

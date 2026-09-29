@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as McpRouteImport } from './routes/mcp'
@@ -26,6 +27,8 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as ApiChatStreamRouteImport } from './routes/api/chat-stream'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BrandsIndexRouteImport } from './routes/brands.index'
+import { Route as BrandsBrandRouteImport } from './routes/brands.$brand'
 import { Route as LocationsBargandaRoadMobileRepairRouteImport } from './routes/locations.barganda-road-mobile-repair'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
@@ -49,6 +52,11 @@ const AdminRoute = AdminRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandsRoute = BrandsRouteImport.update({
+  id: '/brands',
+  path: '/brands',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiePolicyRoute = CookiePolicyRouteImport.update({
@@ -123,6 +131,16 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const BrandsIndexRoute = BrandsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrandsRoute,
+} as any)
+const BrandsBrandRoute = BrandsBrandRouteImport.update({
+  id: '/$brand',
+  path: '/$brand',
+  getParentRoute: () => BrandsRoute,
+} as any)
 const LocationsBargandaRoadMobileRepairRoute =
   LocationsBargandaRoadMobileRepairRouteImport.update({
     id: '/barganda-road-mobile-repair',
@@ -180,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
   '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
@@ -192,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/brands/$brand': typeof BrandsBrandRoute
   '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
@@ -201,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/brands/': typeof BrandsIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -217,6 +238,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/brands/$brand': typeof BrandsBrandRoute
   '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
@@ -226,6 +248,7 @@ export interface FileRoutesByTo {
   '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/brands': typeof BrandsIndexRoute
   '/services': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -234,6 +257,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRouteWithChildren
+  '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
   '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
@@ -246,6 +270,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/brands/$brand': typeof BrandsBrandRoute
   '/locations/barganda-road-mobile-repair': typeof LocationsBargandaRoadMobileRepairRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/services/battery-charging-port-repair-giridih': typeof ServicesBatteryChargingPortRepairGiridihRoute
@@ -255,6 +280,7 @@ export interface FileRoutesById {
   '/services/water-damage-mobile-repair-giridih': typeof ServicesWaterDamageMobileRepairGiridihRoute
   '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/brands/': typeof BrandsIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -264,6 +290,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blog'
+    | '/brands'
     | '/cookie-policy'
     | '/locations'
     | '/mcp'
@@ -276,6 +303,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/brands/$brand'
     | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
     | '/services/battery-charging-port-repair-giridih'
@@ -285,6 +313,7 @@ export interface FileRouteTypes {
     | '/services/water-damage-mobile-repair-giridih'
     | '/admin/'
     | '/blog/'
+    | '/brands/'
     | '/services/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
@@ -301,6 +330,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/brands/$brand'
     | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
     | '/services/battery-charging-port-repair-giridih'
@@ -310,6 +340,7 @@ export interface FileRouteTypes {
     | '/services/water-damage-mobile-repair-giridih'
     | '/admin'
     | '/blog'
+    | '/brands'
     | '/services'
     | '/.mcp/invoke-tool/$tool'
   id:
@@ -317,6 +348,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/blog'
+    | '/brands'
     | '/cookie-policy'
     | '/locations'
     | '/mcp'
@@ -329,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/chat-stream'
     | '/blog/$slug'
+    | '/brands/$brand'
     | '/locations/barganda-road-mobile-repair'
     | '/services/$slug'
     | '/services/battery-charging-port-repair-giridih'
@@ -338,6 +371,7 @@ export interface FileRouteTypes {
     | '/services/water-damage-mobile-repair-giridih'
     | '/admin/'
     | '/blog/'
+    | '/brands/'
     | '/services/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
@@ -346,6 +380,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRouteWithChildren
+  BrandsRoute: typeof BrandsRouteWithChildren
   CookiePolicyRoute: typeof CookiePolicyRoute
   LocationsRoute: typeof LocationsRouteWithChildren
   McpRoute: typeof McpRoute
@@ -380,6 +415,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brands': {
+      id: '/brands'
+      path: '/brands'
+      fullPath: '/brands'
+      preLoaderRoute: typeof BrandsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookie-policy': {
@@ -480,6 +522,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/brands/': {
+      id: '/brands/'
+      path: '/'
+      fullPath: '/brands/'
+      preLoaderRoute: typeof BrandsIndexRouteImport
+      parentRoute: typeof BrandsRoute
+    }
+    '/brands/$brand': {
+      id: '/brands/$brand'
+      path: '/$brand'
+      fullPath: '/brands/$brand'
+      preLoaderRoute: typeof BrandsBrandRouteImport
+      parentRoute: typeof BrandsRoute
+    }
     '/locations/barganda-road-mobile-repair': {
       id: '/locations/barganda-road-mobile-repair'
       path: '/barganda-road-mobile-repair'
@@ -570,6 +626,19 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface BrandsRouteChildren {
+  BrandsBrandRoute: typeof BrandsBrandRoute
+  BrandsIndexRoute: typeof BrandsIndexRoute
+}
+
+const BrandsRouteChildren: BrandsRouteChildren = {
+  BrandsBrandRoute: BrandsBrandRoute,
+  BrandsIndexRoute: BrandsIndexRoute,
+}
+
+const BrandsRouteWithChildren =
+  BrandsRoute._addFileChildren(BrandsRouteChildren)
+
 interface LocationsRouteChildren {
   LocationsBargandaRoadMobileRepairRoute: typeof LocationsBargandaRoadMobileRepairRoute
 }
@@ -616,6 +685,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRouteWithChildren,
+  BrandsRoute: BrandsRouteWithChildren,
   CookiePolicyRoute: CookiePolicyRoute,
   LocationsRoute: LocationsRouteWithChildren,
   McpRoute: McpRoute,

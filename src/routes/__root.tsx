@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
+import { Home, Phone, MessageCircle, Wrench, ArrowRight, Compass } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -18,23 +19,74 @@ import { VisualEditorProvider } from "@/context/VisualEditorContext";
 import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
 import { MobileBottomBar } from "@/components/mobile/MobileBottomBar";
 
-
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-gradient">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-16">
+      <div className="max-w-xl text-center">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-bold uppercase mb-4">
+          <Compass className="h-3.5 w-3.5" /> 404 Error
+        </span>
+        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
+          Page Not Found
+        </h1>
+        <p className="mt-3 text-sm sm:text-base text-slate-300 max-w-md mx-auto leading-relaxed">
+          The requested page on Super Telecom may have been moved, renamed, or is currently unavailable.
         </p>
-        <div className="mt-6">
+
+        {/* Quick Hub Navigation Links */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-gradient-brand px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-brand px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-brand hover:scale-[1.02] transition-transform"
           >
-            Go home
+            <Home className="h-3.5 w-3.5" /> Home
           </Link>
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
+          >
+            <Wrench className="h-3.5 w-3.5 text-cyan-400" /> Services
+          </Link>
+          <Link
+            to="/pricing"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
+          >
+            Rates & Pricing
+          </Link>
+          <a
+            href="https://wa.me/918002903643?text=Hi%20Super%20Telecom,%20I%20got%20lost%20on%20your%20website%20and%20need%20repair%20help"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2.5 text-xs shadow-md transition-transform hover:scale-[1.02]"
+          >
+            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Support
+          </a>
+        </div>
+
+        {/* Suggested Services */}
+        <div className="mt-10 pt-8 border-t border-slate-800 text-left">
+          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400 mb-3 text-center sm:text-left">
+            Popular Mobile Repairs in Giridih
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            {[
+              { title: "Screen & OLED Replacement", href: "/services/screen-replacement" },
+              { title: "Battery & Charging Port Repair", href: "/services/battery-replacement" },
+              { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-repair" },
+              { title: "Water Damage Revival", href: "/services/water-damage-repair" },
+              { title: "Apple iPhone Specialist Lab", href: "/services/iphone-repair" },
+              { title: "Certified Second-Hand Phones", href: "/services/second-hand-mobile" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 text-slate-300 hover:text-white transition-colors"
+              >
+                <span>{item.title}</span>
+                <ArrowRight className="h-3 w-3 text-cyan-400" />
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +159,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
     ],
     links: [
-      { rel: "canonical", href: `${SITE_URL}/` },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon.png" },

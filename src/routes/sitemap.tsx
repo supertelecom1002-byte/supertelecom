@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SERVICES } from "@/data/services";
+import { BRANDS } from "@/data/brands";
 import { POSTS } from "@/data/blog";
 import { SITE_URL } from "@/data/site";
 import { ChevronRight } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
-import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 
 const TITLE = "Sitemap — Super Telecom Giridih";
-const DESC = "HTML sitemap for Super Telecom — every mobile repair service page, blog article and section on our Giridih website.";
+const DESC = "HTML sitemap for Super Telecom — every mobile repair service page, brand repair hub, blog article and section on our Giridih website.";
 
 export const Route = createFileRoute("/sitemap")({
   head: () => ({
@@ -45,9 +45,24 @@ function SitemapPage() {
             <li><Link to="/" className="text-primary hover:underline">Home</Link></li>
             <li><Link to="/pricing" className="text-primary hover:underline">Mobile Repair Prices in Giridih</Link></li>
             <li><Link to="/services" className="text-primary hover:underline">Mobile Repair Services in Giridih</Link></li>
+            <li><Link to="/brands" className="text-primary hover:underline">Supported Smartphone Brands in Giridih</Link></li>
+            <li><Link to="/locations/barganda-road-mobile-repair" className="text-primary hover:underline">Barganda Road Shop Location</Link></li>
             <li><Link to="/blog" className="text-primary hover:underline">Blog</Link></li>
             <li><Link to="/sitemap" className="text-primary hover:underline">Sitemap</Link></li>
             <li><Link to="/cookie-policy" className="text-primary hover:underline">Cookie Policy</Link></li>
+          </ul>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="font-display text-xl font-bold">Brand Repair Hubs</h2>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {BRANDS.map((b) => (
+              <li key={b.slug}>
+                <Link to="/brands/$brand" params={{ brand: b.slug }} className="text-primary hover:underline">
+                  {b.name} Repair Giridih
+                </Link>
+              </li>
+            ))}
           </ul>
         </section>
 

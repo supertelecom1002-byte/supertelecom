@@ -198,7 +198,7 @@ const FAQS: [string, string][] = [
   ["Is my data safe during repair?", "Absolutely. Your data is never accessed unless required (like a software flash) and only with your permission. We recommend a backup before major repairs and can help you with it."],
   ["Are second-hand phones tested and reliable?", "Every used phone goes through a strict quality check — battery health, display, cameras, network, sensors — and is sold with a warranty."],
   ["What payment methods do you accept?", "Cash, UPI (GPay/PhonePe/Paytm), all debit and credit cards, and net banking."],
-  ["What are your business hours?", "We're open Monday to Sunday, 9:00 AM to 9:00 PM. Walk in anytime or book ahead on WhatsApp."],
+  ["What are your business hours?", "We're open Monday to Sunday, 10:00 AM to 9:30 PM. Walk in anytime or book ahead on WhatsApp."],
   ["Do you repair all brands?", "Yes — iPhone, Samsung, Xiaomi, Realme, OPPO, Vivo, OnePlus, Motorola, Nokia and more."],
   ["How do I get a price quote?", "Call, WhatsApp or visit us. We diagnose your phone and give you a transparent, no-obligation quote."],
 ];
@@ -272,8 +272,9 @@ function Nav() {
   }, []);
   const links = [
     ["Services", "#services"],
+    ["Brands", "/brands"],
+    ["Pricing", "/pricing"],
     ["About", "#about"],
-    ["Gallery", "#gallery"],
     ["Reviews", "#reviews"],
     ["FAQ", "#faq"],
     ["Contact", "#contact"],
@@ -285,7 +286,7 @@ function Nav() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1.5 text-[11px] tracking-wide text-muted-foreground">
           <div className="flex items-center gap-5">
             <span className="inline-flex items-center gap-1.5"><MapPin className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_address" defaultValue="Barganda Road, Giridih" /></span>
-            <span className="inline-flex items-center gap-1.5"><Clock className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_timings" defaultValue="Open Daily 9:00 AM – 9:00 PM" /></span>
+            <span className="inline-flex items-center gap-1.5"><Clock className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_timings" defaultValue="Open Daily 10:00 AM – 9:30 PM" /></span>
           </div>
           <div className="flex items-center gap-5">
             <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground">
@@ -301,13 +302,23 @@ function Nav() {
           <BrandLogo size="md" to="/" />
           <nav className="hidden items-center gap-1 md:flex">
             {links.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                className="rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              >
-                {label}
-              </a>
+              href.startsWith("#") ? (
+                <a
+                  key={href}
+                  href={href}
+                  className="rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {label}
+                </a>
+              ) : (
+                <Link
+                  key={href}
+                  to={href}
+                  className="rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  {label}
+                </Link>
+              )
             ))}
           </nav>
           <div className="flex items-center gap-2">
@@ -388,18 +399,26 @@ function Nav() {
                     Sections & Pricing
                   </span>
                   <div className="grid grid-cols-2 gap-1.5">
-                    {[
-                      ...links,
-                      ["Rates & Pricing", "#pricing-matrix"],
-                    ].map(([label, href]) => (
-                      <a
-                        key={href}
-                        href={href}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
-                      >
-                        <span>{label}</span>
-                      </a>
+                    {links.map(([label, href]) => (
+                      href.startsWith("#") ? (
+                        <a
+                          key={href}
+                          href={href}
+                          onClick={() => setOpen(false)}
+                          className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
+                        >
+                          <span>{label}</span>
+                        </a>
+                      ) : (
+                        <Link
+                          key={href}
+                          to={href}
+                          onClick={() => setOpen(false)}
+                          className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
+                        >
+                          <span>{label}</span>
+                        </Link>
+                      )
                     ))}
                   </div>
                 </div>
@@ -426,7 +445,7 @@ function Nav() {
 
                 <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-1">
                   <MapPin className="h-3.5 w-3.5 text-primary flex-none" />
-                  <span>Barganda Road, Giridih · Open Daily 9 AM – 9 PM</span>
+                  <span>Barganda Road, Giridih · Open Daily 10:00 AM – 9:30 PM</span>
                 </div>
               </div>
             </div>
@@ -532,21 +551,21 @@ function About() {
   );
 }
 
-const REPAIR_SERVICES: Array<[any, string, string, string]> = [
-  [Smartphone, "Screen & Display", "Screen replacement, display repair, touch & LCD fixes for all brands.", "screen"],
-  [Battery, "Battery Replacement", "Genuine batteries with warranty. Fixes drain & backup issues.", "battery"],
-  [Zap, "Charging Port", "Charging port repair, charging issue diagnosis and clean-up.", "battery"],
-  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio.", "screen"],
-  [Mic, "Microphone", "Mic repair for call clarity, voice notes and video recording.", "other"],
-  [Camera, "Camera Repair", "Front/rear camera, lens replacement and focus issue fixes.", "iphone"],
-  [Cpu, "Motherboard & IC", "Advanced motherboard, IC and chip-level repairs by experts.", "motherboard"],
-  [Wifi, "Network Issues", "SIM slot, network, signal and connectivity troubleshooting.", "motherboard"],
-  [Download, "Software & Flashing", "Software install, updates, flashing and boot loop repair.", "motherboard"],
-  [Droplet, "Water Damage", "Water-damaged and dead phone recovery with ultrasonic cleaning.", "water"],
-  [Fingerprint, "Fingerprint & Face", "Fingerprint sensor and face unlock repair and calibration.", "iphone"],
-  [RefreshCw, "Performance Fix", "Hanging, heating and slow-phone optimization and cleanup.", "motherboard"],
-  [HardDrive, "Data Recovery", "Recover contacts, photos and backup before/after repairs.", "motherboard"],
-  [Wrench, "Buttons & Ports", "Power, volume, home button, SIM tray and memory slot repair.", "battery"],
+const REPAIR_SERVICES: Array<[any, string, string, string, string, string]> = [
+  [Smartphone, "Screen & Display", "Screen replacement, display repair, touch & LCD fixes for all brands.", "screen", "display-replacement", "30 – 60 min"],
+  [Battery, "Battery Replacement", "Genuine batteries with warranty. Fixes drain & backup issues.", "battery", "battery-replacement", "30 – 45 min"],
+  [Zap, "Charging Port", "Charging port repair, charging issue diagnosis and clean-up.", "battery", "charging-port-repair", "30 – 45 min"],
+  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio.", "screen", "speaker-repair", "30 – 45 min"],
+  [Mic, "Microphone", "Mic repair for call clarity, voice notes and video recording.", "other", "microphone-repair", "30 – 45 min"],
+  [Camera, "Camera Repair", "Front/rear camera, lens replacement and focus issue fixes.", "iphone", "camera-repair", "30 – 60 min"],
+  [Cpu, "Motherboard & IC", "Advanced motherboard, IC and chip-level repairs by experts.", "motherboard", "motherboard-repair", "2 – 6 hours"],
+  [Wifi, "Network Issues", "SIM slot, network, signal and connectivity troubleshooting.", "motherboard", "network-repair", "1 – 3 hours"],
+  [Download, "Software & Flashing", "Software install, updates, flashing and boot loop repair.", "motherboard", "software-repair", "45 – 90 min"],
+  [Droplet, "Water Damage", "Water-damaged and dead phone recovery with ultrasonic cleaning.", "water", "water-damage-repair", "Same day"],
+  [Fingerprint, "Fingerprint & Face", "Fingerprint sensor and face unlock repair and calibration.", "iphone", "iphone-repair", "45 – 90 min"],
+  [RefreshCw, "Performance Fix", "Hanging, heating and slow-phone optimization and cleanup.", "motherboard", "dead-phone-repair", "Same day"],
+  [HardDrive, "Data Recovery", "Recover contacts, photos and backup before/after repairs.", "motherboard", "data-recovery", "1 – 2 days"],
+  [Wrench, "Buttons & Ports", "Power, volume, home button, SIM tray and memory slot repair.", "battery", "button-repair", "30 – 45 min"],
 ];
 
 const ACCESSORY_CATEGORIES = [
@@ -590,24 +609,37 @@ function Services({
         )}
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredServices.map(([Icon, title, desc]) => (
-            <div key={title} className="group relative overflow-hidden rounded-3xl glass p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
+          {filteredServices.map(([Icon, title, desc, _cat, slug, duration]) => (
+            <div key={title} className="group relative flex flex-col justify-between overflow-hidden rounded-3xl glass p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-brand opacity-0 blur-3xl transition-opacity group-hover:opacity-40" />
               <div className="relative">
                 <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-brand shadow-brand">
                   <Icon className="h-6 w-6 text-primary-foreground" />
                 </div>
-                <h3 className="mt-5 font-display text-lg font-semibold">{title}</h3>
+                <h3 className="mt-5 font-display text-lg font-semibold">
+                  <Link to="/services/$slug" params={{ slug }} className="hover:text-primary transition-colors">
+                    {title}
+                  </Link>
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-                <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                  <span className="text-cyan-400 font-mono font-medium">Quick 30-min fix</span>
+              </div>
+              <div className="relative mt-5 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+                <span className="text-cyan-400 font-mono font-medium">{duration}</span>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/services/$slug"
+                    params={{ slug }}
+                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+                  >
+                    Details <ArrowRight className="h-3 w-3" />
+                  </Link>
                   <a
                     href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20help%20with%20${encodeURIComponent(title)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                    className="font-semibold text-emerald-400 hover:underline"
                   >
-                    Enquire <ArrowRight className="h-3 w-3" />
+                    Quote
                   </a>
                 </div>
               </div>
@@ -632,9 +664,9 @@ function Services({
                   <li key={x} className="flex items-center gap-2"><Check className="h-4 w-4 text-primary" /> {x}</li>
                 ))}
               </ul>
-              <a href="#contact" className="mt-6 inline-flex items-center rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-brand">
-                Enquire now <ArrowRight className="ml-1.5 h-4 w-4" />
-              </a>
+              <Link to="/services/$slug" params={{ slug: "second-hand-mobile" }} className="mt-6 inline-flex items-center rounded-full bg-gradient-brand px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-brand">
+                Explore Second-Hand Phones <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
             </div>
           </div>
           <div className="relative overflow-hidden rounded-3xl glass p-8 shadow-elegant">
@@ -652,6 +684,11 @@ function Services({
                     {c}
                   </span>
                 ))}
+              </div>
+              <div className="mt-6">
+                <Link to="/services/$slug" params={{ slug: "mobile-accessories" }} className="inline-flex items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold hover:bg-secondary">
+                  Explore Accessories in Giridih <ArrowRight className="ml-1.5 h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
@@ -885,7 +922,7 @@ function Contact() {
             <ContactCard icon={Phone} label="Call us" value={<EditableBlock contentKey="contact_phone" defaultValue={PHONE_DISPLAY} />} href={`tel:${PHONE}`} />
             <ContactCard icon={MessageCircle} label="WhatsApp" value={<EditableBlock contentKey="contact_whatsapp_text" defaultValue="Chat with our team" />} href={`https://wa.me/${WHATSAPP}`} />
             <ContactCard icon={MapPin} label="Visit us" value={<EditableBlock contentKey="contact_address_full" defaultValue="Super Telecom, Giridih, Jharkhand" />} href={MAPS} />
-            <ContactCard icon={Clock} label="Hours" value={<EditableBlock contentKey="contact_hours_full" defaultValue="Mon–Sun · 9:00 AM – 9:00 PM" />} />
+            <ContactCard icon={Clock} label="Hours" value={<EditableBlock contentKey="contact_hours_full" defaultValue="Mon–Sun · 10:00 AM – 9:30 PM" />} />
             <ContactCard icon={Mail} label="Email" value={<EditableBlock contentKey="contact_email" defaultValue={EMAIL} />} href={`mailto:${EMAIL}`} />
           </div>
 
@@ -1165,7 +1202,7 @@ function VisitStore() {
                 <div className="mt-6 space-y-3 text-sm">
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Clock className="h-4 w-4 text-primary" />
-                    <span>Open Mon–Sun · 9:00 AM – 9:00 PM</span>
+                    <span>Open Mon–Sun · 10:00 AM – 9:30 PM</span>
                   </div>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Phone className="h-4 w-4 text-primary" />

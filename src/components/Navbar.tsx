@@ -1,4 +1,4 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   MapPin, Clock, Mail, Star, Phone, ArrowRight, Menu, X
@@ -23,10 +23,10 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
 
   const links = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },
-    { label: "About", to: isHomePage ? "#about" : "/#about" },
-    { label: "Gallery", to: isHomePage ? "#gallery" : "/#gallery" },
-    { label: "Reviews", to: isHomePage ? "#reviews" : "/#reviews" },
+    { label: "Brands", to: "/brands" },
     { label: "Pricing", to: "/pricing" },
+    { label: "About", to: isHomePage ? "#about" : "/#about" },
+    { label: "Reviews", to: isHomePage ? "#reviews" : "/#reviews" },
     { label: "Contact", to: isHomePage ? "#contact" : "/#contact" },
   ];
 
@@ -43,7 +43,7 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
               <MapPin className="h-3 w-3 text-primary" /> Barganda Road, Giridih
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3 w-3 text-primary" /> Open Daily 9:00 AM – 9:00 PM
+              <Clock className="h-3 w-3 text-primary" /> Open Daily 10:00 AM – 9:30 PM
             </span>
           </div>
           <div className="flex items-center gap-5">
@@ -138,7 +138,7 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
               )
             ))}
             <div className="mt-2 flex items-center gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5 text-primary" /> Barganda Road, Giridih · 9 AM – 9 PM
+              <MapPin className="h-3.5 w-3.5 text-primary" /> Barganda Road, Giridih · 10:00 AM – 9:30 PM
             </div>
           </nav>
         )}
