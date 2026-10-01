@@ -34,7 +34,7 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
   const EMAIL = "supertelecom1002@gmail.com";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40">
+    <header className="sticky top-0 z-40 w-full">
       {/* Utility bar */}
       <div className="hidden border-b border-border bg-surface md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1.5 text-[11px] tracking-wide text-muted-foreground">

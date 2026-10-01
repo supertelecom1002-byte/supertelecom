@@ -82,23 +82,23 @@ export const IphoneRepairPage: React.FC = () => {
               Giridih&apos;s Dedicated Apple Care Hub · Barganda Road
             </div>
 
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
               iPhone Repair Service Centre in Giridih
             </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed">
+            <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
               Precision Apple repairs executed by micro-soldering specialists. Same-day OLED display replacement with True Tone programming, 100% battery health calibration, laser back glass separation, and Face ID restoration.
             </p>
 
             {/* Badges Bar */}
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-cyan-600 dark:text-cyan-400 font-semibold shadow-xs">
                 <Clock className="h-4 w-4" /> 45-Min Express Repairs
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-emerald-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs">
                 <ShieldCheck className="h-4 w-4" /> Up to 90 Days Warranty
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-semibold shadow-xs">
                 <Cpu className="h-4 w-4" /> Motherboard BGA Micro-Soldering
               </span>
             </div>
@@ -117,9 +117,9 @@ export const IphoneRepairPage: React.FC = () => {
               </a>
               <a
                 href={`tel:${PHONE}`}
-                className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white font-semibold px-6 py-3.5 text-sm transition-colors"
+                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold px-6 py-3.5 text-sm transition-colors shadow-xs"
               >
-                <Phone className="h-4 w-4 text-cyan-400" />
+                <Phone className="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
                 <span>Call Store: +91 80029 03643</span>
               </a>
             </div>
@@ -127,25 +127,25 @@ export const IphoneRepairPage: React.FC = () => {
         </section>
 
         {/* Apple Model Matrix */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800/80">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800/80">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-4">
               iPhone Models Repaired at Super Telecom Giridih
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 text-center max-w-2xl mx-auto mb-10">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 text-center max-w-2xl mx-auto mb-10">
               We stock parts for every generation of iPhone with on-the-spot component replacement.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {IPHONE_MODELS.map((item, idx) => (
-                <div key={idx} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                <div key={idx} className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-white text-sm">{item.series}</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/30 text-cyan-400">
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">{item.series}</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-400">
                       All Parts Ready
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed">{item.models}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.models}</p>
                 </div>
               ))}
             </div>
@@ -153,39 +153,39 @@ export const IphoneRepairPage: React.FC = () => {
         </section>
 
         {/* Specialized Apple Services Grid */}
-        <section className="py-16 bg-surface/50 border-t border-border/60">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               Specialized iPhone Engineering Services
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
-                <div className="p-2.5 rounded-2xl bg-cyan-950 border border-cyan-500/30 text-cyan-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div className="p-2.5 rounded-2xl bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400 w-fit">
                   <Eye className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-bold text-white">True Tone &amp; Touch IC Transfer</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">True Tone &amp; Touch IC Transfer</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   We program and write the original EEPROM serial data into your new display so True Tone, ambient light auto-brightness, and 120Hz refresh operate flawlessly.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
-                <div className="p-2.5 rounded-2xl bg-emerald-950 border border-emerald-500/30 text-emerald-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div className="p-2.5 rounded-2xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 w-fit">
                   <Battery className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-bold text-white">100% Battery Health Fix</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">100% Battery Health Fix</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Original BMS flex welding removes the annoying &ldquo;Unknown Part&rdquo; prompt and restores maximum capacity percentage readout in iOS settings.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-3">
-                <div className="p-2.5 rounded-2xl bg-amber-950 border border-amber-500/30 text-amber-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                <div className="p-2.5 rounded-2xl bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-500/30 text-amber-600 dark:text-amber-400 w-fit">
                   <Layers className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-bold text-white">Laser Back Glass Separation</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Laser Back Glass Separation</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   High-precision cold laser burns off factory epoxy without dismantling your phone, keeping internal logic boards safe and preserving wireless charging.
                 </p>
               </div>
@@ -194,30 +194,30 @@ export const IphoneRepairPage: React.FC = () => {
         </section>
 
         {/* FAQs */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               iPhone Repair FAQs (Giridih)
             </h2>
 
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Can you fix Face ID if it says &ldquo;Move iPhone higher/lower&rdquo;?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Can you fix Face ID if it says &ldquo;Move iPhone higher/lower&rdquo;?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes. We repair the flood illuminator, dot projector, and infrared camera ribbon flex under stereo microscopes without requiring motherboard swap.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Do you fix iPhones that are stuck on the Apple logo or bootlooping?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Do you fix iPhones that are stuck on the Apple logo or bootlooping?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes. We diagnose iTunes Error 4013, Error 9, and NAND storage corruption with specialized programmers to revive your iPhone without losing data whenever possible.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Are repair prices cheaper than official Apple service in Ranchi/Dhanbad?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Are repair prices cheaper than official Apple service in Ranchi/Dhanbad?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes, up to 60–70% more economical with same-day turnaround right here on Barganda Road, Giridih, backed by warranty.
                 </p>
               </div>

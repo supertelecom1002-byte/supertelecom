@@ -6,6 +6,7 @@ import {
   Sliders,
   Megaphone,
   MapPin,
+  Search,
   ExternalLink,
   LogOut,
   ShieldCheck,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 
-export type AdminTab = "audit" | "feed" | "services" | "showcase" | "announcements" | "seo";
+export type AdminTab = "audit" | "feed" | "services" | "showcase" | "announcements" | "seo" | "seo_growth";
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
@@ -40,6 +41,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Website Audit",
       icon: <Activity className="h-4 w-4" />,
       badge: `${auditScore}%`,
+    },
+    {
+      id: "seo_growth",
+      label: "SEO & Growth Engine",
+      icon: <Search className="h-4 w-4" />,
+      badge: "AI / AEO",
     },
     {
       id: "feed",

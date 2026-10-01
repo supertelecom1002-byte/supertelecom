@@ -18,6 +18,7 @@ import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
 import { VisualEditorProvider } from "@/context/VisualEditorContext";
 import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
 import { MobileBottomBar } from "@/components/mobile/MobileBottomBar";
+import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
 
 function NotFoundComponent() {
   return (
@@ -342,6 +343,7 @@ function RootComponent() {
           <AnnouncementBanner />
           <Outlet />
           <LiveEditorBar />
+          <FloatingAiChat />
           <MobileBottomBar />
           <CookieBanner />
         </VisualEditorProvider>

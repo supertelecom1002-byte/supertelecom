@@ -90,43 +90,43 @@ export const WaterDamageRepairPage: React.FC = () => {
               <span className="text-cyan-400 font-semibold">Water Damage Mobile Repair</span>
             </nav>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-cyan-400 text-xs font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-cyan-600 dark:text-cyan-400 text-xs font-medium mb-4">
               <Droplets className="h-3.5 w-3.5" />
               <span>Ultrasonic PCB Chemical Bath &amp; IC Recovery • Giridih</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight mb-6">
               Water Damage Mobile Repair <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 dark:from-blue-400 dark:via-cyan-400 dark:to-emerald-400">
                 in Giridih | Super Telecom
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed mb-8">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed mb-8">
               Dropped your phone in water, rain, or tea? Don&apos;t panic or try charging it. Super Telecom on Barganda Road, Giridih provides emergency ultrasonic board de-oxidation, micro-soldering short-circuit removal, and chip-level data recovery with an 85%+ success rate.
             </p>
 
             {/* Quick Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <Droplets className="h-5 w-5 text-blue-400 mb-1" />
-                <div className="font-bold text-sm text-white">Ultrasonic Tank</div>
-                <div className="text-xs text-slate-400">Deep De-oxidation</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <Droplets className="h-5 w-5 text-blue-500 dark:text-blue-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">Ultrasonic Tank</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Deep De-oxidation</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <HardDrive className="h-5 w-5 text-emerald-400 mb-1" />
-                <div className="font-bold text-sm text-white">85%+ Recovery</div>
-                <div className="text-xs text-slate-400">Data Preservation</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <HardDrive className="h-5 w-5 text-emerald-500 dark:text-emerald-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">85%+ Recovery</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Data Preservation</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <Microscope className="h-5 w-5 text-cyan-400 mb-1" />
-                <div className="font-bold text-sm text-white">BGA Microscope</div>
-                <div className="text-xs text-slate-400">Corrosion Inspection</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <Microscope className="h-5 w-5 text-cyan-500 dark:text-cyan-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">BGA Microscope</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Corrosion Inspection</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <Clock className="h-5 w-5 text-amber-400 mb-1" />
-                <div className="font-bold text-sm text-white">Same-Day Rush</div>
-                <div className="text-xs text-slate-400">Emergency Protocol</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <Clock className="h-5 w-5 text-amber-500 dark:text-amber-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">Same-Day Rush</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Emergency Protocol</div>
               </div>
             </div>
 
@@ -143,9 +143,9 @@ export const WaterDamageRepairPage: React.FC = () => {
               </a>
               <a
                 href={`tel:${PHONE}`}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white font-semibold px-6 py-3.5 text-sm transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold px-6 py-3.5 text-sm transition-colors shadow-xs"
               >
-                <Phone className="h-4 w-4 text-cyan-400" />
+                <Phone className="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
                 <span>Call +91 80029 03643</span>
               </a>
             </div>
@@ -153,13 +153,13 @@ export const WaterDamageRepairPage: React.FC = () => {
         </section>
 
         {/* Emergency First Aid Checklist */}
-        <section className="py-16 bg-slate-900/50 border-y border-slate-800">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
                 Emergency First Aid: What to Do Immediately
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Your immediate actions within the first 60 minutes determine whether your motherboard can be saved.
               </p>
             </div>
@@ -168,13 +168,13 @@ export const WaterDamageRepairPage: React.FC = () => {
               {EMERGENCY_STEPS.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-slate-900 border border-slate-800 relative group hover:border-cyan-500/40 transition-colors"
+                  className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs relative group hover:border-cyan-500/40 transition-colors"
                 >
-                  <span className="text-2xl font-black text-cyan-500/30 group-hover:text-cyan-400/50 transition-colors block mb-2">
+                  <span className="text-2xl font-black text-cyan-500/40 group-hover:text-cyan-500 transition-colors block mb-2">
                     {item.step}
                   </span>
-                  <h3 className="text-sm font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -182,44 +182,44 @@ export const WaterDamageRepairPage: React.FC = () => {
         </section>
 
         {/* Restoration Process */}
-        <section className="py-16">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
                 Our Water Damage Restoration Protocol
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Scientific de-oxidation and micro-soldering repair rather than unproven amateur shortcuts.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
                   <Droplets className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">1. Ultrasonic Chemical Bath</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">1. Ultrasonic Chemical Bath</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   The motherboard is desoldered from shielding cans and submerged in an ultrasonic tank with high-grade electronics solvent. Micro-vibrations blast away corrosion minerals beneath surface mount ICs.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-4">
                   <Zap className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">2. Thermal Short Identification</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">2. Thermal Short Identification</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Using high-precision DC power supplies and infrared thermal cameras, we pinpoint shorted capacitors, burned diodes, and damaged power rails down to the millimeter.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
                   <HardDrive className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">3. BGA Rework &amp; Data Recovery</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">3. BGA Rework &amp; Data Recovery</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Corroded ICs are cleaned, reballed, and resoldered under stereoscopic magnification. We ensure your critical photos, contacts, and personal data remain intact.
                 </p>
               </div>
@@ -228,30 +228,30 @@ export const WaterDamageRepairPage: React.FC = () => {
         </section>
 
         {/* FAQs */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               Water Damage FAQs
             </h2>
 
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Can a completely dead water-damaged phone be saved?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Can a completely dead water-damaged phone be saved?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes, in over 85% of cases! As long as the phone was not repeatedly powered on or charged while soaked, our ultrasonic cleaning and chip-level short removal frequently revive the logic board.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Why is putting a wet phone in rice bad?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Why is putting a wet phone in rice bad?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Rice only absorbs surface moisture while trapping internal humidity. Even worse, rice powder forms a sticky corrosive paste on internal copper traces, causing permanent damage.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">How much does water damage repair cost in Giridih?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How much does water damage repair cost in Giridih?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Inspection and ultrasonic de-oxidation starts at ₹499. If specific ICs or power components require micro-soldering, we provide a transparent quote before proceeding.
                 </p>
               </div>

@@ -449,9 +449,9 @@ export function SiteFooter() {
 
           {/* ---------------- Bottom ---------------- */}
           <div className="mt-10 flex flex-col gap-4 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>© {new Date().getFullYear()} Super Telecom. Trusted mobile repair experts in Giridih, Jharkhand.</p>
-            <p className="sm:text-right">
-              Designed for speed, accessibility, SEO, GEO, AEO and a premium user experience.
+            <p>© 2016 Super Telecom. Trusted mobile repair experts in Giridih, Jharkhand • Serving Giridih Since 2016 • Est. 2016.</p>
+            <p className="sm:text-right font-medium text-slate-700 dark:text-slate-300">
+              Giridih&apos;s Trusted Flagship Smartphone &amp; Micro-Soldering Lab • Barganda Road, Near Shivam Clinic • 100% Customer Data Privacy Guarantee.
             </p>
           </div>
         </div>

@@ -12,7 +12,6 @@ import {
 import heroImg from "@/assets/hero-repair.jpg";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
-import { AiChat } from "@/components/AiChat";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
 import { Hero } from "@/components/Hero";
 import { LabTrustStrip } from "@/components/interactive/LabTrustStrip";
@@ -229,7 +228,6 @@ function HomePage() {
           />
         </div>
         <RepairEstimator />
-        <AiChat />
         <TrustBar />
         <About />
         <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
@@ -280,7 +278,7 @@ function Nav() {
     ["Contact", "#contact"],
   ];
   return (
-    <header className="fixed top-0 left-0 right-0 z-40">
+    <header className="sticky top-0 z-40 w-full">
       {/* Utility bar */}
       <div className="hidden border-b border-border bg-surface md:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1.5 text-[11px] tracking-wide text-muted-foreground">
@@ -521,7 +519,7 @@ function About() {
                 ["Genuine Parts", "Sourced from verified suppliers"],
                 ["Warranty Backed", "Every repair is guaranteed"],
                 ["Transparent Pricing", "No hidden charges, ever"],
-                ["Local & Trusted", "Serving Giridih since 2014"],
+                ["Local & Trusted", "Serving Giridih Since 2016"],
               ].map(([t, d]) => (
                 <div key={t} className="rounded-2xl glass p-4">
                   <div className="flex items-center gap-2 font-semibold">
@@ -728,38 +726,66 @@ function WhyUs() {
 }
 
 function Gallery() {
-  const categories = [
-    "Shop Interior", "Repair Work", "Second-Hand Phones", "Accessories",
-    "Technicians", "Completed Repairs", "Mobile Parts", "Customer Service",
+  const labPhotos = [
+    {
+      title: "Microscope Motherboard Soldering",
+      sub: "BGA chip replacement & 0.02mm jumper micro-soldering",
+      badge: "45X Trinocular Bench",
+      img: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      title: "Precision Electronics Micro-rework",
+      sub: "Hot-air reflow, CPU reballing, and ESD-safe chip servicing",
+      badge: "Surface Mount IC Rework",
+      img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      title: "Clean Hardware Diagnostics",
+      sub: "Thermal imaging & digital multi-meter line short isolation",
+      badge: "Diagnostic Subsystem",
+      img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
+      title: "Display Restoration Bench",
+      sub: "Curved AMOLED touch glass separation & OCA lamination",
+      badge: "Clean Bench Chamber",
+      img: "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=1200&q=80",
+    },
   ];
-  const gradients = [
-    "from-blue-500/40 via-cyan-500/30 to-purple-600/40",
-    "from-fuchsia-500/40 via-pink-500/30 to-orange-500/40",
-    "from-emerald-500/40 via-teal-500/30 to-cyan-500/40",
-    "from-indigo-500/40 via-blue-500/30 to-cyan-400/40",
-    "from-purple-500/40 via-indigo-500/30 to-blue-500/40",
-    "from-amber-500/40 via-orange-500/30 to-red-500/40",
-    "from-cyan-500/40 via-sky-500/30 to-blue-600/40",
-    "from-rose-500/40 via-pink-500/30 to-purple-500/40",
-  ];
+
   return (
     <section id="gallery" className="py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader
-          eyebrow="Gallery"
-          title="Inside Super Telecom"
-          sub="A glimpse of our workshop, technicians, second-hand phones and premium accessory shelves."
+          eyebrow="Flagship Lab"
+          title="Inside Super Telecom Workshop"
+          sub="Take a look inside our Barganda Road smartphone engineering laboratory and optical workstations."
         />
-        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {categories.map((c, i) => (
+        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {labPhotos.map((item, i) => (
             <div
-              key={c}
-              className={`group relative aspect-square overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${gradients[i]} p-6 transition-all hover:-translate-y-1 hover:shadow-glow ${i % 3 === 0 ? "md:row-span-2 md:aspect-auto" : ""}`}
+              key={i}
+              className="group relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="absolute inset-0 bg-background/40 backdrop-blur-sm transition-opacity group-hover:opacity-30" />
-              <div className="relative flex h-full flex-col justify-end">
-                <div className="text-[10px] uppercase tracking-widest text-white/80">Category</div>
-                <div className="mt-1 font-display text-lg font-semibold text-white">{c}</div>
+              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-950 relative">
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-950/80 border border-cyan-500/40 text-cyan-300 text-[10px] font-mono font-bold tracking-wider uppercase">
+                  {item.badge}
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  {item.sub}
+                </p>
               </div>
             </div>
           ))}

@@ -25,33 +25,43 @@ export interface DailyUpdate {
 const DEFAULT_UPDATES: DailyUpdate[] = [
   {
     id: "default-1",
-    title: "Logic Board Power IC Diagnostic Inspection",
+    title: "Microscope Motherboard Soldering",
     description:
-      "Bench diagnosis of power management circuitry and surface-mount capacitors under high-magnification optical microscope at our Barganda Road lab.",
+      "Bench diagnosis of power management circuitry and microscopic jumper soldering under our 45X optical stereo microscope at Barganda Road.",
     media_url:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
     media_type: "image",
     created_at: new Date().toISOString(),
   },
   {
     id: "default-2",
-    title: "Curved AMOLED Touch Glass Separation Procedure",
+    title: "Precision Electronics Micro-rework",
     description:
-      "Demonstration of heated precision wire separation to detach cracked outer touch glass while safeguarding the original AMOLED panel.",
+      "Hot-air BGA reflow and thermal IC desoldering workstation maintaining strict ESD safety protocols for iPhone and Android logic boards.",
     media_url:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
     media_type: "image",
     created_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: "default-3",
-    title: "Ultrasonic Chemical Bath for Liquid Damage",
+    title: "Clean Hardware Diagnostics",
     description:
-      "Transducer cleaning procedure removing oxidation and mineral buildup from submerged smartphone motherboard components before micro-soldering.",
+      "Digital multi-meter and DC power curve analysis isolating shorted capacitors and parasitic battery drain circuits.",
     media_url:
-      "https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=1000&q=80",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
     media_type: "image",
     created_at: new Date(Date.now() - 172800000).toISOString(),
+  },
+  {
+    id: "default-4",
+    title: "Display Restoration Bench",
+    description:
+      "Heated vacuum separator and precision wire delamination bench restoring shattered outer glass while preserving original OLED panels.",
+    media_url:
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=1200&q=80",
+    media_type: "image",
+    created_at: new Date(Date.now() - 259200000).toISOString(),
   },
 ];
 

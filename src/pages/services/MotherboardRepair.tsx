@@ -73,23 +73,23 @@ export const MotherboardRepairPage: React.FC = () => {
               Advanced BGA Micro-Soldering Lab · Giridih
             </div>
 
-            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
+            <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1]">
               Dead Phone &amp; Motherboard IC Repair in Giridih
             </h1>
 
-            <p className="mt-5 text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed">
+            <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
               Has another shop told you your phone is &ldquo;unfixable&rdquo; or that the motherboard must be replaced? Super Telecom specializes in component-level BGA chip replacement, power management IC micro-soldering, and water damage dead phone revival.
             </p>
 
             {/* Badges Bar */}
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-amber-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-600 dark:text-amber-400 font-semibold shadow-xs">
                 <Microscope className="h-4 w-4" /> 45x Stereo Microscope Rework
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-cyan-600 dark:text-cyan-400 font-semibold shadow-xs">
                 <Zap className="h-4 w-4" /> Short Circuit Thermal Imaging
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-emerald-400 font-semibold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs">
                 <HardDrive className="h-4 w-4" /> Data Preservation Focus
               </span>
             </div>
@@ -108,9 +108,9 @@ export const MotherboardRepairPage: React.FC = () => {
               </a>
               <a
                 href={`tel:${PHONE}`}
-                className="inline-flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white font-semibold px-6 py-3.5 text-sm transition-colors"
+                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold px-6 py-3.5 text-sm transition-colors shadow-xs"
               >
-                <Phone className="h-4 w-4 text-amber-400" />
+                <Phone className="h-4 w-4 text-amber-500 dark:text-amber-400" />
                 <span>Call Store: +91 80029 03643</span>
               </a>
             </div>
@@ -118,72 +118,72 @@ export const MotherboardRepairPage: React.FC = () => {
         </section>
 
         {/* Fault Diagnosis Checklist */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800/80">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800/80">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-4">
               Symptoms of Motherboard IC Failure
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 text-center max-w-2xl mx-auto mb-10">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 text-center max-w-2xl mx-auto mb-10">
               If your phone shows any of the following symptoms, our chip-level engineers can diagnose the exact failing capacitor, diode, or IC.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-rose-950 border border-rose-500/30 text-rose-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-950 border border-rose-300 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 w-fit">
                   <Flame className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Sudden Dead / No Power</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Sudden Dead / No Power</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   The phone will not switch on, vibrate, or charge. Frequently caused by burned PMIC or primary VDD power line short circuits.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-blue-950 border border-blue-500/30 text-blue-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-950 border border-blue-300 dark:border-blue-500/30 text-blue-600 dark:text-blue-400 w-fit">
                   <Droplets className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Liquid &amp; Water Damage</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Liquid &amp; Water Damage</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Corrosion under BGA chip balls creating microscopic short circuits. We perform deep ultrasonic chemical baths and reballing.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-cyan-950 border border-cyan-500/30 text-cyan-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400 w-fit">
                   <Activity className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Bootloop &amp; Logo Freeze</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Bootloop &amp; Logo Freeze</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Device restarts continuously at the brand logo. Often caused by CPU/RAM ball detachment due to drops or overheating.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-amber-950 border border-amber-500/30 text-amber-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-500/30 text-amber-600 dark:text-amber-400 w-fit">
                   <Zap className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Fake / Slow Charging</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Fake / Slow Charging</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Battery percentage shows charging bolt icon but percentage drops or stays frozen. Indicates charging IC (SMB/OVP) breakdown.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-purple-950 border border-purple-500/30 text-purple-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-purple-100 dark:bg-purple-950 border border-purple-300 dark:border-purple-500/30 text-purple-600 dark:text-purple-400 w-fit">
                   <Cpu className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Qualcomm 9008 / EDL Port</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Qualcomm 9008 / EDL Port</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Computer recognizes device as Qualcomm HS-USB QDLoader 9008 or MediaTek Preloader port with black screen. Fixed via UFS reprogramming.
                 </p>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-2.5">
-                <div className="p-2 rounded-xl bg-emerald-950 border border-emerald-500/30 text-emerald-400 w-fit">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-2.5">
+                <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 w-fit">
                   <HardDrive className="h-5 w-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white">Data Recovery from Dead Boards</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Data Recovery from Dead Boards</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Need photos and business chats back? We bypass dead sub-circuits and power up the core logic board just long enough to extract all data.
                 </p>
               </div>
@@ -192,32 +192,32 @@ export const MotherboardRepairPage: React.FC = () => {
         </section>
 
         {/* Micro-Soldering Equipment Showcase */}
-        <section className="py-16 bg-surface/50 border-t border-border/60">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               Precision Micro-Soldering Laboratory Equipment
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-cyan-950 border border-cyan-500/30 text-cyan-400">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-cyan-100 dark:bg-cyan-950 border border-cyan-300 dark:border-cyan-500/30 text-cyan-600 dark:text-cyan-400">
                   <Microscope className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Trinocular Stereo Optical Microscope</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Trinocular Stereo Optical Microscope</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                     Provides 45x optical magnification for inspecting micro-jumpers (0.01mm copper wire) on severed PCB traces and BGA pads.
                   </p>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-amber-950 border border-amber-500/30 text-amber-400">
+              <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-amber-100 dark:bg-amber-950 border border-amber-300 dark:border-amber-500/30 text-amber-600 dark:text-amber-400">
                   <Zap className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">Infrared Thermal Short-Circuit Camera</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Infrared Thermal Short-Circuit Camera</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                     Instant thermal leak detection spots shorted 0201 capacitors glowing red hot within milliseconds of applying voltage injection.
                   </p>
                 </div>
@@ -227,30 +227,30 @@ export const MotherboardRepairPage: React.FC = () => {
         </section>
 
         {/* FAQs */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               Motherboard Repair FAQs
             </h2>
 
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Can a completely dead phone be fixed?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Can a completely dead phone be fixed?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes, in over 85% of cases! Most dead phones only have a single shorted capacitor or a burnt power IC chip, which can be identified and replaced without swapping the entire motherboard.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">What is the cost of motherboard repair in Giridih?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">What is the cost of motherboard repair in Giridih?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Basic power IC and charging IC repairs range from ₹799 to ₹1,500. Advanced double-decker CPU reballing and water damage recovery range from ₹1,800 to ₹3,500. Upfront quote is always given first.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Do you offer warranty on motherboard repairs?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Do you offer warranty on motherboard repairs?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes, all chip-level motherboard work comes with a formal warranty of 30 to 60 days.
                 </p>
               </div>

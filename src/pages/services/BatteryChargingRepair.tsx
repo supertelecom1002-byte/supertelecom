@@ -141,43 +141,43 @@ export const BatteryChargingRepairPage: React.FC = () => {
               <span className="text-amber-400 font-semibold">Battery &amp; Charging Port Repair</span>
             </nav>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-medium mb-4">
               <Zap className="h-3.5 w-3.5" />
               <span>20-Minute Express Replacement in Giridih</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight mb-6">
               Mobile Battery Replacement &amp; <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-cyan-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-cyan-500 dark:from-amber-400 dark:via-orange-400 dark:to-cyan-400">
                 Charging Port Repair in Giridih
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-300 max-w-3xl leading-relaxed mb-8">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed mb-8">
               Is your phone draining within hours, shutting down randomly at 30%, or failing to charge unless you wiggle the cable? Super Telecom provides fast, reliable OEM battery replacement and precision charging port repairs on Barganda Road, Giridih with a 90-day warranty.
             </p>
 
             {/* Key Value Points */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <Clock className="h-5 w-5 text-amber-400 mb-1" />
-                <div className="font-bold text-sm text-white">20-30 Mins</div>
-                <div className="text-xs text-slate-400">While-You-Wait</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <Clock className="h-5 w-5 text-amber-500 dark:text-amber-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">20-30 Mins</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">While-You-Wait</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <ShieldCheck className="h-5 w-5 text-emerald-400 mb-1" />
-                <div className="font-bold text-sm text-white">90-Day Warranty</div>
-                <div className="text-xs text-slate-400">Hassle-Free Replacement</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <ShieldCheck className="h-5 w-5 text-emerald-500 dark:text-emerald-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">90-Day Warranty</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Hassle-Free Replacement</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <Zap className="h-5 w-5 text-cyan-400 mb-1" />
-                <div className="font-bold text-sm text-white">Fast-Charge Ready</div>
-                <div className="text-xs text-slate-400">SuperVOOC / PD / Turbo</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <Zap className="h-5 w-5 text-cyan-500 dark:text-cyan-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">Fast-Charge Ready</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">SuperVOOC / PD / Turbo</div>
               </div>
-              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                <CheckCircle2 className="h-5 w-5 text-amber-400 mb-1" />
-                <div className="font-bold text-sm text-white">Digital Tested</div>
-                <div className="text-xs text-slate-400">USB Power Meter Check</div>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
+                <CheckCircle2 className="h-5 w-5 text-amber-500 dark:text-amber-400 mb-1" />
+                <div className="font-bold text-sm text-slate-900 dark:text-white">Digital Tested</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">USB Power Meter Check</div>
               </div>
             </div>
 
@@ -194,9 +194,9 @@ export const BatteryChargingRepairPage: React.FC = () => {
               </a>
               <a
                 href={`tel:${PHONE}`}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white font-semibold px-6 py-3.5 text-sm transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-semibold px-6 py-3.5 text-sm transition-colors shadow-xs"
               >
-                <Phone className="h-4 w-4 text-cyan-400" />
+                <Phone className="h-4 w-4 text-cyan-500 dark:text-cyan-400" />
                 <span>Call +91 80029 03643</span>
               </a>
             </div>
@@ -204,13 +204,13 @@ export const BatteryChargingRepairPage: React.FC = () => {
         </section>
 
         {/* Symptoms Section */}
-        <section className="py-16 bg-slate-900/50 border-y border-slate-800">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-900/50 border-y border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
                 Common Signs Your Phone Needs a Battery or Port Fix
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Identify the symptoms early before battery swelling causes irreversible display cracking or motherboard damage.
               </p>
             </div>
@@ -221,13 +221,13 @@ export const BatteryChargingRepairPage: React.FC = () => {
                 return (
                   <div
                     key={idx}
-                    className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-500/40 transition-colors"
+                    className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/40 transition-colors"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-3">
+                    <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 dark:text-amber-400 flex items-center justify-center mb-3">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <h3 className="text-sm font-bold text-white mb-1.5">{s.title}</h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">{s.description}</p>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1.5">{s.title}</h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{s.description}</p>
                   </div>
                 );
               })}
@@ -238,18 +238,18 @@ export const BatteryChargingRepairPage: React.FC = () => {
         {/* Dangerous Swollen Battery Alert */}
         <section className="py-12 bg-amber-950/20 border-b border-amber-500/20">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row items-start gap-4 p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-500/30">
-              <div className="p-3 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+            <div className="flex flex-col sm:flex-row items-start gap-4 p-6 rounded-2xl bg-amber-50 dark:bg-gradient-to-r dark:from-amber-950/40 dark:to-slate-900 border border-amber-300 dark:border-amber-500/30 shadow-xs">
+              <div className="p-3 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 shrink-0">
                 <Flame className="h-7 w-7" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-amber-300 mb-1">
+                <h3 className="text-base sm:text-lg font-bold text-amber-900 dark:text-amber-300 mb-1">
                   WARNING: Do Not Ignore a Swollen or Expanding Battery!
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
+                <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
                   When a lithium battery degrades, it generates pressurized gas causing the battery pack to expand. This pressure can crack your OLED screen from underneath, pop open the rear glass, or cause thermal runaway (smoke and fire hazard). If your screen is lifting, stop charging immediately and visit Super Telecom Barganda Road for safe removal.
                 </p>
-                <div className="flex items-center gap-2 text-xs font-semibold text-amber-400">
+                <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
                   <CheckCircle2 className="h-4 w-4" />
                   <span>Free Physical Battery Safety Inspection Available Daily</span>
                 </div>
@@ -259,20 +259,20 @@ export const BatteryChargingRepairPage: React.FC = () => {
         </section>
 
         {/* Pricing & Services Table */}
-        <section className="py-16">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
                 Transparent Battery &amp; Port Repair Pricing in Giridih
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Fair prices with genuine high-density cells, precision soldering, and zero hidden charges.
               </p>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl">
-              <table className="w-full text-left text-xs sm:text-sm text-slate-300">
-                <thead className="bg-slate-950 text-slate-200 uppercase tracking-wider text-[11px] font-bold border-b border-slate-800">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-sm">
+              <table className="w-full text-left text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                <thead className="bg-slate-100 dark:bg-slate-950 text-slate-700 dark:text-slate-200 uppercase tracking-wider text-[11px] font-bold border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th scope="col" className="px-5 py-4">Repair Service</th>
                     <th scope="col" className="px-5 py-4">Turnaround</th>
@@ -281,29 +281,29 @@ export const BatteryChargingRepairPage: React.FC = () => {
                     <th scope="col" className="px-5 py-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800">
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                   {PRICING.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="px-5 py-4 font-semibold text-white">
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">
                         <div className="flex items-center gap-2">
                           <span>{item.service}</span>
                           {item.popular && (
-                            <span className="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-bold border border-cyan-500/20">
+                            <span className="px-2 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-[10px] font-bold border border-cyan-300 dark:border-cyan-500/20">
                               Popular
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-amber-400 font-medium whitespace-nowrap">
+                      <td className="px-5 py-4 text-amber-600 dark:text-amber-400 font-medium whitespace-nowrap">
                         <span className="flex items-center gap-1.5">
                           <Clock className="h-3.5 w-3.5" />
                           {item.turnaround}
                         </span>
                       </td>
-                      <td className="px-5 py-4 font-bold text-emerald-400 whitespace-nowrap">
+                      <td className="px-5 py-4 font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
                         {item.price}
                       </td>
-                      <td className="px-5 py-4 text-slate-400 text-xs hidden md:table-cell">
+                      <td className="px-5 py-4 text-slate-600 dark:text-slate-400 text-xs hidden md:table-cell">
                         {item.specs}
                       </td>
                       <td className="px-5 py-4 text-right whitespace-nowrap">
@@ -311,7 +311,7 @@ export const BatteryChargingRepairPage: React.FC = () => {
                           href={`https://wa.me/918002903643?text=Hi%20Super%20Telecom,%20I%20need%20${encodeURIComponent(item.service)}%20in%20Giridih`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-semibold text-xs border border-emerald-500/20 transition-all"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 font-semibold text-xs border border-emerald-500/20 transition-all"
                         >
                           <span>Quote</span>
                           <ArrowRight className="h-3 w-3" />
@@ -326,44 +326,44 @@ export const BatteryChargingRepairPage: React.FC = () => {
         </section>
 
         {/* Technical Quality & Protocol */}
-        <section className="py-16 bg-slate-900/40 border-t border-slate-800">
+        <section className="py-16 bg-slate-100/60 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
                 Why Choose Super Telecom for Battery &amp; Port Fixes?
               </h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 We do not just swap parts blindly; we inspect the entire power delivery subsystem.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-4">
                   <Cable className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">Original Charging Sub-Boards</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">Original Charging Sub-Boards</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Cheap market ports lack proper surge protection and disable fast charging. We supply original specification CC boards that preserve VOOC, Warp, PD, and Turbo Charging protocols.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-amber-100 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-4">
                   <Thermometer className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">Digital Power Meter Analysis</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">Digital Power Meter Analysis</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   Every repaired phone is plugged into our USB voltage/ampere digital analyzer to verify accurate current draw (5V/2A, 9V/2A, 12V/3A) before handing it back to you.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-4">
                   <ShieldCheck className="h-5 w-5" />
                 </div>
-                <h3 className="font-bold text-white text-base mb-2">Safe Adhesion &amp; Waterproof Seals</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="font-bold text-slate-900 dark:text-white text-base mb-2">Safe Adhesion &amp; Waterproof Seals</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   We use factory-grade pull tabs to secure new battery packs cleanly without punctures, and restore perimeter adhesive gaskets to guard against dust and moisture ingress.
                 </p>
               </div>
@@ -372,37 +372,37 @@ export const BatteryChargingRepairPage: React.FC = () => {
         </section>
 
         {/* FAQs */}
-        <section className="py-16 bg-slate-950 border-t border-slate-800">
+        <section className="py-16 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white text-center mb-10">
               Frequently Asked Questions (Battery &amp; Charging)
             </h2>
 
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">How long does mobile battery replacement take at Super Telecom?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How long does mobile battery replacement take at Super Telecom?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Battery replacement for popular models (Xiaomi, Samsung, Realme, Vivo, iPhone) takes just 20 to 30 minutes in our shop on Barganda Road, Giridih. You can wait and watch the installation in person.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">Will fast charging (VOOC/SuperVOOC/PD) work after port replacement?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Will fast charging (VOOC/SuperVOOC/PD) work after port replacement?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Yes. We install high-grade charging sub-boards and original pin connectors that fully support fast charging protocols, OTG data transfer, and microphone functionality.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">What should I do if my phone shows &quot;Moisture Detected in USB Port&quot;?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">What should I do if my phone shows &quot;Moisture Detected in USB Port&quot;?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   Do not force a charger into the port. This error can be triggered by dust trapping humidity or oxidized copper pins. Bring it to our shop for a safe ultrasonic clean and pin inspection.
                 </p>
               </div>
 
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800">
-                <h3 className="font-bold text-white text-sm">What is the warranty on new batteries?</h3>
-                <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+              <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">What is the warranty on new batteries?</h3>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                   All replacement batteries come with a 90-day warranty. If the battery experiences abnormal drain or charging issues during this period, we replace it promptly.
                 </p>
               </div>

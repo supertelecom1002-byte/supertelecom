@@ -107,7 +107,7 @@ export const AnnouncementBanner: React.FC = () => {
   return (
     <aside
       aria-label="Site announcement"
-      className={`relative z-40 border-b px-3 py-2 sm:px-6 sm:py-2.5 backdrop-blur-md transition-all ${theme.bar}`}
+      className={`w-full min-h-[40px] flex items-center border-b px-3 py-1.5 sm:px-6 transition-all ${theme.bar}`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 text-xs">
         <div className="flex flex-1 items-center gap-2.5 overflow-hidden">
