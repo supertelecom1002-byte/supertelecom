@@ -58,10 +58,12 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
       </div>
 
       {/* Main Bar */}
-      <div className={`transition-all ${scrolled || open ? "glass-strong shadow-elegant" : "bg-transparent"}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+      <div className={`transition-all ${scrolled || open ? "glass-strong shadow-elegant" : "bg-background/90 backdrop-blur-md border-b border-border/40"}`}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 sm:py-3">
           {/* Brand Logo with Link to "/" */}
-          <BrandLogo size="md" to="/" />
+          <div className="flex-none">
+            <BrandLogo size="md" to="/" />
+          </div>
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-1 md:flex">
@@ -87,28 +89,28 @@ export function Navbar({ isHomePage = false }: NavbarProps) {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-none">
             <ThemeToggle />
             <a
               href={`tel:${PHONE}`}
-              className="hidden items-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary sm:inline-flex"
+              className="hidden items-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary lg:inline-flex"
             >
               <Phone className="mr-2 h-4 w-4" /> Call
             </a>
             <a
               href={isHomePage ? "#contact" : "/#contact"}
-              className="inline-flex items-center rounded-full bg-gradient-brand px-4 py-2 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03]"
+              className="inline-flex items-center rounded-full bg-gradient-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03] whitespace-nowrap"
             >
-              Book Repair <ArrowRight className="ml-1.5 h-4 w-4" />
+              <span>Book Repair</span> <ArrowRight className="ml-1 h-3.5 w-3.5 sm:ml-1.5 sm:h-4 sm:w-4" />
             </a>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border md:hidden"
+              className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-border md:hidden"
             >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {open ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Menu className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
           </div>
         </div>

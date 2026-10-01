@@ -25,7 +25,7 @@ export const HeroSection: React.FC = () => {
       {/* Cinematic AI Repair Video Background */}
       <video
         src={HERO_VIDEO_URL}
-        poster={heroImg}
+        poster="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80"
         autoPlay
         loop
         muted

@@ -295,9 +295,11 @@ function Nav() {
         </div>
       </div>
 
-      <div className={`transition-all ${scrolled || open ? "glass-strong shadow-elegant" : "bg-transparent"}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <BrandLogo size="md" to="/" />
+      <div className={`transition-all ${scrolled || open ? "glass-strong shadow-elegant" : "bg-background/90 backdrop-blur-md border-b border-border/40"}`}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 sm:py-3">
+          <div className="flex-none">
+            <BrandLogo size="md" to="/" />
+          </div>
           <nav className="hidden items-center gap-1 md:flex">
             {links.map(([label, href]) => (
               href.startsWith("#") ? (
@@ -319,22 +321,22 @@ function Nav() {
               )
             ))}
           </nav>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-none">
             <ThemeToggle />
-            <a href={`tel:${PHONE}`} className="hidden items-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary sm:inline-flex">
+            <a href={`tel:${PHONE}`} className="hidden items-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary lg:inline-flex">
               <Phone className="mr-2 h-4 w-4" /> Call
             </a>
-            <a href="#contact" className="inline-flex items-center rounded-full bg-gradient-brand px-4 py-2 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03]">
-              Book Repair <ArrowRight className="ml-1.5 h-4 w-4" />
+            <a href="#contact" className="inline-flex items-center rounded-full bg-gradient-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03] whitespace-nowrap">
+              <span>Book Repair</span> <ArrowRight className="ml-1 h-3.5 w-3.5 sm:ml-1.5 sm:h-4 sm:w-4" />
             </a>
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
-              className="inline-flex h-11 w-11 min-h-[48px] min-w-[48px] items-center justify-center rounded-2xl border border-border bg-slate-900/60 md:hidden active:scale-95 transition-transform"
+              className="inline-flex h-9 w-9 sm:h-11 sm:w-11 min-h-[40px] min-w-[40px] items-center justify-center rounded-2xl border border-border bg-slate-900/60 md:hidden active:scale-95 transition-transform"
             >
-              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {open ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Menu className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
           </div>
         </div>

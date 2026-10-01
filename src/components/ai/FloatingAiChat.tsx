@@ -341,8 +341,14 @@ export const FloatingAiChat: React.FC = () => {
 
       {/* Floating Popup Card (Desktop) / Slide-up Sheet (Mobile) */}
       {isOpen && (
-        <div className="fixed inset-x-3 bottom-20 z-50 mx-auto max-w-md md:inset-x-auto md:bottom-8 md:right-8 w-full md:w-[420px]">
-          <div className="flex max-h-[80vh] h-[580px] w-full flex-col overflow-hidden rounded-3xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col md:inset-auto md:bottom-8 md:right-8 md:w-[420px] md:h-[580px]">
+          {/* Mobile backdrop overlay */}
+          <div
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs md:hidden"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="relative flex h-full w-full flex-col overflow-hidden rounded-t-3xl md:rounded-3xl bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 md:border shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-6 duration-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 px-4 py-3">
               <div className="flex items-center gap-2.5">

@@ -11,6 +11,7 @@ import { BeforeAfterManager } from "@/components/admin/cms/BeforeAfterManager";
 import { AnnouncementManager } from "@/components/admin/cms/AnnouncementManager";
 import { LocalSeoManager } from "@/components/admin/cms/LocalSeoManager";
 import { SeoGrowthManager } from "@/components/admin/cms/SeoGrowthManager";
+import { SeoManager } from "@/components/admin/cms/SeoManager";
 import { runWebsiteAudit } from "@/services/auditEngine";
 
 export const AdminDashboard: React.FC = () => {
@@ -119,7 +120,7 @@ export const AdminDashboard: React.FC = () => {
           <AuditDashboard onNavigateTab={(tab) => setActiveTab(tab)} />
         )}
 
-        {activeTab === "seo_growth" && <SeoGrowthManager />}
+        {(activeTab === "seo_growth" || activeTab === "seo_manager") && <SeoManager />}
 
         {activeTab === "feed" && <DailyFeedManager />}
 

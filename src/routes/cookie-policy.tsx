@@ -101,13 +101,13 @@ function CookiePolicyPage() {
             <li>Address: Super Telecom, {STORE_ADDRESS}</li>
           </ul>
 
-          <p className="mt-10 text-sm text-muted-foreground">Last updated: August 2026</p>
+          <p className="mt-10 text-sm text-muted-foreground">Established 2016 · Last updated: 2026</p>
         </section>
       </main>
 
       <footer className="border-t border-border/50 py-10 text-center text-xs text-muted-foreground">
         <div className="mx-auto max-w-7xl px-4">
-          © {new Date().getFullYear()} Super Telecom · {STORE_ADDRESS} ·{" "}
+          © 2016 Super Telecom · Trusted Mobile Repair in Giridih Since 2016 · {STORE_ADDRESS} ·{" "}
           <Link to="/cookie-policy" className="text-primary hover:underline">Cookie Policy</Link>
         </div>
       </footer>
