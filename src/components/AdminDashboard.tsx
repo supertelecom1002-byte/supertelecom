@@ -12,11 +12,16 @@ import { AnnouncementManager } from "@/components/admin/cms/AnnouncementManager"
 import { LocalSeoManager } from "@/components/admin/cms/LocalSeoManager";
 import { SeoGrowthManager } from "@/components/admin/cms/SeoGrowthManager";
 import { SeoManager } from "@/components/admin/cms/SeoManager";
+import { GoogleConsoleManager } from "@/components/admin/analytics/GoogleConsoleManager";
 import { runWebsiteAudit } from "@/services/auditEngine";
 
-export const AdminDashboard: React.FC = () => {
+interface AdminDashboardProps {
+  defaultTab?: AdminTab;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ defaultTab = "audit" }) => {
   const { user, isAdmin, loading: authLoading, signOut } = useAdminAuth();
-  const [activeTab, setActiveTab] = useState<AdminTab>("audit");
+  const [activeTab, setActiveTab] = useState<AdminTab>(defaultTab);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [auditScore, setAuditScore] = useState<number>(90);
 
@@ -131,6 +136,8 @@ export const AdminDashboard: React.FC = () => {
         {activeTab === "announcements" && <AnnouncementManager />}
 
         {activeTab === "seo" && <LocalSeoManager />}
+
+        {activeTab === "analytics" && <GoogleConsoleManager />}
       </main>
     </div>
   );

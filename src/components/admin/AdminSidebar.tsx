@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 
-export type AdminTab = "audit" | "feed" | "services" | "showcase" | "announcements" | "seo" | "seo_growth" | "seo_manager";
+export type AdminTab = "audit" | "feed" | "services" | "showcase" | "announcements" | "seo" | "seo_growth" | "seo_manager" | "analytics";
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
@@ -41,6 +41,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Website Audit",
       icon: <Activity className="h-4 w-4" />,
       badge: `${auditScore}%`,
+    },
+    {
+      id: "analytics",
+      label: "Google Console & GSC",
+      icon: <ShieldCheck className="h-4 w-4" />,
+      badge: "Verified",
     },
     {
       id: "seo_manager",
