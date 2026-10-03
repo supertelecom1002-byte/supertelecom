@@ -140,6 +140,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "google-site-verification", content: "l1EAStfsD16e2zvMmw3t88DhWnxcSgdPtPBms5L0bus" },
       { name: "google-site-verification", content: "jIBP6ThFnLXcw6dMR7Q4JRbuLJIVjHsquFt4DxgLVxk" },
       { name: "google-site-verification", content: "htat_gsc_supertelec_mrm60cg0mv" },
+      { name: "google-site-verification", content: "htat_gsc_wwwsuperte_bagd36tlh1" },
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESC },
       { name: "author", content: "Super Telecom" },
