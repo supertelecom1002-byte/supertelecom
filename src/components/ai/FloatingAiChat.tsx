@@ -321,13 +321,13 @@ export const FloatingAiChat: React.FC = () => {
   return (
     <>
       {/* Persistent Floating Trigger Button */}
-      <div className="fixed bottom-24 right-4 z-40 md:bottom-8 md:right-8">
+      <div className="fixed bottom-24 right-4 z-40 md:bottom-8 md:right-8 pointer-events-none">
         {!isOpen && (
           <button
             type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Open Super Telecom AI Assistant"
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95"
+            className="pointer-events-auto group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95"
           >
             {/* Active Pulsing Ring */}
             <span className="absolute -inset-1 rounded-full bg-cyan-400/40 animate-ping pointer-events-none" />
@@ -341,7 +341,7 @@ export const FloatingAiChat: React.FC = () => {
 
       {/* Floating Popup Card (Desktop) / Slide-up Sheet (Mobile) */}
       {isOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col md:inset-auto md:bottom-8 md:right-8 md:w-[420px] md:h-[580px]">
+        <div className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col md:inset-auto md:bottom-8 md:right-8 md:w-[420px] md:h-[580px] w-full max-w-full overflow-hidden">
           {/* Mobile backdrop overlay */}
           <div
             className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs md:hidden"

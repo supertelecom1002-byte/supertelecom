@@ -49,7 +49,7 @@ export const WaterDamageRepairPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground selection:bg-cyan-500 selection:text-slate-950">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">

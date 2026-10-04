@@ -133,14 +133,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" },
+      { name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" },
       { name: "theme-color", content: "#030712" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "google-site-verification", content: "htat_gsc_wwwsuperte_bagd36tlh1" },
+      { name: "google-site-verification", content: "htat_gsc_supertelec_mrm60cg0mv" },
       { name: "google-site-verification", content: "l1EAStfsD16e2zvMmw3t88DhWnxcSgdPtPBms5L0bus" },
       { name: "google-site-verification", content: "jIBP6ThFnLXcw6dMR7Q4JRbuLJIVjHsquFt4DxgLVxk" },
-      { name: "google-site-verification", content: "htat_gsc_supertelec_mrm60cg0mv" },
-      { name: "google-site-verification", content: "htat_gsc_wwwsuperte_bagd36tlh1" },
       { title: SITE_TITLE },
       { name: "description", content: SITE_DESC },
       { name: "author", content: "Super Telecom" },
@@ -323,13 +323,15 @@ const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')|
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark w-full max-w-full overflow-x-hidden">
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />
         <meta name="google-site-verification" content="htat_gsc_supertelec_mrm60cg0mv" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
-      <body className="pb-20 md:pb-0 min-h-screen">
+      <body className="pb-20 md:pb-0 min-h-screen w-full max-w-full overflow-x-hidden relative">
         {children}
         <Scripts />
       </body>
@@ -343,7 +345,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AdminAuthProvider>
         <VisualEditorProvider>
-          <AnnouncementBanner />
           <Outlet />
           <LiveEditorBar />
           <FloatingAiChat />

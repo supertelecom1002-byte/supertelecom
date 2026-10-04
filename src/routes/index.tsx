@@ -25,6 +25,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
 import { ServiceChips } from "@/components/mobile/ServiceChips";
+import { Header } from "@/components/Header";
 
 
 export const Route = createFileRoute("/")({
@@ -214,10 +215,10 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
       <BackgroundFX />
-      <Nav />
-      <main id="main">
+      <Header isHomePage={true} />
+      <main id="main" className="w-full max-w-full overflow-x-hidden">
         <Hero />
         <LabTrustStrip />
         {/* Mobile Horizontal Scroll Category Chips directly under Hero */}
@@ -251,209 +252,11 @@ function HomePage() {
 
 function BackgroundFX() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden max-w-full">
       <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-primary/20 blur-[140px]" />
       <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-accent/20 blur-[120px]" />
       <div className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px]" />
     </div>
-  );
-}
-
-function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 20);
-    on();
-    window.addEventListener("scroll", on);
-    return () => window.removeEventListener("scroll", on);
-  }, []);
-  const links = [
-    ["Services", "#services"],
-    ["Brands", "/brands"],
-    ["Pricing", "/pricing"],
-    ["About", "#about"],
-    ["Reviews", "#reviews"],
-    ["FAQ", "#faq"],
-    ["Contact", "#contact"],
-  ];
-  return (
-    <header className="sticky top-0 z-40 w-full">
-      {/* Utility bar */}
-      <div className="hidden border-b border-border bg-surface md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-1.5 text-[11px] tracking-wide text-muted-foreground">
-          <div className="flex items-center gap-5">
-            <span className="inline-flex items-center gap-1.5"><MapPin className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_address" defaultValue="Barganda Road, Giridih" /></span>
-            <span className="inline-flex items-center gap-1.5"><Clock className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_timings" defaultValue="Open Daily 10:00 AM – 9:30 PM" /></span>
-          </div>
-          <div className="flex items-center gap-5">
-            <a href={`mailto:${EMAIL}`} className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground">
-              <Mail className="h-3 w-3 text-primary" /> <EditableBlock contentKey="contact_email" defaultValue={EMAIL} />
-            </a>
-            <span className="inline-flex items-center gap-1.5 text-foreground"><Star className="h-3 w-3 fill-primary text-primary" /> 5.0 Google Rating</span>
-          </div>
-        </div>
-      </div>
-
-      <div className={`transition-all ${scrolled || open ? "glass-strong shadow-elegant" : "bg-background/90 backdrop-blur-md border-b border-border/40"}`}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-2.5 sm:px-6 sm:py-3">
-          <div className="flex-none">
-            <BrandLogo size="md" to="/" />
-          </div>
-          <nav className="hidden items-center gap-1 md:flex">
-            {links.map(([label, href]) => (
-              href.startsWith("#") ? (
-                <a
-                  key={href}
-                  href={href}
-                  className="rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                >
-                  {label}
-                </a>
-              ) : (
-                <Link
-                  key={href}
-                  to={href}
-                  className="rounded-full px-3.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                >
-                  {label}
-                </Link>
-              )
-            ))}
-          </nav>
-          <div className="flex items-center gap-1.5 sm:gap-2 flex-none">
-            <ThemeToggle />
-            <a href={`tel:${PHONE}`} className="hidden items-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary lg:inline-flex">
-              <Phone className="mr-2 h-4 w-4" /> Call
-            </a>
-            <a href="#contact" className="inline-flex items-center rounded-full bg-gradient-brand px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03] whitespace-nowrap">
-              <span>Book Repair</span> <ArrowRight className="ml-1 h-3.5 w-3.5 sm:ml-1.5 sm:h-4 sm:w-4" />
-            </a>
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              className="inline-flex h-9 w-9 sm:h-11 sm:w-11 min-h-[40px] min-w-[40px] items-center justify-center rounded-2xl border border-border bg-slate-900/60 md:hidden active:scale-95 transition-transform"
-            >
-              {open ? <X className="h-4 w-4 sm:h-5 sm:w-5" /> : <Menu className="h-4 w-4 sm:h-5 sm:w-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Slide-over Mobile Drawer with Backdrop Blur & Service Silos */}
-        {open && (
-          <div className="fixed inset-0 z-50 md:hidden">
-            {/* Backdrop Blur Overlay */}
-            <div
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity animate-fade-in"
-              onClick={() => setOpen(false)}
-              aria-hidden="true"
-            />
-
-            {/* Slide-over Drawer Panel */}
-            <div className="fixed inset-y-0 right-0 w-[86%] max-w-sm bg-slate-950 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl z-10 overflow-y-auto">
-              <div>
-                {/* Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                  <BrandLogo size="sm" to="/" />
-                  <button
-                    type="button"
-                    onClick={() => setOpen(false)}
-                    aria-label="Close menu drawer"
-                    className="flex items-center justify-center min-h-[48px] min-w-[48px] rounded-2xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white active:scale-95 transition-all"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-
-                {/* 5 Service Silos Direct Access */}
-                <div className="mt-5">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold block mb-2.5">
-                    Top Service Silos (1-Tap)
-                  </span>
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      { title: "Screen & Display Replacement", href: "/services/screen-replacement", icon: Smartphone },
-                      { title: "Battery & Charging Port Repair", href: "/services/battery-replacement", icon: Battery },
-                      { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-repair", icon: Cpu },
-                      { title: "Water Damage Revival", href: "/services/water-damage-repair", icon: Droplet },
-                      { title: "Apple iPhone Specialist Care", href: "/services/iphone-repair", icon: ShieldCheck },
-                    ].map((silo) => (
-                      <Link
-                        key={silo.href}
-                        to={silo.href}
-                        onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-200 hover:text-cyan-300 hover:border-cyan-500/40 active:scale-95 transition-all min-h-[48px]"
-                      >
-                        <silo.icon className="h-4 w-4 text-cyan-400 flex-none" />
-                        <span className="truncate">{silo.title}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Navigation Links */}
-                <div className="mt-6 border-t border-slate-800/80 pt-4">
-                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold block mb-2">
-                    Sections & Pricing
-                  </span>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {links.map(([label, href]) => (
-                      href.startsWith("#") ? (
-                        <a
-                          key={href}
-                          href={href}
-                          onClick={() => setOpen(false)}
-                          className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
-                        >
-                          <span>{label}</span>
-                        </a>
-                      ) : (
-                        <Link
-                          key={href}
-                          to={href}
-                          onClick={() => setOpen(false)}
-                          className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all min-h-[48px]"
-                        >
-                          <span>{label}</span>
-                        </Link>
-                      )
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Drawer Bottom Actions */}
-              <div className="mt-6 pt-5 border-t border-slate-800 space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`tel:${PHONE}`}
-                    className="flex items-center justify-center gap-2 py-3 px-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs active:scale-95 transition-all min-h-[48px]"
-                  >
-                    <Phone className="h-4 w-4" /> Call Now
-                  </a>
-                  <a
-                    href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20quick%20mobile%20repair%20help`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center justify-center gap-2 py-3 px-2 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs active:scale-95 transition-all min-h-[48px]"
-                  >
-                    <MessageCircle className="h-4 w-4" /> WhatsApp
-                  </a>
-                </div>
-
-                <div className="flex items-center gap-2 text-[11px] text-slate-400 pt-1">
-                  <MapPin className="h-3.5 w-3.5 text-primary flex-none" />
-                  <span>Barganda Road, Giridih · Open Daily 10:00 AM – 9:30 PM</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-    </header>
   );
 }
 

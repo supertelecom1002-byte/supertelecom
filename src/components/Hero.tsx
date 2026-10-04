@@ -10,13 +10,16 @@ import {
   CheckCircle2,
   ChevronRight,
   Sparkles,
+  Star,
+  Shield,
+  Check,
 } from "lucide-react";
 import { EditableBlock } from "@/components/admin/visual/EditableBlock";
 
 export const Hero: React.FC = () => {
   const scrollToCalculator = (e: React.MouseEvent) => {
     e.preventDefault();
-    const el = document.getElementById("repair-calculator");
+    const el = document.getElementById("repair-calculator") || document.getElementById("pricing-matrix");
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
@@ -28,34 +31,131 @@ export const Hero: React.FC = () => {
     <section
       id="top"
       aria-label="Super Telecom Smartphone Laboratory"
-      className="relative isolate min-h-[92vh] w-full overflow-hidden bg-[#020617] pt-24 pb-16 md:pt-32 md:pb-24 flex items-center"
+      className="relative isolate w-full max-w-full overflow-hidden bg-[#020617] pt-4 pb-10 md:pt-28 md:pb-24 flex items-center"
     >
-      {/* Subtle radial cyan glow and cyber grid background */}
+      {/* Subtle radial cyan glow and cyber grid background (strictly clipped) */}
       <div
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
         style={{
           background:
             "radial-gradient(circle at 50% 20%, rgba(6, 182, 212, 0.12), transparent 70%)",
         }}
       />
       <div
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03]"
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.03] overflow-hidden"
         style={{
           backgroundImage:
             "linear-gradient(#06b6d4 1px, transparent 1px), linear-gradient(90deg, #06b6d4 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
-      <div className="pointer-events-none absolute -top-40 right-10 -z-10 h-96 w-96 rounded-full bg-cyan-500/10 blur-[130px]" />
-      <div className="pointer-events-none absolute bottom-0 left-10 -z-10 h-80 w-80 rounded-full bg-blue-600/10 blur-[120px]" />
+      <div className="pointer-events-none absolute -top-40 right-0 -z-10 h-96 w-96 rounded-full bg-cyan-500/10 blur-[130px] overflow-hidden" />
+      <div className="pointer-events-none absolute bottom-0 left-0 -z-10 h-80 w-80 rounded-full bg-blue-600/10 blur-[120px] overflow-hidden" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
+        {/* ========================================================================= */}
+        {/* MOBILE VIEW (< 768px): Native "Local Flagship Store Mobile Profile"       */}
+        {/* ========================================================================= */}
+        <div className="block md:hidden w-full max-w-full space-y-4">
+          {/* Header Profile Card */}
+          <div className="w-full rounded-3xl border border-cyan-500/30 bg-slate-900/90 p-4 sm:p-5 backdrop-blur-xl shadow-[0_4px_25px_rgba(6,182,212,0.12)] space-y-3.5">
+            {/* 1. Verified Store Badge */}
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-500/40 text-cyan-300 text-xs font-bold tracking-tight">
+                <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+                <span>Super Telecom • Barganda Road Lab</span>
+                <span className="text-cyan-400 font-extrabold text-sm ml-0.5">✓</span>
+              </div>
+
+              {/* Status Pill */}
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                <span>Open till 9:30 PM • Near Shivam Clinic</span>
+              </div>
+            </div>
+
+            {/* Headline and Description */}
+            <div className="space-y-1.5 pt-1">
+              <h1 className="font-display text-2xl font-extrabold text-white tracking-tight leading-snug">
+                <EditableBlock
+                  contentKey="hero_h1_title"
+                  defaultValue="Giridih’s Premier Flagship Smartphone & Chip-Level Repair Lab"
+                />
+              </h1>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                <EditableBlock
+                  contentKey="hero_h1_subtitle"
+                  defaultValue="Advanced motherboard micro-soldering, CPU reballing, and 30-minute original display restoration for iPhone, Samsung & OnePlus."
+                  type="textarea"
+                />
+              </p>
+            </div>
+
+            {/* Rating & Stats Bar */}
+            <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-[11px] font-mono text-slate-300">
+              <span className="flex items-center gap-1 text-amber-400 font-bold">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span>5.0 Rating</span>
+              </span>
+              <span className="text-slate-500">•</span>
+              <span className="text-cyan-300 font-semibold truncate">
+                2,00,000+ Phones Restored
+              </span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-400">Est. 2016</span>
+            </div>
+          </div>
+
+          {/* Primary Store Actions (Full width, easy thumb reach) */}
+          <div className="space-y-2.5 w-full">
+            <a
+              href="#repair-calculator"
+              onClick={scrollToCalculator}
+              className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.35)] active:scale-95 transition-all text-sm"
+            >
+              <Wrench className="h-4 w-4" />
+              <span>Calculate Repair Cost</span>
+              <ChevronRight className="h-4 w-4 ml-0.5" />
+            </a>
+
+            <a
+              href="tel:+918002903643"
+              className="w-full py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-white font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all text-sm"
+            >
+              <Phone className="h-4 w-4 text-cyan-400" />
+              <span>Direct Call Engineer</span>
+            </a>
+          </div>
+
+          {/* Store Trust Highlights (2x2 grid) */}
+          <div className="grid grid-cols-2 gap-2 text-xs w-full">
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <Clock className="h-4 w-4 text-cyan-400 flex-none" />
+              <span className="font-medium text-[11px]">30-Min Screen Swap</span>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <ShieldCheck className="h-4 w-4 text-emerald-400 flex-none" />
+              <span className="font-medium text-[11px]">90-Day Warranty</span>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <Cpu className="h-4 w-4 text-cyan-400 flex-none" />
+              <span className="font-medium text-[11px]">Chip-Level Micro-Soldering</span>
+            </div>
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <CheckCircle2 className="h-4 w-4 text-amber-400 flex-none" />
+              <span className="font-medium text-[11px]">100% Data Safe</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* DESKTOP VIEW (>= 768px): Full Two-Column Engineering Lab Showcase         */}
+        {/* ========================================================================= */}
+        <div className="hidden md:grid items-center gap-12 lg:grid-cols-12 lg:gap-8 w-full">
           {/* Left Column: High-Impact Typography & Action CTAs */}
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             {/* Top Status Badge */}
             <div className="inline-flex items-center gap-2.5 rounded-full border border-cyan-500/30 bg-slate-900/80 px-4 py-1.5 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-              {/* Glowing Green Pulse Dot (Pure SVG) */}
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
@@ -71,7 +171,7 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Main Headline */}
-            <h1 className="mt-6 font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl leading-[1.15]">
+            <h1 className="mt-6 font-display text-4xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
               <EditableBlock
                 contentKey="hero_h1_title"
                 defaultValue="Giridih’s Premier Flagship Smartphone & Chip-Level Repair Lab"
@@ -79,7 +179,7 @@ export const Hero: React.FC = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-5 text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
+            <p className="mt-5 text-base lg:text-lg text-slate-300 max-w-2xl leading-relaxed">
               <EditableBlock
                 contentKey="hero_h1_subtitle"
                 defaultValue="Advanced motherboard micro-soldering, double-decker CPU reballing, and 30-minute original display restoration for iPhone, Samsung Ultra & OnePlus."
@@ -105,7 +205,7 @@ export const Hero: React.FC = () => {
               <a
                 href="#repair-calculator"
                 onClick={scrollToCalculator}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-4 text-sm font-bold shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all hover:scale-[1.02] active:scale-95 min-h-[48px] w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-4 text-sm font-bold shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all hover:scale-[1.02] active:scale-95 min-h-[48px]"
               >
                 <Wrench className="h-4 w-4" />
                 <span>Calculate Repair Cost</span>
@@ -114,7 +214,7 @@ export const Hero: React.FC = () => {
 
               <a
                 href="tel:+918002903643"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-500/40 active:scale-95 min-h-[48px] w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-500/40 active:scale-95 min-h-[48px]"
               >
                 <Phone className="h-4 w-4 text-cyan-400" />
                 <span>Direct Engineer Call</span>
@@ -135,7 +235,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
               <span className="font-medium text-slate-300">
-                Over <strong className="text-white">2,00,000+</strong> smartphones diagnosed &amp; repaired in Giridih
+                Over <strong className="text-white">2,00,000+</strong> smartphones diagnosed &amp; repaired in Giridih Since 2016
               </span>
             </div>
           </div>

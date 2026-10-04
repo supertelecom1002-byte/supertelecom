@@ -17,7 +17,7 @@ export interface GscProperty {
   ownerEmail: string;
 }
 
-export const GOOGLE_VERIFICATION_TOKEN = "htat_gsc_supertelec_mrm60cg0mv";
+export const GOOGLE_VERIFICATION_TOKEN = "htat_gsc_wwwsuperte_bagd36tlh1";
 export const GOOGLE_VERIFICATION_META_TAG = `<meta name="google-site-verification" content="${GOOGLE_VERIFICATION_TOKEN}" />`;
 
 /**
@@ -25,9 +25,22 @@ export const GOOGLE_VERIFICATION_META_TAG = `<meta name="google-site-verificatio
  */
 export const htat_gsc_properties: GscProperty[] = [
   {
-    id: "supertelecom-shop",
-    name: "Super Telecom",
+    id: "supertelecom-www",
+    name: "Super Telecom (WWW)",
     url: "https://www.supertelecom.shop",
+    token: "htat_gsc_wwwsuperte_bagd36tlh1",
+    status: "Verified / Token Attached",
+    verified: true,
+    method: "HTML Tag",
+    tag: `<meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />`,
+    verifiedAt: "2026-10-04T11:00:00.000Z",
+    lastChecked: new Date().toISOString(),
+    ownerEmail: "supertelecom1002@gmail.com",
+  },
+  {
+    id: "supertelecom-shop",
+    name: "Super Telecom (Apex)",
+    url: "https://supertelecom.shop",
     token: "htat_gsc_supertelec_mrm60cg0mv",
     status: "Verified / Token Attached",
     verified: true,
@@ -41,12 +54,12 @@ export const htat_gsc_properties: GscProperty[] = [
     id: "supertelecom-sc-domain",
     name: "Super Telecom (Domain Property)",
     url: "sc-domain:supertelecom.shop",
-    token: "htat_gsc_supertelec_mrm60cg0mv",
+    token: "htat_gsc_wwwsuperte_bagd36tlh1",
     status: "Verified / Token Attached",
     verified: true,
     method: "HTML Tag",
-    tag: `<meta name="google-site-verification" content="htat_gsc_supertelec_mrm60cg0mv" />`,
-    verifiedAt: "2026-10-03T12:58:00.000Z",
+    tag: `<meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />`,
+    verifiedAt: "2026-10-04T11:00:00.000Z",
     lastChecked: new Date().toISOString(),
     ownerEmail: "supertelecom1002@gmail.com",
   },
