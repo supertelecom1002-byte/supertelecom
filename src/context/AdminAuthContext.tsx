@@ -50,6 +50,10 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
     // Initial session verification - only set loading = false after both session & admin_users queries complete
     const initAuth = async () => {
+      if (!isSupabaseConfigured) {
+        if (mounted) setLoading(false);
+        return;
+      }
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         if (!mounted) return;
@@ -65,7 +69,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setError(null);
           } else {
             setError(checkError || "Access Denied: You are not an authorized administrator");
-            await supabase.auth.signOut();
+            await supabase.auth.signOut().catch(() => {});
             setSession(null);
             setUser(null);
             setIsAdmin(false);
@@ -85,6 +89,8 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     initAuth();
+
+    if (!isSupabaseConfigured) return;
 
     // Subscribe to auth state updates: NO window.location.reload() or window.location.href here!
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

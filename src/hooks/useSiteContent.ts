@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 export interface SiteContent {
   hero_title: string;
@@ -29,6 +29,11 @@ export const useSiteContent = () => {
     let mounted = true;
 
     const fetchContent = async () => {
+      if (!isSupabaseConfigured) {
+        setContent(DEFAULT_SITE_CONTENT);
+        setLoading(false);
+        return;
+      }
       try {
         const { data, error: fetchErr } = await supabase
           .from("site_content")

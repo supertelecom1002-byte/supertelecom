@@ -8,7 +8,7 @@ import {
   ChevronRight,
   Wrench,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import {
   DEFAULT_SHOWCASE_ITEMS,
   type RepairShowcaseItem,
@@ -23,6 +23,7 @@ export const BeforeAfterSlider: React.FC = () => {
 
   useEffect(() => {
     const fetchRepairs = async () => {
+      if (!isSupabaseConfigured) return;
       try {
         const { data, error } = await supabase
           .from("repair_showcase")

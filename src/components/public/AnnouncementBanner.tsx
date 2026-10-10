@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X, ExternalLink, Sparkles } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import {
   DEFAULT_ANNOUNCEMENT,
   type AnnouncementData,
@@ -24,6 +24,10 @@ export const AnnouncementBanner: React.FC = () => {
 
     // Load announcement
     const loadBanner = async () => {
+      if (!isSupabaseConfigured) {
+        setData(DEFAULT_ANNOUNCEMENT);
+        return;
+      }
       try {
         const { data: dbData, error } = await supabase
           .from("site_announcements")

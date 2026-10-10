@@ -10,7 +10,7 @@ import {
   Wrench,
   Camera,
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 export interface DailyUpdate {
   id: string;
@@ -80,6 +80,11 @@ export const DailyUpdatesSection: React.FC = () => {
     let mounted = true;
 
     const fetchUpdates = async () => {
+      if (!isSupabaseConfigured) {
+        setUpdates(DEFAULT_UPDATES);
+        setLoading(false);
+        return;
+      }
       try {
         const { data, error } = await supabase
           .from("daily_updates")

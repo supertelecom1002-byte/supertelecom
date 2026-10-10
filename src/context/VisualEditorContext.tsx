@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 
 interface VisualEditorContextType {
@@ -44,6 +44,7 @@ export const VisualEditorProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     // Fetch from Supabase site_content
     const fetchContent = async () => {
+      if (!isSupabaseConfigured) return;
       try {
         const { data, error } = await supabase
           .from("site_content")

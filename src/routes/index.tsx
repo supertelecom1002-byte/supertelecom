@@ -9,7 +9,6 @@ import {
   Fingerprint, RefreshCw, HardDrive, Headphones, Watch, Cable, ShieldCheck,
   Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X,
 } from "lucide-react";
-import heroImg from "@/assets/hero-repair.jpg";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
@@ -43,7 +42,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
-      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" } as any,
+      { rel: "preload", as: "image", href: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80", fetchpriority: "high" } as any,
     ],
     scripts: [
       {
