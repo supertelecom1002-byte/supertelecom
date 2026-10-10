@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PhoneCall, MessageCircle, Navigation, Wrench } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
 
 export const MobileBottomBar: React.FC = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [chatOpen, setChatOpen] = useState(false);
 
-  // Hide on admin routes
-  if (pathname.startsWith("/admin")) {
+  useEffect(() => {
+    const onChatToggle = (e: Event) => {
+      const customEvent = e as CustomEvent<{ open: boolean }>;
+      if (customEvent.detail !== undefined) {
+        setChatOpen(!!customEvent.detail.open);
+      }
+    };
+    window.addEventListener("st:chat-toggle", onChatToggle);
+    return () => window.removeEventListener("st:chat-toggle", onChatToggle);
+  }, []);
+
+  // Hide on admin routes or when chat is open
+  if (pathname.startsWith("/admin") || chatOpen) {
     return null;
   }
 
@@ -26,7 +38,7 @@ export const MobileBottomBar: React.FC = () => {
   return (
     <aside
       aria-label="Quick mobile contact and actions"
-      className="fixed bottom-0 left-0 right-0 z-50 block md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(0,0,0,0.6)]"
+      className="fixed bottom-0 left-0 right-0 z-40 block md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/80 px-2 py-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(0,0,0,0.6)]"
     >
       <div className="grid grid-cols-4 gap-1.5 max-w-md mx-auto">
         {/* 1. Call Now */}

@@ -122,8 +122,22 @@ export const FloatingAiChat: React.FC = () => {
   const awaitingStatusRef = useRef(false);
   const sessionRef = useRef<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const lookupStatus = useServerFn(lookupRepairStatus);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("st:chat-toggle", { detail: { open: isOpen } })
+    );
+    if (isOpen) {
+      document.body.classList.add("chat-modal-open");
+    } else {
+      document.body.classList.remove("chat-modal-open");
+    }
+    return () => {
+      document.body.classList.remove("chat-modal-open");
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     let sid = "";
@@ -342,29 +356,29 @@ export const FloatingAiChat: React.FC = () => {
 
       {/* Floating Slide-up Sheet */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none">
-          {/* Mobile backdrop overlay */}
+        <div
+          className="fixed inset-0 z-50 flex flex-col justify-end bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        >
           <div
-            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs pointer-events-auto transition-opacity"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
-          <div className="pointer-events-auto relative flex flex-col h-[85vh] max-h-[640px] w-full max-w-lg mx-auto bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 rounded-t-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-300">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 px-4 py-3 flex-none">
+            className="w-full max-w-lg mx-auto bg-slate-950 border-t border-slate-800 rounded-t-3xl flex flex-col h-[80vh] max-h-[600px] overflow-hidden shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Section 1: Header (flex-none) */}
+            <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/90 px-4 py-3 flex-none">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-md">
                   <Bot className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <h3 className="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
                     Super Telecom AI
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-medium">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-medium">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Online
                     </span>
                   </h3>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  <p className="text-[11px] text-slate-400">
                     Instant Giridih Repair Estimates
                   </p>
                 </div>
@@ -374,16 +388,16 @@ export const FloatingAiChat: React.FC = () => {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 aria-label="Close AI Assistant"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5 text-slate-400" />
               </button>
             </div>
 
-            {/* Chat Body */}
+            {/* Section 2: Scrollable Body (flex-1 overflow-y-auto p-4 space-y-3) */}
             <div
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/50 dark:bg-slate-950 text-xs"
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950 text-xs"
             >
               {messages.map((m, idx) => (
                 <div
@@ -395,8 +409,8 @@ export const FloatingAiChat: React.FC = () => {
                   <div
                     className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 leading-relaxed shadow-sm ${
                       m.role === "user"
-                        ? "bg-cyan-600 dark:bg-cyan-500 text-white rounded-br-none"
-                        : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-none"
+                        ? "bg-cyan-600 text-white rounded-br-none"
+                        : "bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-none"
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{m.content}</p>
@@ -412,57 +426,57 @@ export const FloatingAiChat: React.FC = () => {
               ))}
 
               {sending && (
-                <div className="flex items-center gap-1.5 text-slate-400 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-fit">
+                <div className="flex items-center gap-1.5 text-slate-400 p-2 bg-slate-900 border border-slate-800 rounded-2xl w-fit">
                   <Sparkles className="h-3.5 w-3.5 animate-spin text-cyan-500" />
                   <span className="text-[11px]">Analyzing repair query...</span>
                 </div>
               )}
+
+              {/* Frequently Asked pills inside scrollable body */}
+              {messages.length <= 2 && (
+                <div className="pt-2">
+                  <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1 mb-1.5">
+                    Frequently Asked:
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SUGGESTIONS.map((s, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => send(s)}
+                        disabled={sending}
+                        className="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-medium hover:border-cyan-500 hover:text-cyan-400 transition-all text-left"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Quick Suggestions */}
-            {messages.length <= 2 && (
-              <div className="border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/60 p-2.5 flex-none">
-                <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 mb-1.5">
-                  Frequently Asked:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {SUGGESTIONS.map((s, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => send(s)}
-                      disabled={sending}
-                      className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-medium hover:border-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all text-left"
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Sticky Input Bar */}
-            <div className="flex-none p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+            {/* Section 3: Sticky Input Footer */}
+            <div className="flex-none p-3 bg-slate-900 border-t border-slate-800 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   send(input);
                 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full"
               >
                 <input
-                  ref={inputRef as any}
+                  ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Ask about display price, battery, or status..."
-                  className="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 focus:border-cyan-500 text-slate-900 dark:text-white placeholder-slate-400 text-sm rounded-xl px-4 py-3 outline-none"
+                  placeholder="Type your question..."
+                  className="flex-1 bg-slate-950 border border-slate-700 focus:border-cyan-500 text-white placeholder-slate-500 text-sm rounded-xl px-4 py-3 outline-none"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || sending}
                   aria-label="Send message"
-                  className="h-11 w-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 flex items-center justify-center transition-all active:scale-95 flex-none"
+                  className="h-11 w-11 shrink-0 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 flex items-center justify-center transition-transform active:scale-95"
                 >
                   <SendHorizontal className="h-5 w-5" />
                 </button>
