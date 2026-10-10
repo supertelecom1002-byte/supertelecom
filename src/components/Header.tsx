@@ -17,9 +17,11 @@ import {
   Search,
   Download,
   Zap,
+  RefreshCw,
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAppUpdate } from "@/hooks/useAppUpdate";
 
 interface HeaderProps {
   isHomePage?: boolean;
@@ -27,6 +29,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   const [open, setOpen] = useState(false);
+  const { isChecking, manualCheckForUpdate } = useAppUpdate();
 
   // Close drawer on Esc key
   useEffect(() => {
@@ -278,6 +281,45 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                   <Download className="h-4 w-4" />
                   <span>Download Super Telecom App</span>
                 </a>
+
+                {/* App Information & Update Card */}
+                <div className="p-4 mt-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-cyan-500/20 flex-none">
+                      <Smartphone className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs text-white">Super Telecom App</div>
+                      <div className="text-[10px] text-slate-400 font-mono">v2.4 • Est. 2016</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[11px] text-emerald-400 font-medium">
+                    <span className="relative flex h-2 w-2 flex-none">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                    <span>System Online &amp; Synchronized</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={manualCheckForUpdate}
+                    disabled={isChecking}
+                    className="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-750 active:scale-95 text-cyan-400 font-semibold text-xs flex items-center justify-center gap-2 border border-cyan-500/20 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${isChecking ? "animate-spin" : ""}`} />
+                    <span>{isChecking ? "Checking for updates..." : "Check for Updates"}</span>
+                  </button>
+
+                  <a
+                    href="/SuperTelecom.apk"
+                    download="SuperTelecom.apk"
+                    className="text-[11px] text-slate-500 hover:text-slate-400 text-center block pt-1 underline"
+                  >
+                    Re-download Full APK
+                  </a>
+                </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <a

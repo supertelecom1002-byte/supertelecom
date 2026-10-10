@@ -19,6 +19,8 @@ import { VisualEditorProvider } from "@/context/VisualEditorContext";
 import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
 import { MobileBottomBar } from "@/components/mobile/MobileBottomBar";
 import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
+import { UpdateBanner } from "@/components/app/UpdateBanner";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -349,6 +351,8 @@ function RootComponent() {
           <LiveEditorBar />
           <FloatingAiChat />
           <MobileBottomBar />
+          <UpdateBanner />
+          <Toaster position="top-center" richColors />
           <CookieBanner />
         </VisualEditorProvider>
       </AdminAuthProvider>
