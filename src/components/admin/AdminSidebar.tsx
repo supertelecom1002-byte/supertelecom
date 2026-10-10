@@ -50,9 +50,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     },
     {
       id: "seo_manager",
-      label: "SEO Manager & SERP",
+      label: "SEO & Growth Engine",
       icon: <Search className="h-4 w-4" />,
-      badge: "AEO / SERP",
+      badge: "SERP / FAQ",
     },
     {
       id: "feed",

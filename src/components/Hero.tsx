@@ -64,7 +64,7 @@ export const Hero: React.FC = () => {
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-500/40 text-cyan-300 text-xs font-bold tracking-tight">
                 <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
                 <span>Super Telecom • Barganda Road Lab</span>
-                <span className="text-cyan-400 font-extrabold text-sm ml-0.5">✓</span>
+                <Check className="h-3.5 w-3.5 text-cyan-400 stroke-[3]" />
               </div>
 
               {/* Status Pill */}

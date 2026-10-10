@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Send,
+  SendHorizontal,
   Bot,
   Sparkles,
   X,
@@ -321,36 +322,36 @@ export const FloatingAiChat: React.FC = () => {
   return (
     <>
       {/* Persistent Floating Trigger Button */}
-      <div className="fixed bottom-24 right-4 z-40 md:bottom-8 md:right-8 pointer-events-none">
+      <div className="fixed bottom-24 right-4 z-40 md:bottom-8 md:right-8">
         {!isOpen && (
           <button
             type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Open Super Telecom AI Assistant"
-            className="pointer-events-auto group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95"
+            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95"
           >
             {/* Active Pulsing Ring */}
             <span className="absolute -inset-1 rounded-full bg-cyan-400/40 animate-ping pointer-events-none" />
             <Bot className="h-6 w-6 transition-transform group-hover:rotate-6" />
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-slate-950 border-2 border-white dark:border-slate-950">
-              ✓
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950">
+              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
             </span>
           </button>
         )}
       </div>
 
-      {/* Floating Popup Card (Desktop) / Slide-up Sheet (Mobile) */}
+      {/* Floating Slide-up Sheet */}
       {isOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col md:inset-auto md:bottom-8 md:right-8 md:w-[420px] md:h-[580px] w-full max-w-full overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end justify-center pointer-events-none">
           {/* Mobile backdrop overlay */}
           <div
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs md:hidden"
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs pointer-events-auto transition-opacity"
             onClick={() => setIsOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative flex h-full w-full flex-col overflow-hidden rounded-t-3xl md:rounded-3xl bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 md:border shadow-2xl transition-all animate-in fade-in slide-in-from-bottom-6 duration-200">
+          <div className="pointer-events-auto relative flex flex-col h-[85vh] max-h-[640px] w-full max-w-lg mx-auto bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 rounded-t-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-300">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 px-4 py-3">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 px-4 py-3 flex-none">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-md">
                   <Bot className="h-5 w-5" />
@@ -420,7 +421,7 @@ export const FloatingAiChat: React.FC = () => {
 
             {/* Quick Suggestions */}
             {messages.length <= 2 && (
-              <div className="border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/60 p-2.5">
+              <div className="border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-900/60 p-2.5 flex-none">
                 <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 mb-1.5">
                   Frequently Asked:
                 </p>
@@ -440,8 +441,8 @@ export const FloatingAiChat: React.FC = () => {
               </div>
             )}
 
-            {/* Input Bar */}
-            <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3">
+            {/* Sticky Input Bar */}
+            <div className="flex-none p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -449,27 +450,21 @@ export const FloatingAiChat: React.FC = () => {
                 }}
                 className="flex items-center gap-2"
               >
-                <textarea
-                  ref={inputRef}
+                <input
+                  ref={inputRef as any}
+                  type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      send(input);
-                    }
-                  }}
-                  rows={1}
                   placeholder="Ask about display price, battery, or status..."
-                  className="flex-1 resize-none rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 px-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500"
+                  className="flex-1 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 focus:border-cyan-500 text-slate-900 dark:text-white placeholder-slate-400 text-sm rounded-xl px-4 py-3 outline-none"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || sending}
                   aria-label="Send message"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-600 hover:bg-cyan-500 dark:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-slate-950 font-bold transition-all disabled:opacity-40"
+                  className="h-11 w-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 flex items-center justify-center transition-all active:scale-95 flex-none"
                 >
-                  <Send className="h-4 w-4" />
+                  <SendHorizontal className="h-5 w-5" />
                 </button>
               </form>
             </div>
