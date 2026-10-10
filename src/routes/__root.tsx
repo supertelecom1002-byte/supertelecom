@@ -164,6 +164,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
     ],
     links: [
+      { rel: "manifest", href: "/manifest.json" },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon.png" },
@@ -330,6 +331,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />
         <meta name="google-site-verification" content="htat_gsc_supertelec_mrm60cg0mv" />
+        <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <HeadContent />
       </head>
