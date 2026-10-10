@@ -15,6 +15,8 @@ import {
   ShieldCheck,
   Wrench,
   Search,
+  Download,
+  Zap,
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -58,31 +60,34 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   return (
     <header className="w-full select-none">
       {/* ========================================================= */}
-      {/* LAYER A: Micro Announcement Marquee Strip                 */}
+      {/* LAYER A: Top Smart Announcement Strip                     */}
       {/* ========================================================= */}
-      <div className="h-8 py-1 px-4 text-xs bg-cyan-950/40 border-b border-cyan-500/20 text-cyan-300 backdrop-blur-md flex items-center justify-between overflow-hidden">
-        <div className="flex items-center gap-2 overflow-hidden truncate">
+      <div className="w-full bg-gradient-to-r from-cyan-950/80 via-slate-900/90 to-cyan-950/80 border-b border-cyan-500/30 px-3 py-2 flex items-center justify-between text-xs backdrop-blur-md z-50">
+        <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           <span className="relative flex h-2 w-2 flex-none">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span className="font-mono text-[11px] sm:text-xs font-medium tracking-wide truncate text-cyan-200">
-            Barganda Road Lab, Giridih • Express 30-Min Service Active
-          </span>
+          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden text-[11px] sm:text-xs font-medium tracking-wide text-cyan-200">
+            <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
+            <span className="truncate">
+              Super Telecom Official App • 50%+ Extra Smooth Experience
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 flex-none pl-2 text-[11px]">
-          <span className="hidden md:inline-flex items-center gap-1.5 text-cyan-400/90 font-mono">
+        <div className="flex items-center gap-3 flex-none pl-2">
+          <span className="hidden md:inline-flex items-center gap-1.5 text-cyan-400/90 font-mono text-[11px]">
             <Clock className="h-3 w-3 text-cyan-400" />
             <span>Mon-Sun: 10:00 AM – 9:30 PM</span>
           </span>
           <a
-            href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20a%20repair%20quote`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1 font-bold text-cyan-300 hover:text-white transition-colors"
+            href="/SuperTelecom.apk"
+            download="SuperTelecom.apk"
+            className="inline-flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-bold px-3 py-1 rounded-lg text-[11px] shadow-sm shadow-cyan-500/20 transition-all cursor-pointer whitespace-nowrap"
           >
-            WhatsApp Support &rarr;
+            <Download className="h-3.5 w-3.5" />
+            <span>Download App</span>
           </a>
         </div>
       </div>
@@ -140,6 +145,16 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
           {/* Right: Theme Toggle + Glowing CTA + Mobile Hamburger */}
           <div className="flex items-center gap-2 sm:gap-2.5 flex-none">
             <ThemeToggle />
+
+            {/* Desktop Dedicated App Button (>= 1024px) */}
+            <a
+              href="/SuperTelecom.apk"
+              download="SuperTelecom.apk"
+              className="hidden lg:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-950/50 hover:border-cyan-400 transition-all shadow-sm"
+            >
+              <Smartphone className="h-4 w-4 text-cyan-400" />
+              <span>Get App</span>
+            </a>
 
             {/* Desktop Priority Repair Glowing Pill */}
             <a
@@ -255,6 +270,15 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
               {/* Drawer Bottom Actions */}
               <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 space-y-3">
+                <a
+                  href="/SuperTelecom.apk"
+                  download="SuperTelecom.apk"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition-all"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Download Super Telecom App</span>
+                </a>
+
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href={`tel:${PHONE}`}
