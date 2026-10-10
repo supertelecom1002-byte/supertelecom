@@ -13,6 +13,10 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: {
+    // Prevent Nitro from treating root index.html as a static template and bypassing TanStack Start SSR
+    renderer: false,
+  },
   vite: {
     plugins: [mcpPlugin()],
   },

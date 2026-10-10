@@ -8,7 +8,22 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  // Never intercept HTML page navigations to prevent blank screens; allow clean browser navigation
+  if (e.request.mode === 'navigate') {
+    return;
+  }
+
+  // Only handle GET requests
+  if (e.request.method !== 'GET') {
+    return;
+  }
+
+  e.respondWith(
+    fetch(e.request).catch(async () => {
+      const cached = await caches.match(e.request);
+      return cached || Response.error();
+    })
+  );
 });
 
 self.addEventListener('message', (event) => {
