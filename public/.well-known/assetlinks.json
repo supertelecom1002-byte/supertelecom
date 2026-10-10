@@ -1,1 +1,12 @@
-﻿[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"android_app","package_name":"shop.supertelecom.www.twa","sha256_cert_fingerprints":["5A:57:50:C4:41:60:94:60:A1:9B:96:14:A2:EE:1A:04:6D:86:DC:20:5F:32:01:BF:26:83:B8:54:2E:CE:47:8A"]}}]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "shop.supertelecom.www.twa",
+      "sha256_cert_fingerprints": [
+        "5A:57:50:C4:41:60:94:60:A1:9B:96:14:A2:EE:1A:04:6D:86:DC:20:5F:32:01:BF:26:83:B8:54:2E:CE:47:8A"
+      ]
+    }
+  }
+]
