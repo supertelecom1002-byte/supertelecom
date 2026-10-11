@@ -21,6 +21,13 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
+import {
+  subscribeToAppConfig,
+  isLabOpenNow,
+  type AppConfig,
+  DEFAULT_APP_CONFIG,
+} from "@/services/appConfigService";
+import { LabToolsHub } from "@/components/tools/LabToolsHub";
 
 interface HeaderProps {
   isHomePage?: boolean;
@@ -29,7 +36,14 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   const [open, setOpen] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [toolsHubOpen, setToolsHubOpen] = useState(false);
+  const [appConfig, setAppConfig] = useState<AppConfig>(DEFAULT_APP_CONFIG);
   const { isChecking, manualCheckForUpdate } = useAppUpdate();
+
+  useEffect(() => {
+    const unsub = subscribeToAppConfig(setAppConfig);
+    return unsub;
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -57,13 +71,16 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
     };
   }, [open]);
 
-  const navLinks = [
+  const labStatus = isLabOpenNow(appConfig.lab_status_override);
+
+  const navLinks: Array<{ label: string; to?: string; onClick?: () => void }> = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },
     { label: "iPhone Lab", to: "/services/iphone-repair" },
-    { label: "Chip-Level / IC", to: "/services/motherboard-repair" },
-    { label: "Pricing Matrix", to: isHomePage ? "#pricing-matrix" : "/pricing" },
+    { label: "Chip-Level", to: "/services/motherboard-repair" },
+    { label: "Price Calculator", to: isHomePage ? "#pricing-matrix" : "/pricing" },
     { label: "Track Repair", to: isHomePage ? "#contact" : "/services" },
-    { label: "Contact", to: isHomePage ? "#contact" : "/#contact" },
+    { label: "Lab Tools", onClick: () => setToolsHubOpen(true) },
+    { label: "Admin", to: "/admin" },
   ];
 
   const PHONE = "+918002903643";
@@ -77,8 +94,8 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
       <div className="hidden md:flex w-full bg-gradient-to-r from-cyan-950/80 via-slate-900/90 to-cyan-950/80 border-b border-cyan-500/30 px-4 py-1.5 items-center justify-between text-xs backdrop-blur-md z-50">
         <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           <span className="relative flex h-2 w-2 flex-none">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
           </span>
           <div className="flex items-center gap-1.5 min-w-0 overflow-hidden text-[11px] sm:text-xs font-medium tracking-wide text-cyan-200">
             <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
@@ -91,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
         <div className="flex items-center gap-3 flex-none pl-2">
           <span className="inline-flex items-center gap-1.5 text-cyan-400/90 font-mono text-[11px]">
             <Clock className="h-3 w-3 text-cyan-400" />
-            <span>Mon-Sun: 10:00 AM – 9:30 PM</span>
+            <span>Mon-Sun: 10:00 AM – 9:30 PM (Barganda Road)</span>
           </span>
           {!isStandalone && (
             <a
@@ -135,33 +152,43 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
             {/* Top Live Status */}
             <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
               </span>
-              <span className="text-emerald-400 font-bold">Lab Open Now</span>
+              <span className={`font-bold ${labStatus.isOpen ? "text-emerald-400" : "text-rose-400"}`}>{labStatus.statusText}</span>
               <span className="text-slate-600">•</span>
-              <span>Closes 9:30 PM</span>
+              <span>{labStatus.subText}</span>
             </div>
           </div>
 
           {/* Center: Desktop Navigation Links */}
           <div className="flex items-center gap-1">
-            {navLinks.map(({ label, to }) =>
-              to.startsWith("#") ? (
+            {navLinks.map((link) =>
+              link.onClick ? (
+                <button
+                  key={link.label}
+                  type="button"
+                  onClick={link.onClick}
+                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:text-white hover:bg-slate-900 transition-colors flex items-center gap-1"
+                >
+                  <Sparkles className="h-3 w-3 text-cyan-400" />
+                  <span>{link.label}</span>
+                </button>
+              ) : link.to?.startsWith("#") ? (
                 <a
-                  key={label}
-                  href={to}
+                  key={link.label}
+                  href={link.to}
                   className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
                 >
-                  {label}
+                  {link.label}
                 </a>
               ) : (
                 <Link
-                  key={label}
-                  to={to}
+                  key={link.label}
+                  to={link.to!}
                   className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
                 >
-                  {label}
+                  {link.label}
                 </Link>
               )
             )}
@@ -211,8 +238,8 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
               SUPER TELECOM
             </span>
             <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
+              <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
             </span>
           </div>
         </Link>
@@ -408,6 +435,11 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
           </div>
         </div>
       )}
+      {/* Lab Tools Launchpad Modal */}
+      <LabToolsHub
+        isOpen={toolsHubOpen}
+        onClose={() => setToolsHubOpen(false)}
+      />
     </header>
   );
 };

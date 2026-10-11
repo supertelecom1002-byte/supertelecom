@@ -5,10 +5,21 @@ import {
   DEFAULT_ANNOUNCEMENT,
   type AnnouncementData,
 } from "@/components/admin/cms/AnnouncementManager";
+import { subscribeToAppConfig, type AppConfig } from "@/services/appConfigService";
 
 export const AnnouncementBanner: React.FC = () => {
   const [data, setData] = useState<AnnouncementData | null>(null);
+  const [appConfigBanner, setAppConfigBanner] = useState<{ enabled: boolean; text: string } | null>(null);
   const [dismissed, setDismissed] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsub = subscribeToAppConfig((cfg) => {
+      if (cfg.announcement_banner) {
+        setAppConfigBanner(cfg.announcement_banner);
+      }
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     // Check if dismissed in this session
@@ -69,12 +80,17 @@ export const AnnouncementBanner: React.FC = () => {
     }
   };
 
-  if (!data || !data.is_active || dismissed) {
+  const isAppBannerActive = appConfigBanner?.enabled && Boolean(appConfigBanner.text);
+  const isCmsBannerActive = data?.is_active;
+
+  if (dismissed || (!isAppBannerActive && !isCmsBannerActive)) {
     return null;
   }
 
+  const headline = isAppBannerActive ? appConfigBanner.text : data?.headline || "";
+
   const getThemeStyles = () => {
-    switch (data.theme) {
+    switch (data?.theme) {
       case "amber":
         return {
           bar: "bg-amber-950/95 border-amber-500/40 text-amber-200",
@@ -119,11 +135,11 @@ export const AnnouncementBanner: React.FC = () => {
             className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider flex-none uppercase shadow-sm ${theme.badge}`}
           >
             <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${theme.dot}`} />
-            {data.badge_text || "NOTICE"}
+            {data?.badge_text || "LIVE"}
           </span>
 
           <p className="truncate font-medium text-white text-[11px] sm:text-xs">
-            {data.headline}
+            {headline}
           </p>
         </div>
 

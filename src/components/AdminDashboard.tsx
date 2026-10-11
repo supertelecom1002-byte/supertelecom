@@ -13,6 +13,9 @@ import { LocalSeoManager } from "@/components/admin/cms/LocalSeoManager";
 import { SeoGrowthManager } from "@/components/admin/cms/SeoGrowthManager";
 import { SeoManager } from "@/components/admin/cms/SeoManager";
 import { GoogleConsoleManager } from "@/components/admin/analytics/GoogleConsoleManager";
+import { FeatureToggleManager } from "@/components/admin/cms/FeatureToggleManager";
+import { RepairJobsManager } from "@/components/admin/cms/RepairJobsManager";
+import { PricingMatrixManager } from "@/components/admin/cms/PricingMatrixManager";
 import { runWebsiteAudit } from "@/services/auditEngine";
 
 interface AdminDashboardProps {
@@ -120,6 +123,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ defaultTab = "au
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
+
+        {activeTab === "config" && <FeatureToggleManager />}
+
+        {activeTab === "pipeline" && <RepairJobsManager />}
+
+        {activeTab === "pricing_matrix" && <PricingMatrixManager />}
 
         {activeTab === "audit" && (
           <AuditDashboard onNavigateTab={(tab) => setActiveTab(tab)} />

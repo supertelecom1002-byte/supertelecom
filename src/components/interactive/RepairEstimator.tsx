@@ -21,6 +21,7 @@ import {
   XiaomiLogo,
   VivoLogo,
 } from "@/components/icons/BrandVectors";
+import { SmartAuthDrawer } from "@/components/auth/SmartAuthDrawer";
 
 interface BrandOption {
   id: string;
@@ -98,6 +99,7 @@ const FAULTS: FaultOption[] = [
 export const RepairEstimator: React.FC = () => {
   const [selectedBrand, setSelectedBrand] = useState<string>("apple");
   const [selectedFault, setSelectedFault] = useState<string>("display");
+  const [authDrawerOpen, setAuthDrawerOpen] = useState<boolean>(false);
 
   const brandObj = BRANDS.find((b) => b.id === selectedBrand) || BRANDS[0];
   const faultObj = FAULTS.find((f) => f.id === selectedFault) || FAULTS[0];
@@ -109,7 +111,7 @@ export const RepairEstimator: React.FC = () => {
     <section
       id="repair-calculator"
       aria-label="Smartphone Repair Cost Calculator"
-      className="py-20 md:py-28 bg-[#020617] text-slate-100 relative overflow-hidden border-t border-slate-800/80"
+      className="py-8 sm:py-16 md:py-28 bg-[#020617] text-slate-100 relative overflow-hidden border-t border-slate-800/80"
     >
       {/* Background ambient lighting */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-cyan-500/5 blur-[160px] rounded-full -z-10" />
@@ -254,24 +256,38 @@ export const RepairEstimator: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-            <p className="text-xs text-slate-400 leading-relaxed max-w-xl">
-              Free diagnosis available on-the-spot at our Barganda Road shop before any work starts.
-            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setAuthDrawerOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 px-6 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all hover:scale-[1.02] active:scale-95 min-h-[46px] w-full sm:w-auto"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>Lock Price &amp; Book Priority Slot</span>
+              </button>
 
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-4 text-sm font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:scale-[1.02] active:scale-95 min-h-[48px] w-full sm:w-auto"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span>Get Engineer Quote via WhatsApp</span>
-              <ChevronRight className="h-4 w-4" />
-            </a>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:scale-[1.02] active:scale-95 min-h-[46px] w-full sm:w-auto"
+              >
+                <MessageCircle className="h-4 w-4" />
+                <span>WhatsApp Quote</span>
+                <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+
+      <SmartAuthDrawer
+        isOpen={authDrawerOpen}
+        onClose={() => setAuthDrawerOpen(false)}
+        actionTitle={`Priority Booking for ${brandObj.name} (${faultObj.label})`}
+        onSuccess={() => {
+          window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+        }}
+      />
     </section>
   );
 };

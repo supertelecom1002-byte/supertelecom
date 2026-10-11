@@ -11,10 +11,24 @@ import {
   LogOut,
   ShieldCheck,
   X,
+  Clock,
+  Calculator,
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 
-export type AdminTab = "audit" | "feed" | "services" | "showcase" | "announcements" | "seo" | "seo_growth" | "seo_manager" | "analytics";
+export type AdminTab =
+  | "config"
+  | "pipeline"
+  | "pricing_matrix"
+  | "audit"
+  | "feed"
+  | "services"
+  | "showcase"
+  | "announcements"
+  | "seo"
+  | "seo_growth"
+  | "seo_manager"
+  | "analytics";
 
 interface AdminSidebarProps {
   activeTab: AdminTab;
@@ -36,6 +50,24 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onSignOut,
 }) => {
   const navItems: { id: AdminTab; label: string; icon: React.ReactNode; badge?: string }[] = [
+    {
+      id: "config",
+      label: "Feature Toggles",
+      icon: <Sliders className="h-4 w-4" />,
+      badge: "Switches",
+    },
+    {
+      id: "pipeline",
+      label: "Repair Pipeline",
+      icon: <Clock className="h-4 w-4" />,
+      badge: "Jobs",
+    },
+    {
+      id: "pricing_matrix",
+      label: "Pricing Matrix",
+      icon: <Calculator className="h-4 w-4" />,
+      badge: "Rates",
+    },
     {
       id: "audit",
       label: "Website Audit",
