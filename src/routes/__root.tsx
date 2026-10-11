@@ -329,7 +329,7 @@ const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListen
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark w-full max-w-full overflow-x-hidden">
+    <html lang="en" className="dark w-full max-w-full overflow-x-clip overflow-y-auto">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="theme-color" content="#020617" />
@@ -342,7 +342,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: swRegisterScript }} />
         <HeadContent />
       </head>
-      <body className="pb-20 md:pb-0 min-h-screen w-full max-w-full overflow-x-hidden relative">
+      <body className="pb-20 md:pb-0 min-h-screen h-auto w-full max-w-full overflow-x-clip overflow-y-auto relative">
         {children}
         <Scripts />
       </body>

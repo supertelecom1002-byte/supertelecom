@@ -131,29 +131,29 @@ export const DailyUpdatesSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400 text-xs font-semibold uppercase tracking-wider mb-4 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-semibold uppercase tracking-wider mb-3">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            Latest Workshop Updates
+            Lab Diagnostics &amp; Case Studies
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-display">
-            Technical Case Studies &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Bench Procedures</span>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight font-display">
+            Technical Case Studies &amp; <span className="text-cyan-400">Bench Procedures</span>
           </h2>
-          <p className="mt-4 text-slate-400 text-sm sm:text-base leading-relaxed">
-            Bench diagnostic procedures and repair demonstrations from our workshop at Barganda Road, Giridih — motherboard micro-soldering, display glass laminations, and component testing.
+          <p className="mt-2 text-slate-400 text-xs sm:text-sm leading-relaxed">
+            Verified micro-soldering, trace repair, and hardware recovery procedures conducted at Super Telecom Giridih.
           </p>
         </div>
 
-        {/* Updates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+        {/* Simplified Compact 3-Column Minimalist Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {updates.map((post) => (
             <div
               key={post.id}
-              className="group rounded-3xl border border-slate-800/90 bg-slate-900/80 backdrop-blur-md overflow-hidden shadow-xl hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] transition-all duration-300 flex flex-col justify-between"
+              className="group rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-cyan-500/40 p-3.5 flex flex-col justify-between transition-all duration-200"
             >
               <div>
-                {/* Media Container */}
-                <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
+                {/* Neat Thumbnail */}
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-800/80 mb-3">
                   {post.media_type === "video" ? (
                     <div className="relative w-full h-full">
                       <video
@@ -175,53 +175,41 @@ export const DailyUpdatesSection: React.FC = () => {
                           })
                         }
                         aria-label="Play video full view"
-                        className="absolute inset-0 m-auto h-12 w-12 rounded-full bg-cyan-500/90 hover:bg-cyan-400 text-slate-950 flex items-center justify-center shadow-lg transition-transform hover:scale-110"
+                        className="absolute inset-0 m-auto h-10 w-10 rounded-full bg-cyan-500/90 hover:bg-cyan-400 text-slate-950 flex items-center justify-center shadow-md transition-transform hover:scale-105"
                       >
-                        <Play className="h-5 w-5 ml-0.5 fill-slate-950" />
+                        <Play className="h-4 w-4 ml-0.5 fill-slate-950" />
                       </button>
-                      <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-slate-950/80 border border-cyan-500/40 text-[10px] font-mono text-cyan-400">
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 border border-cyan-500/30 text-[9px] font-mono text-cyan-300">
                         VIDEO
                       </span>
                     </div>
                   ) : (
-                    <div className="relative w-full h-full cursor-pointer overflow-hidden">
+                    <div
+                      className="relative w-full h-full cursor-pointer overflow-hidden"
+                      onClick={() =>
+                        setActiveModalMedia({
+                          url: post.media_url,
+                          type: "image",
+                          title: post.title,
+                        })
+                      }
+                    >
                       <img
                         src={post.media_url}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onClick={() =>
-                          setActiveModalMedia({
-                            url: post.media_url,
-                            type: "image",
-                            title: post.title,
-                          })
-                        }
                       />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveModalMedia({
-                            url: post.media_url,
-                            type: "image",
-                            title: post.title,
-                          })
-                        }
-                        aria-label="Enlarge image"
-                        className="absolute bottom-3 right-3 p-2 rounded-xl bg-slate-950/80 border border-slate-700 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity hover:text-cyan-400"
-                      >
-                        <Maximize2 className="h-4 w-4" />
-                      </button>
-                      <span className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-slate-950/80 border border-cyan-500/40 text-[10px] font-mono text-cyan-400">
-                        WORKSHOP PHOTO
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 border border-slate-700 text-[9px] font-mono text-slate-300">
+                        BENCH PHOTO
                       </span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-xs text-slate-400 mb-2.5 font-mono">
-                    <Calendar className="h-3.5 w-3.5 text-cyan-400" />
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono text-slate-400">
+                    <Calendar className="h-3 w-3 text-cyan-400" />
                     <span>
                       {new Date(post.created_at).toLocaleDateString("en-IN", {
                         day: "numeric",
@@ -230,24 +218,39 @@ export const DailyUpdatesSection: React.FC = () => {
                       })}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-lg text-white leading-snug group-hover:text-cyan-400 transition-colors">
+                  <h3 className="font-semibold text-sm sm:text-base text-white group-hover:text-cyan-300 transition-colors line-clamp-1">
                     {post.title}
                   </h3>
-                  <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed line-clamp-3">
+                  <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
                     {post.description}
                   </p>
                 </div>
               </div>
 
-              {/* Action Footer with WhatsApp Query */}
-              <div className="p-6 pt-0 mt-2">
+              {/* Subtle View Diagnostic Log Button */}
+              <div className="pt-2.5 mt-3 border-t border-slate-800/80 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveModalMedia({
+                      url: post.media_url,
+                      type: post.media_type,
+                      title: post.title,
+                    })
+                  }
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  <Wrench className="h-3.5 w-3.5" />
+                  <span>View Diagnostic Log</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => handleWhatsAppQuery(post)}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-white px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-md transition-transform hover:scale-[1.02]"
+                  aria-label="Ask on WhatsApp"
+                  title="Ask on WhatsApp"
+                  className="text-slate-400 hover:text-emerald-400 transition-colors p-1"
                 >
-                  <MessageCircle className="h-4 w-4 fill-white" />
-                  Ask About This on WhatsApp
+                  <MessageCircle className="h-4 w-4" />
                 </button>
               </div>
             </div>

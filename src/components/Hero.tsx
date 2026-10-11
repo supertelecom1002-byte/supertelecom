@@ -245,8 +245,8 @@ export const Hero: React.FC = () => {
               {/* Lab Photo Viewport */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
                 <img
-                  src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80"
-                  alt="Super Telecom precision micro-soldering and motherboard repair lab under microscope"
+                  src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80"
+                  alt="Super Telecom precision smartphone micro-soldering and double-decker reballing workstation under stereo microscope"
                   className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
                   loading="eager"
                   fetchPriority="high"
@@ -260,8 +260,8 @@ export const Hero: React.FC = () => {
                     4K Stereo Microscope Diagnostic
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold shadow-md">
-                    <ShieldCheck className="h-3 w-3 text-emerald-400" />
-                    100% ESD-Safe Workspace
+                    <Cpu className="h-3 w-3 text-emerald-400" />
+                    Double-Decker Reballing Station
                   </span>
                 </div>
 
@@ -272,7 +272,7 @@ export const Hero: React.FC = () => {
                       <Cpu className="h-3.5 w-3.5 text-cyan-400" />
                       BGA Rework Station
                     </span>
-                    <span className="text-emerald-400 font-bold">Calibrated 350°C</span>
+                    <span className="text-emerald-400 font-bold">BGA Calibrated 350°C</span>
                   </div>
                   <div className="mt-1.5 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 w-3/4 rounded-full" />

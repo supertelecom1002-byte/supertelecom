@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, PenLine, ExternalLink, MessageCircle, X, ShieldCheck } from "lucide-react";
 
 export interface ReviewItem {
   id?: string;
@@ -106,7 +106,39 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
                   Loved by customers across Giridih
                 </h2>
               </div>
-              <div className="mt-8 sm:mt-14 grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+              {/* Interactive Google Review Action Bar */}
+              <div className="mt-8 mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl glass-strong border border-border/70 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex-none">
+                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
+                      <span>⭐ 5.0 Rating</span>
+                      <span className="text-muted-foreground">•</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground font-normal">based on verified repairs</span>
+                    </div>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground">
+                      2,00,000+ smartphones repaired at Barganda Road, Giridih
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                  <a
+                    href="https://maps.app.goo.gl/mu5XXCehEpocaZWY9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-xs sm:text-sm font-bold text-primary-foreground shadow-brand transition-all hover:scale-[1.02] active:scale-95"
+                  >
+                    <PenLine className="h-4 w-4" />
+                    <span>Write a Google Review / Give Feedback</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {DEFAULT_REVIEWS.map((item, idx) => (
                   <div key={idx} className="rounded-2xl sm:rounded-3xl glass p-4 sm:p-6 shadow-sm">
                     <div className="flex gap-1 text-amber-400 text-sm mb-2">
@@ -130,6 +162,7 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
 
 export const ReviewsSection: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewItem[]>(DEFAULT_REVIEWS);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -174,7 +207,37 @@ export const ReviewsSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-8 sm:mt-14 grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {/* Interactive Google Review Action Bar */}
+        <div className="mt-8 mb-6 sm:mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl glass-strong border border-border/70 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex-none">
+              <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
+                <span>⭐ 5.0 Rating</span>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-xs sm:text-sm text-muted-foreground font-normal">based on verified repairs</span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-muted-foreground">
+                2,00,000+ smartphones repaired at Barganda Road, Giridih
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setReviewModalOpen(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-xs sm:text-sm font-bold text-primary-foreground shadow-brand transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+            >
+              <PenLine className="h-4 w-4" />
+              <span>Write a Google Review / Give Feedback</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {Array.isArray(safeReviews) &&
             safeReviews.map((item, idx) => {
               const customerName = item?.customer_name || item?.name || "Verified Customer";
@@ -219,6 +282,91 @@ export const ReviewsSection: React.FC = () => {
             })}
         </div>
       </div>
+
+      {/* Interactive Review Modal */}
+      {reviewModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setReviewModalOpen(false)}
+        >
+          <div
+            className="relative max-w-md w-full rounded-2xl bg-card border border-border shadow-2xl p-5 sm:p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                <h3 className="font-bold text-base sm:text-lg text-foreground">Write a Review</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReviewModalOpen(false)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Your honest feedback helps neighbors in Giridih discover authentic, transparent mobile repairs.
+            </p>
+
+            <div className="space-y-3 pt-1">
+              <a
+                href="https://maps.app.goo.gl/mu5XXCehEpocaZWY9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-between p-3.5 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                    G
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
+                      <span>Rate on Google Maps</span>
+                      <ExternalLink className="h-3 w-3 text-primary" />
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">Post 5-star review on Google profile</div>
+                  </div>
+                </div>
+                <div className="flex text-amber-400">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-amber-400" />
+                  ))}
+                </div>
+              </a>
+
+              <a
+                href="https://wa.me/918002903643?text=Hi%20Super%20Telecom,%20I%20would%20like%20to%20give%20feedback%20about%20my%20recent%20mobile%20repair"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-foreground transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-500">
+                    <MessageCircle className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs sm:text-sm font-bold">Direct WhatsApp Feedback</div>
+                    <div className="text-[11px] text-muted-foreground">Message owner / engineer directly</div>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-emerald-500">Fast Reply</span>
+              </a>
+            </div>
+
+            <div className="pt-2 text-center">
+              <span className="text-[11px] font-mono text-muted-foreground flex items-center justify-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-cyan-500" />
+                Verified Super Telecom Barganda Road Repair Guarantee
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

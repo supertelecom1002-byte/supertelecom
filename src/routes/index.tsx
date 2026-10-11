@@ -222,10 +222,10 @@ function HomePage() {
       </div>
 
       {/* Flagship Enterprise Portal (hidden md:block) */}
-      <div className="hidden md:block min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
+      <div className="hidden md:block min-h-screen h-auto w-full max-w-full overflow-x-clip bg-background text-foreground">
         <BackgroundFX />
         <Header isHomePage={true} />
-        <main id="main" className="w-full max-w-full overflow-x-hidden">
+        <main id="main" className="w-full max-w-full overflow-x-clip overflow-y-visible">
           <Hero />
           <LabTrustStrip />
           <RepairEstimator />

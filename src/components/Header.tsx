@@ -74,21 +74,20 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
   const labStatus = isLabOpenNow(appConfig?.lab_status_override || "auto");
 
-  const navLinks: Array<{ label: string; to?: string; onClick?: () => void }> = [
+  const navLinks: Array<{ label: string; to: string }> = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },
     { label: "iPhone Lab", to: "/services/iphone-repair" },
-    { label: "Chip-Level", to: "/services/motherboard-repair" },
-    { label: "Price Calculator", to: isHomePage ? "#pricing-matrix" : "/pricing" },
+    { label: "Chip-Level / IC", to: "/services/motherboard-repair" },
+    { label: "Pricing Matrix", to: isHomePage ? "#pricing-matrix" : "/pricing" },
     { label: "Track Repair", to: isHomePage ? "#contact" : "/services" },
-    { label: "Lab Tools", onClick: () => setToolsHubOpen(true) },
-    { label: "Admin", to: "/admin" },
+    { label: "Contact", to: isHomePage ? "#contact" : "/#contact" },
   ];
 
   const PHONE = "+918002903643";
   const WHATSAPP = "918002903643";
 
   return (
-    <header className="w-full select-none">
+    <header className="w-full select-none md:select-auto">
       {/* ========================================================= */}
       {/* 1. DESKTOP TOP ANNOUNCEMENT STRIP (Hidden on Mobile)      */}
       {/* ========================================================= */}
@@ -198,20 +197,9 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
             )}
           </div>
 
-          {/* Right: Theme Toggle + App CTA + Priority Repair Button */}
+          {/* Right: Theme Toggle + Priority Repair Button */}
           <div className="flex items-center gap-2.5 flex-none">
             <ThemeToggle />
-
-            {!isStandalone && (
-              <a
-                href="/SuperTelecom.apk"
-                download="SuperTelecom.apk"
-                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-cyan-500/40 text-slate-700 dark:text-cyan-300 hover:bg-slate-200 dark:hover:bg-cyan-950/50 transition-all shadow-sm"
-              >
-                <Smartphone className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
-                <span>Get App</span>
-              </a>
-            )}
 
             <a
               href={isHomePage ? "#contact" : "/#contact"}
