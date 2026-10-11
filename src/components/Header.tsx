@@ -111,14 +111,13 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
             <span>Mon-Sun: 10:00 AM – 9:30 PM (Barganda Road)</span>
           </span>
           {!isStandalone && (
-            <a
-              href="/SuperTelecom.apk"
-              download="SuperTelecom.apk"
+            <Link
+              to="/download"
               className="inline-flex items-center gap-1.5 bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-500 dark:hover:bg-cyan-400 active:scale-95 text-white dark:text-slate-950 font-bold px-3 py-1 rounded-lg text-[11px] shadow-sm shadow-cyan-500/20 transition-all cursor-pointer whitespace-nowrap"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Download App</span>
-            </a>
+            </Link>
           )}
         </div>
       </div>
@@ -395,14 +394,14 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
             {/* Drawer Bottom Actions & App Update */}
             <div className="mt-5 pt-4 border-t border-slate-800 space-y-2.5">
               {!isStandalone && (
-                <a
-                  href="/SuperTelecom.apk"
-                  download="SuperTelecom.apk"
+                <Link
+                  to="/download"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition-all"
                 >
                   <Download className="h-4 w-4" />
                   <span>Download Super Telecom App</span>
-                </a>
+                </Link>
               )}
 
               {/* App Information Card */}

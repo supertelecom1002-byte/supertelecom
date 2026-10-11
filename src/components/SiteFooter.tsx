@@ -71,6 +71,7 @@ const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "About Us", to: "/", hash: "about" },
   { label: "Services", to: "/", hash: "services" },
   { label: "Pricing", to: "/pricing" },
+  { label: "Download App", to: "/download" },
   { label: "Gallery", to: "/", hash: "gallery" },
   { label: "Reviews", to: "/", hash: "reviews" },
   { label: "FAQ", to: "/", hash: "faq" },

@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
+import { Route as DownloadRouteImport } from './routes/download'
 import { Route as LocationsRouteImport } from './routes/locations'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -63,6 +64,11 @@ const BrandsRoute = BrandsRouteImport.update({
 const CookiePolicyRoute = CookiePolicyRouteImport.update({
   id: '/cookie-policy',
   path: '/cookie-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadRoute = DownloadRouteImport.update({
+  id: '/download',
+  path: '/download',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationsRoute = LocationsRouteImport.update({
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
+  '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cookie-policy': typeof CookiePolicyRoute
+  '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/blog': typeof BlogRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
+  '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
@@ -301,6 +310,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/brands'
     | '/cookie-policy'
+    | '/download'
     | '/locations'
     | '/mcp'
     | '/pricing'
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cookie-policy'
+    | '/download'
     | '/locations'
     | '/mcp'
     | '/pricing'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/brands'
     | '/cookie-policy'
+    | '/download'
     | '/locations'
     | '/mcp'
     | '/pricing'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   BrandsRoute: typeof BrandsRouteWithChildren
   CookiePolicyRoute: typeof CookiePolicyRoute
+  DownloadRoute: typeof DownloadRoute
   LocationsRoute: typeof LocationsRouteWithChildren
   McpRoute: typeof McpRoute
   PricingRoute: typeof PricingRoute
@@ -441,6 +454,13 @@ declare module '@tanstack/react-router' {
       path: '/cookie-policy'
       fullPath: '/cookie-policy'
       preLoaderRoute: typeof CookiePolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/download': {
+      id: '/download'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof DownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/locations': {
@@ -708,6 +728,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   BrandsRoute: BrandsRouteWithChildren,
   CookiePolicyRoute: CookiePolicyRoute,
+  DownloadRoute: DownloadRoute,
   LocationsRoute: LocationsRouteWithChildren,
   McpRoute: McpRoute,
   PricingRoute: PricingRoute,
