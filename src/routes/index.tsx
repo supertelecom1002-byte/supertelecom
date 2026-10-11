@@ -27,6 +27,7 @@ import { ServiceChips } from "@/components/mobile/ServiceChips";
 import { Header } from "@/components/Header";
 import { SafeReviewsSection } from "@/components/ReviewsSection";
 import { MobileAppShell } from "@/components/layout/MobileAppShell";
+import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 
 
 export const Route = createFileRoute("/")({
@@ -205,6 +206,16 @@ const FAQS: [string, string][] = [
 
 function HomePage() {
   const [serviceCategory, setServiceCategory] = useState<string>("all");
+  const [desktopScannerOpen, setDesktopScannerOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("action") === "scan") {
+        setDesktopScannerOpen(true);
+      }
+    }
+  }, []);
 
   const handleSelectCategory = (cat: string) => {
     setServiceCategory(cat);
@@ -246,6 +257,11 @@ function HomePage() {
 
         <Footer />
         <FloatingActions />
+
+        <DeepScanEngine
+          isOpen={desktopScannerOpen}
+          onClose={() => setDesktopScannerOpen(false)}
+        />
       </div>
     </>
   );

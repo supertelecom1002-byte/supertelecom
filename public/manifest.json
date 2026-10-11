@@ -21,5 +21,28 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "1-Tap Turbo Boost & Scan",
+      "short_name": "Turbo Scan",
+      "description": "Scan device health and clean junk cache",
+      "url": "/?action=scan",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sonic Speaker Ejector",
+      "short_name": "Speaker Cleaner",
+      "description": "Eject water and dust with 165Hz tone",
+      "url": "/tools?tool=speaker",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Track Repair Job",
+      "short_name": "Track Repair",
+      "description": "Check live phone repair status",
+      "url": "/track",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

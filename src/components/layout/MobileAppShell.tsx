@@ -66,6 +66,8 @@ import { TOOLS, type ToolId, type ToolCategory } from "@/components/tools/LabToo
 import { RepairTrackerModal } from "@/components/repair/RepairTrackerModal";
 import { SettingsView } from "@/components/settings/SettingsView";
 import { RepairEstimator } from "@/components/interactive/RepairEstimator";
+import { MasterScanHeroCard } from "@/components/scanner/MasterScanHeroCard";
+import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 
 export type MobileTab = "home" | "tools" | "track" | "shop" | "settings";
 
@@ -74,10 +76,14 @@ const WHATSAPP = "918002903643";
 
 interface MobileAppShellProps {
   initialTab?: MobileTab;
+  initialTool?: ToolId | null;
+  initialAction?: string | null;
 }
 
 export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   initialTab = "home",
+  initialTool = null,
+  initialAction = null,
 }) => {
   const [activeTab, setActiveTab] = useState<MobileTab>(initialTab);
   const [config, setConfig] = useState<AppConfig>(DEFAULT_APP_CONFIG);
@@ -86,8 +92,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const { isDark } = useTheme();
 
   // Active Tool Modal & Filters
-  const [activeToolModal, setActiveToolModal] = useState<ToolId | null>(null);
+  const [activeToolModal, setActiveToolModal] = useState<ToolId | null>(initialTool);
   const [trackModalOpen, setTrackModalOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(initialAction === "scan");
   const [toolsSearch, setToolsSearch] = useState("");
   const [toolsCategory, setToolsCategory] = useState<ToolCategory>("all");
 
@@ -110,6 +117,29 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     fetchAppConfig().then(setConfig);
     const unsub = subscribeToAppConfig(setConfig);
     return unsub;
+  }, []);
+
+  // Handle URL query parameters (e.g. ?action=scan, ?tool=speaker, ?tab=tools)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("action") === "scan") {
+        setScannerOpen(true);
+      }
+      const t = params.get("tool");
+      if (t) {
+        if (t === "speaker" || t === "speaker_cleaner") {
+          setActiveToolModal("speaker_cleaner");
+        } else {
+          const matched = TOOLS.find((tool) => tool.id === t);
+          if (matched) setActiveToolModal(matched.id);
+        }
+      }
+      const tab = params.get("tab") as MobileTab | null;
+      if (tab && ["home", "tools", "track", "shop", "settings"].includes(tab)) {
+        setActiveTab(tab);
+      }
+    }
   }, []);
 
   const labStatus = isLabOpenNow(config?.lab_status_override || "auto");
@@ -315,6 +345,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         {/* ===================================================== */}
         {activeTab === "home" && (
           <div className="space-y-4 pb-20 animate-in fade-in duration-200">
+            {/* 360° Hardware Shield Master Scanner Hero Card */}
+            <MasterScanHeroCard onOpenScanner={() => setScannerOpen(true)} />
+
             {/* Live Lab Status Banner */}
             <div className="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-xl dark:shadow-black/40">
               <div className="flex items-center gap-2.5">
@@ -684,7 +717,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
               </p>
               <button
                 type="button"
-                onClick={() => openToolWithHaptic(setTrackModalOpen)}
+                onClick={openTrackModalWithHaptic}
                 className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 active:scale-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
               >
                 <Search className="h-4 w-4" />
@@ -1024,6 +1057,11 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
       <RepairTrackerModal
         isOpen={trackModalOpen}
         onClose={() => setTrackModalOpen(false)}
+      />
+
+      <DeepScanEngine
+        isOpen={scannerOpen}
+        onClose={() => setScannerOpen(false)}
       />
     </div>
   );
