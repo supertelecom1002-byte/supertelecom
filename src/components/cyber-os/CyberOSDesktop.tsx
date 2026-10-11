@@ -26,8 +26,10 @@ import {
   Smartphone,
   CheckCircle2,
   X,
+  Gamepad2,
 } from "lucide-react";
 import { useLauncher } from "@/context/LauncherContext";
+import { useGamingMode } from "@/context/GamingModeContext";
 import { useTheme } from "@/context/ThemeContext";
 import { isLabOpenNow } from "@/services/appConfigService";
 import { toast } from "sonner";
@@ -64,6 +66,7 @@ const WHATSAPP = "918002903643";
 
 export const CyberOSDesktop: React.FC = () => {
   const { disableCyberOs } = useLauncher();
+  const { enterGamingMode } = useGamingMode();
   const { isDark } = useTheme();
 
   // Clock state (HH:MM:SS)
@@ -400,6 +403,34 @@ export const CyberOSDesktop: React.FC = () => {
           >
             <Search className="h-3 w-3" />
             <span>Track Job</span>
+          </button>
+        </div>
+
+        {/* Esports Gaming Console Feature Banner */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-950/60 via-slate-950/90 to-amber-950/40 border border-red-500/50 p-3.5 shadow-xl shadow-red-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2.5 rounded-xl bg-red-500/20 border border-red-500/40 text-red-400">
+              <Gamepad2 className="h-5 w-5 animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-xs font-black text-white flex items-center gap-1.5">
+                🎮 Super Telecom Esports Gaming Console
+              </h4>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Unlock 120Hz Touch Boost, Footstep Sound Equalizer, and Custom Sniper Crosshair.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              triggerHaptic([40, 30, 80]);
+              enterGamingMode();
+            }}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:brightness-110 text-white font-black text-xs font-mono active:scale-95 transition-all shadow-lg shadow-red-600/40 animate-pulse text-center whitespace-nowrap"
+          >
+            Launch Gaming Console Mode
           </button>
         </div>
 

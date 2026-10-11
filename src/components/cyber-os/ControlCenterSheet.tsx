@@ -13,9 +13,11 @@ import {
   Zap,
   Activity,
   CheckCircle2,
+  Gamepad2,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { useLauncher } from "@/context/LauncherContext";
+import { useGamingMode } from "@/context/GamingModeContext";
 import { toast } from "sonner";
 
 interface ControlCenterSheetProps {
@@ -26,6 +28,7 @@ interface ControlCenterSheetProps {
 export const ControlCenterSheet: React.FC<ControlCenterSheetProps> = ({ isOpen, onClose }) => {
   const { isDark, toggleTheme } = useTheme();
   const { disableCyberOs } = useLauncher();
+  const { enterGamingMode } = useGamingMode();
 
   // Torch state
   const [torchOn, setTorchOn] = useState(false);
@@ -340,6 +343,22 @@ export const ControlCenterSheet: React.FC<ControlCenterSheetProps> = ({ isOpen, 
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Engage Gaming Console Mode */}
+        <div className="pt-2 border-t border-slate-800/80">
+          <button
+            type="button"
+            onClick={() => {
+              triggerVibrate([40, 30, 80]);
+              onClose();
+              enterGamingMode();
+            }}
+            className="w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-red-600/30 via-rose-600/20 to-amber-600/30 hover:from-red-600/40 border border-red-500/40 text-red-300 font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md"
+          >
+            <Gamepad2 className="h-4 w-4 text-red-400" />
+            <span>Engage Esports Gaming Console</span>
+          </button>
         </div>
 
         {/* Exit Launcher CTA Button */}

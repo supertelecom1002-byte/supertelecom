@@ -21,12 +21,14 @@ import {
   Lock,
   FileText,
   Sparkles,
+  Gamepad2,
 } from "lucide-react";
 import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { useTheme } from "@/context/ThemeContext";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 import { useLauncher } from "@/context/LauncherContext";
+import { useGamingMode } from "@/context/GamingModeContext";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,6 +50,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
   const { isUpdateAvailable, isChecking, applyUpdate, manualCheckForUpdate } = useAppUpdate();
   const { user, isVip, loading: authLoading, signInWithGoogle, signOut, openVipModal } = useCustomerAuth();
   const { isCyberOsActive, toggleCyberOs } = useLauncher();
+  const { isGamingModeActive, enterGamingMode, exitGamingMode } = useGamingMode();
   const [isClearing, setIsClearing] = useState(false);
 
   const displayName =
@@ -272,6 +275,53 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
             }`}
           >
             {isCyberOsActive ? "Exit Cyber-OS" : "Enable Cyber-OS Experience"}
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Esports Gaming Console Card */}
+      <div className="rounded-3xl bg-gradient-to-br from-red-950/20 via-slate-50 to-white dark:from-red-950/30 dark:via-slate-900/90 dark:to-slate-950 border border-red-500/50 p-5 space-y-3 shadow-xl shadow-red-950/20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/15 rounded-full blur-2xl pointer-events-none" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2.5 rounded-xl bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/30">
+              <Gamepad2 className="h-4 w-4" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
+                🎮 Super Telecom Esports Gaming Console
+              </h4>
+              <span className="text-[10px] font-mono text-red-600 dark:text-red-400 font-bold">
+                120Hz Touch Boost &bull; Reticle HUD &bull; Footstep EQ
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          Unlock 120Hz Touch Boost, Footstep Sound Equalizer, and Custom Sniper Crosshair for esports battle royale titles.
+        </p>
+
+        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800">
+          <div className="leading-tight">
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">
+              {isGamingModeActive ? "Gaming Console Active" : "ROG Performance Standby"}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              {isGamingModeActive ? "Pro crosshair & audio filters primed" : "Tap to engage full gaming environment"}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={isGamingModeActive ? exitGamingMode : enterGamingMode}
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all active:scale-95 shadow-lg ${
+              isGamingModeActive
+                ? "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"
+                : "bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-red-600/40 animate-pulse hover:brightness-110"
+            }`}
+          >
+            {isGamingModeActive ? "Exit Gaming Mode" : "Launch Gaming Console Mode"}
           </button>
         </div>
       </div>

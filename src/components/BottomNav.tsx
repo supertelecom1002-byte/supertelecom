@@ -21,10 +21,12 @@ import { LabToolsHub } from "@/components/tools/LabToolsHub";
 import { RepairTrackerModal } from "@/components/repair/RepairTrackerModal";
 import { SmartAuthDrawer } from "@/components/auth/SmartAuthDrawer";
 import { useLauncher } from "@/context/LauncherContext";
+import { useGamingMode } from "@/context/GamingModeContext";
 
 export const BottomNav: React.FC = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { isCyberOsActive } = useLauncher();
+  const { isGamingModeActive } = useGamingMode();
   const [config, setConfig] = useState<AppConfig>(DEFAULT_APP_CONFIG);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [trackOpen, setTrackOpen] = useState(false);
@@ -49,8 +51,8 @@ export const BottomNav: React.FC = () => {
     return () => window.removeEventListener("st:chat-toggle", onChatToggle);
   }, []);
 
-  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), when AI chat is open, or when Cyber-OS Workspace is active
-  if (isCyberOsActive || pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
+  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), when AI chat is open, or when Cyber-OS / Gaming Console is active
+  if (isGamingModeActive || isCyberOsActive || pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
     return null;
   }
 

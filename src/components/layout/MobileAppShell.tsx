@@ -75,6 +75,8 @@ import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { useLauncher } from "@/context/LauncherContext";
 import { CyberOSDesktop } from "@/components/cyber-os/CyberOSDesktop";
+import { useGamingMode } from "@/context/GamingModeContext";
+import { GamingConsoleWorkspace } from "@/components/gaming/GamingConsoleWorkspace";
 
 export type MobileTab = "home" | "tools" | "track" | "shop" | "settings";
 
@@ -99,6 +101,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const { isDark } = useTheme();
   const { user, isVip, openVipModal } = useCustomerAuth();
   const { isCyberOsActive } = useLauncher();
+  const { isGamingModeActive } = useGamingMode();
 
   const customerDisplayName =
     (user as any)?.name ||
@@ -212,6 +215,14 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     }
     return true;
   });
+
+  if (isGamingModeActive) {
+    return (
+      <div className="md:hidden">
+        <GamingConsoleWorkspace />
+      </div>
+    );
+  }
 
   if (isCyberOsActive) {
     return (
