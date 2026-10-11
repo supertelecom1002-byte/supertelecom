@@ -18,6 +18,7 @@ import {
   Download,
   Zap,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
@@ -343,24 +344,39 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                   Sections &amp; Pricing
                 </span>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {navLinks.map(({ label, to }) =>
-                    to.startsWith("#") ? (
+                  {navLinks.map((link) =>
+                    link.onClick ? (
+                      <button
+                        key={link.label}
+                        type="button"
+                        onClick={() => {
+                          setOpen(false);
+                          link.onClick?.();
+                        }}
+                        className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-cyan-300 hover:text-white active:scale-95 transition-all text-left"
+                      >
+                        <span className="flex items-center gap-1">
+                          <Sparkles className="h-3 w-3 text-cyan-400" />
+                          {link.label}
+                        </span>
+                      </button>
+                    ) : link.to?.startsWith("#") ? (
                       <a
-                        key={to}
-                        href={to}
+                        key={link.label}
+                        href={link.to}
                         onClick={() => setOpen(false)}
                         className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all"
                       >
-                        <span>{label}</span>
+                        <span>{link.label}</span>
                       </a>
                     ) : (
                       <Link
-                        key={to}
-                        to={to}
+                        key={link.label}
+                        to={link.to || "/"}
                         onClick={() => setOpen(false)}
                         className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900/40 border border-slate-800/50 text-xs font-medium text-slate-300 hover:text-white active:scale-95 transition-all"
                       >
-                        <span>{label}</span>
+                        <span>{link.label}</span>
                       </Link>
                     )
                   )}
