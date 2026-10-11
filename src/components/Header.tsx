@@ -135,17 +135,20 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
           {/* Left: Brand Monogram + Title + Live Status */}
           <div className="flex items-center gap-3.5 flex-none">
             <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                <span className="font-display font-black text-sm text-white tracking-wider">
-                  ST
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display text-sm font-extrabold tracking-tight text-white leading-tight">
+              <img
+                src="/icon-192.png"
+                alt="Super Telecom Official Logo"
+                className="w-9 h-9 object-contain rounded-xl shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform"
+                onError={(e) => {
+                  e.currentTarget.src = "/logo.png";
+                }}
+              />
+              <div className="leading-tight">
+                <span className="text-sm font-black tracking-tight text-white block">
                   SUPER TELECOM
                 </span>
-                <span className="font-mono text-[9px] uppercase tracking-wider text-cyan-400 font-bold">
-                  GIRIDIH LAB • EST. 2016
+                <span className="text-[10px] text-cyan-400 font-medium block">
+                  LAB & CHIP REPAIR
                 </span>
               </div>
             </Link>
@@ -231,13 +234,23 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
       >
         {/* Left: Clean compact Super Telecom micro-logo + mini pulsing status dot */}
         <Link to="/" className="flex items-center gap-2 select-none">
-          <div className="relative flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-sm shadow-cyan-500/20">
-            <span className="font-display font-black text-xs text-white">ST</span>
-          </div>
+          <img
+            src="/icon-192.png"
+            alt="Super Telecom Official Logo"
+            className="w-7 h-7 object-contain rounded-lg shadow-sm drop-shadow-md active:scale-95 transition-transform"
+            onError={(e) => {
+              e.currentTarget.src = "/logo.png";
+            }}
+          />
           <div className="flex items-center gap-1.5">
-            <span className="font-display text-xs font-bold text-white tracking-tight">
-              SUPER TELECOM
-            </span>
+            <div className="leading-tight">
+              <span className="text-xs font-black text-white tracking-tight block">
+                SUPER TELECOM
+              </span>
+              <span className="text-[9px] text-cyan-400 font-medium block">
+                LAB & CHIP REPAIR
+              </span>
+            </div>
             <span className="relative flex h-1.5 w-1.5">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
               <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
@@ -292,14 +305,21 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
               {/* Drawer Header */}
               <div className="flex items-center justify-between pb-3.5 border-b border-slate-800">
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs">
-                    ST
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-display font-bold text-xs text-white">
+                  <img
+                    src="/icon-192.png"
+                    alt="Super Telecom Official Logo"
+                    className="h-7 w-7 object-contain rounded-lg shadow-sm"
+                    onError={(e) => {
+                      e.currentTarget.src = "/logo.png";
+                    }}
+                  />
+                  <div className="leading-tight">
+                    <span className="font-bold text-xs text-white block">
                       Super Telecom
                     </span>
-                    <span className="text-[10px] text-cyan-400 font-mono">Barganda Road Lab</span>
+                    <span className="text-[10px] text-cyan-400 font-medium block">
+                      LAB & CHIP REPAIR
+                    </span>
                   </div>
                 </div>
                 <button
