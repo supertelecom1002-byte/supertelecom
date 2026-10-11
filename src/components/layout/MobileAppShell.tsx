@@ -35,10 +35,13 @@ import {
   Activity,
   Flame,
   Award,
+  Download,
 } from "lucide-react";
 import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { useTheme } from "@/context/ThemeContext";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
+import { useIsStandalone } from "@/hooks/useIsStandalone";
+import { SmartAppInstallBanner } from "@/components/common/SmartAppInstallBanner";
 import {
   fetchAppConfig,
   subscribeToAppConfig,
@@ -102,6 +105,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const { user, isVip, openVipModal } = useCustomerAuth();
   const { isCyberOsActive } = useLauncher();
   const { isGamingModeActive } = useGamingMode();
+  const isStandalone = useIsStandalone();
 
   const customerDisplayName =
     (user as any)?.name ||
@@ -250,6 +254,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         </div>
       )}
 
+      {/* Dynamic Smart Install / Download CTA for Mobile Browsers */}
+      <SmartAppInstallBanner />
+
       {/* ========================================================= */}
       {/* 2. Compact Top App Bar (Fixed 52px)                      */}
       {/* ========================================================= */}
@@ -301,6 +308,18 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
         {/* Right: VIP Account / Google Auth Pill + Emergency Direct-Call Icon + Native Settings Gear */}
         <div className="flex items-center gap-1.5">
+          {!isStandalone && (
+            <Link
+              to="/download"
+              onClick={() => triggerVibration(15)}
+              aria-label="Install Super Telecom App"
+              className="h-8 px-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white dark:text-slate-950 font-bold text-[10px] font-mono flex items-center gap-1 active:scale-90 transition-all shadow-xs whitespace-nowrap"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>App</span>
+            </Link>
+          )}
+
           <button
             type="button"
             onClick={() => {

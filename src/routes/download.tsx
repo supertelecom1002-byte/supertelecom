@@ -29,6 +29,7 @@ import {
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { useIsStandalone } from "@/hooks/useIsStandalone";
 
 const PHONE = "+918002903643";
 const PHONE_DISPLAY = "+91 80029 03643";
@@ -109,6 +110,7 @@ export const Route = createFileRoute("/download")({
 });
 
 export default function DownloadPage() {
+  const isStandalone = useIsStandalone();
   const [installGuideOpen, setInstallGuideOpen] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -188,6 +190,30 @@ export default function DownloadPage() {
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground font-medium">Download Official App</span>
         </nav>
+
+        {isStandalone && (
+          <div className="mb-8 p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-lg shadow-emerald-950/20">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 dark:text-white">
+                  Super Telecom App is Already Installed!
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  You are currently using the app in full standalone mode with all 16+ offline hardware diagnostics active.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/"
+              className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs active:scale-95 transition-all shadow-sm whitespace-nowrap"
+            >
+              Open Dashboard &rarr;
+            </Link>
+          </div>
+        )}
 
         {/* ========================================================= */}
         {/* 2. HERO SECTION                                           */}

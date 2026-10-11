@@ -24,6 +24,7 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
+import { useIsStandalone } from "@/hooks/useIsStandalone";
 import {
   subscribeToAppConfig,
   isLabOpenNow,
@@ -38,7 +39,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   const [open, setOpen] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const isStandalone = useIsStandalone();
   const [toolsHubOpen, setToolsHubOpen] = useState(false);
   const [appConfig, setAppConfig] = useState<AppConfig>(DEFAULT_APP_CONFIG);
   const { isChecking, manualCheckForUpdate } = useAppUpdate();
@@ -57,15 +58,6 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   useEffect(() => {
     const unsub = subscribeToAppConfig(setAppConfig);
     return unsub;
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isPwa =
-        window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as any).standalone === true;
-      setIsStandalone(isPwa);
-    }
   }, []);
 
   // Close drawer on Esc key
