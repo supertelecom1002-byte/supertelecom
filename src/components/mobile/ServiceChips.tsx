@@ -67,9 +67,9 @@ export const ServiceChips: React.FC<ServiceChipsProps> = ({
               aria-selected={isActive}
               type="button"
               onClick={(e) => handleSelect(chip.id, e)}
-              className={`flex-none snap-start min-h-[44px] px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 active:scale-95 flex items-center gap-2 select-none shadow-sm ${
+              className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all duration-200 active:scale-95 flex items-center gap-1.5 select-none shadow-sm ${
                 isActive
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-extrabold shadow-[0_0_20px_rgba(6,182,212,0.45)] ring-2 ring-cyan-300/60 scale-[1.02]"
+                  ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-extrabold shadow-[0_0_15px_rgba(6,182,212,0.45)] ring-2 ring-cyan-300/60 scale-[1.02]"
                   : "bg-slate-900/90 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 hover:bg-slate-850"
               }`}
             >

@@ -121,47 +121,47 @@ export const PricingMatrix: React.FC = () => {
     <section
       id="pricing-matrix"
       aria-label="Super Telecom Repair Pricing Matrix Giridih"
-      className="py-20 md:py-28 bg-slate-950 text-slate-100 relative overflow-hidden border-y border-slate-800/80"
+      className="py-8 sm:py-16 md:py-28 bg-slate-950 text-slate-100 relative overflow-hidden border-y border-slate-800/80"
     >
       {/* Background Ambience Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold uppercase mb-4 shadow-sm">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-[11px] sm:text-xs font-mono font-bold uppercase mb-3 sm:mb-4 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
             Transparent Giridih Price Index · No Hidden Fees
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
             Smartphone Repair Pricing Matrix
           </h2>
 
-          <p className="mt-4 text-sm sm:text-base text-slate-300 leading-relaxed">
+          <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-300 leading-relaxed">
             Direct, honest repair charges with zero diagnosis fees on Barganda Road, Giridih.
             Verified OEM parts, backed by formal service warranty.
           </p>
 
           {/* Value Badges */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-xs">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-cyan-400 font-medium">
-              <Clock className="h-3.5 w-3.5" /> 30–45 Mins Fast Turnaround
+          <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] sm:text-xs">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-900 border border-slate-800 text-cyan-400 font-medium">
+              <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> 30–45 Mins Fast Turnaround
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 font-medium">
-              <ShieldCheck className="h-3.5 w-3.5" /> Up to 90 Days Warranty
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-900 border border-slate-800 text-emerald-400 font-medium">
+              <ShieldCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Up to 90 Days Warranty
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-amber-400 font-medium">
-              <CheckCircle2 className="h-3.5 w-3.5" /> 100% Tested Spare Parts
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-900 border border-slate-800 text-amber-400 font-medium">
+              <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> 100% Tested Spare Parts
             </span>
           </div>
 
           {/* Filter Pills with Horizontal Swipe on Mobile */}
-          <div className="mt-8 flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2 pb-2 md:flex-wrap md:justify-center px-2">
+          <div className="mt-6 sm:mt-8 flex overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory gap-2 pb-2 md:flex-wrap md:justify-center px-1">
             <button
               type="button"
               onClick={() => setActiveCategory("all")}
-              className={`flex-none snap-start min-h-[44px] px-4 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-95 ${
+              className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
                 activeCategory === "all"
                   ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -174,7 +174,7 @@ export const PricingMatrix: React.FC = () => {
                 key={c.id}
                 type="button"
                 onClick={() => setActiveCategory(c.id)}
-                className={`flex-none snap-start min-h-[44px] px-4 py-2.5 rounded-2xl text-xs font-bold transition-all active:scale-95 ${
+                className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
                   activeCategory === c.id
                     ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                     : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -267,39 +267,43 @@ export const PricingMatrix: React.FC = () => {
                 </table>
               </div>
 
-              {/* Mobile Card View */}
-              <div className="md:hidden divide-y divide-slate-800/80">
+              {/* Mobile Compact 2-Column Grid (E-Commerce Ready) */}
+              <div className="md:hidden grid grid-cols-2 gap-2.5 p-3">
                 {category.rows.map((row, idx) => (
-                  <div key={idx} className="p-5 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h4 className="font-bold text-white text-sm">{row.service}</h4>
-                        <p className="text-xs text-slate-400 mt-0.5">{row.deviceType}</p>
+                  <div
+                    key={idx}
+                    className="flex flex-col justify-between rounded-2xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2 hover:border-cyan-500/40 transition-colors"
+                  >
+                    <div>
+                      <h4 className="font-bold text-white text-xs leading-tight line-clamp-2">
+                        {row.service}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">
+                        {row.deviceType}
+                      </p>
+                      <div className="mt-2 flex items-baseline justify-between">
+                        <span className="font-mono font-bold text-emerald-400 text-xs tracking-tight">
+                          {row.priceRange}
+                        </span>
                       </div>
-                      <span className="font-mono font-bold text-emerald-400 text-sm whitespace-nowrap">
-                        {row.priceRange}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-slate-300 pt-1">
-                      <span className="flex items-center gap-1 text-cyan-400 font-mono">
-                        <Clock className="h-3 w-3" /> {row.turnaround}
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[11px]">
-                        {row.warranty}
-                      </span>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1 text-[10px] text-slate-400 font-mono">
+                        <span className="flex items-center gap-0.5 text-cyan-400">
+                          <Clock className="h-2.5 w-2.5" /> {row.turnaround}
+                        </span>
+                        <span>•</span>
+                        <span className="truncate">{row.warranty}</span>
+                      </div>
                     </div>
 
                     <a
                       href={buildQuoteUrl(row.service, row.deviceType)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full mt-2 inline-flex items-center justify-center gap-2 min-h-[48px] py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-md transition-transform active:scale-95"
+                      className="w-full mt-2 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-[11px] shadow-sm transition-transform active:scale-95"
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      <span>Get Instant Quote on WhatsApp</span>
+                      <MessageCircle className="h-3 w-3 shrink-0" />
+                      <span>Quote</span>
                     </a>
-
                   </div>
                 ))}
               </div>

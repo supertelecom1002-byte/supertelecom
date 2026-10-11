@@ -17,7 +17,7 @@ import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
 import { VisualEditorProvider } from "@/context/VisualEditorContext";
 import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
-import { MobileBottomBar } from "@/components/mobile/MobileBottomBar";
+import { BottomNav } from "@/components/BottomNav";
 import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
 import { UpdateBanner } from "@/components/app/UpdateBanner";
 import { Toaster } from "@/components/ui/sonner";
@@ -357,7 +357,7 @@ function RootComponent() {
           <Outlet />
           <LiveEditorBar />
           <FloatingAiChat />
-          <MobileBottomBar />
+          <BottomNav />
           <UpdateBanner />
           <Toaster position="top-center" richColors />
           <CookieBanner />

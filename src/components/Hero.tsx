@@ -31,7 +31,7 @@ export const Hero: React.FC = () => {
     <section
       id="top"
       aria-label="Super Telecom Smartphone Laboratory"
-      className="relative isolate w-full max-w-full overflow-hidden bg-[#020617] pt-4 pb-10 md:pt-28 md:pb-24 flex items-center"
+      className="relative isolate w-full max-w-full overflow-hidden bg-[#020617] pt-2 pb-5 md:pt-28 md:pb-24 flex items-center"
     >
       {/* Subtle radial cyan glow and cyber grid background (strictly clipped) */}
       <div
@@ -52,37 +52,37 @@ export const Hero: React.FC = () => {
       <div className="pointer-events-none absolute -top-40 right-0 -z-10 h-96 w-96 rounded-full bg-cyan-500/10 blur-[130px] overflow-hidden" />
       <div className="pointer-events-none absolute bottom-0 left-0 -z-10 h-80 w-80 rounded-full bg-blue-600/10 blur-[120px] overflow-hidden" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full overflow-hidden">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 w-full overflow-hidden">
         {/* ========================================================================= */}
         {/* MOBILE VIEW (< 768px): Native "Local Flagship Store Mobile Profile"       */}
         {/* ========================================================================= */}
-        <div className="block md:hidden w-full max-w-full space-y-4">
+        <div className="block md:hidden w-full max-w-full space-y-3">
           {/* Header Profile Card */}
-          <div className="w-full rounded-3xl border border-cyan-500/30 bg-slate-900/90 p-4 sm:p-5 backdrop-blur-xl shadow-[0_4px_25px_rgba(6,182,212,0.12)] space-y-3.5">
+          <div className="w-full rounded-2xl border border-cyan-500/30 bg-slate-900/90 p-3.5 backdrop-blur-xl shadow-[0_4px_25px_rgba(6,182,212,0.12)] space-y-2.5">
             {/* 1. Verified Store Badge */}
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-500/40 text-cyan-300 text-xs font-bold tracking-tight">
-                <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
-                <span>Super Telecom • Barganda Road Lab</span>
-                <Check className="h-3.5 w-3.5 text-cyan-400 stroke-[3]" />
+            <div className="flex items-center justify-between gap-1.5 flex-wrap">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-950/90 border border-cyan-500/40 text-cyan-300 text-[11px] font-bold tracking-tight">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span>Super Telecom • Barganda Road</span>
+                <Check className="h-3 w-3 text-cyan-400 stroke-[3]" />
               </div>
 
               {/* Status Pill */}
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <span>Open till 9:30 PM • Near Shivam Clinic</span>
+              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span>Open till 9:30 PM</span>
               </div>
             </div>
 
             {/* Headline and Description */}
-            <div className="space-y-1.5 pt-1">
-              <h1 className="font-display text-2xl font-extrabold text-white tracking-tight leading-snug">
+            <div className="space-y-1">
+              <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
                 <EditableBlock
                   contentKey="hero_h1_title"
                   defaultValue="Giridih’s Premier Flagship Smartphone & Chip-Level Repair Lab"
                 />
               </h1>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
                 <EditableBlock
                   contentKey="hero_h1_subtitle"
                   defaultValue="Advanced motherboard micro-soldering, CPU reballing, and 30-minute original display restoration for iPhone, Samsung & OnePlus."
@@ -92,58 +92,57 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Rating & Stats Bar */}
-            <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-[11px] font-mono text-slate-300">
+            <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-300">
               <span className="flex items-center gap-1 text-amber-400 font-bold">
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span>5.0 Rating</span>
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                <span>5.0</span>
               </span>
-              <span className="text-slate-500">•</span>
+              <span className="text-slate-600">•</span>
               <span className="text-cyan-300 font-semibold truncate">
-                2,00,000+ Phones Restored
+                2,00,000+ Restored
               </span>
-              <span className="text-slate-500">•</span>
+              <span className="text-slate-600">•</span>
               <span className="text-slate-400">Est. 2016</span>
             </div>
           </div>
 
           {/* Primary Store Actions (Full width, easy thumb reach) */}
-          <div className="space-y-2.5 w-full">
+          <div className="grid grid-cols-2 gap-2 w-full">
             <a
               href="#repair-calculator"
               onClick={scrollToCalculator}
-              className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.35)] active:scale-95 transition-all text-sm"
+              className="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all text-xs"
             >
-              <Wrench className="h-4 w-4" />
-              <span>Calculate Repair Cost</span>
-              <ChevronRight className="h-4 w-4 ml-0.5" />
+              <Wrench className="h-3.5 w-3.5" />
+              <span>Cost Calculator</span>
             </a>
 
             <a
               href="tel:+918002903643"
-              className="w-full py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-white font-semibold flex items-center justify-center gap-2 active:scale-95 transition-all text-sm"
+              className="py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-white font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs"
             >
-              <Phone className="h-4 w-4 text-cyan-400" />
-              <span>Direct Call Engineer</span>
+              <Phone className="h-3.5 w-3.5 text-cyan-400" />
+              <span>Direct Call</span>
             </a>
           </div>
 
           {/* Store Trust Highlights (2x2 grid) */}
-          <div className="grid grid-cols-2 gap-2 text-xs w-full">
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-              <Clock className="h-4 w-4 text-cyan-400 flex-none" />
-              <span className="font-medium text-[11px]">30-Min Screen Swap</span>
+          <div className="grid grid-cols-2 gap-1.5 text-xs w-full">
+            <div className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <Clock className="h-3.5 w-3.5 text-cyan-400 flex-none" />
+              <span className="font-medium text-[10px]">30-Min Screen Swap</span>
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-              <ShieldCheck className="h-4 w-4 text-emerald-400 flex-none" />
-              <span className="font-medium text-[11px]">90-Day Warranty</span>
+            <div className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 flex-none" />
+              <span className="font-medium text-[10px]">90-Day Warranty</span>
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-              <Cpu className="h-4 w-4 text-cyan-400 flex-none" />
-              <span className="font-medium text-[11px]">Chip-Level Micro-Soldering</span>
+            <div className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <Cpu className="h-3.5 w-3.5 text-cyan-400 flex-none" />
+              <span className="font-medium text-[10px]">Chip-Level Soldering</span>
             </div>
-            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
-              <CheckCircle2 className="h-4 w-4 text-amber-400 flex-none" />
-              <span className="font-medium text-[11px]">100% Data Safe</span>
+            <div className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
+              <CheckCircle2 className="h-3.5 w-3.5 text-amber-400 flex-none" />
+              <span className="font-medium text-[10px]">100% Data Safe</span>
             </div>
           </div>
         </div>

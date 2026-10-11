@@ -296,7 +296,7 @@ function SectionHeader({ eyebrow, title, sub }: { eyebrow: React.ReactNode; titl
 
 function About() {
   return (
-    <section id="about" className="py-24">
+    <section id="about" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
@@ -395,7 +395,7 @@ function Services({
   });
 
   return (
-    <section id="services" className="py-24">
+    <section id="services" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader
           eyebrow="What we do"
@@ -410,36 +410,36 @@ function Services({
           </div>
         )}
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-6 sm:mt-10 grid grid-cols-2 gap-2.5 sm:gap-5 px-1 sm:px-0 lg:grid-cols-3 xl:grid-cols-4">
           {filteredServices.map(([Icon, title, desc, _cat, slug, duration]) => (
-            <div key={title} className="group relative flex flex-col justify-between overflow-hidden rounded-3xl glass p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
+            <div key={title} className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl glass p-3 sm:p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-brand opacity-0 blur-3xl transition-opacity group-hover:opacity-40" />
               <div className="relative">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-brand shadow-brand">
-                  <Icon className="h-6 w-6 text-primary-foreground" />
+                <div className="grid h-8 w-8 sm:h-12 sm:w-12 place-items-center rounded-xl sm:rounded-2xl bg-gradient-brand shadow-brand">
+                  <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground" />
                 </div>
-                <h3 className="mt-5 font-display text-lg font-semibold">
+                <h3 className="mt-2.5 sm:mt-5 font-display text-xs sm:text-lg font-semibold leading-tight line-clamp-2">
                   <Link to="/services/$slug" params={{ slug }} className="hover:text-primary transition-colors">
                     {title}
                   </Link>
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground hidden sm:block">{desc}</p>
               </div>
-              <div className="relative mt-5 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                <span className="text-cyan-400 font-mono font-medium">{duration}</span>
-                <div className="flex items-center gap-3">
+              <div className="relative mt-3 sm:mt-5 pt-2 sm:pt-3 border-t border-border/40 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-0 text-[11px] sm:text-xs">
+                <span className="text-cyan-400 font-mono font-medium truncate">{duration}</span>
+                <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
                   <Link
                     to="/services/$slug"
                     params={{ slug }}
-                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5 text-[11px] sm:text-xs"
                   >
-                    Details <ArrowRight className="h-3 w-3" />
+                    <span>Details</span> <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
                   <a
                     href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20help%20with%20${encodeURIComponent(title)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-semibold text-emerald-400 hover:underline"
+                    className="font-semibold text-emerald-400 hover:underline text-[11px] sm:text-xs"
                   >
                     Quote
                   </a>
@@ -512,15 +512,15 @@ function WhyUs() {
     [Cable, "Latest Equipment", "Modern tools for chip-level and micro-soldering work."],
   ];
   return (
-    <section className="py-24">
+    <section className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader eyebrow="Why choose us" title="Why customers keep coming back" />
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 sm:mt-14 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
           {items.map(([Icon, t, d]) => (
-            <div key={t} className="rounded-3xl glass p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
-              <Icon className="h-6 w-6 text-primary" />
-              <div className="mt-4 font-display text-lg font-semibold">{t}</div>
-              <p className="mt-1.5 text-sm text-muted-foreground">{d}</p>
+            <div key={t} className="rounded-2xl sm:rounded-3xl glass p-3.5 sm:p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
+              <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <div className="mt-2.5 sm:mt-4 font-display text-xs sm:text-lg font-semibold leading-tight">{t}</div>
+              <p className="mt-1 sm:mt-1.5 text-[11px] sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 sm:line-clamp-none">{d}</p>
             </div>
           ))}
         </div>
@@ -558,18 +558,18 @@ function Gallery() {
   ];
 
   return (
-    <section id="gallery" className="py-24">
+    <section id="gallery" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader
           eyebrow="Flagship Lab"
           title="Inside Super Telecom Workshop"
           sub="Take a look inside our Barganda Road smartphone engineering laboratory and optical workstations."
         />
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-8 sm:mt-14 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
           {labPhotos.map((item, i) => (
             <div
               key={i}
-              className="group relative overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <div className="aspect-[4/3] w-full overflow-hidden bg-slate-950 relative">
                 <img
@@ -579,15 +579,15 @@ function Gallery() {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-950/80 border border-cyan-500/40 text-cyan-300 text-[10px] font-mono font-bold tracking-wider uppercase">
+                <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-950/80 border border-cyan-500/40 text-cyan-300 text-[9px] sm:text-[10px] font-mono font-bold tracking-wider uppercase">
                   {item.badge}
                 </span>
               </div>
-              <div className="p-5">
-                <h3 className="font-display text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+              <div className="p-3 sm:p-5">
+                <h3 className="font-display text-xs sm:text-base font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-1">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="mt-1 text-[11px] sm:text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
                   {item.sub}
                 </p>
               </div>
@@ -609,25 +609,25 @@ function Testimonials() {
     { name: "Neha R.", role: "Accessories", body: "Great range of chargers, covers and tempered glass at fair prices. My go-to accessory shop.", rating: 5 },
   ];
   return (
-    <section id="reviews" className="py-24">
+    <section id="reviews" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader eyebrow="Reviews" title="Loved by customers across Giridih" />
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 sm:mt-14 grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((r) => (
-            <div key={r.name} className="rounded-3xl glass p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
+            <div key={r.name} className="rounded-2xl sm:rounded-3xl glass p-4 sm:p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
               <div className="flex gap-1">
                 {Array.from({ length: r.rating }).map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/90">"{r.body}"</p>
-              <div className="mt-5 flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-brand font-semibold text-primary-foreground">
+              <p className="mt-3 sm:mt-4 text-xs sm:text-sm leading-relaxed text-foreground/90">"{r.body}"</p>
+              <div className="mt-4 sm:mt-5 flex items-center gap-3">
+                <div className="grid h-8 w-8 sm:h-10 sm:w-10 place-items-center rounded-full bg-gradient-brand font-semibold text-xs sm:text-sm text-primary-foreground">
                   {r.name[0]}
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">{r.name}</div>
-                  <div className="text-xs text-muted-foreground">{r.role}</div>
+                  <div className="text-xs sm:text-sm font-semibold">{r.name}</div>
+                  <div className="text-[11px] sm:text-xs text-muted-foreground">{r.role}</div>
                 </div>
               </div>
             </div>
@@ -641,10 +641,10 @@ function Testimonials() {
 function FAQ() {
   const faqs = FAQS;
   return (
-    <section id="faq" className="py-24">
+    <section id="faq" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <SectionHeader eyebrow="FAQ" title="Answers to common questions" />
-        <div className="mt-12 space-y-3">
+        <div className="mt-8 sm:mt-12 space-y-2.5 sm:space-y-3">
           {faqs.map(([q, a], i) => (
             <FAQItem key={i} q={q} a={a} />
           ))}
@@ -740,14 +740,14 @@ function Contact() {
 
   return (
 
-    <section id="contact" className="py-24">
+    <section id="contact" className="py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader
           eyebrow="Contact"
           title="Book a repair or drop by our store"
           sub="Reach us on call, WhatsApp or fill out the form — we usually reply within minutes."
         />
-        <div className="mt-14 grid gap-8 lg:grid-cols-5">
+        <div className="mt-8 sm:mt-14 grid gap-6 sm:gap-8 lg:grid-cols-5">
           <div className="space-y-4 lg:col-span-2">
             <ContactCard icon={Phone} label="Call us" value={<EditableBlock contentKey="contact_phone" defaultValue={PHONE_DISPLAY} />} href={`tel:${PHONE}`} />
             <ContactCard icon={MessageCircle} label="WhatsApp" value={<EditableBlock contentKey="contact_whatsapp_text" defaultValue="Chat with our team" />} href={`https://wa.me/${WHATSAPP}`} />
@@ -968,7 +968,7 @@ function VisitStore() {
   };
 
   return (
-    <section id="visit" className="relative py-24">
+    <section id="visit" className="relative py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div
           className={`transition-all duration-700 ${inView ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
@@ -979,7 +979,7 @@ function VisitStore() {
             sub="Visit our store for mobile repair, second-hand phones, accessories, software services, unlocking, flashing, and professional mobile solutions."
           />
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-5">
+          <div className="mt-8 sm:mt-12 grid gap-6 lg:grid-cols-5">
             {/* Map */}
             <div className="lg:col-span-3">
               <div className="group relative overflow-hidden rounded-3xl glass-strong shadow-elegant transition-all duration-500 hover:shadow-glow">
