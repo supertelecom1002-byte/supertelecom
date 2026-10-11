@@ -68,11 +68,13 @@ const BUY_SELL_LINKS: { label: string; to: string }[] = [
 
 const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "Home", to: "/" },
-  { label: "About Us", to: "/", hash: "about" },
+  { label: "About Us", to: "/about" },
   { label: "Services", to: "/", hash: "services" },
   { label: "Pricing", to: "/pricing" },
   { label: "Download App", to: "/download" },
-  { label: "Gallery", to: "/", hash: "gallery" },
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Service", to: "/terms" },
+  { label: "Warranty Policy", to: "/warranty" },
   { label: "Reviews", to: "/", hash: "reviews" },
   { label: "FAQ", to: "/", hash: "faq" },
   { label: "Blog & Guides", to: "/blog" },
@@ -81,6 +83,28 @@ const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "Cookie Policy", to: "/cookie-policy" },
   { label: "Sitemap", to: "/sitemap" },
   { label: "Admin Portal", to: "/admin/login" },
+];
+
+const LEGAL_COMPLIANCE_LINKS: { label: string; to: string }[] = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms & Conditions", to: "/terms" },
+  { label: "90-Day Lab Warranty", to: "/warranty" },
+  { label: "About Our Lab & Team", to: "/about" },
+  { label: "Download Android APK", to: "/download" },
+  { label: "Repair Price List", to: "/pricing" },
+  { label: "Cookie Policy", to: "/cookie-policy" },
+  { label: "HTML Sitemap", to: "/sitemap" },
+];
+
+const CORE_SERVICES_LINKS: { label: string; to: string }[] = [
+  { label: "iPhone Lab Specialist", to: "/brands/iphone" },
+  { label: "Chip-Level IC & Motherboard", to: "/services/motherboard-repair" },
+  { label: "Screen & OLED Restoration", to: "/services/screen-replacement" },
+  { label: "High-Density Battery Swap", to: "/services/battery-replacement" },
+  { label: "Charging Port & Audio Repair", to: "/services/charging-port-repair" },
+  { label: "Water Damage Revival", to: "/services/water-damage-repair" },
+  { label: "16-in-1 Offline Lab Tools", to: "/download" },
+  { label: "Certified Pre-Owned Phones", to: "/services/second-hand-mobile" },
 ];
 
 const FOOTER_FAQS: [string, string][] = [
@@ -329,24 +353,29 @@ export function SiteFooter() {
             ))}
           </section>
 
-          {/* ---------------- Main grid ---------------- */}
-          <div className="mt-12 grid gap-10 lg:grid-cols-12">
-            {/* Brand / GEO description */}
-            <div className="lg:col-span-4">
+          {/* ---------------- Main 4-Column Responsive Grid ---------------- */}
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Column 1: Brand & Lab Hub */}
+            <div className="space-y-4">
               <BrandLogo size="lg" to="/" />
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Super Telecom is a family-run mobile repair shop in Giridih, Jharkhand, serving customers
-                across Barganda, Makatpur, Bank More, Pachamba, Bengabad and nearby areas for over 10 years.
-                Our technicians handle everything from display replacement and battery replacement to
-                charging port and motherboard repair for iPhone and every Android brand — and we also buy,
-                sell and exchange tested second-hand smartphones and accessories.
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Super Telecom is Jharkhand&apos;s premier smartphone micro-soldering and flagship screen restoration lab. Serving Giridih with honest bench diagnostics since 2016.
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Customers choose us for honest diagnosis, transparent pricing, original-quality parts and
-                same-day turnaround — with a written warranty on every repair.
-              </p>
-
-              <ul className="mt-6 flex flex-wrap gap-2" aria-label="Social profiles">
+              <address className="space-y-2.5 text-xs not-italic text-muted-foreground">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                  <span>Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Phone className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                  <a href={`tel:${PHONE}`} className="hover:text-primary font-medium">{PHONE_DISPLAY}</a>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Clock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                  <span>Mon – Sun: 10:00 AM – 9:30 PM</span>
+                </div>
+              </address>
+              <ul className="flex flex-wrap gap-2 pt-1" aria-label="Social profiles">
                 {SOCIALS.map(({ label, href, Icon }) => (
                   <li key={label}>
                     <a
@@ -355,69 +384,61 @@ export function SiteFooter() {
                       rel="noreferrer noopener"
                       aria-label={label}
                       title={label}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-border/60 bg-background/50 text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
+                      className="grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-background/50 text-muted-foreground transition-all hover:border-primary/50 hover:text-primary"
                     >
-                      <Icon className="h-4 w-4" aria-hidden />
+                      <Icon className="h-3.5 w-3.5" aria-hidden />
                     </a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Link columns */}
-            <div className="grid gap-8 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-4">
-              <FooterCol id="footer-services" title="Repair Services" items={SERVICE_LINKS} />
-              <FooterCol id="footer-brands" title="Brand Hubs" items={BRAND_LINKS} />
-              <FooterCol id="footer-buysell" title="Buy & Sell" items={BUY_SELL_LINKS} />
-              <FooterCol id="footer-quick" title="Quick Links" items={QUICK_LINKS} />
-            </div>
+            {/* Column 2: Services & Diagnostics */}
+            <FooterCol id="footer-services" title="Services & Diagnostics" items={CORE_SERVICES_LINKS} />
 
-            {/* Contact */}
-            <section aria-labelledby="footer-contact" className="lg:col-span-3">
-              <h3 id="footer-contact" className="text-sm font-semibold tracking-wide text-foreground">Contact & Store Hours</h3>
-              <address className="mt-4 space-y-4 text-sm not-italic text-muted-foreground">
-                <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <span>
-                    <strong className="block font-medium text-foreground">Super Telecom</strong>
-                    Barganda Road, Near Shivam Clinic,<br />Giridih, Jharkhand 815301, India
-                  </span>
+            {/* Column 3: Legal & Compliance */}
+            <FooterCol id="footer-compliance" title="Legal & Compliance" items={LEGAL_COMPLIANCE_LINKS} />
+
+            {/* Column 4: Trust & Security */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold tracking-wide text-foreground">Trust &amp; Security</h3>
+              <div className="space-y-2.5 text-xs">
+                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-surface/60 border border-border/60">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground font-semibold">100% Data Safe Guarantee</strong>
+                    <span className="text-muted-foreground text-[11px]">Strict zero snooping policy on customer devices</span>
+                  </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <a href={`tel:${PHONE}`} className="transition-colors hover:text-primary">{PHONE_DISPLAY}</a>
+
+                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-surface/60 border border-border/60">
+                  <BadgeCheck className="h-4 w-4 text-cyan-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground font-semibold">Verified OEM Quality Parts</strong>
+                    <span className="text-muted-foreground text-[11px]">Grade-tested panels &amp; high-density batteries</span>
+                  </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <a href={`mailto:${EMAIL}`} className="break-all transition-colors hover:text-primary">{EMAIL}</a>
+
+                <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-surface/60 border border-border/60">
+                  <Star className="h-4 w-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block text-foreground font-semibold">Google 5.0 Star Rating</strong>
+                    <span className="text-muted-foreground text-[11px]">1,200+ verified customer reviews in Giridih</span>
+                  </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <span>Monday – Sunday<br />10:00 AM – 9:30 PM</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Star className="mt-0.5 h-4 w-4 shrink-0 text-primary fill-primary" aria-hidden />
-                  <span>5.0 Customer Rating in Giridih</span>
-                </div>
-              </address>
-              <div className="mt-5 grid gap-2">
+              </div>
+
+              <div className="pt-1 flex flex-col gap-2">
                 <a
                   href={MAPS_PLACE}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-brand px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.03]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gradient-brand px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.02]"
                 >
-                  <MapPin className="h-4 w-4" aria-hidden /> View on Google Maps
+                  <MapPin className="h-3.5 w-3.5" /> Get Lab Directions
                 </a>
-                <Link
-                  to="/"
-                  hash="contact"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2.5 text-sm font-semibold text-foreground transition-transform hover:scale-[1.03]"
-                >
-                  <Wrench className="h-4 w-4 text-primary" aria-hidden /> Get a Free Quote
-                </Link>
               </div>
-            </section>
+            </div>
           </div>
 
           {/* ---------------- AEO FAQ ---------------- */}
@@ -449,10 +470,10 @@ export function SiteFooter() {
           </section>
 
           {/* ---------------- Bottom ---------------- */}
-          <div className="mt-10 flex flex-col gap-4 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2016 Super Telecom. Trusted mobile repair experts in Giridih, Jharkhand • Serving Giridih Since 2016 • Est. 2016.</p>
+          <div className="mt-10 flex flex-col gap-2 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>© 2026 Super Telecom Lab. All Rights Reserved. Engineered for Giridih &amp; Beyond.</p>
             <p className="sm:text-right font-medium text-slate-700 dark:text-slate-300">
-              Giridih&apos;s Trusted Flagship Smartphone &amp; Micro-Soldering Lab • Barganda Road, Near Shivam Clinic • 100% Customer Data Privacy Guarantee.
+              Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301 &bull; 100% Customer Data Privacy Guarantee.
             </p>
           </div>
         </div>

@@ -49,7 +49,11 @@ function SitemapPage() {
             <li><Link to="/locations/barganda-road-mobile-repair" className="text-primary hover:underline">Barganda Road Shop Location</Link></li>
             <li><Link to="/blog" className="text-primary hover:underline">Blog</Link></li>
             <li><Link to="/sitemap" className="text-primary hover:underline">Sitemap</Link></li>
+            <li><Link to="/about" className="text-primary hover:underline">About Super Telecom Lab</Link></li>
             <li><Link to="/download" className="text-primary hover:underline">Download Official Mobile App</Link></li>
+            <li><Link to="/privacy" className="text-primary hover:underline">Privacy Policy &amp; Permissions</Link></li>
+            <li><Link to="/terms" className="text-primary hover:underline">Terms of Service &amp; Conditions</Link></li>
+            <li><Link to="/warranty" className="text-primary hover:underline">90-Day Lab Warranty Policy</Link></li>
             <li><Link to="/cookie-policy" className="text-primary hover:underline">Cookie Policy</Link></li>
           </ul>
         </section>

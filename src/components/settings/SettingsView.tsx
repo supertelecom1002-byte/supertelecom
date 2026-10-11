@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   ShieldCheck,
   Volume2,
@@ -18,6 +19,8 @@ import {
   PhoneCall,
   MapPin,
   Lock,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { useTheme } from "@/context/ThemeContext";
@@ -289,7 +292,80 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
         </div>
       </div>
 
-      {/* 3. App Storage & Performance */}
+      {/* 3. Legal, Compliance & Warranty */}
+      <div className="rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-5 space-y-3 shadow-sm dark:shadow-xl">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Legal, Policies &amp; Warranty</h4>
+        </div>
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          Official store terms, customer privacy guarantees, and hardware warranty boundaries.
+        </p>
+
+        <div className="space-y-2 pt-1 text-xs">
+          <Link
+            to="/privacy"
+            onClick={onClose}
+            className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-900 dark:text-white font-medium transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <Lock className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+              <div>
+                <span className="font-bold block">Privacy Policy</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Zero data storage &amp; hardware permissions disclosure</span>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
+          </Link>
+
+          <Link
+            to="/terms"
+            onClick={onClose}
+            className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-900 dark:text-white font-medium transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <FileText className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <div>
+                <span className="font-bold block">Terms of Service</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Liability limits, data backup &amp; 45-day pickup policy</span>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
+          </Link>
+
+          <Link
+            to="/warranty"
+            onClick={onClose}
+            className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-900 dark:text-white font-medium transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <Award className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <div>
+                <span className="font-bold block">90-Day Lab Warranty</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Screen, battery &amp; IC repair coverage terms</span>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
+          </Link>
+
+          <Link
+            to="/about"
+            onClick={onClose}
+            className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-900 dark:text-white font-medium transition-colors"
+          >
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              <div>
+                <span className="font-bold block">About Super Telecom</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400">Founded 2016 in Giridih &bull; Lab equipment &amp; team</span>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-slate-400 shrink-0" />
+          </Link>
+        </div>
+      </div>
+
+      {/* 4. App Storage & Performance */}
       <div className="rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-5 space-y-3 shadow-sm dark:shadow-xl">
         <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Offline Cache &amp; Storage</h4>
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
