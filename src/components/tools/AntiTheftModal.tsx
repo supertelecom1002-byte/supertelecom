@@ -1,5 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Shield, ShieldAlert, Zap, AlertTriangle, KeyRound, X, Check, Bell } from "lucide-react";
+import {
+  Shield,
+  ShieldAlert,
+  Zap,
+  AlertTriangle,
+  KeyRound,
+  X,
+  Check,
+  Bell,
+  Activity,
+  Volume2,
+  Lock,
+  Unlock,
+} from "lucide-react";
+import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
+import { PermissionSheet } from "@/components/common/PermissionSheet";
+import { toast } from "sonner";
 
 interface AntiTheftModalProps {
   isOpen: boolean;
@@ -7,6 +23,7 @@ interface AntiTheftModalProps {
 }
 
 export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose }) => {
+  const { isGranted, triggerVibration } = useHardwarePermissions();
   const [pin, setPin] = useState("1234");
   const [inputPin, setInputPin] = useState("");
   const [isArmed, setIsArmed] = useState(false);
@@ -15,17 +32,21 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
   const [isTriggered, setIsTriggered] = useState(false);
   const [pinError, setPinError] = useState(false);
   const [initialCharging, setInitialCharging] = useState<boolean | null>(null);
+  const [permissionSheetOpen, setPermissionSheetOpen] = useState(false);
+  const [strobeState, setStrobeState] = useState(false);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const oscRef = useRef<OscillatorNode | null>(null);
   const sirenIntervalRef = useRef<number | null>(null);
+  const strobeIntervalRef = useRef<number | null>(null);
   const motionLastRef = useRef<{ x: number; y: number; z: number } | null>(null);
 
   const startSirenSound = () => {
     if (typeof window === "undefined") return;
     try {
       const AudioCtxClass =
-        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtxClass) return;
 
       const ctx = new AudioCtxClass();
@@ -36,20 +57,26 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
 
       osc.type = "sawtooth";
       osc.frequency.setValueAtTime(880, ctx.currentTime);
-      gain.gain.setValueAtTime(0.85, ctx.currentTime);
+      gain.gain.setValueAtTime(0.95, ctx.currentTime);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
       oscRef.current = osc;
 
-      // Alternating police/ambulance emergency siren modulation
+      // High decibel ambulance/police emergency alternation
       let tone = 880;
       sirenIntervalRef.current = window.setInterval(() => {
         if (!oscRef.current || !audioCtxRef.current) return;
         tone = tone === 880 ? 1320 : 880;
         oscRef.current.frequency.setValueAtTime(tone, audioCtxRef.current.currentTime);
-      }, 250);
+      }, 200);
+
+      // Flash strobe screen
+      strobeIntervalRef.current = window.setInterval(() => {
+        setStrobeState((prev) => !prev);
+        triggerVibration([100, 50, 100]);
+      }, 150);
     } catch {
       // ignore
     }
@@ -57,6 +84,7 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
 
   const stopSirenSound = () => {
     if (sirenIntervalRef.current) clearInterval(sirenIntervalRef.current);
+    if (strobeIntervalRef.current) clearInterval(strobeIntervalRef.current);
     try {
       if (oscRef.current) {
         oscRef.current.stop();
@@ -70,6 +98,7 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
     } catch {
       // ignore
     }
+    setStrobeState(false);
   };
 
   const triggerAlarm = () => {
@@ -99,44 +128,52 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
         };
 
         battery.addEventListener("chargingchange", handleChargingChange);
+        return () => {
+          battery.removeEventListener("chargingchange", handleChargingChange);
+        };
       }).catch(() => {});
     }
 
-    // Motion detection listener
-    const handleMotion = (e: DeviceMotionEvent) => {
-      if (!isArmed || isTriggered) return;
-      const acc = e.accelerationIncludingGravity;
-      if (!acc || acc.x === null || acc.y === null || acc.z === null) return;
-
-      if (!motionLastRef.current) {
-        motionLastRef.current = { x: acc.x, y: acc.y, z: acc.z };
-        return;
-      }
-
-      const dx = Math.abs(acc.x - motionLastRef.current.x);
-      const dy = Math.abs(acc.y - motionLastRef.current.y);
-      const dz = Math.abs(acc.z - motionLastRef.current.z);
-
-      // Motion threshold of sudden movement
-      if (dx + dy + dz > 6.5) {
-        triggerAlarm();
-      }
-      motionLastRef.current = { x: acc.x, y: acc.y, z: acc.z };
-    };
-
-    window.addEventListener("devicemotion", handleMotion);
-
     return () => {
-      window.removeEventListener("devicemotion", handleMotion);
       if (batteryInstance) {
-        batteryInstance.removeEventListener("chargingchange", triggerAlarm);
+        batteryInstance.onchargingchange = null;
       }
     };
   }, [isArmed, isTriggered]);
 
-  const handleArm = () => {
-    setIsCountingDown(true);
-    setCountdown(5);
+  // Motion monitoring
+  useEffect(() => {
+    if (!isArmed || isTriggered || typeof window === "undefined") return;
+
+    const handleMotion = (e: DeviceMotionEvent) => {
+      const acc = e.accelerationIncludingGravity;
+      if (!acc) return;
+
+      const current = { x: acc.x || 0, y: acc.y || 0, z: acc.z || 0 };
+
+      if (motionLastRef.current) {
+        const deltaX = Math.abs(current.x - motionLastRef.current.x);
+        const deltaY = Math.abs(current.y - motionLastRef.current.y);
+        const deltaZ = Math.abs(current.z - motionLastRef.current.z);
+
+        // Motion threshold for pickup detection
+        if (deltaX > 2.5 || deltaY > 2.5 || deltaZ > 2.5) {
+          triggerAlarm();
+        }
+      }
+
+      motionLastRef.current = current;
+    };
+
+    window.addEventListener("devicemotion", handleMotion);
+    return () => {
+      window.removeEventListener("devicemotion", handleMotion);
+    };
+  }, [isArmed, isTriggered]);
+
+  // Countdown timer when arming
+  useEffect(() => {
+    if (!isCountingDown) return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -144,11 +181,30 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
           clearInterval(timer);
           setIsCountingDown(false);
           setIsArmed(true);
-          return 0;
+          triggerVibration([80, 50, 150]);
+          return 5;
         }
+        triggerVibration(40);
         return prev - 1;
       });
     }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isCountingDown, triggerVibration]);
+
+  const handleArmRequest = () => {
+    if (!isGranted("audio")) {
+      setPermissionSheetOpen(true);
+    } else {
+      executeArm();
+    }
+  };
+
+  const executeArm = () => {
+    setIsCountingDown(true);
+    setCountdown(5);
+    motionLastRef.current = null;
+    toast.success("Place phone on flat surface. Arming in 5s...");
   };
 
   const handleDisarm = () => {
@@ -158,225 +214,245 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
       setIsTriggered(false);
       setInputPin("");
       setPinError(false);
+      triggerVibration([100, 50, 100]);
+      toast.success("Security System Disarmed");
     } else {
       setPinError(true);
-      setInputPin("");
-      setTimeout(() => setPinError(false), 1200);
+      triggerVibration([150, 80, 150]);
+      setTimeout(() => {
+        setInputPin("");
+        setPinError(false);
+      }, 700);
     }
   };
 
-  const handleKeyPress = (num: string) => {
+  const handleNumClick = (digit: string) => {
+    triggerVibration(25);
     if (inputPin.length < 4) {
-      const next = inputPin + num;
+      const next = inputPin + digit;
       setInputPin(next);
       if (next.length === 4) {
-        if (next === pin) {
-          stopSirenSound();
-          setIsArmed(false);
-          setIsTriggered(false);
-          setInputPin("");
-        } else {
-          setPinError(true);
-          setTimeout(() => {
+        if (isArmed || isTriggered) {
+          if (next === pin) {
+            stopSirenSound();
+            setIsArmed(false);
+            setIsTriggered(false);
             setInputPin("");
-            setPinError(false);
-          }, 800);
+            triggerVibration([100, 50, 100]);
+            toast.success("Alarm Disarmed Successfully");
+          } else {
+            setPinError(true);
+            triggerVibration([200, 100, 200]);
+            setTimeout(() => {
+              setInputPin("");
+              setPinError(false);
+            }, 600);
+          }
         }
       }
     }
   };
 
-  useEffect(() => {
-    return () => {
-      stopSirenSound();
-    };
-  }, []);
+  const handleDelete = () => {
+    triggerVibration(25);
+    setInputPin((prev) => prev.slice(0, -1));
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in select-none ${
-        isTriggered ? "bg-red-600 animate-pulse" : "bg-black/85"
-      }`}
-    >
+    <>
       <div
-        className="w-full max-w-sm bg-slate-950 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-2xl relative text-white"
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md select-none transition-colors duration-150 ${
+          isTriggered && strobeState ? "bg-rose-600/90" : "bg-black/90"
+        }`}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div
-              className={`p-2.5 rounded-2xl ${
-                isTriggered
-                  ? "bg-red-500 text-white animate-bounce"
-                  : isArmed
-                  ? "bg-amber-500/20 text-amber-400"
-                  : "bg-cyan-500/10 text-cyan-400"
-              }`}
-            >
-              {isTriggered ? (
-                <ShieldAlert className="h-6 w-6" />
-              ) : isArmed ? (
-                <AlertTriangle className="h-6 w-6 animate-pulse" />
-              ) : (
-                <Shield className="h-6 w-6" />
-              )}
-            </div>
-            <div>
-              <h3 className="font-bold text-base text-white">Anti-Theft Unplug Siren</h3>
-              <p className="text-[11px] text-slate-400">Hardware Motion &amp; Charger Guard</p>
-            </div>
-          </div>
-
-          {!isArmed && !isCountingDown && (
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          )}
-        </div>
-
-        {/* State 1: Triggered Alarm & Pin Keypad */}
-        {isTriggered ? (
-          <div className="space-y-4 text-center">
-            <div className="p-3 bg-red-950/80 border border-red-500 rounded-2xl text-red-200">
-              <div className="font-mono text-xl font-black uppercase tracking-wider text-red-400">
-                THEFT ALARM TRIGGERED!
-              </div>
-              <p className="text-xs text-red-300 mt-1">
-                Charger removed or unauthorized movement detected. Enter PIN to disarm.
-              </p>
-            </div>
-
-            {/* PIN Dots */}
-            <div className="flex justify-center gap-3 my-4">
-              {[0, 1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className={`w-4 h-4 rounded-full border-2 transition-all ${
-                    inputPin.length > i
-                      ? pinError
-                        ? "bg-red-500 border-red-400 scale-110"
-                        : "bg-cyan-400 border-cyan-300 scale-110 shadow-[0_0_10px_#22d3ee]"
-                      : "bg-slate-900 border-slate-700"
-                  }`}
-                />
-              ))}
-            </div>
-
-            {pinError && <p className="text-xs text-red-400 font-bold">Incorrect PIN! Alarm Continuing...</p>}
-
-            {/* Keypad */}
-            <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "OK"].map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    if (key === "C") setInputPin("");
-                    else if (key === "OK") handleDisarm();
-                    else handleKeyPress(key);
-                  }}
-                  className="py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 active:bg-cyan-600 active:scale-95 text-lg font-mono font-bold text-white border border-slate-800 shadow-md transition-all"
-                >
-                  {key}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : isCountingDown ? (
-          /* State 2: 5-Second Arming Countdown */
-          <div className="py-8 flex flex-col items-center justify-center space-y-3 text-center">
-            <div className="w-20 h-20 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin flex items-center justify-center">
-              <span className="font-mono text-3xl font-black text-cyan-400">{countdown}</span>
-            </div>
-            <h4 className="font-bold text-base text-white">Arming Protection...</h4>
-            <p className="text-xs text-slate-400 max-w-xs">
-              Plug in your phone now and place it on a stable surface.
-            </p>
-          </div>
-        ) : isArmed ? (
-          /* State 3: Actively Armed Screen */
-          <div className="space-y-5 text-center py-4">
-            <div className="w-20 h-20 rounded-full bg-emerald-950/60 border-2 border-emerald-500/80 flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(16,185,129,0.4)]">
-              <Shield className="h-10 w-10 text-emerald-400 animate-pulse" />
-            </div>
-
-            <div>
-              <div className="font-mono text-lg font-black text-emerald-400 uppercase tracking-wide">
-                SYSTEM ARMED
-              </div>
-              <p className="text-xs text-slate-400 mt-1">
-                Any movement or charger disconnection will immediately sound the siren.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-2 pt-2">
-              <button
-                type="button"
-                onClick={triggerAlarm}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-red-500/30 hover:border-red-500 text-red-400 text-xs font-semibold"
+        <div
+          className={`w-full max-w-sm rounded-3xl p-6 space-y-5 border shadow-2xl relative overflow-hidden transition-all ${
+            isTriggered
+              ? "bg-slate-950 border-rose-500 shadow-rose-500/50"
+              : isArmed
+              ? "bg-slate-950 border-emerald-500/50 shadow-emerald-500/20"
+              : "bg-slate-950 border-slate-800"
+          }`}
+        >
+          {/* Top Bar */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div
+                className={`p-2 rounded-xl ${
+                  isTriggered
+                    ? "bg-rose-500/20 text-rose-400 animate-bounce"
+                    : isArmed
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-cyan-500/20 text-cyan-400"
+                }`}
               >
-                Simulate Test Trigger
-              </button>
+                {isTriggered ? (
+                  <ShieldAlert className="h-5 w-5" />
+                ) : (
+                  <Shield className="h-5 w-5" />
+                )}
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-white">
+                  {isTriggered
+                    ? "SECURITY BREACH DETECTED"
+                    : isArmed
+                    ? "SYSTEM ARMED & MONITORING"
+                    : "Anti-Theft Motion & Unplug Alarm"}
+                </h3>
+                <span className="text-[10px] text-slate-400 font-mono block">
+                  {isArmed ? "Sensors: Charger + Accelerometer" : "PIN: Default 1234"}
+                </span>
+              </div>
+            </div>
 
+            {!isArmed && !isTriggered && (
               <button
                 type="button"
                 onClick={() => {
-                  setIsArmed(false);
                   stopSirenSound();
+                  onClose();
                 }}
-                className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-xs"
+                className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
               >
-                Disarm System
+                <X className="h-4 w-4" />
               </button>
+            )}
+          </div>
+
+          {/* Center Graphic / Radar Scanner */}
+          <div className="flex flex-col items-center justify-center py-4 bg-slate-900/60 rounded-2xl border border-slate-800/80 relative overflow-hidden">
+            {isArmed ? (
+              <div className="relative w-28 h-28 flex items-center justify-center">
+                {/* Radar sweep ring */}
+                <div className="absolute inset-0 rounded-full border border-emerald-500/30 animate-ping opacity-50" />
+                <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-400/60 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                  <Lock className="h-8 w-8 text-emerald-400" />
+                </div>
+              </div>
+            ) : isTriggered ? (
+              <div className="relative w-28 h-28 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-rose-500 flex items-center justify-center animate-ping opacity-75 absolute" />
+                <div className="w-20 h-20 rounded-full bg-rose-600 flex items-center justify-center z-10 shadow-lg">
+                  <Volume2 className="h-10 w-10 text-white animate-pulse" />
+                </div>
+              </div>
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
+                <Unlock className="h-8 w-8" />
+              </div>
+            )}
+
+            <div className="mt-3 text-center">
+              <span
+                className={`font-mono text-xs font-bold uppercase tracking-wider block ${
+                  isTriggered
+                    ? "text-rose-400 animate-pulse text-sm"
+                    : isArmed
+                    ? "text-emerald-400"
+                    : "text-slate-400"
+                }`}
+              >
+                {isTriggered
+                  ? "EMERGENCY 100% SIREN ACTIVE"
+                  : isCountingDown
+                  ? `Arming in ${countdown}s...`
+                  : isArmed
+                  ? "Standby: Do not move phone"
+                  : "Tap Arm to Lock Device"}
+              </span>
             </div>
           </div>
-        ) : (
-          /* State 4: Setup / Arm Configuration */
-          <div className="space-y-4">
-            <div className="p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300 space-y-2">
-              <div className="flex items-center gap-2 text-cyan-300 font-bold">
-                <Zap className="h-4 w-4 text-cyan-400" /> How It Works:
-              </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Connect your phone to any charger in public places (airports, cafes, trains).
-                If someone unplugs your cable or picks up your phone, an intense loud siren rings until your PIN is entered.
-              </p>
-            </div>
 
-            <div>
-              <label className="text-[11px] font-mono text-slate-400 block mb-1">
-                Security Disarm PIN (Default: 1234)
-              </label>
-              <input
-                type="text"
-                maxLength={4}
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center font-mono text-lg font-bold text-cyan-400 tracking-widest focus:outline-none focus:border-cyan-500"
+          {/* PIN Display Dots */}
+          <div className="flex items-center justify-center gap-3 py-1">
+            {[0, 1, 2, 3].map((idx) => (
+              <div
+                key={idx}
+                className={`w-3.5 h-3.5 rounded-full border-2 transition-all ${
+                  pinError
+                    ? "border-rose-500 bg-rose-500 animate-shake"
+                    : inputPin.length > idx
+                    ? "border-cyan-400 bg-cyan-400 shadow-[0_0_8px_#22d3ee]"
+                    : "border-slate-700 bg-slate-900"
+                }`}
               />
-            </div>
+            ))}
+          </div>
 
+          {/* 4-Digit PIN Keypad */}
+          <div className="grid grid-cols-3 gap-2">
+            {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
+              <button
+                key={num}
+                type="button"
+                onClick={() => handleNumClick(num)}
+                className="py-3 rounded-xl bg-slate-900 hover:bg-slate-850 active:scale-90 text-white font-mono font-bold text-base border border-slate-800 transition-all text-center"
+              >
+                {num}
+              </button>
+            ))}
             <button
               type="button"
-              onClick={handleArm}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all"
+              onClick={handleDelete}
+              className="py-3 rounded-xl bg-slate-900/60 hover:bg-slate-800 active:scale-90 text-slate-400 font-bold text-xs border border-slate-800 transition-all"
             >
-              <Shield className="h-4 w-4" />
-              <span>Arm Anti-Theft Protection</span>
+              DEL
+            </button>
+            <button
+              type="button"
+              onClick={() => handleNumClick("0")}
+              className="py-3 rounded-xl bg-slate-900 hover:bg-slate-850 active:scale-90 text-white font-mono font-bold text-base border border-slate-800 transition-all text-center"
+            >
+              0
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (isArmed || isTriggered) {
+                  handleDisarm();
+                } else if (inputPin.length === 4) {
+                  setPin(inputPin);
+                  setInputPin("");
+                  toast.success(`PIN updated to ${inputPin}`);
+                }
+              }}
+              className="py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 active:scale-90 text-slate-950 font-bold text-xs shadow-md transition-all flex items-center justify-center"
+            >
+              <Check className="h-4 w-4" />
             </button>
           </div>
-        )}
+
+          {/* Arm Button */}
+          {!isArmed && !isTriggered && (
+            <button
+              type="button"
+              onClick={handleArmRequest}
+              disabled={isCountingDown}
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
+            >
+              {isCountingDown ? `Arming in ${countdown}s...` : "ARM ANTI-THEFT PROTECTION"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+
+      <PermissionSheet
+        isOpen={permissionSheetOpen}
+        onClose={() => setPermissionSheetOpen(false)}
+        onAllowed={() => {
+          setPermissionSheetOpen(false);
+          executeArm();
+        }}
+        requiredPermissions={["audio", "sensors"]}
+        title="Anti-Theft Hardware Authorization"
+        description="Super Telecom requires access to the device audio synthesizer for the loud siren and motion accelerometer to detect theft attempts."
+      />
+    </>
   );
 };
 

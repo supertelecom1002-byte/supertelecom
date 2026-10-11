@@ -1,5 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Play, Square, X, Sparkles, AlertCircle, Droplets } from "lucide-react";
+import {
+  Volume2,
+  VolumeX,
+  Play,
+  Square,
+  X,
+  Sparkles,
+  AlertCircle,
+  Droplets,
+  Zap,
+  Activity,
+} from "lucide-react";
+import { PermissionSheet } from "@/components/common/PermissionSheet";
+import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 
 interface SpeakerCleanerModalProps {
   isOpen: boolean;
@@ -7,6 +20,8 @@ interface SpeakerCleanerModalProps {
 }
 
 export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen, onClose }) => {
+  const { isGranted, triggerVibration } = useHardwarePermissions();
+  const [permissionSheetOpen, setPermissionSheetOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [frequency, setFrequency] = useState(165);
@@ -17,10 +32,12 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
   const gainRef = useRef<GainNode | null>(null);
   const timerRef = useRef<number | null>(null);
   const sweepIntervalRef = useRef<number | null>(null);
+  const vibrateIntervalRef = useRef<number | null>(null);
 
   const stopAudio = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (sweepIntervalRef.current) clearInterval(sweepIntervalRef.current);
+    if (vibrateIntervalRef.current) clearInterval(vibrateIntervalRef.current);
 
     try {
       if (oscRef.current) {
@@ -45,13 +62,14 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
     setFrequency(165);
   };
 
-  const startAudio = async () => {
+  const executeAudioStart = async () => {
     setErrorMsg(null);
     if (typeof window === "undefined") return;
 
     try {
       const AudioContextClass =
-        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioContextClass) {
         setErrorMsg("Web Audio API is not supported in this browser.");
         return;
@@ -60,7 +78,6 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
       const ctx = new AudioContextClass();
       audioCtxRef.current = ctx;
 
-      // Resume context if suspended by browser autoplay policy
       if (ctx.state === "suspended") {
         await ctx.resume();
       }
@@ -71,8 +88,7 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
       osc.type = "sine";
       osc.frequency.setValueAtTime(165, ctx.currentTime);
 
-      // Create rhythmic water-ejection pulse effect
-      gain.gain.setValueAtTime(0.85, ctx.currentTime);
+      gain.gain.setValueAtTime(0.9, ctx.currentTime);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -83,6 +99,9 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
       setIsRunning(true);
       setTimeLeft(60);
 
+      // Trigger initial tactile ejection feedback
+      triggerVibration([100, 50, 100, 50, 200]);
+
       // Oscillate frequency between 165Hz and 250Hz with pulse burst
       let currentFreq = 165;
       let direction = 1;
@@ -90,23 +109,29 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
         if (!audioCtxRef.current || !oscRef.current || !gainRef.current) return;
         const cTime = audioCtxRef.current.currentTime;
 
-        currentFreq += direction * 5;
-        if (currentFreq >= 240) direction = -1;
+        currentFreq += direction * 4;
+        if (currentFreq >= 250) direction = -1;
         if (currentFreq <= 165) direction = 1;
 
         setFrequency(currentFreq);
         oscRef.current.frequency.setValueAtTime(currentFreq, cTime);
 
-        // Pulse gain modulation for acoustic mechanical shock
-        const pulse = 0.5 + Math.random() * 0.45;
+        // Acoustic mechanical pulse modulation
+        const pulse = 0.65 + Math.random() * 0.35;
         gainRef.current.gain.linearRampToValueAtTime(pulse, cTime + 0.05);
-      }, 80);
+      }, 70);
+
+      // Periodic synchronized haptic motor pulses
+      vibrateIntervalRef.current = window.setInterval(() => {
+        triggerVibration([60, 30, 80]);
+      }, 1200);
 
       // 60-second countdown
       timerRef.current = window.setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             stopAudio();
+            triggerVibration([200, 100, 200]);
             return 0;
           }
           return prev - 1;
@@ -114,8 +139,16 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
       }, 1000);
     } catch (err) {
       console.error(err);
-      setErrorMsg("Failed to access audio hardware. Please check speaker permissions.");
+      setErrorMsg("Failed to access audio hardware. Please tap Allow on the permission prompt.");
       stopAudio();
+    }
+  };
+
+  const handleStartRequest = () => {
+    if (!isGranted("audio")) {
+      setPermissionSheetOpen(true);
+    } else {
+      executeAudioStart();
     }
   };
 
@@ -127,116 +160,188 @@ export const SpeakerCleanerModal: React.FC<SpeakerCleanerModalProps> = ({ isOpen
 
   if (!isOpen) return null;
 
+  // Gauge calculations
+  const progressPercent = Math.round(((60 - timeLeft) / 60) * 100);
+  const strokeDashoffset = 440 - (440 * progressPercent) / 100;
+
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
-      onClick={() => {
-        stopAudio();
-        onClose();
-      }}
-    >
+    <>
       <div
-        className="w-full max-w-md bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-7 space-y-6 shadow-2xl relative overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in select-none"
+        onClick={() => {
+          stopAudio();
+          onClose();
+        }}
       >
-        {/* Glow backdrop */}
-        <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div
+          className="w-full max-w-md bg-slate-950 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-2xl relative overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* AMOLED Radial Background Glow */}
+          <div className="absolute top-0 right-0 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
-              <Droplets className="h-6 w-6 animate-pulse" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg text-white">Speaker Dust &amp; Water Ejector</h3>
-              <p className="text-xs text-slate-400">165Hz Acoustic Moisture Clearance</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              stopAudio();
-              onClose();
-            }}
-            className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Interactive Wave Animation Container */}
-        <div className="relative flex flex-col items-center justify-center py-8 bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden">
-          {isRunning ? (
-            <div className="relative flex items-center justify-center">
-              {/* Concentric soundwaves */}
-              <div className="absolute w-36 h-36 rounded-full border-2 border-cyan-400/40 animate-ping opacity-60" />
-              <div className="absolute w-28 h-28 rounded-full border border-cyan-500/60 animate-pulse" />
-              <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.6)] z-10">
-                <Volume2 className="h-10 w-10 text-slate-950 animate-bounce" />
+          {/* Header */}
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                <Droplets className="h-6 w-6 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800">
+                    Acoustic Ejector
+                  </span>
+                </div>
+                <h3 className="font-bold text-base text-white mt-0.5">
+                  Sonic Speaker Dust &amp; Water Ejector
+                </h3>
               </div>
             </div>
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400">
-              <VolumeX className="h-9 w-9" />
+            <button
+              type="button"
+              onClick={() => {
+                stopAudio();
+                onClose();
+              }}
+              className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* High-Contrast Circular Gauge & Sound-Wave Equalizer */}
+          <div className="relative flex flex-col items-center justify-center py-6 bg-slate-900/60 border border-slate-800/80 rounded-3xl overflow-hidden">
+            {/* SVG Gauge */}
+            <div className="relative w-48 h-48 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="70"
+                  fill="transparent"
+                  stroke="#1e293b"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="70"
+                  fill="transparent"
+                  stroke={isRunning ? "#22d3ee" : "#334155"}
+                  strokeWidth="8"
+                  strokeDasharray="440"
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  className="transition-all duration-300"
+                />
+              </svg>
+
+              {/* Center icon / status */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                {isRunning ? (
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center border border-cyan-400 animate-pulse">
+                      <Volume2 className="h-8 w-8 text-cyan-400 animate-bounce" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500">
+                    <VolumeX className="h-8 w-8" />
+                  </div>
+                )}
+                <div className="mt-2 font-mono text-xl font-black text-white">
+                  {isRunning ? `${timeLeft}s` : "60s"}
+                </div>
+              </div>
+            </div>
+
+            {/* Equalizer Waveform bars */}
+            <div className="flex items-end justify-center gap-1.5 h-8 mt-2 px-6">
+              {[40, 75, 55, 90, 60, 100, 70, 85, 50, 95, 65, 80].map((h, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 rounded-full transition-all duration-150 ${
+                    isRunning
+                      ? "bg-gradient-to-t from-cyan-500 to-blue-400"
+                      : "bg-slate-700 h-2"
+                  }`}
+                  style={{
+                    height: isRunning ? `${Math.max(6, Math.min(32, (h * frequency) / 200))}px` : "6px",
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="mt-3 text-center">
+              <div className="text-xs font-mono text-slate-400">
+                Acoustic Frequency:{" "}
+                <span className="text-cyan-400 font-bold text-sm">{frequency} Hz</span>
+              </div>
+              <span className="text-[10px] text-slate-500 block mt-0.5">
+                Target Moisture &amp; Particle Ejection Band (165Hz - 250Hz)
+              </span>
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-3.5 text-xs text-slate-300 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-cyan-300 font-semibold text-[11px]">
+              <Sparkles className="h-3.5 w-3.5" /> Optimal Ejection Technique:
+            </div>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              1. Turn phone media volume to <strong>100% Maximum</strong>.<br />
+              2. Point bottom speaker grille downwards over a cloth.<br />
+              3. Hold firmly as acoustic resonance &amp; haptic pulses vibrate the grille.
+            </p>
+          </div>
+
+          {errorMsg && (
+            <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-500/40 text-xs text-rose-300 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+              <span>{errorMsg}</span>
             </div>
           )}
 
-          <div className="mt-5 text-center">
-            <div className="font-mono text-2xl font-black text-cyan-400">
-              {isRunning ? `${timeLeft}s Remaining` : "60s Session"}
-            </div>
-            <div className="text-[11px] font-mono text-slate-400 mt-1">
-              Active Resonance: <span className="text-emerald-400 font-bold">{frequency} Hz</span>
-            </div>
+          {/* 1-Tap Big Tactile Button */}
+          <div>
+            {isRunning ? (
+              <button
+                type="button"
+                onClick={stopAudio}
+                className="w-full py-4 px-4 rounded-2xl bg-rose-500 hover:bg-rose-400 active:scale-95 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-rose-500/30 transition-all cursor-pointer"
+              >
+                <Square className="h-5 w-5 fill-slate-950" />
+                <span>STOP EJECTION ({timeLeft}s)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleStartRequest}
+                className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 hover:from-cyan-300 hover:to-blue-500 active:scale-95 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all cursor-pointer"
+              >
+                <Play className="h-5 w-5 fill-slate-950" />
+                <span>START WATER EJECTION (60s)</span>
+              </button>
+            )}
           </div>
-        </div>
-
-        {/* Instructions */}
-        <div className="bg-slate-900/40 border border-slate-800/60 rounded-xl p-3 text-xs text-slate-300 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-cyan-300 font-semibold text-[11px]">
-            <Sparkles className="h-3.5 w-3.5" /> Optimal Ejection Technique:
-          </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            1. Turn phone media volume to <strong>100% Maximum</strong>.<br />
-            2. Hold device vertically with bottom speaker facing downward.<br />
-            3. Tap Start to trigger low-frequency sound bursts.
-          </p>
-        </div>
-
-        {errorMsg && (
-          <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-500/40 text-xs text-rose-300 flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
-            <span>{errorMsg}</span>
-          </div>
-        )}
-
-        {/* Action Controls */}
-        <div className="flex gap-3">
-          {isRunning ? (
-            <button
-              type="button"
-              onClick={stopAudio}
-              className="w-full py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 active:scale-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 transition-all"
-            >
-              <Square className="h-4 w-4 fill-slate-950" />
-              <span>Stop Ejection</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={startAudio}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 active:scale-95 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all"
-            >
-              <Play className="h-4 w-4 fill-slate-950" />
-              <span>Start Ejection (60s)</span>
-            </button>
-          )}
         </div>
       </div>
-    </div>
+
+      {/* Permission sheet for Audio & Vibration */}
+      <PermissionSheet
+        isOpen={permissionSheetOpen}
+        onClose={() => setPermissionSheetOpen(false)}
+        onAllowed={() => {
+          setPermissionSheetOpen(false);
+          executeAudioStart();
+        }}
+        requiredPermissions={["audio", "vibration"]}
+        title="Speaker & Haptic Hardware Access"
+        description="Super Telecom requires Web Audio API and Haptic feedback permissions to trigger ultrasonic acoustic waves and clear water droplets."
+      />
+    </>
   );
 };
 

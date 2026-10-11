@@ -47,8 +47,8 @@ export const BottomNav: React.FC = () => {
     return () => window.removeEventListener("st:chat-toggle", onChatToggle);
   }, []);
 
-  // Hide on admin routes or when AI chat is open
-  if (pathname.startsWith("/admin") || chatOpen) {
+  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), or when AI chat is open
+  if (pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
     return null;
   }
 

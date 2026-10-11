@@ -26,6 +26,7 @@ import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
 import { ServiceChips } from "@/components/mobile/ServiceChips";
 import { Header } from "@/components/Header";
 import { SafeReviewsSection } from "@/components/ReviewsSection";
+import { MobileAppShell } from "@/components/layout/MobileAppShell";
 
 
 export const Route = createFileRoute("/")({
@@ -214,38 +215,39 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
-      <BackgroundFX />
-      <Header isHomePage={true} />
-      <main id="main" className="w-full max-w-full overflow-x-hidden">
-        <Hero />
-        <LabTrustStrip />
-        {/* Mobile Horizontal Scroll Category Chips directly under Hero */}
-        <div className="border-b border-border/40 bg-slate-950/85 backdrop-blur-md py-2 md:hidden">
-          <ServiceChips
-            activeCategory={serviceCategory}
-            onSelectCategory={handleSelectCategory}
-          />
-        </div>
-        <RepairEstimator />
-        <TrustBar />
-        <About />
-        <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
-        <PricingMatrix />
-        <WhyUs />
-        <Gallery />
-        <BeforeAfterSlider />
-        <DailyUpdatesSection />
-        <SafeReviewsSection />
-        <FAQ />
-        <LocalFaqSection />
-        <Contact />
-        <VisitStore />
-      </main>
+    <>
+      {/* 100% Native Mobile App Experience (md:hidden) */}
+      <div className="md:hidden">
+        <MobileAppShell />
+      </div>
 
-      <Footer />
-      <FloatingActions />
-    </div>
+      {/* Flagship Enterprise Portal (hidden md:block) */}
+      <div className="hidden md:block min-h-screen w-full max-w-full overflow-x-hidden bg-background text-foreground">
+        <BackgroundFX />
+        <Header isHomePage={true} />
+        <main id="main" className="w-full max-w-full overflow-x-hidden">
+          <Hero />
+          <LabTrustStrip />
+          <RepairEstimator />
+          <TrustBar />
+          <About />
+          <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
+          <PricingMatrix />
+          <WhyUs />
+          <Gallery />
+          <BeforeAfterSlider />
+          <DailyUpdatesSection />
+          <SafeReviewsSection />
+          <FAQ />
+          <LocalFaqSection />
+          <Contact />
+          <VisitStore />
+        </main>
+
+        <Footer />
+        <FloatingActions />
+      </div>
+    </>
   );
 }
 
