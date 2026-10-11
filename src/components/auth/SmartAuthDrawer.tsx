@@ -38,7 +38,8 @@ export const SmartAuthDrawer: React.FC<SmartAuthDrawerProps> = ({
         await supabase.auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: window.location.href,
+            redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
+            queryParams: { access_type: "offline", prompt: "consent" },
           },
         });
       } else {

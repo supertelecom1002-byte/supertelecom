@@ -22,6 +22,8 @@ import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
 import { UpdateBanner } from "@/components/app/UpdateBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
+import { VipPerksModal } from "@/components/auth/VipPerksModal";
 
 function NotFoundComponent() {
   return (
@@ -438,15 +440,18 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AdminAuthProvider>
-          <VisualEditorProvider>
-            <Outlet />
-            <LiveEditorBar />
-            <FloatingAiChat />
-            <BottomNav />
-            <UpdateBanner />
-            <Toaster position="top-center" richColors />
-            <CookieBanner />
-          </VisualEditorProvider>
+          <CustomerAuthProvider>
+            <VisualEditorProvider>
+              <Outlet />
+              <LiveEditorBar />
+              <FloatingAiChat />
+              <BottomNav />
+              <UpdateBanner />
+              <VipPerksModal />
+              <Toaster position="top-center" richColors />
+              <CookieBanner />
+            </VisualEditorProvider>
+          </CustomerAuthProvider>
         </AdminAuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
