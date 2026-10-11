@@ -97,6 +97,17 @@ self.addEventListener("fetch", (event) => {
   // Skip non-http/https protocols (chrome-extension, blob, data, etc.)
   if (!url.protocol.startsWith("http")) return;
 
+  // CRITICAL: Bypass API routes, Server Functions, Auth calls, and external DB queries
+  if (
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/_server") ||
+    url.pathname.startsWith("/_serverFn") ||
+    url.pathname.includes("/admin/") ||
+    url.hostname.includes("supabase.co")
+  ) {
+    return; // Pass through directly to browser network pipeline
+  }
+
   // 1. Navigation Requests (HTML Page loads / Route transitions):
   // Network-First with Stale Cache Fallback + Root fallback for SPA offline routes
   if (event.request.mode === "navigate") {
@@ -124,11 +135,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 2. Static Assets (Scripts, Styles, Images, Fonts, Audio):
+  // 2. Static Assets (Scripts, Styles, Images, Fonts, Audio, Manifest):
   // Cache-First with Background Network Revalidation
   const isStaticAsset =
-    url.origin === self.location.origin ||
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff|woff2|ttf|mp3|wav|ogg)$/i);
+    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff|woff2|ttf|mp3|wav|ogg|json)$/i) ||
+    url.pathname.startsWith("/assets/") ||
+    url.pathname.startsWith("/static/") ||
+    PRECACHE_ASSETS.includes(url.pathname);
 
   if (isStaticAsset) {
     event.respondWith(
