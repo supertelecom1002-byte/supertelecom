@@ -2,12 +2,24 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 
 export interface AppConfig {
   tool_speaker_cleaner: boolean;
+  tool_audio_loopback: boolean;
+  tool_vibration: boolean;
   tool_touch_test: boolean;
+  tool_dead_pixel: boolean;
+  tool_multi_touch: boolean;
+  tool_burnin_healer: boolean;
+  tool_fps_meter: boolean;
+  tool_gyro: boolean;
+  tool_torch: boolean;
+  tool_ambient_light: boolean;
   tool_anti_theft: boolean;
   tool_battery_guard: boolean;
   tool_secret_codes: boolean;
+  tool_imei_validator: boolean;
   tool_lockscreen_gen: boolean;
+  tool_used_audit: boolean;
   tool_used_phone_audit: boolean;
+  tool_water_wizard: boolean;
   shop_accessories_enabled: boolean;
   lab_status_override: "auto" | "open" | "closed";
   announcement_banner: {
@@ -18,12 +30,24 @@ export interface AppConfig {
 
 export const DEFAULT_CONFIG: AppConfig = {
   tool_speaker_cleaner: true,
+  tool_audio_loopback: true,
+  tool_vibration: true,
   tool_touch_test: true,
+  tool_dead_pixel: true,
+  tool_multi_touch: true,
+  tool_burnin_healer: true,
+  tool_fps_meter: true,
+  tool_gyro: true,
+  tool_torch: true,
+  tool_ambient_light: true,
   tool_anti_theft: true,
   tool_battery_guard: true,
   tool_secret_codes: true,
+  tool_imei_validator: true,
   tool_lockscreen_gen: true,
+  tool_used_audit: true,
   tool_used_phone_audit: true,
+  tool_water_wizard: true,
   shop_accessories_enabled: true,
   lab_status_override: "auto",
   announcement_banner: {

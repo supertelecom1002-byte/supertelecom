@@ -55,6 +55,14 @@ import { AudioHardwareTestModal } from "@/components/tools/AudioHardwareTestModa
 import { VibrationTesterModal } from "@/components/tools/VibrationTesterModal";
 import { DisplayFpsMeterModal } from "@/components/tools/DisplayFpsMeterModal";
 import { WaterRescueWizardModal } from "@/components/tools/WaterRescueWizardModal";
+import { DeadPixelTestModal } from "@/components/tools/DeadPixelTestModal";
+import { MultiTouchTesterModal } from "@/components/tools/MultiTouchTesterModal";
+import { BurnInHealerModal } from "@/components/tools/BurnInHealerModal";
+import { GyroCompassModal } from "@/components/tools/GyroCompassModal";
+import { TorchControllerModal } from "@/components/tools/TorchControllerModal";
+import { AmbientLightTestModal } from "@/components/tools/AmbientLightTestModal";
+import { ImeiValidatorModal } from "@/components/tools/ImeiValidatorModal";
+import { TOOLS, type ToolId, type ToolCategory } from "@/components/tools/LabToolsHub";
 import { RepairTrackerModal } from "@/components/repair/RepairTrackerModal";
 import { SettingsView } from "@/components/settings/SettingsView";
 import { RepairEstimator } from "@/components/interactive/RepairEstimator";
@@ -77,19 +85,11 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const { triggerVibration } = useHardwarePermissions();
   const { isDark } = useTheme();
 
-  // Tool Modals
-  const [speakerModalOpen, setSpeakerModalOpen] = useState(false);
-  const [touchModalOpen, setTouchModalOpen] = useState(false);
-  const [antiTheftModalOpen, setAntiTheftModalOpen] = useState(false);
-  const [batteryModalOpen, setBatteryModalOpen] = useState(false);
-  const [secretCodesModalOpen, setSecretCodesModalOpen] = useState(false);
-  const [lockscreenModalOpen, setLockscreenModalOpen] = useState(false);
-  const [usedAuditModalOpen, setUsedAuditModalOpen] = useState(false);
-  const [audioTestModalOpen, setAudioTestModalOpen] = useState(false);
-  const [vibrationModalOpen, setVibrationModalOpen] = useState(false);
-  const [fpsMeterModalOpen, setFpsMeterModalOpen] = useState(false);
-  const [waterWizardModalOpen, setWaterWizardModalOpen] = useState(false);
+  // Active Tool Modal & Filters
+  const [activeToolModal, setActiveToolModal] = useState<ToolId | null>(null);
   const [trackModalOpen, setTrackModalOpen] = useState(false);
+  const [toolsSearch, setToolsSearch] = useState("");
+  const [toolsCategory, setToolsCategory] = useState<ToolCategory>("all");
 
   // Online / Offline state detection
   useEffect(() => {
@@ -119,10 +119,41 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     setActiveTab(tab);
   };
 
-  const openToolWithHaptic = (opener: (val: boolean) => void) => {
+  const openToolWithHaptic = (toolId: ToolId) => {
     triggerVibration(15);
-    opener(true);
+    setActiveToolModal(toolId);
   };
+
+  const openTrackModalWithHaptic = () => {
+    triggerVibration(15);
+    setTrackModalOpen(true);
+  };
+
+  const toolCategories: { key: ToolCategory; label: string }[] = [
+    { key: "all", label: "All Tools" },
+    { key: "audio", label: "Audio & Haptics" },
+    { key: "screen", label: "Display & Screen" },
+    { key: "sensors", label: "Sensors & Torch" },
+    { key: "system", label: "Battery & System" },
+  ];
+
+  const filteredTools = TOOLS.filter((tool) => {
+    if (tool.configKey && config && config[tool.configKey] === false) {
+      return false;
+    }
+    if (toolsCategory !== "all" && tool.category !== toolsCategory) {
+      return false;
+    }
+    if (toolsSearch.trim()) {
+      const q = toolsSearch.toLowerCase();
+      return (
+        tool.title.toLowerCase().includes(q) ||
+        tool.subtitle.toLowerCase().includes(q) ||
+        tool.tag.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
 
   return (
     <div className="md:hidden h-[100dvh] flex flex-col bg-[#f8fafc] dark:bg-[#02040a] text-slate-900 dark:text-slate-100 overflow-hidden select-none relative transition-colors duration-200">
@@ -231,10 +262,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
         <button
           type="button"
-          onClick={() => {
-            triggerVibration(15);
-            setWaterWizardModalOpen(true);
-          }}
+          onClick={() => openToolWithHaptic("water_wizard")}
           className="px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-500/40 text-rose-800 dark:text-rose-300 text-[10px] font-mono font-bold flex items-center gap-1 whitespace-nowrap active:scale-95 transition-transform"
         >
           <LifeBuoy className="h-3 w-3 text-rose-600 dark:text-rose-400" />
@@ -313,7 +341,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
               </div>
               <button
                 type="button"
-                onClick={() => openToolWithHaptic(setTrackModalOpen)}
+                onClick={openTrackModalWithHaptic}
                 className="px-2.5 py-1 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-300 dark:border-cyan-500/30 text-cyan-800 dark:text-cyan-300 font-bold text-[10px] active:scale-95 transition-transform"
               >
                 Track Repair
@@ -350,7 +378,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 className="flex flex-col items-center justify-center p-3 rounded-2xl bg-cyan-50 dark:bg-gradient-to-tr dark:from-cyan-950/80 dark:to-blue-950/80 border border-cyan-200 dark:border-cyan-500/40 text-cyan-800 dark:text-cyan-300 active:scale-95 transition-all shadow-sm dark:shadow-md dark:shadow-black/40"
               >
                 <Wrench className="h-5 w-5 mb-1 text-cyan-600 dark:text-cyan-400" />
-                <span className="text-[11px] font-bold text-slate-900 dark:text-white">10+ Tools</span>
+                <span className="text-[11px] font-bold text-slate-900 dark:text-white">16+ Tools</span>
                 <span className="text-[9px] text-cyan-600 dark:text-cyan-400 font-mono">Offline Suite</span>
               </button>
             </div>
@@ -366,14 +394,14 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                   onClick={() => handleTabChange("tools")}
                   className="text-[10px] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-semibold"
                 >
-                  View All (10+) &rarr;
+                  View All (16+) &rarr;
                 </button>
               </div>
 
               <div className="grid grid-cols-4 gap-1.5">
                 <button
                   type="button"
-                  onClick={() => openToolWithHaptic(setSpeakerModalOpen)}
+                  onClick={() => openToolWithHaptic("speaker_cleaner")}
                   className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-center active:scale-95 transition-all"
                 >
                   <Droplets className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mx-auto mb-1 animate-pulse" />
@@ -383,7 +411,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => openToolWithHaptic(setTouchModalOpen)}
+                  onClick={() => openToolWithHaptic("touch_test")}
                   className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 text-center active:scale-95 transition-all"
                 >
                   <Smartphone className="h-4 w-4 text-emerald-600 dark:text-emerald-400 mx-auto mb-1" />
@@ -393,7 +421,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => openToolWithHaptic(setFpsMeterModalOpen)}
+                  onClick={() => openToolWithHaptic("fps_meter")}
                   className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-purple-500/40 text-center active:scale-95 transition-all"
                 >
                   <Gauge className="h-4 w-4 text-purple-600 dark:text-purple-400 mx-auto mb-1" />
@@ -403,7 +431,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => openToolWithHaptic(setAudioTestModalOpen)}
+                  onClick={() => openToolWithHaptic("audio_test")}
                   className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 text-center active:scale-95 transition-all"
                 >
                   <Mic className="h-4 w-4 text-amber-600 dark:text-amber-400 mx-auto mb-1" />
@@ -522,6 +550,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         {/* ===================================================== */}
         {/* TAB 2: 🧰 CYBER-LAB TOOLS (10+ UTILITIES GRID)         */}
         {/* ===================================================== */}
+        {/* ===================================================== */}
+        {/* TAB 2: 🧰 CYBER-LAB TOOLS (16+ UTILITIES GRID)        */}
+        {/* ===================================================== */}
         {activeTab === "tools" && (
           <div className="space-y-3 pb-24 animate-in fade-in duration-200">
             {/* Header Badge */}
@@ -529,282 +560,112 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
               <div className="flex items-center gap-2.5">
                 <Wrench className="h-5 w-5 text-cyan-700 dark:text-cyan-400 shrink-0" />
                 <div>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">Cyber-Lab Offline Diagnostic Suite</h3>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white">Cyber-Lab Diagnostic Suite</h3>
                   <p className="text-[10px] text-cyan-800 dark:text-cyan-300">
                     100% Client-side &bull; Zero Data Required &bull; Native Web APIs
                   </p>
                 </div>
               </div>
               <span className="text-[9px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                11 Utilities
+                {filteredTools.length} Utilities
               </span>
             </div>
 
-            {/* 2-Column Cyberpunk Grid for all 10+ Hardware Tools */}
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={toolsSearch}
+                onChange={(e) => setToolsSearch(e.target.value)}
+                placeholder="Search hardware tool (e.g. mic, screen, battery, imei)..."
+                className="w-full pl-9 pr-8 py-2 text-xs bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 transition-colors"
+              />
+              {toolsSearch && (
+                <button
+                  type="button"
+                  onClick={() => setToolsSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs p-1"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Horizontal Category Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+              {toolCategories.map((cat) => {
+                const isSelected = toolsCategory === cat.key;
+                return (
+                  <button
+                    key={cat.key}
+                    type="button"
+                    onClick={() => {
+                      triggerVibration(10);
+                      setToolsCategory(cat.key);
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-[11px] font-medium whitespace-nowrap transition-all active:scale-95 cursor-pointer ${
+                      isSelected
+                        ? "bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20"
+                        : "bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 2-Column Compact Grid */}
             <div className="grid grid-cols-2 gap-2.5">
-              {/* 1. Speaker Ejector */}
-              <div
-                onClick={() => openToolWithHaptic(setSpeakerModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
-                      <Droplets className="h-4 w-4 animate-pulse" />
-                    </div>
-                    <span className="text-[8px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-950 px-1.5 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800">
-                      165Hz
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Sonic 165Hz Ejector</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Dual-frequency sound burst &amp; haptic pulses clear water.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1">
-                  Launch &rarr;
-                </span>
-              </div>
-
-              {/* 2. Touch Matrix */}
-              <div
-                onClick={() => openToolWithHaptic(setTouchModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-emerald-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                      <Smartphone className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                      10x15
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Touch Matrix &amp; Pixels</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    150-tile sweep, ghost touch tracker &amp; RGB flasher.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                  Audit &rarr;
-                </span>
-              </div>
-
-              {/* 3. Anti-Theft Siren */}
-              <div
-                onClick={() => openToolWithHaptic(setAntiTheftModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-rose-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-                      <ShieldAlert className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950 px-1.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800">
-                      Siren
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Anti-Theft Unplug</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    100% emergency alarm &amp; strobe if charger is pulled.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1">
-                  Arm Alarm &rarr;
-                </span>
-              </div>
-
-              {/* 4. Mic & Audio Loopback */}
-              <div
-                onClick={() => openToolWithHaptic(setAudioTestModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
-                      <Mic className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-950 px-1.5 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800">
-                      Loopback
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Mic Loopback Test</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    4s local recording playback tests microphone clarity.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1">
-                  Test Mic &rarr;
-                </span>
-              </div>
-
-              {/* 5. Vibration Motor Test */}
-              <div
-                onClick={() => openToolWithHaptic(setVibrationModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-amber-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                      <Zap className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-950 px-1.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
-                      4 Stress
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Haptic Motor Test</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Pulse, Heartbeat, Buzz &amp; SOS patterns verify motor.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1">
-                  Run Stress &rarr;
-                </span>
-              </div>
-
-              {/* 6. Display FPS & Refresh Rate */}
-              <div
-                onClick={() => openToolWithHaptic(setFpsMeterModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-purple-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/30">
-                      <Gauge className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-purple-700 dark:text-purple-400 bg-purple-100 dark:bg-purple-950 px-1.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-800">
-                      120Hz
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Display FPS Meter</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Measures true 60Hz/90Hz/120Hz refresh rate in real time.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-purple-700 dark:text-purple-400 flex items-center gap-1">
-                  Meter FPS &rarr;
-                </span>
-              </div>
-
-              {/* 7. Water Damage Emergency Protocol */}
-              <div
-                onClick={() => openToolWithHaptic(setWaterWizardModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-rose-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-                      <LifeBuoy className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950 px-1.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800">
-                      Triage
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Water Damage Protocol</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    4-step survival guide &amp; 2-hour golden lab window.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1">
-                  Open Triage &rarr;
-                </span>
-              </div>
-
-              {/* 8. Smart Battery Guard */}
-              <div
-                onClick={() => openToolWithHaptic(setBatteryModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-emerald-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                      <BatteryCharging className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                      85% Guard
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Battery Guard 85%</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Overcharge alarm to extend lithium battery life.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                  Guard &rarr;
-                </span>
-              </div>
-
-              {/* 9. Secret Codes */}
-              <div
-                onClick={() => openToolWithHaptic(setSecretCodesModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
-                      <Hash className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-100 dark:bg-cyan-950 px-1.5 py-0.5 rounded-full border border-cyan-200 dark:border-cyan-800">
-                      Codes
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Secret Dial Codes</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Hardware menus for Samsung, Apple, OnePlus &amp; Xiaomi.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1">
-                  Directory &rarr;
-                </span>
-              </div>
-
-              {/* 10. Emergency Lockscreen */}
-              <div
-                onClick={() => openToolWithHaptic(setLockscreenModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-rose-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
-              >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-                      <HeartPulse className="h-4 w-4" />
-                    </div>
-                    <span className="text-[8px] font-mono text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950 px-1.5 py-0.5 rounded-full border border-rose-200 dark:border-rose-800">
-                      AMOLED
-                    </span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5">Emergency ICE Wall</h4>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
-                    Canvas generator creates lost phone recovery wallpaper.
-                  </p>
-                </div>
-                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 flex items-center gap-1">
-                  Generate &rarr;
-                </span>
-              </div>
-
-              {/* 11. Used Phone Audit */}
-              <div
-                onClick={() => openToolWithHaptic(setUsedAuditModalOpen)}
-                className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-amber-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2 col-span-2"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                      <CheckSquare className="h-4 w-4" />
-                    </div>
+              {filteredTools.map((tool) => {
+                const Icon = tool.icon;
+                return (
+                  <div
+                    key={tool.id}
+                    onClick={() => openToolWithHaptic(tool.id)}
+                    className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all cursor-pointer flex flex-col justify-between shadow-sm dark:shadow-md space-y-2"
+                  >
                     <div>
-                      <h4 className="text-xs font-bold text-slate-900 dark:text-white">12-Point Used Phone Audit Checklist</h4>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
-                        Hardware, TrueTone, battery cycles &amp; IMEI inspection before purchasing second-hand.
+                      <div className="flex items-center justify-between">
+                        <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
+                          <Icon className="h-4 w-4" />
+                        </div>
+                        <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded-full border ${tool.badgeColor}`}>
+                          {tool.tag}
+                        </span>
+                      </div>
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white mt-1.5 line-clamp-1">
+                        {tool.title}
+                      </h4>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5 line-clamp-2">
+                        {tool.subtitle}
                       </p>
                     </div>
+                    <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400 flex items-center gap-1 pt-1">
+                      Launch &rarr;
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 shrink-0">
-                    Audit &rarr;
-                  </span>
-                </div>
-              </div>
+                );
+              })}
             </div>
+
+            {filteredTools.length === 0 && (
+              <div className="text-center py-10 space-y-2">
+                <Wrench className="h-8 w-8 text-slate-400 mx-auto opacity-50" />
+                <p className="text-xs font-semibold text-slate-500">No hardware tools matched your filter</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setToolsSearch("");
+                    setToolsCategory("all");
+                  }}
+                  className="text-xs text-cyan-600 dark:text-cyan-400 font-bold underline"
+                >
+                  Reset filters
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -1070,59 +931,94 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
       {/* 6. Native Tool Modals                                     */}
       {/* ========================================================= */}
       <SpeakerCleanerModal
-        isOpen={speakerModalOpen}
-        onClose={() => setSpeakerModalOpen(false)}
-      />
-
-      <TouchTestModal
-        isOpen={touchModalOpen}
-        onClose={() => setTouchModalOpen(false)}
-      />
-
-      <AntiTheftModal
-        isOpen={antiTheftModalOpen}
-        onClose={() => setAntiTheftModalOpen(false)}
+        isOpen={activeToolModal === "speaker_cleaner"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <AudioHardwareTestModal
-        isOpen={audioTestModalOpen}
-        onClose={() => setAudioTestModalOpen(false)}
+        isOpen={activeToolModal === "audio_test"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <VibrationTesterModal
-        isOpen={vibrationModalOpen}
-        onClose={() => setVibrationModalOpen(false)}
+        isOpen={activeToolModal === "vibration_test"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <TouchTestModal
+        isOpen={activeToolModal === "touch_test"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <DeadPixelTestModal
+        isOpen={activeToolModal === "dead_pixel"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <MultiTouchTesterModal
+        isOpen={activeToolModal === "multi_touch"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <BurnInHealerModal
+        isOpen={activeToolModal === "burnin_healer"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <DisplayFpsMeterModal
-        isOpen={fpsMeterModalOpen}
-        onClose={() => setFpsMeterModalOpen(false)}
+        isOpen={activeToolModal === "fps_meter"}
+        onClose={() => setActiveToolModal(null)}
       />
 
-      <WaterRescueWizardModal
-        isOpen={waterWizardModalOpen}
-        onClose={() => setWaterWizardModalOpen(false)}
-        onOpenSpeakerEjector={() => setSpeakerModalOpen(true)}
+      <GyroCompassModal
+        isOpen={activeToolModal === "gyro"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <TorchControllerModal
+        isOpen={activeToolModal === "torch"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <AmbientLightTestModal
+        isOpen={activeToolModal === "ambient_light"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <AntiTheftModal
+        isOpen={activeToolModal === "anti_theft"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <BatteryGuardModal
-        isOpen={batteryModalOpen}
-        onClose={() => setBatteryModalOpen(false)}
+        isOpen={activeToolModal === "battery_guard"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <SecretCodesModal
-        isOpen={secretCodesModalOpen}
-        onClose={() => setSecretCodesModalOpen(false)}
+        isOpen={activeToolModal === "secret_codes"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <ImeiValidatorModal
+        isOpen={activeToolModal === "imei_validator"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <LockScreenGenModal
-        isOpen={lockscreenModalOpen}
-        onClose={() => setLockscreenModalOpen(false)}
+        isOpen={activeToolModal === "lockscreen_gen"}
+        onClose={() => setActiveToolModal(null)}
       />
 
       <UsedPhoneAuditModal
-        isOpen={usedAuditModalOpen}
-        onClose={() => setUsedAuditModalOpen(false)}
+        isOpen={activeToolModal === "used_phone_audit"}
+        onClose={() => setActiveToolModal(null)}
+      />
+
+      <WaterRescueWizardModal
+        isOpen={activeToolModal === "water_wizard"}
+        onClose={() => setActiveToolModal(null)}
+        onOpenSpeakerEjector={() => setActiveToolModal("speaker_cleaner")}
       />
 
       <RepairTrackerModal

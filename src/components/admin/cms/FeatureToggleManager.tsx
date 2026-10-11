@@ -14,6 +14,16 @@ import {
   Megaphone,
   Check,
   RotateCcw,
+  Mic,
+  Zap,
+  Gauge,
+  LifeBuoy,
+  Eye,
+  Layers,
+  Compass,
+  Flashlight,
+  Sun,
+  ShieldCheck,
 } from "lucide-react";
 import {
   fetchAppConfig,
@@ -77,47 +87,120 @@ export const FeatureToggleManager: React.FC = () => {
   };
 
   const toolToggles: { key: keyof AppConfig; title: string; subtitle: string; icon: any }[] = [
+    // Category A: Audio & Haptics
     {
       key: "tool_speaker_cleaner",
-      title: "Speaker Dust & Water Ejector",
-      subtitle: "165Hz Acoustic Moisture Clearance",
+      title: "165Hz Speaker Dust & Water Ejector",
+      subtitle: "Sine Oscillator Resonance & Moisture Clearance",
       icon: Droplets,
     },
     {
+      key: "tool_audio_loopback",
+      title: "Mic & Earpiece Loopback Tester",
+      subtitle: "4-Second Local Audio Recording & Diagnostic Playback",
+      icon: Mic,
+    },
+    {
+      key: "tool_vibration",
+      title: "Haptic Vibration Motor Tester",
+      subtitle: "4 Stress Patterns (Pulse, Heartbeat, Buzz, SOS)",
+      icon: Zap,
+    },
+
+    // Category B: Display & Digitizer
+    {
       key: "tool_touch_test",
-      title: "Screen Touch & Dead Pixel Diagnostic",
-      subtitle: "96-Tile Grid Digitizer & RGB Sweep",
+      title: "Touch Matrix 10x15 Digitizer Grid",
+      subtitle: "150-Tile Grid Sweep with Real-time Completion %",
       icon: Smartphone,
     },
     {
+      key: "tool_dead_pixel",
+      title: "Dead Pixel RGB Sub-Pixel Cycle",
+      subtitle: "Pure Red, Green, Blue, White, Black Fullscreen Check",
+      icon: Eye,
+    },
+    {
+      key: "tool_multi_touch",
+      title: "10-Point Multi-Touch Inspector",
+      subtitle: "Live Touch Rings & Digitizer Multiplexing Grade",
+      icon: Layers,
+    },
+    {
+      key: "tool_burnin_healer",
+      title: "AMOLED Burn-in & Ghost Image Healer",
+      subtitle: "Rapid RGB & Static Noise Sub-pixel Exerciser",
+      icon: Sparkles,
+    },
+    {
+      key: "tool_fps_meter",
+      title: "Real Display FPS & Refresh Rate Meter",
+      subtitle: "Live RAF Refresh Measurement (60Hz / 90Hz / 120Hz)",
+      icon: Gauge,
+    },
+
+    // Category C: Sensors & Hardware
+    {
+      key: "tool_gyro",
+      title: "3D Gyroscope & Digital Spirit Level",
+      subtitle: "DeviceOrientation IMU Tilting & Accelerometer IC Health",
+      icon: Compass,
+    },
+    {
+      key: "tool_torch",
+      title: "Camera Torch Strobe & SOS Signal",
+      subtitle: "Steady, 10Hz Strobe, SOS Beacon & Screen Flash Fallback",
+      icon: Flashlight,
+    },
+    {
+      key: "tool_ambient_light",
+      title: "Ambient Light & Proximity Health Check",
+      subtitle: "Photodiode Illuminance & Camera Lux Meter",
+      icon: Sun,
+    },
+    {
       key: "tool_anti_theft",
-      title: "Anti-Theft Unplug & Motion Siren",
-      subtitle: "Charger Disconnect Loud Alarm Tone",
+      title: "Anti-Theft Unplug & Movement Siren",
+      subtitle: "Battery API Charger Disconnect 100% Volume Alarm",
       icon: ShieldAlert,
     },
+
+    // Category D: Battery & System Integrity
     {
       key: "tool_battery_guard",
       title: "Smart Battery Guard (85%)",
-      subtitle: "Cathode Preservation Chime",
+      subtitle: "Cathode Preservation Chime & Overcharge Guard",
       icon: BatteryCharging,
     },
     {
       key: "tool_secret_codes",
-      title: "Secret Hardware Dial Codes",
-      subtitle: "Engineering Menus for Samsung, Apple, etc.",
+      title: "All-Brand Secret Hardware Dial Directory",
+      subtitle: "Engineering Menus for Samsung, Apple, OnePlus, Xiaomi",
       icon: Hash,
     },
     {
+      key: "tool_imei_validator",
+      title: "Mathematical IMEI Luhn Validator",
+      subtitle: "Luhn Mod-10 Checksum & GSMA Hardware Legitimacy",
+      icon: ShieldCheck,
+    },
+    {
       key: "tool_lockscreen_gen",
-      title: "Emergency Lockscreen Wallpaper",
-      subtitle: "AMOLED ICE Card Generator",
+      title: "Emergency Lockscreen Wallpaper Generator",
+      subtitle: "AMOLED 1080x2400 ICE Emergency Card Canvas",
       icon: HeartPulse,
     },
     {
       key: "tool_used_phone_audit",
       title: "Used Phone Inspection Checklist",
-      subtitle: "12-Point Pre-Purchase Scorecard",
+      subtitle: "12-Point Hardware Scorecard with Grade A+ to D",
       icon: CheckSquare,
+    },
+    {
+      key: "tool_water_wizard",
+      title: "Water Damage Emergency Triage Protocol",
+      subtitle: "Golden Window Triage Guide & Critical Diagnostic Steps",
+      icon: LifeBuoy,
     },
   ];
 
