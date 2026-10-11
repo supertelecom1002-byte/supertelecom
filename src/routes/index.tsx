@@ -25,6 +25,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
 import { ServiceChips } from "@/components/mobile/ServiceChips";
 import { Header } from "@/components/Header";
+import { SafeReviewsSection } from "@/components/ReviewsSection";
 
 
 export const Route = createFileRoute("/")({
@@ -42,7 +43,6 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
-      { rel: "preload", as: "image", href: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80", fetchpriority: "high" } as any,
     ],
     scripts: [
       {
@@ -236,7 +236,7 @@ function HomePage() {
         <Gallery />
         <BeforeAfterSlider />
         <DailyUpdatesSection />
-        <Testimonials />
+        <SafeReviewsSection />
         <FAQ />
         <LocalFaqSection />
         <Contact />
@@ -600,42 +600,7 @@ function Gallery() {
 }
 
 function Testimonials() {
-  const reviews = [
-    { name: "Rahul K.", role: "Screen replacement", body: "Cracked my iPhone screen and Super Telecom had it fixed in under an hour. Perfect display, fair price, great service.", rating: 5 },
-    { name: "Priya S.", role: "Battery replacement", body: "My phone was dying by noon. New battery, honest price, and it feels brand new. Definitely coming back.", rating: 5 },
-    { name: "Mohit V.", role: "Second-hand phone", body: "Bought a used Samsung — tested thoroughly and came with warranty. Best used phone shop in Giridih.", rating: 5 },
-    { name: "Anjali D.", role: "Water damage repair", body: "Phone fell in water and everyone said it was gone. Super Telecom brought it back to life. Miracle workers!", rating: 5 },
-    { name: "Suresh P.", role: "Motherboard repair", body: "Complex IC issue no one else would touch. Fixed cleanly with a warranty. Real experts.", rating: 5 },
-    { name: "Neha R.", role: "Accessories", body: "Great range of chargers, covers and tempered glass at fair prices. My go-to accessory shop.", rating: 5 },
-  ];
-  return (
-    <section id="reviews" className="py-8 sm:py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionHeader eyebrow="Reviews" title="Loved by customers across Giridih" />
-        <div className="mt-8 sm:mt-14 grid gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((r) => (
-            <div key={r.name} className="rounded-2xl sm:rounded-3xl glass p-4 sm:p-6 transition-all hover:-translate-y-1 hover:shadow-glow">
-              <div className="flex gap-1">
-                {Array.from({ length: r.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <p className="mt-3 sm:mt-4 text-xs sm:text-sm leading-relaxed text-foreground/90">"{r.body}"</p>
-              <div className="mt-4 sm:mt-5 flex items-center gap-3">
-                <div className="grid h-8 w-8 sm:h-10 sm:w-10 place-items-center rounded-full bg-gradient-brand font-semibold text-xs sm:text-sm text-primary-foreground">
-                  {r.name[0]}
-                </div>
-                <div>
-                  <div className="text-xs sm:text-sm font-semibold">{r.name}</div>
-                  <div className="text-[11px] sm:text-xs text-muted-foreground">{r.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <SafeReviewsSection />;
 }
 
 function FAQ() {
