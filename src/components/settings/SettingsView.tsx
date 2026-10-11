@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { useTheme } from "@/context/ThemeContext";
+import { useAppUpdate } from "@/hooks/useAppUpdate";
 import { toast } from "sonner";
 
 interface SettingsViewProps {
@@ -41,6 +42,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
   } = useHardwarePermissions();
 
   const { theme, isDark, toggleTheme } = useTheme();
+  const { isUpdateAvailable, isChecking, applyUpdate, manualCheckForUpdate } = useAppUpdate();
   const [isClearing, setIsClearing] = useState(false);
 
   const handleToggleTheme = () => {
@@ -367,20 +369,51 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
 
       {/* 4. App Storage & Performance */}
       <div className="rounded-3xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 p-5 space-y-3 shadow-sm dark:shadow-xl">
-        <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Offline Cache &amp; Storage</h4>
+        <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Offline Cache &amp; System Updates</h4>
         <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-          Wipe cached assets, reload latest lab tools, and unregister old service workers without reinstalling the application.
+          Check for new lab software releases, wipe stale cached assets, and manage offline service worker state.
         </p>
 
-        <button
-          type="button"
-          onClick={handleClearCache}
-          disabled={isClearing}
-          className="w-full py-3 px-4 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 border border-rose-500/30 text-rose-600 dark:text-rose-300 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
-        >
-          <Trash2 className="h-4 w-4" />
-          <span>{isClearing ? "Clearing & Reloading..." : "Refresh & Clear Local Cache"}</span>
-        </button>
+        {isUpdateAvailable && (
+          <div className="p-3.5 rounded-2xl bg-cyan-100 dark:bg-cyan-950/80 border border-cyan-300 dark:border-cyan-500/50 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-cyan-600 dark:text-cyan-400 animate-pulse" />
+              <div>
+                <span className="text-xs font-bold text-slate-900 dark:text-white block">Release v3.2 Waiting</span>
+                <span className="text-[10px] text-cyan-800 dark:text-cyan-300">Ready to activate immediately.</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={applyUpdate}
+              className="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs active:scale-95 transition-transform cursor-pointer"
+            >
+              Update Now
+            </button>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-2 pt-1">
+          <button
+            type="button"
+            onClick={manualCheckForUpdate}
+            disabled={isChecking}
+            className="py-2.5 px-3 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isChecking ? "animate-spin text-cyan-500" : ""}`} />
+            <span>{isChecking ? "Checking..." : "Check Updates"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClearCache}
+            disabled={isClearing}
+            className="py-2.5 px-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 active:scale-95 border border-rose-500/30 text-rose-600 dark:text-rose-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            <span>{isClearing ? "Clearing..." : "Clear Cache"}</span>
+          </button>
+        </div>
       </div>
 
       {/* 4. Lab Location & Engineer Desk */}

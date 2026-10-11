@@ -1,94 +1,176 @@
-// Super Telecom Cyber-Lab Service Worker v3.0 (Offline-First Engine)
-const CACHE_NAME = "supertelecom-offline-v3";
-const STATIC_ASSETS = [
+// Super Telecom Cyber-Lab Service Worker v3.2 (Strict Offline-First Engine)
+// 100% Client-Side Hardware Diagnostics • Controlled Manual Update Workflow
+
+const CACHE_NAME = "supertelecom-offline-v3.2";
+
+// Core App Shell & Offline Hubs to Pre-Cache
+const PRECACHE_ASSETS = [
   "/",
+  "/tools",
+  "/track",
+  "/download",
+  "/pricing",
+  "/services",
+  "/brands",
+  "/about",
+  "/warranty",
+  "/privacy",
+  "/terms",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",
   "/logo.png",
   "/favicon.png",
-  "/SuperTelecom.apk",
+  "/og-image.png",
 ];
 
-// Pre-cache core shell during install
+// Pre-cache core shell during install without silent skipWaiting
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn("Pre-cache partially skipped:", err);
-      });
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // Safely cache each asset with individual fallbacks so pre-caching never aborts
+      await Promise.allSettled(
+        PRECACHE_ASSETS.map((url) =>
+          cache.add(url).catch((err) => {
+            console.warn("[SW] Pre-cache skip for:", url, err);
+          })
+        )
+      );
+    })
+    // CRITICAL: DO NOT call self.skipWaiting() automatically.
+    // Controlled update workflow requires remaining in waiting state until explicit user interaction.
   );
 });
 
 // Clean up old caches on activation
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+    caches
+      .keys()
+      .then((keys) => {
+        return Promise.all(
+          keys.map((key) => {
+            if (key !== CACHE_NAME) {
+              console.log("[SW] Removing outdated cache bucket:", key);
+              return caches.delete(key);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
+  );
+});
+
+// Listen for manual skipWaiting signal from client UI
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    console.log("[SW] Received user SKIP_WAITING signal. Activating new version...");
+    self.skipWaiting();
+  }
+});
+
+// Notification Click Handler: Focus existing tab or open root
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (client.url && "focus" in client) {
+            return client.focus();
           }
-        })
-      );
-    }).then(() => clients.claim())
+        }
+        if (self.clients.openWindow) {
+          return self.clients.openWindow("/");
+        }
+      })
   );
 });
 
 // Offline-first fetch strategy
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET") {
-    return;
-  }
+  if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
 
-  // For navigate requests (HTML page loads), try network first, fallback to cached index or root
+  // Skip non-http/https protocols (chrome-extension, blob, data, etc.)
+  if (!url.protocol.startsWith("http")) return;
+
+  // 1. Navigation Requests (HTML Page loads / Route transitions):
+  // Network-First with Stale Cache Fallback + Root fallback for SPA offline routes
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(event.request);
-          if (cached) return cached;
-          const fallback = await caches.match("/");
-          return fallback || Response.error();
-        })
-    );
-    return;
-  }
-
-  // For assets, images, scripts, styles: Stale-While-Revalidate
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
         .then((networkResponse) => {
-          if (
-            networkResponse &&
-            networkResponse.status === 200 &&
-            (url.origin === self.location.origin || url.pathname.includes(".png") || url.pathname.includes(".js") || url.pathname.includes(".css"))
-          ) {
+          if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return networkResponse;
         })
-        .catch(() => cachedResponse);
+        .catch(async () => {
+          // Offline fallback: try exact cached route first
+          const cached = await caches.match(event.request);
+          if (cached) return cached;
 
-      return cachedResponse || fetchPromise;
-    })
-  );
-});
+          // Fallback to cached root "/" for client-side TanStack SPA routing
+          const rootFallback = await caches.match("/");
+          if (rootFallback) return rootFallback;
 
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
+          return Response.error();
+        })
+    );
+    return;
   }
+
+  // 2. Static Assets (Scripts, Styles, Images, Fonts, Audio):
+  // Cache-First with Background Network Revalidation
+  const isStaticAsset =
+    url.origin === self.location.origin ||
+    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff|woff2|ttf|mp3|wav|ogg)$/i);
+
+  if (isStaticAsset) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          // Revalidate in background when online
+          fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                const clone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+              }
+            })
+            .catch(() => {});
+          return cachedResponse;
+        }
+
+        // Not yet cached: fetch from network and store copy
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return networkResponse;
+          })
+          .catch(() => cachedResponse || Response.error());
+      })
+    );
+    return;
+  }
+
+  // 3. All other requests: Network with Cache fallback
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
+  );
 });

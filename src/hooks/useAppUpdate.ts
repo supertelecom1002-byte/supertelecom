@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
 
 export interface AppUpdateState {
@@ -8,10 +8,68 @@ export interface AppUpdateState {
   manualCheckForUpdate: () => Promise<void>;
 }
 
+const STORAGE_NOTIFIED_VERSION_KEY = "st_update_notified_version";
+const STORAGE_PENDING_UPDATE_KEY = "st_has_pending_update";
+const CURRENT_RELEASE_TAG = "v3.2.0";
+
 export function useAppUpdate(): AppUpdateState {
-  const [isUpdateAvailable, setIsUpdateAvailable] = useState<boolean>(false);
+  // Initialize state from localStorage so banner persists across relaunches immediately
+  const [isUpdateAvailable, setIsUpdateAvailable] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem(STORAGE_PENDING_UPDATE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+
   const [isChecking, setIsChecking] = useState<boolean>(false);
-  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
+  const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
+
+  // Helper to dispatch single native outside system notification (preventing spam)
+  const dispatchSingleSystemNotification = useCallback(
+    async (reg: ServiceWorkerRegistration, releaseTag = CURRENT_RELEASE_TAG) => {
+      if (typeof window === "undefined" || !("Notification" in window)) return;
+      if (Notification.permission !== "granted") return;
+
+      try {
+        const alreadyNotified = localStorage.getItem(STORAGE_NOTIFIED_VERSION_KEY);
+        if (alreadyNotified === releaseTag) {
+          // Already notified once for this version, skip duplicate
+          return;
+        }
+
+        localStorage.setItem(STORAGE_NOTIFIED_VERSION_KEY, releaseTag);
+
+        if ("showNotification" in reg) {
+          await reg.showNotification("Super Telecom Update Ready ⚡", {
+            body: "A new version of Super Telecom Lab & Offline Diagnostics is available. Tap to reload.",
+            icon: "/icon-192.png",
+            badge: "/icon-192.png",
+            tag: "supertelecom-release-update",
+            data: { url: "/" },
+          });
+        }
+      } catch (err) {
+        console.warn("[PWA] Error displaying system notification:", err);
+      }
+    },
+    []
+  );
+
+  // Mark update as waiting and persist
+  const handleUpdateDetected = useCallback(
+    (reg: ServiceWorkerRegistration) => {
+      try {
+        localStorage.setItem(STORAGE_PENDING_UPDATE_KEY, "true");
+      } catch {
+        // ignore
+      }
+      setIsUpdateAvailable(true);
+      dispatchSingleSystemNotification(reg);
+    },
+    [dispatchSingleSystemNotification]
+  );
 
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
@@ -20,8 +78,7 @@ export function useAppUpdate(): AppUpdateState {
 
     let isMounted = true;
 
-    // Check existing registration and register service worker
-    const setupServiceWorker = async () => {
+    const setupWorker = async () => {
       try {
         let reg = await navigator.serviceWorker.getRegistration();
         if (!reg) {
@@ -29,63 +86,105 @@ export function useAppUpdate(): AppUpdateState {
         }
 
         if (!isMounted) return;
-        setRegistration(reg);
+        registrationRef.current = reg;
 
+        // 1. If a worker is already waiting in background:
         if (reg.waiting) {
-          setIsUpdateAvailable(true);
+          handleUpdateDetected(reg);
         }
 
+        // 2. Listen for future updates
         reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
-          if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
+          const installingWorker = reg.installing;
+          if (installingWorker) {
+            installingWorker.addEventListener("statechange", () => {
               if (
-                newWorker.state === "installed" &&
+                installingWorker.state === "installed" &&
                 navigator.serviceWorker.controller
               ) {
-                if (isMounted) setIsUpdateAvailable(true);
+                // New worker is ready and waiting for user permission to activate
+                if (isMounted) {
+                  handleUpdateDetected(reg);
+                }
               }
             });
           }
         });
+
+        // 3. Periodic background check for updates when returning to app
+        const onVisibilityChange = () => {
+          if (document.visibilityState === "visible" && reg) {
+            reg.update().catch(() => {});
+          }
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+          document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
       } catch (err) {
-        console.warn("[PWA] Service worker initialization:", err);
+        console.warn("[PWA] Service worker setup failed:", err);
       }
     };
 
-    setupServiceWorker();
+    setupWorker();
 
-    // Listen for controllerchange to reload if new worker takes control
+    // Reload seamlessly when new worker assumes control
     const onControllerChange = () => {
+      try {
+        localStorage.removeItem(STORAGE_PENDING_UPDATE_KEY);
+      } catch {
+        // ignore
+      }
       window.location.reload();
     };
+
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
     return () => {
       isMounted = false;
-      navigator.serviceWorker.removeEventListener(
-        "controllerchange",
-        onControllerChange
-      );
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
-  }, []);
+  }, [handleUpdateDetected]);
 
+  // Explicit user action to skip waiting and activate new version
   const applyUpdate = useCallback(() => {
-    if (registration?.waiting) {
-      registration.waiting.postMessage({ type: "SKIP_WAITING" });
+    try {
+      localStorage.removeItem(STORAGE_PENDING_UPDATE_KEY);
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([30, 50, 30]);
+      }
+    } catch {
+      // ignore
     }
+
+    const reg = registrationRef.current;
+    if (reg?.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    } else {
+      navigator.serviceWorker.getRegistration().then((activeReg) => {
+        if (activeReg?.waiting) {
+          activeReg.waiting.postMessage({ type: "SKIP_WAITING" });
+        } else {
+          window.location.reload();
+        }
+      });
+    }
+
+    // Fallback reload if controllerchange doesn't fire within 400ms
     setTimeout(() => {
       window.location.reload();
-    }, 150);
-  }, [registration]);
+    }, 400);
+  }, []);
 
+  // Manual Check Trigger from UI (e.g. Settings sheet)
   const manualCheckForUpdate = useCallback(async () => {
     setIsChecking(true);
-    toast.info("Checking for updates...");
+    toast.info("Checking for lab updates...");
 
     try {
       if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-        let reg = registration;
+        let reg = registrationRef.current;
         if (!reg) {
           reg = (await navigator.serviceWorker.getRegistration()) || null;
         }
@@ -93,7 +192,7 @@ export function useAppUpdate(): AppUpdateState {
         if (reg) {
           await reg.update();
           if (reg.waiting) {
-            setIsUpdateAvailable(true);
+            handleUpdateDetected(reg);
             toast.success("New update available! Tap to reload.");
             setIsChecking(false);
             return;
@@ -106,11 +205,11 @@ export function useAppUpdate(): AppUpdateState {
       setTimeout(() => {
         setIsChecking(false);
         if (!isUpdateAvailable) {
-          toast.success("Super Telecom is up to date! (v2.4)");
+          toast.success("Super Telecom is up to date! (v3.2.0)");
         }
-      }, 750);
+      }, 700);
     }
-  }, [registration, isUpdateAvailable]);
+  }, [handleUpdateDetected, isUpdateAvailable]);
 
   return {
     isUpdateAvailable,
