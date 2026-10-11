@@ -73,6 +73,8 @@ import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 import { DualMasterActions } from "@/components/dashboard/DualMasterActions";
 import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
+import { useLauncher } from "@/context/LauncherContext";
+import { CyberOSDesktop } from "@/components/cyber-os/CyberOSDesktop";
 
 export type MobileTab = "home" | "tools" | "track" | "shop" | "settings";
 
@@ -96,6 +98,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const { triggerVibration } = useHardwarePermissions();
   const { isDark } = useTheme();
   const { user, isVip, openVipModal } = useCustomerAuth();
+  const { isCyberOsActive } = useLauncher();
 
   const customerDisplayName =
     (user as any)?.name ||
@@ -209,6 +212,14 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     }
     return true;
   });
+
+  if (isCyberOsActive) {
+    return (
+      <div className="md:hidden">
+        <CyberOSDesktop />
+      </div>
+    );
+  }
 
   return (
     <div className="md:hidden h-[100dvh] flex flex-col bg-[#f8fafc] dark:bg-[#02040a] text-slate-900 dark:text-slate-100 overflow-hidden select-none relative transition-colors duration-200">

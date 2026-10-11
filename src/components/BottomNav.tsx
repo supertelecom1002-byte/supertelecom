@@ -20,9 +20,11 @@ import { fetchAppConfig, subscribeToAppConfig, type AppConfig, DEFAULT_APP_CONFI
 import { LabToolsHub } from "@/components/tools/LabToolsHub";
 import { RepairTrackerModal } from "@/components/repair/RepairTrackerModal";
 import { SmartAuthDrawer } from "@/components/auth/SmartAuthDrawer";
+import { useLauncher } from "@/context/LauncherContext";
 
 export const BottomNav: React.FC = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { isCyberOsActive } = useLauncher();
   const [config, setConfig] = useState<AppConfig>(DEFAULT_APP_CONFIG);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [trackOpen, setTrackOpen] = useState(false);
@@ -47,8 +49,8 @@ export const BottomNav: React.FC = () => {
     return () => window.removeEventListener("st:chat-toggle", onChatToggle);
   }, []);
 
-  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), or when AI chat is open
-  if (pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
+  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), when AI chat is open, or when Cyber-OS Workspace is active
+  if (isCyberOsActive || pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
     return null;
   }
 

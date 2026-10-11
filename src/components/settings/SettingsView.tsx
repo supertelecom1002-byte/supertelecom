@@ -26,6 +26,7 @@ import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { useTheme } from "@/context/ThemeContext";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
+import { useLauncher } from "@/context/LauncherContext";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
 
@@ -46,6 +47,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
   const { theme, isDark, toggleTheme } = useTheme();
   const { isUpdateAvailable, isChecking, applyUpdate, manualCheckForUpdate } = useAppUpdate();
   const { user, isVip, loading: authLoading, signInWithGoogle, signOut, openVipModal } = useCustomerAuth();
+  const { isCyberOsActive, toggleCyberOs } = useLauncher();
   const [isClearing, setIsClearing] = useState(false);
 
   const displayName =
@@ -223,6 +225,53 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
             className="px-3.5 py-2 rounded-xl bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-500 dark:hover:bg-cyan-400 active:scale-95 text-xs font-bold text-white dark:text-slate-950 transition-all shadow-sm"
           >
             {isDark ? "Switch to Light" : "Switch to Dark"}
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Cyber-OS Full-Screen Workspace Toggle */}
+      <div className="rounded-3xl bg-gradient-to-br from-cyan-950/20 via-slate-50 to-white dark:from-cyan-950/30 dark:via-slate-900/90 dark:to-slate-950 border border-cyan-500/40 p-5 space-y-3 shadow-sm dark:shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+              <Sparkles className="h-4 w-4" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
+                ⚡ Super Telecom Cyber-OS Workspace
+              </h4>
+              <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold">
+                Optional &bull; Pure AMOLED &bull; Ultra Performance
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          Transform your phone into a futuristic Cyber-Lab desktop with live hardware telemetry, interactive CPU gauges, 1-tap turbo boost, and tactile native widgets.
+        </p>
+
+        <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800">
+          <div className="leading-tight">
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">
+              {isCyberOsActive ? "Cyber-OS Workspace Active" : "Standard Mobile View Active"}
+            </span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              {isCyberOsActive ? "Tactile desktop launcher loaded" : "Classic tab navigation"}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={toggleCyberOs}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 shadow-sm ${
+              isCyberOsActive
+                ? "bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/40 hover:bg-rose-500/30"
+                : "bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-500 dark:hover:bg-cyan-400 text-white dark:text-slate-950 font-black shadow-cyan-500/20"
+            }`}
+          >
+            {isCyberOsActive ? "Exit Cyber-OS" : "Enable Cyber-OS Experience"}
           </button>
         </div>
       </div>

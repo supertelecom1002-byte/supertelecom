@@ -23,6 +23,7 @@ import { UpdateBanner } from "@/components/app/UpdateBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
+import { LauncherProvider } from "@/context/LauncherContext";
 import { VipPerksModal } from "@/components/auth/VipPerksModal";
 
 function NotFoundComponent() {
@@ -439,20 +440,22 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AdminAuthProvider>
-          <CustomerAuthProvider>
-            <VisualEditorProvider>
-              <Outlet />
-              <LiveEditorBar />
-              <FloatingAiChat />
-              <BottomNav />
-              <UpdateBanner />
-              <VipPerksModal />
-              <Toaster position="top-center" richColors />
-              <CookieBanner />
-            </VisualEditorProvider>
-          </CustomerAuthProvider>
-        </AdminAuthProvider>
+        <LauncherProvider>
+          <AdminAuthProvider>
+            <CustomerAuthProvider>
+              <VisualEditorProvider>
+                <Outlet />
+                <LiveEditorBar />
+                <FloatingAiChat />
+                <BottomNav />
+                <UpdateBanner />
+                <VipPerksModal />
+                <Toaster position="top-center" richColors />
+                <CookieBanner />
+              </VisualEditorProvider>
+            </CustomerAuthProvider>
+          </AdminAuthProvider>
+        </LauncherProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
