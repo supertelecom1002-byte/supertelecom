@@ -24,10 +24,17 @@
   ],
   "shortcuts": [
     {
-      "name": "1-Tap Turbo Boost & Scan",
-      "short_name": "Turbo Scan",
-      "description": "Scan device health and clean junk cache",
-      "url": "/?action=scan",
+      "name": "360° Turbo Clean & Boost",
+      "short_name": "Turbo Clean",
+      "description": "Purge cache, RAM & lag with 1-tap boost",
+      "url": "/?action=clean",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lab Doctor & Ampere Profiler",
+      "short_name": "Lab Doctor",
+      "description": "Real charging current, IC & full hardware checkup",
+      "url": "/?action=doctor",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {

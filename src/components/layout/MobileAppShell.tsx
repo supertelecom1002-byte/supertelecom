@@ -68,6 +68,9 @@ import { SettingsView } from "@/components/settings/SettingsView";
 import { RepairEstimator } from "@/components/interactive/RepairEstimator";
 import { MasterScanHeroCard } from "@/components/scanner/MasterScanHeroCard";
 import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
+import { DualMasterActions } from "@/components/dashboard/DualMasterActions";
+import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
+import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 
 export type MobileTab = "home" | "tools" | "track" | "shop" | "settings";
 
@@ -95,6 +98,10 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
   const [activeToolModal, setActiveToolModal] = useState<ToolId | null>(initialTool);
   const [trackModalOpen, setTrackModalOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(initialAction === "scan");
+  const [cleanModalOpen, setCleanModalOpen] = useState(initialAction === "clean");
+  const [doctorModalOpen, setDoctorModalOpen] = useState(
+    initialAction === "doctor" || initialAction === "ampere"
+  );
   const [toolsSearch, setToolsSearch] = useState("");
   const [toolsCategory, setToolsCategory] = useState<ToolCategory>("all");
 
@@ -119,12 +126,17 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
     return unsub;
   }, []);
 
-  // Handle URL query parameters (e.g. ?action=scan, ?tool=speaker, ?tab=tools)
+  // Handle URL query parameters (e.g. ?action=scan, ?action=clean, ?action=doctor, ?tool=speaker, ?tab=tools)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("action") === "scan") {
+      const action = params.get("action");
+      if (action === "scan") {
         setScannerOpen(true);
+      } else if (action === "clean") {
+        setCleanModalOpen(true);
+      } else if (action === "doctor" || action === "ampere") {
+        setDoctorModalOpen(true);
       }
       const t = params.get("tool");
       if (t) {
@@ -345,6 +357,13 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         {/* ===================================================== */}
         {activeTab === "home" && (
           <div className="space-y-4 pb-20 animate-in fade-in duration-200">
+            {/* FRONT HERO DASHBOARD: DUAL MASTER ACTION BUTTONS */}
+            <DualMasterActions
+              onOpenClean={() => setCleanModalOpen(true)}
+              onOpenDoctor={() => setDoctorModalOpen(true)}
+              className="px-0 pt-0 pb-1"
+            />
+
             {/* 360° Hardware Shield Master Scanner Hero Card */}
             <MasterScanHeroCard onOpenScanner={() => setScannerOpen(true)} />
 
@@ -1062,6 +1081,18 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
       <DeepScanEngine
         isOpen={scannerOpen}
         onClose={() => setScannerOpen(false)}
+      />
+
+      {/* Turbo Clean & Speed Boost Modal */}
+      <TurboCleanModal
+        isOpen={cleanModalOpen}
+        onClose={() => setCleanModalOpen(false)}
+      />
+
+      {/* Lab Doctor Diagnostic & Real Charging Current Ampere Profiler Modal */}
+      <DoctorDiagnosticModal
+        isOpen={doctorModalOpen}
+        onClose={() => setDoctorModalOpen(false)}
       />
     </div>
   );

@@ -28,6 +28,8 @@ import { Header } from "@/components/Header";
 import { SafeReviewsSection } from "@/components/ReviewsSection";
 import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
+import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
+import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 
 
 export const Route = createFileRoute("/")({
@@ -253,12 +255,19 @@ const FAQS: [string, string][] = [
 function HomePage() {
   const [serviceCategory, setServiceCategory] = useState<string>("all");
   const [desktopScannerOpen, setDesktopScannerOpen] = useState(false);
+  const [desktopCleanOpen, setDesktopCleanOpen] = useState(false);
+  const [desktopDoctorOpen, setDesktopDoctorOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("action") === "scan") {
+      const action = params.get("action");
+      if (action === "scan") {
         setDesktopScannerOpen(true);
+      } else if (action === "clean") {
+        setDesktopCleanOpen(true);
+      } else if (action === "doctor" || action === "ampere") {
+        setDesktopDoctorOpen(true);
       }
     }
   }, []);
@@ -307,6 +316,16 @@ function HomePage() {
         <DeepScanEngine
           isOpen={desktopScannerOpen}
           onClose={() => setDesktopScannerOpen(false)}
+        />
+
+        <TurboCleanModal
+          isOpen={desktopCleanOpen}
+          onClose={() => setDesktopCleanOpen(false)}
+        />
+
+        <DoctorDiagnosticModal
+          isOpen={desktopDoctorOpen}
+          onClose={() => setDesktopDoctorOpen(false)}
         />
       </div>
     </>

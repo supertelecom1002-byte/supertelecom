@@ -143,3 +143,64 @@ export function playTrashCleanSweep() {
     // Fail silently
   }
 }
+
+/**
+ * Stethoscope Heartbeat Acoustic Double-Thump (Lab Doctor Checkup)
+ */
+export function playDoctorHeartbeat() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    [0, 0.12].forEach((offset) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(70, now + offset);
+      osc.frequency.exponentialRampToValueAtTime(32, now + offset + 0.08);
+
+      gain.gain.setValueAtTime(0.001, now + offset);
+      gain.gain.linearRampToValueAtTime(0.14, now + offset + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.08);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.09);
+    });
+  } catch {
+    // Fail silently
+  }
+}
+
+/**
+ * Ampere Current Flow Acoustic Pulse
+ */
+export function playAmperePulse() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(660, now + 0.06);
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.06, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.07);
+  } catch {
+    // Fail silently
+  }
+}
+

@@ -42,6 +42,8 @@ import { GyroCompassModal } from "@/components/tools/GyroCompassModal";
 import { TorchControllerModal } from "@/components/tools/TorchControllerModal";
 import { AmbientLightTestModal } from "@/components/tools/AmbientLightTestModal";
 import { ImeiValidatorModal } from "@/components/tools/ImeiValidatorModal";
+import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
+import { Stethoscope } from "lucide-react";
 
 export type ToolId =
   | "speaker_cleaner"
@@ -61,7 +63,8 @@ export type ToolId =
   | "imei_validator"
   | "lockscreen_gen"
   | "used_phone_audit"
-  | "water_wizard";
+  | "water_wizard"
+  | "doctor_diagnostic";
 
 export type ToolCategory = "all" | "audio" | "screen" | "sensors" | "system";
 
@@ -210,6 +213,15 @@ export const TOOLS: ToolDefinition[] = [
   },
 
   // CATEGORY D: BATTERY & SYSTEM INTEGRITY
+  {
+    id: "doctor_diagnostic",
+    category: "system",
+    title: "Lab Doctor Hardware Checkup & Ampere Profiler",
+    subtitle: "Real charging current in mA, IC health, 5-point motherboard checkup & prescription.",
+    tag: "Ampere & IC",
+    badgeColor: "text-emerald-400 bg-emerald-950/80 border-emerald-500/30",
+    icon: Stethoscope,
+  },
   {
     id: "battery_guard",
     category: "system",
@@ -554,6 +566,11 @@ export const LabToolsHub: React.FC<LabToolsHubProps> = ({
         isOpen={activeModal === "water_wizard"}
         onClose={() => setActiveModal(null)}
         onOpenSpeakerEjector={() => setActiveModal("speaker_cleaner")}
+      />
+
+      <DoctorDiagnosticModal
+        isOpen={activeModal === "doctor_diagnostic"}
+        onClose={() => setActiveModal(null)}
       />
     </>
   );

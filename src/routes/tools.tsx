@@ -35,6 +35,7 @@ import { GyroCompassModal } from "@/components/tools/GyroCompassModal";
 import { TorchControllerModal } from "@/components/tools/TorchControllerModal";
 import { AmbientLightTestModal } from "@/components/tools/AmbientLightTestModal";
 import { ImeiValidatorModal } from "@/components/tools/ImeiValidatorModal";
+import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 import { SITE_URL } from "@/data/site";
 
@@ -308,6 +309,11 @@ function ToolsPage() {
         isOpen={activeModal === "water_wizard"}
         onClose={() => setActiveModal(null)}
         onOpenSpeakerEjector={() => setActiveModal("speaker_cleaner")}
+      />
+
+      <DoctorDiagnosticModal
+        isOpen={activeModal === "doctor_diagnostic"}
+        onClose={() => setActiveModal(null)}
       />
 
       <DeepScanEngine
