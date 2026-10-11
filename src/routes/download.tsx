@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Smartphone,
@@ -25,6 +25,8 @@ import {
   Wrench,
   Clock,
   MapPin,
+  Loader2,
+  HardDrive,
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -36,28 +38,32 @@ const PHONE_DISPLAY = "+91 80029 03643";
 const WHATSAPP = "918002903643";
 const MAPS = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
 
-const TITLE = "Download Official Super Telecom App (Android APK & iOS) | Giridih";
+const TITLE = "Download Super Telecom APK v2.4.0 (Official) | Giridih Mobile Repair Lab App";
 const DESC =
-  "Download the official Super Telecom mobile app for Android APK and iOS. 16-in-1 offline hardware diagnostics suite, live repair tracking pipeline, and VIP priority booking in Giridih.";
+  "Download official Super Telecom Android APK for free. 16+ offline hardware diagnostic tools, 165Hz speaker dust ejector, live repair tracking, and charging ampere meter.";
+const KEYWORDS =
+  "Super Telecom APK, Super Telecom app download, Super Telecom Giridih APK, mobile repair app Giridih, 165Hz speaker cleaner APK";
+const OG_TITLE = "Download Super Telecom Android APK (Official Lab App)";
+const OG_DESC =
+  "Official Android app for Super Telecom Giridih. 100% offline hardware diagnostic tools and live repair tracking.";
+const OG_IMAGE = `${SITE_URL}/og-download.jpg`;
 
 export const Route = createFileRoute("/download")({
   head: () => ({
     meta: [
       { title: TITLE },
       { name: "description", content: DESC },
-      {
-        name: "keywords",
-        content:
-          "Super Telecom App, Super Telecom APK Download, Mobile Repair App Giridih, Hardware Diagnostic APK, Speaker Cleaner APK, Repair Tracker App Giridih",
-      },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
+      { name: "keywords", content: KEYWORDS },
+      { property: "og:title", content: OG_TITLE },
+      { property: "og:description", content: OG_DESC },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/download` },
       { property: "og:site_name", content: "Super Telecom" },
+      { property: "og:image", content: OG_IMAGE },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: TITLE },
-      { name: "twitter:description", content: DESC },
+      { name: "twitter:title", content: OG_TITLE },
+      { name: "twitter:description", content: OG_DESC },
+      { name: "twitter:image", content: OG_IMAGE },
       { name: "robots", content: "index, follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/download` }],
@@ -67,8 +73,8 @@ export const Route = createFileRoute("/download")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
-          name: "Super Telecom Mobile App",
-          operatingSystem: "Android 8.0+, iOS 14.0+",
+          name: "Super Telecom Android APK",
+          operatingSystem: "Android",
           applicationCategory: "UtilitiesApplication",
           offers: {
             "@type": "Offer",
@@ -76,10 +82,11 @@ export const Route = createFileRoute("/download")({
             priceCurrency: "INR",
           },
           downloadUrl: `${SITE_URL}/SuperTelecom.apk`,
-          fileSize: "5.2MB",
+          fileSize: "1.7MB",
           softwareVersion: "2.4.0",
+          description: DESC,
           author: {
-            "@type": "LocalBusiness",
+            "@type": "ElectronicsRepairStore",
             name: "Super Telecom",
             telephone: PHONE,
             address: {
@@ -91,6 +98,47 @@ export const Route = createFileRoute("/download")({
               addressCountry: "IN",
             },
           },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "Is the Super Telecom APK safe and virus-free?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes, 100% safe, clean, and verified. The APK is compiled directly by Super Telecom Giridih with zero third-party adware, zero trackers, and zero bloatware. All 16+ hardware utilities operate completely client-side.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Why does Android show 'File might be harmful' during download?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "This is a standard security prompt that modern Android devices display for any APK file downloaded outside Google Play. Simply tap 'Download anyway' to proceed safely.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Can I use the hardware diagnostic tools offline without internet?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes! Every single one of the 16+ hardware lab tools (165Hz Speaker Dust Ejector, 10x15 Touch Matrix, Multi-Touch Tester, Anti-Theft Siren, Battery Guard, IMEI Validator, etc.) works 100% offline with zero data consumption.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "How can iPhone users install the Super Telecom app?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "iPhone users can open supertelecom.shop in Safari, tap the Share button, and select 'Add to Home Screen' for an instant full-screen, offline-cached app experience.",
+              },
+            },
+          ],
         }),
       },
       {
@@ -114,20 +162,80 @@ export default function DownloadPage() {
   const [installGuideOpen, setInstallGuideOpen] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
+  // Auto-Download State Engine
+  const [countdown, setCountdown] = useState<number>(1.5);
+  const [downloadTriggered, setDownloadTriggered] = useState<boolean>(false);
+  const [isIosDevice, setIsIosDevice] = useState<boolean>(false);
+  const downloadTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Detect iOS
+    const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    setIsIosDevice(isIos);
+
+    // If installed or on iOS, skip auto-download
+    if (isStandalone || isIos) {
+      return;
+    }
+
+    // 1.5-second countdown auto-trigger engine
+    const startTime = Date.now();
+    const duration = 1500; // 1.5 seconds
+
+    downloadTimerRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, (duration - elapsed) / 1000);
+      setCountdown(Number(remaining.toFixed(1)));
+
+      if (remaining <= 0) {
+        if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
+        triggerDownload();
+      }
+    }, 100);
+
+    return () => {
+      if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
+    };
+  }, [isStandalone]);
+
+  const triggerDownload = () => {
+    if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
+    setCountdown(0);
+    setDownloadTriggered(true);
+
+    if (typeof window !== "undefined") {
+      if ("vibrate" in navigator) {
+        try {
+          navigator.vibrate([30, 20, 40]);
+        } catch {
+          // ignore
+        }
+      }
+
+      // Invisible link click to ensure native download header handling
+      const a = document.createElement("a");
+      a.href = "/SuperTelecom.apk";
+      a.download = "SuperTelecom.apk";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   };
 
-  const handleDownloadClick = () => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate(15);
-    }
+  const handleManualDownload = () => {
+    triggerDownload();
+  };
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
   };
 
   const faqs = [
     {
       q: "Is the Super Telecom APK file safe and virus-free?",
-      a: "Yes, 100% safe, clean, and verified. The APK is compiled directly by Super Telecom with zero third-party adware, zero analytics trackers, and zero bloatware. All 16+ hardware utilities operate completely client-side.",
+      a: "Yes, 100% safe, clean, and verified. The APK is compiled directly by Super Telecom Giridih with zero third-party adware, zero analytics trackers, and zero bloatware. All 16+ hardware utilities operate completely client-side.",
     },
     {
       q: "Why does Android show 'File might be harmful' during download?",
@@ -191,6 +299,7 @@ export default function DownloadPage() {
           <span className="text-foreground font-medium">Download Official App</span>
         </nav>
 
+        {/* STANDALONE ACTIVE BANNER */}
         {isStandalone && (
           <div className="mb-8 p-4 rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left shadow-lg shadow-emerald-950/20">
             <div className="flex items-center gap-3">
@@ -202,7 +311,7 @@ export default function DownloadPage() {
                   Super Telecom App is Already Installed!
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300">
-                  You are currently using the app in full standalone mode with all 16+ offline hardware diagnostics active.
+                  You are currently using the app in standalone mode with all 16+ offline hardware diagnostics active.
                 </p>
               </div>
             </div>
@@ -216,7 +325,68 @@ export default function DownloadPage() {
         )}
 
         {/* ========================================================= */}
-        {/* 2. HERO SECTION                                           */}
+        {/* 2. AUTO-TRIGGERED DOWNLOAD RADAR (HERO BANNER)            */}
+        {/* ========================================================= */}
+        {!isStandalone && !isIosDevice && (
+          <div className="mb-8 rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-emerald-500/15 via-slate-900/90 to-teal-500/15 border-2 border-emerald-500/50 shadow-2xl backdrop-blur-xl relative overflow-hidden text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-5 animate-in fade-in">
+            {/* Ambient Background Glow */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="space-y-1.5 z-10 max-w-lg">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-mono uppercase tracking-wider font-extrabold text-emerald-600 dark:text-emerald-400">
+                  {downloadTriggered
+                    ? "Download Commenced"
+                    : `Auto-Download Engine (${countdown}s)`}
+                </span>
+              </div>
+
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight">
+                {downloadTriggered
+                  ? "Super Telecom APK Download Has Started!"
+                  : `Starting your direct APK download in ${countdown}s...`}
+              </h2>
+
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                {downloadTriggered
+                  ? "Please check your browser notifications. If your device blocked the prompt, tap the button on the right to download directly."
+                  : "Connecting to secure CDN server. Zero waiting queue, zero malware, and direct Android package delivery."}
+              </p>
+
+              {/* Countdown Progress Bar */}
+              {!downloadTriggered && (
+                <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 mt-2 overflow-hidden">
+                  <div
+                    className="bg-emerald-500 h-1.5 rounded-full transition-all duration-100 ease-linear"
+                    style={{ width: `${Math.max(0, 100 - (countdown / 1.5) * 100)}%` }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Prominent Pulse Button */}
+            <div className="z-10 shrink-0 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleManualDownload}
+                className="w-full sm:w-auto py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 active:scale-95 text-slate-950 font-black text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-emerald-500/30 transition-all cursor-pointer ring-4 ring-emerald-500/20 hover:ring-emerald-500/40"
+              >
+                <Download className="h-5 w-5 animate-bounce" />
+                <span>Tap to Download APK Directly</span>
+              </button>
+              <div className="text-[10px] text-center text-slate-500 dark:text-slate-400 font-mono mt-1.5">
+                v2.4.0 &bull; 1.7 MB &bull; Android 8.0 to 16+
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* 3. HERO SECTION                                           */}
         {/* ========================================================= */}
         <section className="text-center space-y-4 mb-10 sm:mb-12">
           {/* Official Badge */}
@@ -258,7 +428,7 @@ export default function DownloadPage() {
         </section>
 
         {/* ========================================================= */}
-        {/* 3. DUAL PLATFORM CARDS (SIDE BY SIDE ON DESKTOP)          */}
+        {/* 4. DUAL PLATFORM CARDS (SIDE BY SIDE ON DESKTOP)          */}
         {/* ========================================================= */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-12">
           {/* ------------------------------------------------------- */}
@@ -291,7 +461,7 @@ export default function DownloadPage() {
                       v2.4.0 Stable
                     </span>
                     <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                      ~5.2 MB &bull; Zero Bloat
+                      ~1.7 MB &bull; Zero Bloat
                     </span>
                   </div>
                 </div>
@@ -324,7 +494,7 @@ export default function DownloadPage() {
                 <a
                   href="/SuperTelecom.apk"
                   download="SuperTelecom.apk"
-                  onClick={handleDownloadClick}
+                  onClick={handleManualDownload}
                   className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 active:scale-[0.98] text-slate-950 font-black text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
                 >
                   <Download className="h-5 w-5" />
@@ -476,7 +646,7 @@ export default function DownloadPage() {
         </section>
 
         {/* ========================================================= */}
-        {/* 4. APP FEATURE HIGHLIGHTS GRID                            */}
+        {/* 5. APP FEATURE HIGHLIGHTS GRID                            */}
         {/* ========================================================= */}
         <section className="mb-14 space-y-6">
           <div className="text-center space-y-2">
@@ -523,7 +693,7 @@ export default function DownloadPage() {
               <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit border border-amber-500/30">
                 <ShieldCheck className="h-5 w-5" />
               </div>
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white">Safe &amp; Ultra-Light (~5MB)</h4>
+              <h4 className="font-bold text-sm text-slate-900 dark:text-white">Safe &amp; Ultra-Light (~1.7 MB)</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Zero tracking libraries, zero background ads, and ultra-compact file footprint that runs on all phones.
               </p>
@@ -532,7 +702,7 @@ export default function DownloadPage() {
         </section>
 
         {/* ========================================================= */}
-        {/* 5. TECHNICAL SPECIFICATIONS TABLE                         */}
+        {/* 6. TECHNICAL SPECIFICATIONS TABLE                         */}
         {/* ========================================================= */}
         <section className="mb-14">
           <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
@@ -558,14 +728,14 @@ export default function DownloadPage() {
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800">
                 <span className="text-[10px] text-slate-500 font-mono block">File Size</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">~5.2 MB (Compressed)</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">~1.7 MB (Direct APK)</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* ========================================================= */}
-        {/* 6. FAQS ACCORDION                                         */}
+        {/* 7. FAQS ACCORDION (AEO/GEO OPTIMIZED)                     */}
         {/* ========================================================= */}
         <section className="mb-14 space-y-4">
           <div className="text-center space-y-1.5 mb-6">
@@ -607,7 +777,7 @@ export default function DownloadPage() {
         </section>
 
         {/* ========================================================= */}
-        {/* 7. BOTTOM LAB VISIT BANNER                                */}
+        {/* 8. BOTTOM LAB VISIT BANNER                                */}
         {/* ========================================================= */}
         <section className="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-slate-900 via-slate-950 to-cyan-950 border border-cyan-500/30 text-white space-y-4 shadow-xl text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-1.5">

@@ -46,8 +46,8 @@
   <url>
     <loc>https://www.supertelecom.shop/download</loc>
     <lastmod>2026-10-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.supertelecom.shop/about</loc>

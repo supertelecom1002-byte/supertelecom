@@ -4,3 +4,8 @@
 
 /sw.js
   Cache-Control: no-cache, no-store, must-revalidate
+
+/SuperTelecom.apk
+  Content-Type: application/vnd.android.package-archive
+  Content-Disposition: attachment; filename="SuperTelecom.apk"
+  Cache-Control: public, max-age=86400
