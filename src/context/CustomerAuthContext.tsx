@@ -3,7 +3,7 @@ import type { User, Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
-interface CustomerUser {
+export interface CustomerUser {
   id: string;
   email?: string;
   name?: string;
@@ -11,7 +11,7 @@ interface CustomerUser {
   isVip: boolean;
 }
 
-interface CustomerAuthContextType {
+export interface CustomerAuthContextType {
   user: User | CustomerUser | null;
   session: Session | null;
   isVip: boolean;
@@ -25,7 +25,24 @@ interface CustomerAuthContextType {
 
 const CustomerAuthContext = createContext<CustomerAuthContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_USER_KEY = "st_vip_customer_session";
+export const LOCAL_STORAGE_USER_KEY = "st_vip_customer_session";
+
+function formatCustomerUser(supabaseUser: User): CustomerUser {
+  return {
+    id: supabaseUser.id,
+    email: supabaseUser.email,
+    name:
+      supabaseUser.user_metadata?.full_name ||
+      supabaseUser.user_metadata?.name ||
+      supabaseUser.email?.split("@")[0] ||
+      "VIP Member",
+    avatarUrl:
+      supabaseUser.user_metadata?.avatar_url ||
+      supabaseUser.user_metadata?.picture ||
+      undefined,
+    isVip: true,
+  };
+}
 
 export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | CustomerUser | null>(null);
@@ -34,12 +51,12 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [loading, setLoading] = useState<boolean>(true);
   const [isVipModalOpen, setIsVipModalOpen] = useState<boolean>(false);
 
-  // Initialize session
+  // Initialize session & handle OAuth redirects
   useEffect(() => {
     let mounted = true;
 
     const initAuth = async () => {
-      // 1. Check local storage for existing session/fallback
+      // 1. Immediately hydrate from localStorage to prevent UI flash
       if (typeof window !== "undefined") {
         try {
           const cached = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
@@ -55,10 +72,50 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
       }
 
-      // 2. Query Supabase Auth session if configured
+      // 2. Handle modern PKCE redirect callback if ?code= is present
+      if (typeof window !== "undefined" && isSupabaseConfigured) {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const code = params.get("code");
+          if (code) {
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            if (!error && data?.session?.user) {
+              if (mounted) {
+                setSession(data.session);
+                setUser(data.session.user);
+                setIsVip(true);
+                try {
+                  localStorage.setItem(
+                    LOCAL_STORAGE_USER_KEY,
+                    JSON.stringify(formatCustomerUser(data.session.user))
+                  );
+                } catch {
+                  // ignore
+                }
+              }
+              // Clean code from URL query without full reload
+              const cleanUrl = new URL(window.location.href);
+              cleanUrl.searchParams.delete("code");
+              window.history.replaceState(
+                {},
+                document.title,
+                cleanUrl.pathname + cleanUrl.search + cleanUrl.hash
+              );
+            }
+          }
+        } catch (pkceErr) {
+          console.warn("[CustomerAuth] PKCE exchange notice:", pkceErr);
+        }
+      }
+
+      // 3. Query existing Supabase Auth session
       if (isSupabaseConfigured) {
         try {
-          const { data: { session: initialSession } } = await supabase.auth.getSession();
+          const { data: { session: initialSession }, error: sessionError } =
+            await supabase.auth.getSession();
+          if (sessionError) {
+            console.warn("[CustomerAuth] getSession notice:", sessionError);
+          }
           if (mounted && initialSession?.user) {
             setSession(initialSession);
             setUser(initialSession.user);
@@ -66,20 +123,22 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
             try {
               localStorage.setItem(
                 LOCAL_STORAGE_USER_KEY,
-                JSON.stringify({
-                  id: initialSession.user.id,
-                  email: initialSession.user.email,
-                  name: initialSession.user.user_metadata?.full_name || initialSession.user.email?.split("@")[0] || "VIP Member",
-                  avatarUrl: initialSession.user.user_metadata?.avatar_url,
-                  isVip: true,
-                })
+                JSON.stringify(formatCustomerUser(initialSession.user))
               );
             } catch {
               // ignore
             }
+            // Clean hash if implicit token was in URL
+            if (typeof window !== "undefined" && window.location.hash.includes("access_token")) {
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname + window.location.search
+              );
+            }
           }
         } catch (err) {
-          console.warn("[CustomerAuth] Supabase session check notice:", err);
+          console.warn("[CustomerAuth] Supabase session check error:", err);
         }
       }
 
@@ -90,10 +149,10 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     initAuth();
 
-    // 3. Listen to Supabase Auth state changes (e.g. after Google OAuth redirect)
+    // 4. Real-time auth listener for OAuth redirects and token refreshes
     if (isSupabaseConfigured) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, currentSession) => {
+        (event, currentSession) => {
           if (!mounted) return;
           setSession(currentSession);
           if (currentSession?.user) {
@@ -102,19 +161,15 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
             try {
               localStorage.setItem(
                 LOCAL_STORAGE_USER_KEY,
-                JSON.stringify({
-                  id: currentSession.user.id,
-                  email: currentSession.user.email,
-                  name: currentSession.user.user_metadata?.full_name || currentSession.user.email?.split("@")[0] || "VIP Member",
-                  avatarUrl: currentSession.user.user_metadata?.avatar_url,
-                  isVip: true,
-                })
+                JSON.stringify(formatCustomerUser(currentSession.user))
               );
             } catch {
               // ignore
             }
-          } else {
-            // Signed out
+            if (event === "SIGNED_IN") {
+              toast.success("Welcome back! Google VIP Pass Active.");
+            }
+          } else if (event === "SIGNED_OUT") {
             setUser(null);
             setIsVip(false);
             try {
@@ -162,7 +217,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         if (error) throw error;
       } else {
         // Safe simulated fallback for local environments
-        await new Promise((r) => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 500));
         const demoUser: CustomerUser = {
           id: "vip-google-demo",
           email: "vip.customer@gmail.com",
@@ -237,5 +292,8 @@ export function useCustomerAuth(): CustomerAuthContextType {
   }
   return context;
 }
+
+// Unified alias for universal compatibility
+export const useAuth = useCustomerAuth;
 
 export default CustomerAuthProvider;

@@ -68,11 +68,14 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             setIsAdmin(true);
             setError(null);
           } else {
-            setError(checkError || "Access Denied: You are not an authorized administrator");
-            await supabase.auth.signOut().catch(() => {});
-            setSession(null);
-            setUser(null);
+            // User is authenticated in Supabase, but is not an administrator.
+            // Do NOT invoke supabase.auth.signOut() as it terminates regular customer/VIP sessions.
+            setSession(initialSession);
+            setUser(initialSession.user);
             setIsAdmin(false);
+            if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+              setError(checkError || "Access Denied: You are not an authorized administrator");
+            }
           }
         } else {
           setSession(null);
@@ -116,11 +119,13 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               setIsAdmin(true);
               setError(null);
             } else {
-              setError(checkError || "Access Denied: You are not an authorized administrator");
-              await supabase.auth.signOut();
-              setSession(null);
-              setUser(null);
+              // Not an administrator: keep session for customer views, but deny admin rights
+              setSession(newSession);
+              setUser(newSession.user);
               setIsAdmin(false);
+              if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
+                setError(checkError || "Access Denied: You are not an authorized administrator");
+              }
             }
           } else {
             setSession(null);

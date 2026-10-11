@@ -9,7 +9,7 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
-import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
 
 interface SmartAuthDrawerProps {
   isOpen: boolean;
@@ -24,6 +24,7 @@ export const SmartAuthDrawer: React.FC<SmartAuthDrawerProps> = ({
   actionTitle = "Book Priority Repair",
   onSuccess,
 }) => {
+  const { signInWithGoogle } = useCustomerAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,24 +35,12 @@ export const SmartAuthDrawer: React.FC<SmartAuthDrawerProps> = ({
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      if (isSupabaseConfigured) {
-        await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: typeof window !== "undefined" ? window.location.origin : undefined,
-            queryParams: { access_type: "offline", prompt: "consent" },
-          },
-        });
-      } else {
-        // Mock fallback instant auth
-        setTimeout(() => {
-          setLoading(false);
-          setAuthCompleted(true);
-          if (onSuccess) onSuccess();
-        }, 600);
-      }
+      await signInWithGoogle();
+      setAuthCompleted(true);
+      if (onSuccess) onSuccess();
+      onClose();
     } catch (err) {
-      console.warn("Google auth error, proceeding with instant guest fallback:", err);
+      console.warn("Google auth error:", err);
       setAuthCompleted(true);
       if (onSuccess) onSuccess();
     } finally {
