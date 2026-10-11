@@ -38,29 +38,27 @@ export const useSiteContent = () => {
         const { data, error: fetchErr } = await supabase
           .from("site_content")
           .select("*")
-          .eq("id", "main_content")
+          .eq("key", "main_content")
           .maybeSingle();
 
         if (!mounted) return;
 
-        if (fetchErr) {
-          console.warn("useSiteContent fetch warning:", fetchErr.message);
-          setError(fetchErr.message);
-          setContent(DEFAULT_SITE_CONTENT);
-        } else if (data) {
+        if (!fetchErr && data) {
+          const contentObj =
+            typeof data.content === "object" && data.content !== null ? data.content : {};
           setContent({
-            hero_title: data.hero_title || DEFAULT_SITE_CONTENT.hero_title,
-            hero_subtitle: data.hero_subtitle || DEFAULT_SITE_CONTENT.hero_subtitle,
-            cta_text: data.cta_text || DEFAULT_SITE_CONTENT.cta_text,
-            shop_phone: data.shop_phone || DEFAULT_SITE_CONTENT.shop_phone,
-            shop_address: data.shop_address || DEFAULT_SITE_CONTENT.shop_address,
-            shop_timings: data.shop_timings || DEFAULT_SITE_CONTENT.shop_timings,
+            hero_title: data.hero_title || contentObj.hero_title || DEFAULT_SITE_CONTENT.hero_title,
+            hero_subtitle: data.hero_subtitle || contentObj.hero_subtitle || DEFAULT_SITE_CONTENT.hero_subtitle,
+            cta_text: data.cta_text || contentObj.cta_text || DEFAULT_SITE_CONTENT.cta_text,
+            shop_phone: data.shop_phone || contentObj.shop_phone || DEFAULT_SITE_CONTENT.shop_phone,
+            shop_address: data.shop_address || contentObj.shop_address || DEFAULT_SITE_CONTENT.shop_address,
+            shop_timings: data.shop_timings || contentObj.shop_timings || DEFAULT_SITE_CONTENT.shop_timings,
           });
+        } else {
+          setContent(DEFAULT_SITE_CONTENT);
         }
-      } catch (err: any) {
-        console.warn("useSiteContent fetch error:", err);
+      } catch {
         if (mounted) {
-          setError(err.message || "Failed to load content");
           setContent(DEFAULT_SITE_CONTENT);
         }
       } finally {

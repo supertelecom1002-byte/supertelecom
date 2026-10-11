@@ -20,7 +20,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: "iPhone 14 Pro Max • OCA Glass Lamination",
     description: "Shattered front gorilla glass replaced using precision cryo-separation & OCA vacuum debubbler, saving the customer over ₹12,000 while retaining 100% genuine factory Apple OLED colors & 120Hz ProMotion.",
     beforeImg: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=1200&q=80",
-    afterImg: "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=1200&q=80",
+    afterImg: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
     damageTag: "SEVERE SHATTER • TOUCH OK",
     restoredTag: "FACTORY RETINA PRESERVED",
     specs: ["Retained Original Apple Display", "OCA Vacuum Laminated", "True Tone Calibrated"],

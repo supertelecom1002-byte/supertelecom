@@ -28,20 +28,22 @@ export const LocalSeoManager: React.FC = () => {
       const { data, error } = await supabase
         .from("site_content")
         .select("*")
-        .eq("id", "main_content")
+        .eq("key", "main_content")
         .maybeSingle();
 
       if (!error && data) {
+        const contentObj =
+          typeof data.content === "object" && data.content !== null ? data.content : {};
         setContent({
-          hero_title: data.hero_title || DEFAULT_SITE_CONTENT.hero_title,
-          hero_subtitle: data.hero_subtitle || DEFAULT_SITE_CONTENT.hero_subtitle,
-          cta_text: data.cta_text || DEFAULT_SITE_CONTENT.cta_text,
-          shop_phone: data.shop_phone || DEFAULT_SITE_CONTENT.shop_phone,
-          shop_address: data.shop_address || DEFAULT_SITE_CONTENT.shop_address,
-          shop_timings: data.shop_timings || DEFAULT_SITE_CONTENT.shop_timings,
+          hero_title: data.hero_title || contentObj.hero_title || DEFAULT_SITE_CONTENT.hero_title,
+          hero_subtitle: data.hero_subtitle || contentObj.hero_subtitle || DEFAULT_SITE_CONTENT.hero_subtitle,
+          cta_text: data.cta_text || contentObj.cta_text || DEFAULT_SITE_CONTENT.cta_text,
+          shop_phone: data.shop_phone || contentObj.shop_phone || DEFAULT_SITE_CONTENT.shop_phone,
+          shop_address: data.shop_address || contentObj.shop_address || DEFAULT_SITE_CONTENT.shop_address,
+          shop_timings: data.shop_timings || contentObj.shop_timings || DEFAULT_SITE_CONTENT.shop_timings,
         });
-        if (data.maps_url) setGoogleMapsUrl(data.maps_url);
-        if (data.shop_email) setShopEmail(data.shop_email);
+        if (data.maps_url || contentObj.maps_url) setGoogleMapsUrl(data.maps_url || contentObj.maps_url);
+        if (data.shop_email || contentObj.shop_email) setShopEmail(data.shop_email || contentObj.shop_email);
       }
     } catch (err) {
       console.warn("fetchContent error:", err);
@@ -59,15 +61,18 @@ export const LocalSeoManager: React.FC = () => {
 
     try {
       const payload = {
-        id: "main_content",
-        hero_title: content.hero_title,
-        hero_subtitle: content.hero_subtitle,
-        cta_text: content.cta_text,
-        shop_phone: content.shop_phone,
-        shop_address: content.shop_address,
-        shop_timings: content.shop_timings,
-        maps_url: googleMapsUrl,
-        shop_email: shopEmail,
+        key: "main_content",
+        section: "global",
+        content: {
+          hero_title: content.hero_title,
+          hero_subtitle: content.hero_subtitle,
+          cta_text: content.cta_text,
+          shop_phone: content.shop_phone,
+          shop_address: content.shop_address,
+          shop_timings: content.shop_timings,
+          maps_url: googleMapsUrl,
+          shop_email: shopEmail,
+        },
         updated_at: new Date().toISOString(),
       };
 

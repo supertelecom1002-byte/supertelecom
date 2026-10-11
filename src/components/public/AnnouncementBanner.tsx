@@ -32,7 +32,7 @@ export const AnnouncementBanner: React.FC = () => {
         const { data: dbData, error } = await supabase
           .from("site_announcements")
           .select("*")
-          .eq("id", "main_announcement")
+          .limit(1)
           .maybeSingle();
 
         if (!error && dbData) {

@@ -46,7 +46,7 @@ export const AnnouncementManager: React.FC = () => {
       const { data, error } = await supabase
         .from("site_announcements")
         .select("*")
-        .eq("id", "main_announcement")
+        .limit(1)
         .maybeSingle();
 
       if (!error && data) {

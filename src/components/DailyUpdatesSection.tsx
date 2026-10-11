@@ -59,7 +59,7 @@ const DEFAULT_UPDATES: DailyUpdate[] = [
     description:
       "Heated vacuum separator and precision wire delamination bench restoring shattered outer glass while preserving original OLED panels.",
     media_url:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
     media_type: "image",
     created_at: new Date(Date.now() - 259200000).toISOString(),
   },
@@ -101,8 +101,7 @@ export const DailyUpdatesSection: React.FC = () => {
           // Keep default fallback updates so the section is always populated
           setUpdates(DEFAULT_UPDATES);
         }
-      } catch (err) {
-        console.warn("Daily updates fetch fallback:", err);
+      } catch {
         if (mounted) setUpdates(DEFAULT_UPDATES);
       } finally {
         if (mounted) setLoading(false);

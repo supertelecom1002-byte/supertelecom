@@ -28,12 +28,15 @@ export const BeforeAfterSlider: React.FC = () => {
         const { data, error } = await supabase
           .from("repair_showcase")
           .select("*")
-          .eq("is_published", true)
-          .order("created_at", { ascending: false });
+          .order("created_at", { ascending: false })
+          .limit(10);
 
         if (!error && data && data.length > 0) {
-          setItems(data);
-          setActiveItem(data[0]);
+          const published = data.filter((item: any) => item.is_published !== false);
+          if (published.length > 0) {
+            setItems(published);
+            setActiveItem(published[0]);
+          }
         }
       } catch {
         // use default fallback

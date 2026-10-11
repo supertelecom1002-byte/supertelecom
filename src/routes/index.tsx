@@ -553,7 +553,7 @@ function Gallery() {
       title: "Display Restoration Bench",
       sub: "Curved AMOLED touch glass separation & OCA lamination",
       badge: "Clean Bench Chamber",
-      img: "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=1200&q=80",
+      img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
     },
   ];
 

@@ -49,19 +49,21 @@ export const VisualEditorProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const { data, error } = await supabase
           .from("site_content")
           .select("*")
-          .eq("id", "main_content")
+          .eq("key", "main_content")
           .maybeSingle();
 
         if (!error && data && mounted) {
+          const contentObj =
+            typeof data.content === "object" && data.content !== null ? data.content : {};
           const merged = {
-            hero_title: data.hero_title,
-            hero_subtitle: data.hero_subtitle,
-            hero_description: data.hero_description,
-            cta_text: data.cta_text,
-            shop_phone: data.shop_phone,
-            shop_address: data.shop_address,
-            shop_timings: data.shop_timings,
-            ...(data.custom_fields || {}),
+            hero_title: data.hero_title || contentObj.hero_title,
+            hero_subtitle: data.hero_subtitle || contentObj.hero_subtitle,
+            hero_description: data.hero_description || contentObj.hero_description,
+            cta_text: data.cta_text || contentObj.cta_text,
+            shop_phone: data.shop_phone || contentObj.shop_phone,
+            shop_address: data.shop_address || contentObj.shop_address,
+            shop_timings: data.shop_timings || contentObj.shop_timings,
+            ...(data.custom_fields || contentObj.custom_fields || contentObj || {}),
           };
 
           setSavedContent((prev) => {
@@ -74,8 +76,8 @@ export const VisualEditorProvider: React.FC<{ children: React.ReactNode }> = ({ 
             return next;
           });
         }
-      } catch (err) {
-        console.warn("VisualEditorContext content fetch warning:", err);
+      } catch {
+        // Safe silent fallback to local storage or defaults
       }
     };
 
@@ -155,25 +157,11 @@ export const VisualEditorProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
       // Upsert to Supabase site_content table
       const payload: Record<string, any> = {
-        id: "main_content",
+        key: "main_content",
+        section: "global",
+        content: updatedContent,
         updated_at: new Date().toISOString(),
-        custom_fields: updatedContent,
       };
-
-      // Map well-known fields if present
-      if (updatedContent.hero_title) payload.hero_title = updatedContent.hero_title;
-      if (updatedContent.hero_subtitle) payload.hero_subtitle = updatedContent.hero_subtitle;
-      if (updatedContent.hero_description) payload.hero_description = updatedContent.hero_description;
-      if (updatedContent.cta_text) payload.cta_text = updatedContent.cta_text;
-      if (updatedContent.shop_phone || updatedContent.contact_phone) {
-        payload.shop_phone = updatedContent.contact_phone || updatedContent.shop_phone;
-      }
-      if (updatedContent.shop_address || updatedContent.contact_address) {
-        payload.shop_address = updatedContent.contact_address || updatedContent.shop_address;
-      }
-      if (updatedContent.shop_timings || updatedContent.contact_timings) {
-        payload.shop_timings = updatedContent.contact_timings || updatedContent.shop_timings;
-      }
 
       const { error } = await supabase.from("site_content").upsert([payload]);
       if (error) {
