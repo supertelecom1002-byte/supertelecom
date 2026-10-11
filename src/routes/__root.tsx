@@ -21,6 +21,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
 import { UpdateBanner } from "@/components/app/UpdateBanner";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 function NotFoundComponent() {
   return (
@@ -323,7 +324,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';document.documentElement.classList.toggle('dark',t==='dark');}catch(e){}})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';var isD=t==='dark';document.documentElement.classList.toggle('dark',isD);var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.setAttribute('content',isD?'#020617':'#ffffff');}catch(e){}})();`;
 const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
 
 function RootShell({ children }: { children: ReactNode }) {
@@ -331,6 +332,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" className="dark w-full max-w-full overflow-x-hidden">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="theme-color" content="#020617" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />
@@ -352,17 +354,19 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <AdminAuthProvider>
-        <VisualEditorProvider>
-          <Outlet />
-          <LiveEditorBar />
-          <FloatingAiChat />
-          <BottomNav />
-          <UpdateBanner />
-          <Toaster position="top-center" richColors />
-          <CookieBanner />
-        </VisualEditorProvider>
-      </AdminAuthProvider>
+      <ThemeProvider>
+        <AdminAuthProvider>
+          <VisualEditorProvider>
+            <Outlet />
+            <LiveEditorBar />
+            <FloatingAiChat />
+            <BottomNav />
+            <UpdateBanner />
+            <Toaster position="top-center" richColors />
+            <CookieBanner />
+          </VisualEditorProvider>
+        </AdminAuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

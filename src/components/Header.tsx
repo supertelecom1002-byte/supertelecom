@@ -92,14 +92,14 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
       {/* ========================================================= */}
       {/* 1. DESKTOP TOP ANNOUNCEMENT STRIP (Hidden on Mobile)      */}
       {/* ========================================================= */}
-      <div className="hidden md:flex w-full bg-gradient-to-r from-cyan-950/80 via-slate-900/90 to-cyan-950/80 border-b border-cyan-500/30 px-4 py-1.5 items-center justify-between text-xs backdrop-blur-md z-50">
+      <div className="hidden md:flex w-full bg-slate-100 dark:bg-gradient-to-r dark:from-cyan-950/80 dark:via-slate-900/90 dark:to-cyan-950/80 border-b border-slate-200 dark:border-cyan-500/30 px-4 py-1.5 items-center justify-between text-xs backdrop-blur-md z-50">
         <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           <span className="relative flex h-2 w-2 flex-none">
             <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
             <span className={`relative inline-flex rounded-full h-2 w-2 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
           </span>
-          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden text-[11px] sm:text-xs font-medium tracking-wide text-cyan-200">
-            <Zap className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
+          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden text-[11px] sm:text-xs font-medium tracking-wide text-slate-700 dark:text-cyan-200">
+            <Zap className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 fill-amber-500 dark:fill-amber-400 shrink-0" />
             <span className="truncate">
               Super Telecom Official App • 50%+ Extra Smooth Experience
             </span>
@@ -107,15 +107,15 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
         </div>
 
         <div className="flex items-center gap-3 flex-none pl-2">
-          <span className="inline-flex items-center gap-1.5 text-cyan-400/90 font-mono text-[11px]">
-            <Clock className="h-3 w-3 text-cyan-400" />
+          <span className="inline-flex items-center gap-1.5 text-slate-600 dark:text-cyan-400/90 font-mono text-[11px]">
+            <Clock className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
             <span>Mon-Sun: 10:00 AM – 9:30 PM (Barganda Road)</span>
           </span>
           {!isStandalone && (
             <a
               href="/SuperTelecom.apk"
               download="SuperTelecom.apk"
-              className="inline-flex items-center gap-1.5 bg-cyan-500 hover:bg-cyan-400 active:scale-95 text-slate-950 font-bold px-3 py-1 rounded-lg text-[11px] shadow-sm shadow-cyan-500/20 transition-all cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 bg-cyan-600 dark:bg-cyan-500 hover:bg-cyan-500 dark:hover:bg-cyan-400 active:scale-95 text-white dark:text-slate-950 font-bold px-3 py-1 rounded-lg text-[11px] shadow-sm shadow-cyan-500/20 transition-all cursor-pointer whitespace-nowrap"
             >
               <Download className="h-3.5 w-3.5" />
               <span>Download App</span>
@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
       {/* ========================================================= */}
       <nav
         aria-label="Desktop Navigation"
-        className="hidden md:flex h-[68px] sticky top-0 z-50 w-full backdrop-blur-xl bg-slate-950/85 border-b border-slate-800/80 transition-all duration-300 items-center"
+        className="hidden md:flex h-[68px] sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-slate-950/85 border-b border-slate-200 dark:border-slate-800/80 transition-all duration-300 items-center"
       >
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6">
           {/* Left: Brand Monogram + Title + Live Status */}
@@ -144,23 +144,23 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                 }}
               />
               <div className="leading-tight">
-                <span className="text-sm font-black tracking-tight text-white block">
+                <span className="text-sm font-black tracking-tight text-slate-900 dark:text-white block">
                   SUPER TELECOM
                 </span>
-                <span className="text-[10px] text-cyan-400 font-medium block">
+                <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-bold block">
                   LAB & CHIP REPAIR
                 </span>
               </div>
             </Link>
 
             {/* Top Live Status */}
-            <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-[11px] font-mono text-slate-300">
+            <div className="hidden lg:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-700 dark:text-slate-300">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${labStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"} opacity-75`} />
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${labStatus.isOpen ? "bg-emerald-500" : "bg-rose-500"}`} />
               </span>
-              <span className={`font-bold ${labStatus.isOpen ? "text-emerald-400" : "text-rose-400"}`}>{labStatus.statusText}</span>
-              <span className="text-slate-600">•</span>
+              <span className={`font-bold ${labStatus.isOpen ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>{labStatus.statusText}</span>
+              <span className="text-slate-400 dark:text-slate-600">•</span>
               <span>{labStatus.subText}</span>
             </div>
           </div>
@@ -173,16 +173,16 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                   key={link.label}
                   type="button"
                   onClick={link.onClick}
-                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-cyan-300 hover:text-white hover:bg-slate-900 transition-colors flex items-center gap-1"
+                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-cyan-700 dark:text-cyan-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors flex items-center gap-1"
                 >
-                  <Sparkles className="h-3 w-3 text-cyan-400" />
+                  <Sparkles className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
                   <span>{link.label}</span>
                 </button>
               ) : link.to?.startsWith("#") ? (
                 <a
                   key={link.label}
                   href={link.to}
-                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                 >
                   {link.label}
                 </a>
@@ -190,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                 <Link
                   key={link.label}
                   to={link.to!}
-                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-900 transition-colors"
+                  className="rounded-full px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -206,9 +206,9 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
               <a
                 href="/SuperTelecom.apk"
                 download="SuperTelecom.apk"
-                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-900 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-950/50 hover:border-cyan-400 transition-all shadow-sm"
+                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-cyan-500/40 text-slate-700 dark:text-cyan-300 hover:bg-slate-200 dark:hover:bg-cyan-950/50 transition-all shadow-sm"
               >
-                <Smartphone className="h-3.5 w-3.5 text-cyan-400" />
+                <Smartphone className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span>Get App</span>
               </a>
             )}
