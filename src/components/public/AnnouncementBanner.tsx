@@ -144,7 +144,7 @@ export const AnnouncementBanner: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2 flex-none">
-          {data.action_text && data.action_url && (
+          {data?.action_text && data?.action_url && (
             <a
               href={data.action_url}
               target="_blank"

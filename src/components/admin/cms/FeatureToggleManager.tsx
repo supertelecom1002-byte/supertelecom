@@ -52,7 +52,7 @@ export const FeatureToggleManager: React.FC = () => {
 
   const handleSaveBanner = async () => {
     const updatedBanner = {
-      enabled: config.announcement_banner.enabled,
+      enabled: Boolean((config || DEFAULT_APP_CONFIG)?.announcement_banner?.enabled),
       text: announcementText,
     };
     const updated = await updateAppConfigKey("announcement_banner", updatedBanner);
@@ -61,8 +61,9 @@ export const FeatureToggleManager: React.FC = () => {
   };
 
   const handleToggleBanner = async () => {
+    const currentEnabled = Boolean((config || DEFAULT_APP_CONFIG)?.announcement_banner?.enabled);
     const updatedBanner = {
-      enabled: !config.announcement_banner.enabled,
+      enabled: !currentEnabled,
       text: announcementText,
     };
     const updated = await updateAppConfigKey("announcement_banner", updatedBanner);
@@ -158,7 +159,7 @@ export const FeatureToggleManager: React.FC = () => {
           </div>
 
           <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-slate-800 text-slate-300 uppercase">
-            Active: <strong className="text-cyan-400">{config.lab_status_override.toUpperCase()}</strong>
+            Active: <strong className="text-cyan-400">{((config || DEFAULT_APP_CONFIG)?.lab_status_override || "auto").toUpperCase()}</strong>
           </span>
         </div>
 
@@ -173,7 +174,7 @@ export const FeatureToggleManager: React.FC = () => {
               type="button"
               onClick={() => handleStatusOverride(opt.id as any)}
               className={`p-4 rounded-2xl border text-left transition-all active:scale-98 ${
-                config.lab_status_override === opt.id
+                ((config || DEFAULT_APP_CONFIG)?.lab_status_override || "auto") === opt.id
                   ? "bg-cyan-950/60 border-cyan-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                   : "bg-slate-950/60 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
               }`}
@@ -202,12 +203,12 @@ export const FeatureToggleManager: React.FC = () => {
             type="button"
             onClick={handleToggleBanner}
             className={`w-12 h-6 rounded-full transition-colors relative flex items-center px-1 ${
-              config.announcement_banner.enabled ? "bg-amber-500" : "bg-slate-800"
+              (config || DEFAULT_APP_CONFIG)?.announcement_banner?.enabled ? "bg-amber-500" : "bg-slate-800"
             }`}
           >
             <div
               className={`w-4 h-4 rounded-full bg-slate-950 transition-transform ${
-                config.announcement_banner.enabled ? "translate-x-6" : "translate-x-0"
+                (config || DEFAULT_APP_CONFIG)?.announcement_banner?.enabled ? "translate-x-6" : "translate-x-0"
               }`}
             />
           </button>
@@ -247,12 +248,12 @@ export const FeatureToggleManager: React.FC = () => {
           type="button"
           onClick={() => handleToggle("shop_accessories_enabled")}
           className={`w-12 h-6 rounded-full transition-colors relative flex items-center px-1 ${
-            config.shop_accessories_enabled !== false ? "bg-emerald-500" : "bg-slate-800"
+            (config || DEFAULT_APP_CONFIG)?.shop_accessories_enabled !== false ? "bg-emerald-500" : "bg-slate-800"
           }`}
         >
           <div
             className={`w-4 h-4 rounded-full bg-slate-950 transition-transform ${
-              config.shop_accessories_enabled !== false ? "translate-x-6" : "translate-x-0"
+              (config || DEFAULT_APP_CONFIG)?.shop_accessories_enabled !== false ? "translate-x-6" : "translate-x-0"
             }`}
           />
         </button>
@@ -268,7 +269,7 @@ export const FeatureToggleManager: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {toolToggles.map((t) => {
             const Icon = t.icon;
-            const isEnabled = config[t.key] !== false;
+            const isEnabled = (config || DEFAULT_APP_CONFIG)?.[t.key] !== false;
 
             return (
               <div

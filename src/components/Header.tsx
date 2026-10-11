@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
     };
   }, [open]);
 
-  const labStatus = isLabOpenNow(appConfig.lab_status_override);
+  const labStatus = isLabOpenNow(appConfig?.lab_status_override || "auto");
 
   const navLinks: Array<{ label: string; to?: string; onClick?: () => void }> = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },

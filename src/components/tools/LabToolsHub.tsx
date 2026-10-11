@@ -136,7 +136,7 @@ export const LabToolsHub: React.FC<LabToolsHubProps> = ({
 
   // Filter tools based on live AppConfig toggles
   const visibleTools = TOOLS.filter((tool) => {
-    const isEnabled = config[tool.configKey];
+    const isEnabled = (config || DEFAULT_APP_CONFIG)?.[tool.configKey];
     return isEnabled !== false;
   });
 

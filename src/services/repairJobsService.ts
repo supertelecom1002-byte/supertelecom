@@ -114,10 +114,15 @@ function getLocalJobs(): RepairJob[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_JOBS));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_JOBS));
+      } catch {
+        // ignore
+      }
       return DEFAULT_JOBS;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_JOBS;
   } catch {
     return DEFAULT_JOBS;
   }
@@ -254,20 +259,22 @@ export async function updateRepairJobStage(id: string, stage: RepairStage, notes
 }
 
 export function buildWhatsAppStatusUrl(job: RepairJob): string {
-  const stageInfo = STAGE_METADATA[job.current_stage];
+  const stageInfo = (job && STAGE_METADATA[job.current_stage]) || STAGE_METADATA.received;
+  const rawCost = typeof job?.estimated_cost === "number" ? job.estimated_cost.toLocaleString() : "TBD";
   const lines = [
-    `*Super Telecom Repair Update - ${job.id}*`,
-    `Customer: ${job.customer_name}`,
-    `Device: ${job.device_model}`,
+    `*Super Telecom Repair Update - ${job?.id || "ST-JOB"}*`,
+    `Customer: ${job?.customer_name || "Valued Customer"}`,
+    `Device: ${job?.device_model || "Smartphone"}`,
     `Current Status: *${stageInfo.label}*`,
     `Progress: ${stageInfo.description}`,
-    job.notes ? `Engineer Note: ${job.notes}` : "",
-    `Estimated Cost: ₹${job.estimated_cost.toLocaleString()}`,
+    job?.notes ? `Engineer Note: ${job.notes}` : "",
+    `Estimated Cost: ₹${rawCost}`,
     "",
     "Barganda Road Lab, Near Shivam Clinic, Giridih",
     "Call: +91 80029 03643",
   ].filter(Boolean);
 
-  const phone = job.customer_phone.startsWith("91") ? job.customer_phone : `91${job.customer_phone}`;
+  const rawPhone = String(job?.customer_phone || "8002903643").replace(/\D/g, "");
+  const phone = rawPhone.startsWith("91") ? rawPhone : `91${rawPhone}`;
   return `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
 }

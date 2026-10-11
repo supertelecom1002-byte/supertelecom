@@ -134,7 +134,11 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
               type="button"
               onClick={() => {
                 setQuery("ST-1082");
-                findRepairJob("ST-1082").then(setJob);
+                findRepairJob("ST-1082")
+                  .then((res) => {
+                    if (res) setJob(res);
+                  })
+                  .catch(() => {});
               }}
               className="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/30 text-[11px]"
             >
@@ -160,7 +164,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
                 <div className="flex items-center gap-2">
                   <span className="font-mono font-bold text-base text-cyan-400">{job.id}</span>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-500/30 uppercase">
-                    {STAGE_METADATA[job.current_stage].label}
+                    {(STAGE_METADATA[job.current_stage] || STAGE_METADATA.received)?.label || "IN PROGRESS"}
                   </span>
                 </div>
                 <h4 className="font-bold text-sm text-white mt-1">{job.device_model}</h4>
@@ -170,7 +174,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
               <div className="text-left sm:text-right border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
                 <div className="text-[10px] font-mono uppercase text-slate-400">Estimated Cost</div>
                 <div className="text-xl font-mono font-black text-emerald-400">
-                  ₹{job.estimated_cost.toLocaleString()}
+                  ₹{(job.estimated_cost ?? 0).toLocaleString()}
                 </div>
               </div>
             </div>
@@ -183,7 +187,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
 
               <div className="space-y-3 relative before:absolute before:left-3.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-800">
                 {ORDERED_STAGES.map((st, idx) => {
-                  const meta = STAGE_METADATA[st];
+                  const meta = STAGE_METADATA[st] || STAGE_METADATA.received;
                   const isCompleted = currentStageIndex > idx;
                   const isCurrent = currentStageIndex === idx;
 

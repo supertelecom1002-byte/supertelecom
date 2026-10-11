@@ -121,10 +121,15 @@ function getLocalPricing(): ServicePricingItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SERVICE_PRICING));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SERVICE_PRICING));
+      } catch {
+        // ignore
+      }
       return DEFAULT_SERVICE_PRICING;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_SERVICE_PRICING;
   } catch {
     return DEFAULT_SERVICE_PRICING;
   }

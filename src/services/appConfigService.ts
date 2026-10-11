@@ -16,7 +16,7 @@ export interface AppConfig {
   };
 }
 
-export const DEFAULT_APP_CONFIG: AppConfig = {
+export const DEFAULT_CONFIG: AppConfig = {
   tool_speaker_cleaner: true,
   tool_touch_test: true,
   tool_anti_theft: true,
@@ -32,17 +32,29 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
   },
 };
 
+export const DEFAULT_APP_CONFIG: AppConfig = DEFAULT_CONFIG;
+
 const STORAGE_KEY = "st_app_config_cache";
 const EVENT_NAME = "st:config-updated";
 
 export async function fetchAppConfig(): Promise<AppConfig> {
   // 1. Try local cache first for instant hydration
-  let currentConfig: AppConfig = { ...DEFAULT_APP_CONFIG };
+  let currentConfig: AppConfig = { ...DEFAULT_CONFIG };
   if (typeof window !== "undefined") {
     try {
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
-        currentConfig = { ...DEFAULT_APP_CONFIG, ...JSON.parse(cached) };
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === "object") {
+          currentConfig = {
+            ...DEFAULT_CONFIG,
+            ...parsed,
+            announcement_banner: {
+              ...DEFAULT_CONFIG.announcement_banner,
+              ...(parsed.announcement_banner || {}),
+            },
+          };
+        }
       }
     } catch {
       // ignore JSON parse error
@@ -53,14 +65,29 @@ export async function fetchAppConfig(): Promise<AppConfig> {
   if (isSupabaseConfigured) {
     try {
       const { data, error } = await supabase.from("app_config").select("key, value");
-      if (!error && data && data.length > 0) {
-        const liveConfig: Partial<AppConfig> = {};
+      // If table is missing (404/42P01) or error occurs, fallback cleanly without throwing
+      if (!error && Array.isArray(data) && data.length > 0) {
+        const liveConfig: Record<string, unknown> = {};
         for (const row of data) {
-          (liveConfig as Record<string, unknown>)[row.key] = row.value;
+          if (row && row.key) {
+            liveConfig[row.key] = row.value;
+          }
         }
-        currentConfig = { ...currentConfig, ...liveConfig };
+        currentConfig = {
+          ...DEFAULT_CONFIG,
+          ...currentConfig,
+          ...(liveConfig as Partial<AppConfig>),
+          announcement_banner: {
+            ...DEFAULT_CONFIG.announcement_banner,
+            ...((liveConfig.announcement_banner as any) || currentConfig.announcement_banner || {}),
+          },
+        };
         if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(currentConfig));
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(currentConfig));
+          } catch {
+            // ignore storage quota errors
+          }
         }
       }
     } catch (err) {
@@ -75,8 +102,14 @@ export async function updateAppConfigKey<K extends keyof AppConfig>(
   key: K,
   value: AppConfig[K]
 ): Promise<AppConfig> {
-  const current = await fetchAppConfig();
-  const updated: AppConfig = { ...current, [key]: value };
+  let current: AppConfig;
+  try {
+    current = await fetchAppConfig();
+  } catch {
+    current = { ...DEFAULT_CONFIG };
+  }
+
+  const updated: AppConfig = { ...DEFAULT_CONFIG, ...current, [key]: value };
 
   // 1. Persist locally immediately
   if (typeof window !== "undefined") {
@@ -103,22 +136,49 @@ export async function updateAppConfigKey<K extends keyof AppConfig>(
 }
 
 export function subscribeToAppConfig(callback: (config: AppConfig) => void): () => void {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === "undefined") {
+    try {
+      callback(DEFAULT_CONFIG);
+    } catch {
+      // ignore
+    }
+    return () => {};
+  }
 
   const handler = (e: Event) => {
-    const custom = e as CustomEvent<AppConfig>;
-    if (custom.detail) {
-      callback(custom.detail);
-    } else {
-      fetchAppConfig().then(callback);
+    try {
+      const custom = e as CustomEvent<AppConfig>;
+      if (custom && custom.detail && typeof custom.detail === "object") {
+        callback({ ...DEFAULT_CONFIG, ...custom.detail });
+      } else {
+        fetchAppConfig()
+          .then((cfg) => callback(cfg ? { ...DEFAULT_CONFIG, ...cfg } : DEFAULT_CONFIG))
+          .catch(() => callback(DEFAULT_CONFIG));
+      }
+    } catch {
+      callback(DEFAULT_CONFIG);
     }
   };
 
   window.addEventListener(EVENT_NAME, handler);
   window.addEventListener("storage", handler);
 
-  // Initial call
-  fetchAppConfig().then(callback);
+  // Initial call with immediate safe execution
+  try {
+    fetchAppConfig()
+      .then((cfg) => {
+        try {
+          callback(cfg ? { ...DEFAULT_CONFIG, ...cfg } : DEFAULT_CONFIG);
+        } catch {
+          callback(DEFAULT_CONFIG);
+        }
+      })
+      .catch(() => {
+        callback(DEFAULT_CONFIG);
+      });
+  } catch {
+    callback(DEFAULT_CONFIG);
+  }
 
   return () => {
     window.removeEventListener(EVENT_NAME, handler);
@@ -131,14 +191,15 @@ export function isLabOpenNow(override: "auto" | "open" | "closed" = "auto"): {
   statusText: string;
   subText: string;
 } {
-  if (override === "open") {
+  const safeOverride = override || "auto";
+  if (safeOverride === "open") {
     return {
       isOpen: true,
       statusText: "Lab Open Now",
       subText: "Technicians On-Duty • Walk-in Welcome",
     };
   }
-  if (override === "closed") {
+  if (safeOverride === "closed") {
     return {
       isOpen: false,
       statusText: "Lab Closed",

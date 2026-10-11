@@ -106,7 +106,7 @@ export const BottomNav: React.FC = () => {
         </button>
 
         {/* 4. Shop / Parts (Hidden if disabled in Admin) */}
-        {config.shop_accessories_enabled !== false && (
+        {(config || DEFAULT_APP_CONFIG)?.shop_accessories_enabled !== false && (
           <Link
             to="/services"
             className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-95 ${
