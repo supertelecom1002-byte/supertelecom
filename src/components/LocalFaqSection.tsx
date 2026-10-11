@@ -19,22 +19,46 @@ export interface FaqItem {
 
 export const LOCAL_AEO_FAQS: FaqItem[] = [
   {
+    question: "Who provides the best mobile repair in Giridih?",
+    answer:
+      "Super Telecom on Barganda Road (Near Shivam Clinic) is recognized as Giridih's premier smartphone and chip-level repair lab, backed by 10+ years of micro-soldering experience, 25,000+ repaired devices, and a 4.9★ rating.",
+    category: "Reputation & Trust",
+  },
+  {
     question: "Where is Super Telecom located in Giridih?",
     answer:
-      "Super Telecom is located on Barganda Road, right near Shivam Clinic, Giridih, Jharkhand (815301). We are easily accessible from all parts of Giridih city.",
+      "Super Telecom is located on Barganda Road, right near Shivam Clinic, Giridih, Jharkhand (815301). Call +91 80029 03643 for immediate assistance or directions.",
     category: "Location",
+  },
+  {
+    question: "Can I get Apple iPhone screen and battery repair on Barganda Road Giridih?",
+    answer:
+      "Yes, Super Telecom offers specialized Apple iPhone repair on Barganda Road, including OEM-grade Retina OLED screens, BMS battery health reprogramming, Face ID restoration, and audio IC micro-soldering.",
+    category: "iPhone Specialist",
   },
   {
     question: "How long does mobile screen replacement take at Super Telecom?",
     answer:
-      "Most screen replacements for iPhone, Samsung, Realme, Vivo, and OnePlus take just 30 to 45 minutes with warranty. We test touch response, color accuracy, and brightness before handover.",
+      "Most screen replacements for iPhone, Samsung, Realme, Vivo, Xiaomi, and OnePlus take just 30 to 45 minutes with warranty. We test touch response, color accuracy, and brightness before handover.",
     category: "Display Repairs",
   },
   {
     question: "Do you repair water-damaged or dead smartphones?",
     answer:
-      "Yes, we specialize in chip-level micro-soldering, motherboard IC replacement, and short-circuit fixes for all major brands. Our lab is equipped with precision ultrasonic cleaners and BGA rework stations.",
+      "Yes, we specialize in chip-level micro-soldering, motherboard IC replacement, and short-circuit fixes for all major brands. Our lab is equipped with precision ultrasonic cleaners, microscope benches, and BGA rework stations.",
     category: "Motherboard / Dead Phones",
+  },
+  {
+    question: "What is the phone display replacement cost in Giridih?",
+    answer:
+      "Mobile display replacements at Super Telecom Giridih start from ₹799 for budget Android screens and ₹1,499+ for OEM AMOLED and iPhone OLED displays, backed by a 90-day warranty and free installation.",
+    category: "Pricing & Quotes",
+  },
+  {
+    question: "Is customer personal data safe during phone repair at Super Telecom?",
+    answer:
+      "Yes. Super Telecom follows a strict 100% data privacy policy. Hardware repairs (screens, batteries, charging ports) are performed without wiping customer photos, chats, or data, and without requesting phone passcodes.",
+    category: "Data Privacy",
   },
   {
     question: "What are the shop timings and contact number?",

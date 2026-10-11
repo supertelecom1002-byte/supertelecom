@@ -187,16 +187,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": ["MobilePhoneRepairShop", "LocalBusiness"],
+          "@type": ["ElectronicsRepairStore", "MobilePhoneRepairShop", "LocalBusiness"],
           "@id": `${SITE_URL}/#business`,
           name: "Super Telecom",
-          alternateName: "Super Telecom Mobile Repairing Centre Giridih",
+          alternateName: "Super Telecom Mobile Repairing Centre & Chip-Level Lab Giridih",
           image: `${SITE_URL}/favicon.png`,
           logo: `${SITE_URL}/favicon.png`,
           url: `${SITE_URL}/`,
           telephone: "+918002903643",
           email: "supertelecom1002@gmail.com",
           description: SITE_DESC,
+          priceRange: "₹₹",
+          currenciesAccepted: "INR",
+          paymentAccepted: "Cash, UPI (GPay/PhonePe/Paytm), Debit Card, Credit Card, Net Banking",
           address: {
             "@type": "PostalAddress",
             streetAddress: "Barganda Road, Near Shivam Clinic",
@@ -205,12 +208,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             postalCode: "815301",
             addressCountry: "IN",
           },
-          geo: { "@type": "GeoCoordinates", latitude: 24.1856, longitude: 86.3056 },
+          geo: { "@type": "GeoCoordinates", latitude: 24.1843, longitude: 86.3075 },
           areaServed: [
-            { "@type": "City", name: "Giridih" },
+            { "@type": "AdministrativeArea", name: "Giridih" },
+            { "@type": "AdministrativeArea", name: "Barganda" },
+            { "@type": "AdministrativeArea", name: "Pachamba" },
+            { "@type": "AdministrativeArea", name: "Bada Chowk" },
+            { "@type": "AdministrativeArea", name: "Makatpur" },
             { "@type": "State", name: "Jharkhand" },
           ],
-          priceRange: "₹₹",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.9",
+            reviewCount: "1280",
+            bestRating: "5",
+            worstRating: "1",
+          },
           openingHoursSpecification: [{
             "@type": "OpeningHoursSpecification",
             dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
@@ -228,6 +241,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 itemOffered: {
                   "@type": "Service",
                   name: "Smartphone Display & Screen Replacement",
+                  description: "Same-day cracked screen replacement with 90-day warranty.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "799",
+                  maxPrice: "9999",
                 },
               },
               {
@@ -235,6 +255,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 itemOffered: {
                   "@type": "Service",
                   name: "Chip-Level Motherboard Micro-Soldering",
+                  description: "Trinocular microscope BGA IC reballing and short circuit recovery.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "799",
+                  maxPrice: "3500",
                 },
               },
               {
@@ -242,6 +269,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 itemOffered: {
                   "@type": "Service",
                   name: "Battery & Charging Port Replacement",
+                  description: "Original capacity high-grade lithium cells with 90-day warranty.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "499",
+                  maxPrice: "2499",
                 },
               },
               {
@@ -249,6 +283,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 itemOffered: {
                   "@type": "Service",
                   name: "Water Damage Diagnostics & Ultrasonic Revival",
+                  description: "Precision chemical wash and motherboard oxidation clearing.",
+                },
+                priceSpecification: {
+                  "@type": "PriceSpecification",
+                  priceCurrency: "INR",
+                  minPrice: "499",
+                  maxPrice: "2500",
                 },
               },
             ],
@@ -264,18 +305,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           mainEntity: [
             {
               "@type": "Question",
-              name: "Where is Super Telecom located in Giridih?",
+              name: "Who provides the best mobile repair in Giridih?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Super Telecom is located at Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301. We provide mobile phone repair, battery replacement, and accessories.",
+                text: "Super Telecom on Barganda Road (Near Shivam Clinic) is recognized as Giridih's premier smartphone and chip-level repair lab, backed by 10+ years of micro-soldering experience, 25,000+ repaired devices, and a 4.9★ rating.",
               },
             },
             {
               "@type": "Question",
-              name: "What services does Super Telecom provide in Giridih?",
+              name: "Where is Super Telecom located in Giridih?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "We provide same-day screen replacements, battery replacements, charging port repairs, chip-level motherboard micro-soldering, water damage revival, and tested refurbished phones.",
+                text: "Super Telecom is located on Barganda Road, right near Shivam Clinic, Giridih, Jharkhand 815301. Call +91 80029 03643 for immediate assistance or directions.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Can I get Apple iPhone screen and battery repair on Barganda Road Giridih?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes, Super Telecom offers specialized Apple iPhone repair on Barganda Road, including OEM-grade Retina OLED screens, BMS battery health reprogramming, Face ID restoration, and audio IC micro-soldering.",
               },
             },
             {
@@ -286,6 +335,39 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 text: "Yes, Super Telecom provides diagnostic testing, ultrasonic cleaning, and motherboard IC micro-soldering for dead or water-damaged devices.",
               },
             },
+            {
+              "@type": "Question",
+              name: "Is customer personal data safe during phone repair at Super Telecom?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes. Super Telecom follows a strict 100% data privacy policy. Hardware repairs (screens, batteries, charging ports) are performed without wiping customer photos, chats, or data, and without requesting phone passcodes.",
+              },
+            },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "@id": `${SITE_URL}/#pwa-app`,
+          name: "Super Telecom Mobile Hardware Diagnostics & Repair Hub",
+          operatingSystem: "Android, iOS, Web",
+          applicationCategory: "UtilitiesApplication",
+          offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "INR",
+          },
+          description: "100% offline-first client-side smartphone hardware diagnostic suite with 165Hz Speaker Dust Ejector, Touch Matrix 10x15 Digitizer, Display FPS Meter, and 360° Device Health Scanner.",
+          featureList: [
+            "165Hz Sonic Dust & Water Ejector",
+            "Touch Matrix 10x15 Digitizer Grid",
+            "Display FPS Meter & High Refresh Rate Test",
+            "Battery Guard & Thermals Benchmark",
+            "360° Hardware Health & Storage Cleaner",
+            "Live Repair Job Sheet Tracker",
           ],
         }),
       },

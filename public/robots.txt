@@ -1,9 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /admin
-Disallow: /admin/*
+Disallow: /api/
 
 User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
 Allow: /
 
 User-agent: GPTBot
@@ -12,4 +15,11 @@ Allow: /
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: Applebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://supertelecom.shop/sitemap.xml
 Sitemap: https://www.supertelecom.shop/sitemap.xml
