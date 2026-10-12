@@ -129,7 +129,7 @@ class FloatingCrosshairService : Service() {
             var initialTouchY = 0f
 
             setOnTouchListener { _, event ->
-                val params = layoutParams ?: return@setOnTouchListener false
+                val params = this@FloatingCrosshairService.layoutParams ?: return@setOnTouchListener false
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         initialX = params.x
