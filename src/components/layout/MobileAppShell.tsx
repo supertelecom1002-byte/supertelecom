@@ -80,6 +80,10 @@ import { useLauncher } from "@/context/LauncherContext";
 import { CyberOSDesktop } from "@/components/cyber-os/CyberOSDesktop";
 import { useGamingMode } from "@/context/GamingModeContext";
 import { GamingConsoleWorkspace } from "@/components/gaming/GamingConsoleWorkspace";
+import { PlayProtectBridge } from "@/components/security/PlayProtectBridge";
+import { LinkFraudInspector } from "@/components/security/LinkFraudInspector";
+import { RealStorageGauge } from "@/components/security/RealStorageGauge";
+import { CustomerRewardsHub } from "@/components/rewards/CustomerRewardsHub";
 
 export type MobileTab = "home" | "tools" | "track" | "shop" | "settings";
 
@@ -679,6 +683,34 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 <span className="text-[9px] font-mono text-cyan-700 dark:text-cyan-400 uppercase font-bold">Live Pricing</span>
               </div>
               <RepairEstimator />
+            </div>
+
+            {/* ========================================================= */}
+            {/* 🎁 CUSTOMER PERKS & REWARDS VAULT                         */}
+            {/* ========================================================= */}
+            <CustomerRewardsHub onOpenTrack={openTrackModalWithHaptic} />
+
+            {/* ========================================================= */}
+            {/* 🛡️ 100% GENUINE DEVICE SECURITY HUB (ZERO-SIMULATION)    */}
+            {/* ========================================================= */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5" /> Security &amp; Phone Care Suite
+                </span>
+                <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400">
+                  Zero Simulation &bull; Native OS
+                </span>
+              </div>
+
+              {/* Real Malware & Virus Scan Bridge via Google Play Protect */}
+              <PlayProtectBridge />
+
+              {/* Real Hardware Storage & Cache Gauge */}
+              <RealStorageGauge />
+
+              {/* Phishing Link & Fraud Message Inspector */}
+              <LinkFraudInspector />
             </div>
 
             {/* Lab Trust Card & Rating */}
