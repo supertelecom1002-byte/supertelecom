@@ -19,6 +19,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useLauncher } from "@/context/LauncherContext";
 import { useGamingMode } from "@/context/GamingModeContext";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface ControlCenterSheetProps {
   isOpen: boolean;
@@ -43,13 +44,7 @@ export const ControlCenterSheet: React.FC<ControlCenterSheetProps> = ({ isOpen, 
   const [refreshRate, setRefreshRate] = useState<number>(60);
 
   const triggerVibrate = (pattern: number | number[] = 15) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Measure display refresh rate using rAF

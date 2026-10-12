@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useGamingMode } from "@/context/GamingModeContext";
 import { Zap, Target, Activity, CheckCircle2, RotateCcw } from "lucide-react";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export const TouchResponseBooster: React.FC = () => {
   const { touchBoosterActive, toggleTouchBooster } = useGamingMode();
@@ -43,12 +44,8 @@ export const TouchResponseBooster: React.FC = () => {
       }
 
       // Micro-haptic on tap
-      if (e.type === "pointerdown" && typeof navigator !== "undefined" && "vibrate" in navigator) {
-        try {
-          navigator.vibrate(8);
-        } catch {
-          // ignore
-        }
+      if (e.type === "pointerdown") {
+        safeVibrate(8);
       }
     };
 
@@ -85,13 +82,7 @@ export const TouchResponseBooster: React.FC = () => {
   };
 
   const handlePadPointerDown = () => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(8);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(8);
   };
 
   const resetStats = () => {

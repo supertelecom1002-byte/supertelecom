@@ -23,6 +23,7 @@ import { GamingHudBar } from "@/components/gaming/GamingHudBar";
 import { ProCrosshairOverlay } from "@/components/gaming/ProCrosshairOverlay";
 import { TouchResponseBooster } from "@/components/gaming/TouchResponseBooster";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export const GamingConsoleWorkspace: React.FC = () => {
   const {
@@ -47,13 +48,7 @@ export const GamingConsoleWorkspace: React.FC = () => {
   const [targetSpawnTime, setTargetSpawnTime] = useState<number>(Date.now());
 
   const triggerHaptic = (pattern: number | number[] = 15) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Footstep Audio effect listener

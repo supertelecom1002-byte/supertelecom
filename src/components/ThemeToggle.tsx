@@ -1,14 +1,13 @@
 import React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const { theme, isDark, toggleTheme } = useTheme();
 
   const handleToggle = () => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate(15);
-    }
+    safeVibrate(15);
     toggleTheme();
   };
 

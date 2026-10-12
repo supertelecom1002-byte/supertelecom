@@ -11,6 +11,7 @@ import {
   Flame,
 } from "lucide-react";
 import { playScanRadarPing } from "./cyberAudio";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface MasterScanHeroCardProps {
   onOpenScanner: () => void;
@@ -48,13 +49,7 @@ export const MasterScanHeroCard: React.FC<MasterScanHeroCardProps> = ({
   }, []);
 
   const handleLaunch = () => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate([40, 60, 40]);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate([40, 60, 40]);
     playScanRadarPing(920);
     onOpenScanner();
   };

@@ -3,6 +3,7 @@ import { Zap, Stethoscope } from "lucide-react";
 import { TurboCleanModal } from "./TurboCleanModal";
 import { DoctorDiagnosticModal } from "./DoctorDiagnosticModal";
 import { playDoctorHeartbeat, playTrashCleanSweep } from "@/components/scanner/cyberAudio";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface DualMasterActionsProps {
   onOpenClean?: () => void;
@@ -19,13 +20,7 @@ export const DualMasterActions: React.FC<DualMasterActionsProps> = ({
   const [internalDoctorOpen, setInternalDoctorOpen] = useState(false);
 
   const triggerHaptic = (ms = 15) => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(ms);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(ms);
   };
 
   const openCleanModal = () => {

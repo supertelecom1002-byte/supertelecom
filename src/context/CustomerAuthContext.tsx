@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import type { User, Session } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export interface CustomerUser {
   id: string;
@@ -136,6 +137,22 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 window.location.pathname + window.location.search
               );
             }
+          } else if (mounted && !initialSession) {
+            // Reconcile stale cache if no OAuth code is currently pending in query
+            const hasPendingCode = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("code");
+            if (!hasPendingCode) {
+              setSession(null);
+              const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_STORAGE_USER_KEY) : null;
+              if (cached && !cached.includes("vip-google-demo")) {
+                setUser(null);
+                setIsVip(false);
+                try {
+                  localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                } catch {
+                  // ignore
+                }
+              }
+            }
           }
         } catch (err) {
           console.warn("[CustomerAuth] Supabase session check error:", err);
@@ -169,13 +186,16 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
             if (event === "SIGNED_IN") {
               toast.success("Welcome back! Google VIP Pass Active.");
             }
-          } else if (event === "SIGNED_OUT") {
-            setUser(null);
-            setIsVip(false);
-            try {
-              localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
-            } catch {
-              // ignore
+          } else if (event === "SIGNED_OUT" || (event === "INITIAL_SESSION" && !currentSession)) {
+            const cached = typeof window !== "undefined" ? localStorage.getItem(LOCAL_STORAGE_USER_KEY) : null;
+            if (cached && !cached.includes("vip-google-demo")) {
+              setUser(null);
+              setIsVip(false);
+              try {
+                localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+              } catch {
+                // ignore
+              }
             }
           }
           setLoading(false);
@@ -197,13 +217,7 @@ export const CustomerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     try {
-      if (typeof window !== "undefined" && "vibrate" in navigator) {
-        try {
-          navigator.vibrate(20);
-        } catch {
-          // ignore
-        }
-      }
+      safeVibrate(20);
 
       if (isSupabaseConfigured) {
         const redirectTo = typeof window !== "undefined" ? window.location.origin : undefined;

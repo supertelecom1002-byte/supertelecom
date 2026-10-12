@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Download, ArrowRight } from "lucide-react";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export const Route = createFileRoute("/apk")({
   server: {
@@ -24,15 +25,6 @@ export const Route = createFileRoute("/apk")({
 function ApkDirectDownloadPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Trigger haptic feedback
-      if ("vibrate" in navigator) {
-        try {
-          navigator.vibrate([30, 20, 40]);
-        } catch {
-          // ignore
-        }
-      }
-
       // Invisible link click to force direct browser download
       const link = document.createElement("a");
       link.href = "/SuperTelecom.apk";
@@ -73,6 +65,7 @@ function ApkDirectDownloadPage() {
           <a
             href="/SuperTelecom.apk"
             download="SuperTelecom-v2.4.0.apk"
+            onClick={() => safeVibrate([30, 20, 40])}
             className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
           >
             <Download className="w-4 h-4" />

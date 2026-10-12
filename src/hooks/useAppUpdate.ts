@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export interface AppUpdateState {
   isUpdateAvailable: boolean;
@@ -151,9 +152,7 @@ export function useAppUpdate(): AppUpdateState {
   const applyUpdate = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_PENDING_UPDATE_KEY);
-      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-        navigator.vibrate([30, 50, 30]);
-      }
+      safeVibrate([30, 50, 30]);
     } catch {
       // ignore
     }

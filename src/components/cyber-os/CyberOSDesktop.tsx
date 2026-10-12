@@ -33,6 +33,7 @@ import { useGamingMode } from "@/context/GamingModeContext";
 import { useTheme } from "@/context/ThemeContext";
 import { isLabOpenNow } from "@/services/appConfigService";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 // Tools & Dashboard Modals
 import { SpeakerCleanerModal } from "@/components/tools/SpeakerCleanerModal";
@@ -103,13 +104,7 @@ export const CyberOSDesktop: React.FC = () => {
   const labStatus = isLabOpenNow("auto");
 
   const triggerHaptic = (pattern: number | number[] = 15) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Live Digital Clock

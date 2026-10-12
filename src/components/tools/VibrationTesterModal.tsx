@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useHardwarePermissions } from "@/hooks/useHardwarePermissions";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface VibrationTesterModalProps {
   isOpen: boolean;
@@ -92,9 +93,7 @@ export const VibrationTesterModal: React.FC<VibrationTesterModalProps> = ({
 
   const stopVibration = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate(0);
-    }
+    safeVibrate(0);
     setIsPlaying(false);
   };
 

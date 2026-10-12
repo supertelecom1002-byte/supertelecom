@@ -25,6 +25,7 @@ import {
   playTurboBoostChime,
   playTrashCleanSweep,
 } from "./cyberAudio";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export interface ScanMetrics {
   // Phase 1: Storage
@@ -115,13 +116,7 @@ export const DeepScanEngine: React.FC<DeepScanEngineProps> = ({
 
   // Safe Haptic feedback helper
   const triggerHaptic = (pattern: number | number[] = [30, 50, 30]) => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Phase 1: Real Storage & Cache Inspection

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface LauncherContextType {
   isCyberOsActive: boolean;
@@ -24,13 +25,7 @@ export const LauncherProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
 
   const triggerHaptic = (pattern: number | number[] = [30, 20, 50]) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   const enableCyberOs = useCallback(() => {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export type CrosshairStyle = "dot" | "cross" | "circle";
 
@@ -62,13 +63,7 @@ export const GamingModeProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const wakeLockRef = useRef<any>(null);
 
   const triggerHaptic = (pattern: number | number[] = [40, 30, 80]) => {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   const requestWakeLock = async () => {

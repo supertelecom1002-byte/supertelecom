@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 export type HardwarePermissionType =
   | "audio"
@@ -141,12 +142,7 @@ export function useHardwarePermissions() {
   }, []);
 
   const triggerVibration = useCallback((pattern: number | number[] = [80, 40, 80]) => {
-    if (typeof window === "undefined" || !("vibrate" in navigator)) return false;
-    try {
-      return navigator.vibrate(pattern);
-    } catch {
-      return false;
-    }
+    return safeVibrate(pattern);
   }, []);
 
   const requestNotificationPermission = useCallback(async (): Promise<boolean> => {

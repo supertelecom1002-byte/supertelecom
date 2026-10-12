@@ -13,6 +13,7 @@ import {
   playTrashCleanSweep,
   playTurboBoostChime,
 } from "@/components/scanner/cyberAudio";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface TurboCleanModalProps {
   isOpen: boolean;
@@ -31,13 +32,7 @@ export const TurboCleanModal: React.FC<TurboCleanModalProps> = ({
 
   // Safe Haptic feedback helper
   const triggerHaptic = (pattern: number | number[] = [30, 40]) => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Inspect real storage on modal open

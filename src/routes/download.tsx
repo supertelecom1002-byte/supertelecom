@@ -32,6 +32,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { useIsStandalone } from "@/hooks/useIsStandalone";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 const PHONE = "+918002903643";
 const PHONE_DISPLAY = "+91 80029 03643";
@@ -200,20 +201,16 @@ export default function DownloadPage() {
     };
   }, [isStandalone]);
 
-  const triggerDownload = () => {
+  const triggerDownload = (fromUserGesture = false) => {
     if (downloadTimerRef.current) clearInterval(downloadTimerRef.current);
     setCountdown(0);
     setDownloadTriggered(true);
 
-    if (typeof window !== "undefined") {
-      if ("vibrate" in navigator) {
-        try {
-          navigator.vibrate([30, 20, 40]);
-        } catch {
-          // ignore
-        }
-      }
+    if (fromUserGesture) {
+      safeVibrate([30, 20, 40]);
+    }
 
+    if (typeof window !== "undefined") {
       // Invisible link click to ensure native download header handling
       const a = document.createElement("a");
       a.href = "/SuperTelecom.apk";
@@ -225,7 +222,7 @@ export default function DownloadPage() {
   };
 
   const handleManualDownload = () => {
-    triggerDownload();
+    triggerDownload(true);
   };
 
   const toggleFaq = (index: number) => {

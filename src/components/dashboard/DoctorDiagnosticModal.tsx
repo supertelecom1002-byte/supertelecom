@@ -25,6 +25,7 @@ import {
   playPhaseBlip,
   playTurboBoostChime,
 } from "@/components/scanner/cyberAudio";
+import { safeVibrate } from "@/utils/safeVibrate";
 
 interface DoctorDiagnosticModalProps {
   isOpen: boolean;
@@ -72,13 +73,7 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
 
   // Safe Haptic feedback helper
   const triggerHaptic = (pattern: number | number[] = [30, 40]) => {
-    if (typeof window !== "undefined" && "vibrate" in navigator) {
-      try {
-        navigator.vibrate(pattern);
-      } catch {
-        // ignore
-      }
-    }
+    safeVibrate(pattern);
   };
 
   // Inspect Battery & Live Ampere Telemetry
@@ -91,9 +86,8 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
       return;
     }
 
-    // Play heartbeat on open
+    // Play heartbeat audio on open (no automatic vibration on mount)
     playDoctorHeartbeat();
-    triggerHaptic([40, 60, 40]);
 
     if (typeof window === "undefined") return;
 
