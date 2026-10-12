@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.CyberGamingOS" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/cyber_bg_black</item>
+        <item name="android:navigationBarColor">@color/cyber_bg_black</item>
+        <item name="android:windowBackground">@color/cyber_bg_black</item>
+    </style>
+
+    <style name="Theme.CyberGamingOS.Fullscreen" parent="Theme.CyberGamingOS">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:statusBarColor">@color/cyber_bg_black</item>
+        <item name="android:navigationBarColor">@color/cyber_bg_black</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

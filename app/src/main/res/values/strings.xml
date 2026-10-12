@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cyber Gaming OS</string>
+    <string name="launcher_tagline">Super Telecom Cyber-Gamer Hub</string>
+    <string name="game_vault_title">Game Turbo Vault</string>
+    <string name="hardware_telemetry_title">Hardware Telemetry</string>
+    <string name="ram_gauge">Active Memory</string>
+    <string name="battery_status">Battery &amp; Thermal</string>
+    <string name="refresh_rate">Display Refresh</string>
+    <string name="floating_crosshair">Floating HUD Crosshair</string>
+    <string name="switch_launcher">Default Home Launcher</string>
+    <string name="search_apps_hint">Search cyber vault...</string>
+    <string name="turbo_boost_launch">BOOST &amp; LAUNCH</string>
+    <string name="overlay_permission_desc">Screen overlay permission is needed for the Floating Crosshair HUD</string>
+    <string name="crosshair_active">HUD Crosshair Active</string>
+    <string name="crosshair_stopped">HUD Crosshair Stopped</string>
+</resources>
