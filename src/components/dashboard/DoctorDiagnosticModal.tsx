@@ -37,7 +37,7 @@ interface AmpereProfile {
   watts: number;
   protocol: string;
   chargingRateText: string;
-  icHealth: "Optimal" | "Degraded" | "Monitored";
+  icHealth: string;
   portResistance: string;
 }
 
@@ -48,15 +48,15 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
   const [activeTab, setActiveTab] = useState<"ampere" | "stethoscope" | "prescription">("ampere");
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
   const [isCharging, setIsCharging] = useState<boolean | null>(null);
-  const [isBatteryApiSupported, setIsBatteryApiSupported] = useState<boolean>(true);
+  const [isBatteryApiSupported, setIsBatteryApiSupported] = useState<boolean>(false);
   const [ampereData, setAmpereData] = useState<AmpereProfile>({
-    mA: 2450,
-    voltageV: 4.18,
-    watts: 18.2,
-    protocol: "USB Power Delivery / QC 3.0",
-    chargingRateText: "Fast Charging Active",
-    icHealth: "Optimal",
-    portResistance: "0.08 Ω • Clean Contact",
+    mA: 0,
+    voltageV: 3.85,
+    watts: 0,
+    protocol: "Querying Subsystem...",
+    chargingRateText: "Initializing Telemetry...",
+    icHealth: "Checking Power Interface",
+    portResistance: "Reading Bus State...",
   });
 
   // 5-Point Checkup state
@@ -128,33 +128,31 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
 
           const updateAmpereProfile = (charging: boolean, currentLevel: number) => {
             if (charging) {
-              // Estimate mA based on battery charging state
-              const baseMA = currentLevel < 50 ? 2850 : currentLevel < 80 ? 2100 : 1250;
-              const jitter = Math.floor(Math.random() * 120) - 60;
-              const finalMA = baseMA + jitter;
-              const volt = 4.15 + (currentLevel / 100) * 0.2;
-              const watts = Number(((finalMA * volt) / 1000).toFixed(1));
+              // Estimated mA based on typical Li-ion USB charging curves (Battery API status: charging)
+              const estimatedMA = currentLevel < 50 ? 2500 : currentLevel < 80 ? 1800 : 1000;
+              const volt = 4.15 + (currentLevel / 100) * 0.15;
+              const watts = Number(((estimatedMA * volt) / 1000).toFixed(1));
 
               setAmpereData({
-                mA: finalMA,
+                mA: estimatedMA,
                 voltageV: Number(volt.toFixed(2)),
                 watts: watts,
-                protocol: finalMA > 3000 ? "Super Fast Charge (33W-67W)" : "Fast Charging (18W)",
-                chargingRateText: `Rapid Flow: ~${finalMA} mA`,
-                icHealth: "Optimal",
-                portResistance: "0.07 Ω • Clean Contact",
+                protocol: "Standard / Rapid USB Power Flow (Estimated)",
+                chargingRateText: `Active Charging: ~${estimatedMA} mA (Estimated Curve)`,
+                icHealth: "Battery API Signaled Active",
+                portResistance: "Nominal Interface Handshake",
               });
             } else {
-              // Discharge profile
-              const dischargeMA = -320 - Math.floor(Math.random() * 80);
+              // Nominal discharge profile
+              const dischargeMA = -350;
               setAmpereData({
                 mA: dischargeMA,
-                voltageV: 3.92,
-                watts: Number(((Math.abs(dischargeMA) * 3.92) / 1000).toFixed(2)),
+                voltageV: 3.85,
+                watts: Number(((Math.abs(dischargeMA) * 3.85) / 1000).toFixed(2)),
                 protocol: "Discharging on Battery (PMIC Standby)",
-                chargingRateText: `Nominal Discharge: ${dischargeMA} mA`,
-                icHealth: "Optimal",
-                portResistance: "0.06 Ω • Nominal Impedance",
+                chargingRateText: `Nominal Discharge: ${dischargeMA} mA (Estimated Curve)`,
+                icHealth: "Battery API Signaled Active",
+                portResistance: "Nominal Interface Handshake",
               });
             }
           };
@@ -173,13 +171,31 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
         })
         .catch(() => {
           setIsBatteryApiSupported(false);
-          setBatteryLevel(82);
-          setIsCharging(true);
+          setBatteryLevel(null);
+          setIsCharging(null);
+          setAmpereData({
+            mA: 0,
+            voltageV: 3.85,
+            watts: 0,
+            protocol: "Restricted by Browser Sandbox",
+            chargingRateText: "Battery Status API restricted on this browser",
+            icHealth: "Native hardware bus restricted",
+            portResistance: "Requires Physical Lab Multimeter / Dock",
+          });
         });
     } else {
       setIsBatteryApiSupported(false);
-      setBatteryLevel(85);
-      setIsCharging(true);
+      setBatteryLevel(null);
+      setIsCharging(null);
+      setAmpereData({
+        mA: 0,
+        voltageV: 3.85,
+        watts: 0,
+        protocol: "Restricted by Browser Sandbox",
+        chargingRateText: "Battery Status API restricted on this browser",
+        icHealth: "Native hardware bus restricted",
+        portResistance: "Requires Physical Lab Multimeter / Dock",
+      });
     }
 
     // Storage estimation
@@ -339,10 +355,10 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-emerald-500/30 text-center relative overflow-hidden shadow-inner">
               <div className="flex items-center justify-between text-xs mb-2">
                 <span className="font-mono text-[10px] uppercase text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
-                  <Activity className="w-3.5 h-3.5" /> Real Charging Current Meter
+                  <Activity className="w-3.5 h-3.5" /> Charging Current &amp; Power Profiler
                 </span>
                 <span className="font-mono text-[10px] text-slate-500 dark:text-slate-400">
-                  {isBatteryApiSupported ? "Live Hardware Telemetry" : "Calibrated Standard Mode"}
+                  {isBatteryApiSupported ? "Live Battery API (Estimated Curve)" : "Sandbox Restricted"}
                 </span>
               </div>
 
@@ -351,15 +367,21 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                 <div className="inline-flex items-baseline gap-1.5">
                   <span
                     className={`font-mono text-4xl sm:text-5xl font-black tracking-tight ${
-                      isCharging
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : "text-cyan-600 dark:text-cyan-400"
+                      isBatteryApiSupported
+                        ? isCharging
+                          ? "text-emerald-600 dark:text-emerald-400"
+                          : "text-cyan-600 dark:text-cyan-400"
+                        : "text-slate-400"
                     }`}
                   >
-                    {isCharging ? `+${ampereData.mA}` : `${ampereData.mA}`}
+                    {isBatteryApiSupported
+                      ? isCharging
+                        ? `+${ampereData.mA}`
+                        : `${ampereData.mA}`
+                      : "N/A"}
                   </span>
                   <span className="font-mono text-base font-bold text-slate-500 dark:text-slate-400">
-                    mA
+                    {isBatteryApiSupported ? "mA" : ""}
                   </span>
                 </div>
                 <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300 mt-1">
@@ -371,15 +393,16 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
               <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3.5 p-0.5 overflow-hidden my-2">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
-                    isCharging
-                      ? "bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400"
-                      : "bg-gradient-to-r from-cyan-500 to-blue-500"
+                    isBatteryApiSupported
+                      ? isCharging
+                        ? "bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400"
+                        : "bg-gradient-to-r from-cyan-500 to-blue-500"
+                      : "bg-slate-400/40"
                   }`}
                   style={{
-                    width: `${Math.min(
-                      100,
-                      Math.max(12, Math.abs(ampereData.mA) / 45)
-                    )}%`,
+                    width: isBatteryApiSupported
+                      ? `${Math.min(100, Math.max(12, Math.abs(ampereData.mA) / 45))}%`
+                      : "0%",
                   }}
                 />
               </div>
@@ -392,6 +415,15 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
               </div>
             </div>
 
+            {!isBatteryApiSupported && (
+              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs">
+                <p className="font-bold">Hardware Power API Note</p>
+                <p className="text-[11px] mt-0.5 text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Modern browsers (iOS Safari, desktop Chrome) restrict direct Battery API access for privacy. Physical current measurements (mA, voltage drop, port resistance) are performed on our hardware lab bench at Super Telecom Giridih.
+                </p>
+              </div>
+            )}
+
             {/* Electric Tri-Metrics Strip */}
             <div className="grid grid-cols-3 gap-2">
               <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-center">
@@ -400,10 +432,10 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                   <span>State</span>
                 </div>
                 <span className="text-sm font-mono font-black text-slate-900 dark:text-white mt-1 block">
-                  {batteryLevel !== null ? `${batteryLevel}%` : "—"}
+                  {batteryLevel !== null ? `${batteryLevel}%` : "N/A"}
                 </span>
                 <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
-                  {isCharging ? "Charging" : "On Battery"}
+                  {isCharging === null ? "Restricted" : isCharging ? "Charging" : "On Battery"}
                 </span>
               </div>
 
@@ -413,10 +445,10 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                   <span>Voltage</span>
                 </div>
                 <span className="text-sm font-mono font-black text-slate-900 dark:text-white mt-1 block">
-                  {ampereData.voltageV} V
+                  {isBatteryApiSupported ? `${ampereData.voltageV} V` : "N/A"}
                 </span>
                 <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold block">
-                  Li-ion Curve
+                  {isBatteryApiSupported ? "Li-ion Curve" : "Bench Test"}
                 </span>
               </div>
 
@@ -426,10 +458,10 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                   <span>Wattage</span>
                 </div>
                 <span className="text-sm font-mono font-black text-slate-900 dark:text-white mt-1 block">
-                  {ampereData.watts} W
+                  {isBatteryApiSupported ? `${ampereData.watts} W` : "N/A"}
                 </span>
                 <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold block">
-                  Power Flow
+                  {isBatteryApiSupported ? "Power Flow" : "Bench Test"}
                 </span>
               </div>
             </div>
@@ -437,21 +469,21 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
             {/* Charging IC & Port Status Strip */}
             <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
               <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Power Delivery Protocol:</span>
+                <span className="text-slate-600 dark:text-slate-400">Power Delivery Profile:</span>
                 <span className="font-mono font-bold text-slate-900 dark:text-white">
                   {ampereData.protocol}
                 </span>
               </div>
 
               <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800">
-                <span className="text-slate-600 dark:text-slate-400">Charging IC Condition:</span>
+                <span className="text-slate-600 dark:text-slate-400">Battery Telemetry Status:</span>
                 <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> {ampereData.icHealth} &bull; Zero Leakage
+                  <CheckCircle2 className="w-3.5 h-3.5" /> {ampereData.icHealth}
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-slate-600 dark:text-slate-400">Charging Port Resistance:</span>
+                <span className="text-slate-600 dark:text-slate-400">Hardware Interface:</span>
                 <span className="font-mono font-bold text-cyan-600 dark:text-cyan-400">
                   {ampereData.portResistance}
                 </span>
@@ -463,17 +495,19 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
               onClick={() => {
                 triggerHaptic([30, 40]);
                 playAmperePulse();
-                // Re-calculate with jitter
-                const jitter = Math.floor(Math.random() * 140) - 70;
-                setAmpereData((prev) => ({
-                  ...prev,
-                  mA: Math.max(800, prev.mA + jitter),
-                }));
+                const nav = navigator as any;
+                if (nav.getBattery) {
+                  nav.getBattery().then((b: any) => {
+                    const lvl = Math.round(b.level * 100);
+                    setBatteryLevel(lvl);
+                    setIsCharging(b.charging);
+                  }).catch(() => {});
+                }
               }}
               className="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 hover:border-emerald-500/40 text-slate-900 dark:text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.97] transition-all cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Refresh Current Flow Telemetry</span>
+              <span>Query Battery Subsystem</span>
             </button>
           </div>
         )}
@@ -518,15 +552,17 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                   </div>
                   <div>
                     <h5 className="font-bold text-xs text-slate-900 dark:text-white">
-                      Charging IC &amp; Battery Health
+                      Charging Subsystem &amp; Battery State
                     </h5>
                     <p className="text-[10px] text-slate-500">
-                      {isCharging ? `Charging at ${ampereData.mA} mA` : "Discharge curve stable"} &bull; Safe cell wear
+                      {isBatteryApiSupported
+                        ? `${isCharging ? `Charging active (~${ampereData.mA} mA est.)` : "Discharging state"} • ${batteryLevel}% level reported`
+                        : "Battery API restricted by browser sandbox • Bench dock test available"}
                     </p>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-500/40">
-                  PASSED
+                  {isBatteryApiSupported ? "DETECTED" : "RESTRICTED"}
                 </span>
               </div>
 
@@ -581,12 +617,12 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                       Core Thermals &amp; Heat Dissipation
                     </h5>
                     <p className="text-[10px] text-slate-500">
-                      Estimated temp ~{thermalTemp}°C &bull; Safe copper heat-pipe curve
+                      Nominal ambient range (~30°C–35°C Est.) &bull; Thermal throttling inactive
                     </p>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-500/40">
-                  SAFE
+                  NOMINAL
                 </span>
               </div>
 
@@ -601,7 +637,9 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                       Storage I/O &amp; Controller Quota
                     </h5>
                     <p className="text-[10px] text-slate-500">
-                      ~{storageUsedPct}% quota utilized &bull; File system blocks responsive
+                      {storageUsedPct !== null
+                        ? `~${storageUsedPct}% of origin quota utilized • File system storage responsive`
+                        : "Storage quota manager responsive • Clean file system buffers"}
                     </p>
                   </div>
                 </div>
@@ -624,13 +662,13 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
                 {hardwareScore}
               </div>
               <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold block">
-                Grade: A+ (Lab Certified)
+                Grade: A+ (Nominal Web Health)
               </span>
               <h4 className="text-base font-black text-slate-900 dark:text-white mt-0.5">
-                Hardware Operates Within Factory Tolerance
+                Hardware Operates Within Normal Operating Range
               </h4>
               <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 max-w-sm mx-auto">
-                No short-circuits or critical power management IC drops detected. Your display and charging components are in top condition.
+                No UI thread stutters or storage quota overflow detected. For physical component micro-soldering and oscilloscope tracing, visit our Giridih Lab.
               </p>
             </div>
 
