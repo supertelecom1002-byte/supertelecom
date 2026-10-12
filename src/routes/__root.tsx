@@ -412,6 +412,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';var isD=t==='dark';document.documentElement.classList.toggle('dark',isD);var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.setAttribute('content',isD?'#020617':'#ffffff');}catch(e){}})();`;
 const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
+const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -424,6 +425,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />
         <meta name="google-site-verification" content="htat_gsc_supertelec_mrm60cg0mv" />
         <link rel="manifest" href="/manifest.json" />
+        <script dangerouslySetInnerHTML={{ __html: extensionShieldScript }} />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: swRegisterScript }} />
         <HeadContent />

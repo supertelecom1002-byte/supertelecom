@@ -4,6 +4,20 @@ import { RouterProvider } from "@tanstack/react-router";
 import { getRouter } from "./router";
 import "./styles.css";
 
+// Suppress unhandled promise rejections originating from third-party browser extensions
+if (typeof window !== "undefined") {
+  window.addEventListener("unhandledrejection", (e) => {
+    const msg = (e?.reason?.message || e?.reason || "") + "";
+    if (
+      msg.includes("Could not establish connection") ||
+      msg.includes("Receiving end does not exist") ||
+      msg.includes("message port closed")
+    ) {
+      e.preventDefault();
+    }
+  });
+}
+
 const router = getRouter();
 
 declare module "@tanstack/react-router" {
