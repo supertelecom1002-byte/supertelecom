@@ -12,9 +12,16 @@ import {
   HelpCircle,
 } from "lucide-react";
 
+import {
+  BUSINESS_MASTER,
+  REPAIR_PRICE_DISCLAIMER,
+  buildWhatsAppQuoteUrl,
+} from "@/config/superTelecomConfig";
+
 interface PriceRow {
   service: string;
   deviceType: string;
+  partGrade: string;
   priceRange: string;
   turnaround: string;
   warranty: string;
@@ -33,26 +40,29 @@ const PRICING_CATEGORIES: PriceCategory[] = [
     id: "screen",
     name: "Display & Screen Replacement",
     icon: <Smartphone className="h-5 w-5 text-cyan-400" />,
-    description: "Original OEM & tested OLED/AMOLED displays with touch sensitivity and colour accuracy.",
+    description: "Original Service Pack, OEM-Grade AMOLED, and Compatible Aftermarket IPS LCD screens.",
     rows: [
       {
-        service: "iPhone OLED & Retina Screen",
+        service: "iPhone Display & Retina OLED",
         deviceType: "iPhone (11 / 12 / 13 / 14 / 15 Series)",
-        priceRange: "₹2,499 – ₹9,999",
-        turnaround: "30–45 Mins",
+        partGrade: "Original Service Pack",
+        priceRange: "₹3,500 – ₹15,000",
+        turnaround: "30–60 Mins",
         warranty: "Up to 90 Days",
       },
       {
         service: "Android Curved & Flat AMOLED",
         deviceType: "Samsung, OnePlus, Xiaomi, Vivo, Realme",
-        priceRange: "₹1,899 – ₹5,499",
+        partGrade: "OEM-Grade",
+        priceRange: "₹2,499 – ₹9,999",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
       },
       {
-        service: "IPS LCD Display Glass & Touch",
+        service: "Android IPS LCD Display & Touch Glass",
         deviceType: "Budget & Mid-Range Android Phones",
-        priceRange: "₹999 – ₹2,499",
+        partGrade: "Compatible Aftermarket",
+        priceRange: "₹899 – ₹2,999",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
       },
@@ -60,22 +70,24 @@ const PRICING_CATEGORIES: PriceCategory[] = [
   },
   {
     id: "battery",
-    name: "Battery & Charging IC",
+    name: "Battery & Charging Port",
     icon: <BatteryCharging className="h-5 w-5 text-emerald-400" />,
-    description: "High-backup original battery replacements & fast charging port repairs.",
+    description: "High-density battery replacements and OEM-grade Type-C / Lightning port sub-boards.",
     rows: [
       {
-        service: "Original High-Capacity Battery",
-        deviceType: "iPhone, Samsung, Redmi, Realme, OPPO",
-        priceRange: "₹899 – ₹2,499",
-        turnaround: "30–45 Mins",
+        service: "High-Capacity Battery Replacement",
+        deviceType: "Android (₹699–₹2,499) / iPhone (₹1,999–₹5,499)",
+        partGrade: "OEM-Grade / Service Pack",
+        priceRange: "₹699 – ₹3,499",
+        turnaround: "20–45 Mins",
         warranty: "90 Days Warranty",
       },
       {
         service: "Type-C & Lightning Port Replacement",
-        deviceType: "All Brands (Fast Charging Verified)",
-        priceRange: "₹350 – ₹1,200",
-        turnaround: "20–30 Mins",
+        deviceType: "All Brands (Fast Charging & OTG Verified)",
+        partGrade: "OEM-Grade",
+        priceRange: "₹349 – ₹1,999",
+        turnaround: "20–40 Mins",
         warranty: "30 Days Warranty",
       },
     ],
@@ -84,21 +96,23 @@ const PRICING_CATEGORIES: PriceCategory[] = [
     id: "motherboard",
     name: "Motherboard & Chip-Level Repair",
     icon: <Cpu className="h-5 w-5 text-amber-400" />,
-    description: "Advanced BGA micro-soldering, short circuit debugging & dead phone resuscitation.",
+    description: "Advanced BGA micro-soldering, short-circuit debugging, and dead phone recovery.",
     rows: [
       {
-        service: "Dead Phone & No-Power Recovery",
-        deviceType: "All Smartphones (Short Circuit / Bootloop)",
-        priceRange: "₹799 – ₹3,500",
-        turnaround: "Same Day / 24h",
+        service: "Dead Phone & Motherboard IC Micro-Soldering",
+        deviceType: "All Smartphones (Short Circuit / PMIC / CPU)",
+        partGrade: "Original Service Pack",
+        priceRange: "₹899 – ₹6,500",
+        turnaround: "Same Day / 24–48h",
         warranty: "60 Days Warranty",
       },
       {
-        service: "Liquid & Water Damage Restoration",
-        deviceType: "Ultrasonic Chemical Clean & IC Fix",
-        priceRange: "₹500 – ₹2,500",
-        turnaround: "Same Day / 24h",
-        warranty: "Verified Testing",
+        service: "Water Damage & Liquid Ultrasonic Revival",
+        deviceType: "Ultrasonic Chemical Bath & IC De-Oxidation",
+        partGrade: "OEM-Grade",
+        priceRange: "₹499 – ₹2,999",
+        turnaround: "2–5 Hours / 24h",
+        warranty: "Tested & Bench Verified",
       },
     ],
   },
@@ -113,9 +127,12 @@ export const PricingMatrix: React.FC = () => {
       : PRICING_CATEGORIES.filter((c) => c.id === activeCategory);
 
   const buildQuoteUrl = (service: string, device: string) => {
-    const text = `Hi Super Telecom, I would like to get a price quote for ${service} (${device}) in Giridih.`;
-    return `https://wa.me/918002903643?text=${encodeURIComponent(text)}`;
+    return buildWhatsAppQuoteUrl({
+      serviceName: service,
+      model: device,
+    });
   };
+
 
   return (
     <section
@@ -234,7 +251,12 @@ export const PricingMatrix: React.FC = () => {
                         className="hover:bg-cyan-950/20 transition-colors group"
                       >
                         <td className="py-4 px-6 font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                          {row.service}
+                          <div className="flex flex-col gap-1">
+                            <span>{row.service}</span>
+                            <span className="inline-flex w-fit items-center px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950/70 border border-cyan-800/40 text-cyan-300">
+                              {row.partGrade}
+                            </span>
+                          </div>
                         </td>
                         <td className="py-4 px-6 text-slate-400">
                           {row.deviceType}
@@ -278,6 +300,11 @@ export const PricingMatrix: React.FC = () => {
                       <h4 className="font-bold text-white text-xs leading-tight line-clamp-2">
                         {row.service}
                       </h4>
+                      <div className="mt-1">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-950/70 border border-cyan-800/40 text-cyan-300">
+                          {row.partGrade}
+                        </span>
+                      </div>
                       <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">
                         {row.deviceType}
                       </p>
@@ -312,10 +339,10 @@ export const PricingMatrix: React.FC = () => {
         </div>
 
         {/* Footnote on Pricing & Diagnosis */}
-        <div className="mt-8 p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 flex items-center gap-3">
-          <HelpCircle className="h-5 w-5 text-cyan-400 flex-none" />
+        <div className="mt-8 p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 text-xs text-slate-300 flex items-start gap-3">
+          <HelpCircle className="h-5 w-5 text-cyan-400 flex-none mt-0.5" />
           <p className="leading-relaxed">
-            <strong>Note for Customers &amp; AI Assistants:</strong> Final prices may vary slightly depending on exact model tier (e.g. Pro Max vs Base models) and current supply part costs. Free diagnostics and physical inspection are always provided on-the-spot at our Barganda Road shop before any repair begins.
+            <strong className="text-white">Estimates &amp; Physical Diagnostics Policy:</strong> {REPAIR_PRICE_DISCLAIMER}
           </p>
         </div>
       </div>

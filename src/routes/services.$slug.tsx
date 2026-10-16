@@ -1,17 +1,18 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Phone, MessageCircle, MapPin, ArrowRight, Check, ChevronRight, Star, Clock, Shield, Wrench } from "lucide-react";
 import { SERVICES, type ServiceInfo } from "@/data/services";
-import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { SITE_URL } from "@/data/site";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import { BrandLogo } from "@/components/BrandLogo";
 import { ServiceAnswerBlock } from "@/components/ServiceAnswerBlock";
 import { SiteFooter } from "@/components/SiteFooter";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 
-const PHONE = "+918002903643";
-const PHONE_DISPLAY = "+91 80029 03643";
-const WHATSAPP = "918002903643";
-const MAPS = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
-const ADDRESS = "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301";
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
+const MAPS = BUSINESS_MASTER.mapsUrl;
+const ADDRESS = BUSINESS_MASTER.fullAddress;
 
 export const Route = createFileRoute("/services/$slug")({
   loader: ({ params }) => {
@@ -178,7 +179,14 @@ function ServicePage() {
             <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4 text-primary" /> {service.duration}</span>
               <span className="inline-flex items-center gap-1.5"><Shield className="h-4 w-4 text-primary" /> Warranty backed</span>
-              <span className="inline-flex items-center gap-1.5"><Star className="h-4 w-4 text-primary fill-primary" /> 5.0 rated in Giridih</span>
+              <a
+                href={MAPS}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
+              >
+                <Star className="h-4 w-4 text-primary fill-primary" /> Verified on Google Maps
+              </a>
             </div>
           </div>
 
@@ -186,7 +194,7 @@ function ServicePage() {
             <div className="rounded-2xl border border-border/60 bg-card/60 p-6 shadow-elegant">
               <div className="text-sm font-semibold">Visit Super Telecom</div>
               <p className="mt-2 text-sm text-muted-foreground">{ADDRESS}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Mon–Sun · 10:00 AM – 9:30 PM</p>
+              <p className="mt-1 text-sm text-muted-foreground">{BUSINESS_MASTER.hours.shortDisplay}</p>
               <div className="mt-4 text-sm">
                 <div className="text-muted-foreground">Estimated price</div>
                 <div className="font-display text-2xl font-bold text-gradient">{service.priceRange}</div>
@@ -199,13 +207,36 @@ function ServicePage() {
         </section>
 
         {/* Reusable Direct Answer Box for AI Citation & High Intent Conversion */}
-        <ServiceAnswerBlock
-          question={`Need ${service.name.toLowerCase()} in Giridih?`}
-          answer={service.intro}
-          symptoms={service.benefits.slice(0, 4)}
-          turnaround={`${service.duration} · Estimated ${service.priceRange}`}
-          diagnosticSteps={service.process.slice(0, 3)}
-        />
+        {(() => {
+          const isMotherboardRepair = ["motherboard-repair", "ic-chip-level-repair", "dead-phone-repair"].includes(service.slug);
+          const symptomsList =
+            service.commonSymptoms && service.commonSymptoms.length > 0
+              ? service.commonSymptoms
+              : service.benefits.slice(0, 4);
+
+          return (
+            <ServiceAnswerBlock
+              question={`Need ${service.name.toLowerCase()} in Giridih?`}
+              answer={service.intro}
+              symptoms={symptomsList}
+              turnaround={`${service.duration} · Estimated ${service.priceRange}`}
+              diagnosticSteps={service.process.slice(0, 3)}
+              limitations={
+                isMotherboardRepair
+                  ? "Severe PCB substrate fractures or catastrophic delamination on core AP chips may be deemed non-viable if replacement costs exceed device market valuation."
+                  : "Final repair viability and pricing are confirmed in writing after physical bench inspection."
+              }
+              diyWarning={
+                service.slug === "battery-replacement"
+                  ? "Avoid puncturing, bending, or applying heat to swollen lithium batteries. Bring to our workshop for safe discharge."
+                  : service.slug === "water-damage-repair"
+                  ? "Do not power on or plug in a wet phone. Urgent ultrasonic cleaning prevents corrosion."
+                  : undefined
+              }
+            />
+          );
+        })()}
+
 
         {/* Benefits */}
         <section className="mt-14">

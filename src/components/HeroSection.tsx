@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import heroImg from "@/assets/hero-repair.jpg";
 
-const PHONE = "+918002903643";
-const WHATSAPP = "918002903643";
-const EMAIL = "supertelecom1002@gmail.com";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
+
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
+const EMAIL = BUSINESS_MASTER.email;
 const HERO_VIDEO_URL =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
 
@@ -48,7 +50,7 @@ export const HeroSection: React.FC = () => {
         {/* Top Eyebrow Badge */}
         <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-cyan-950/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
           <Sparkles className="h-3.5 w-3.5 animate-pulse text-cyan-400" />
-          Trusted by 2 Lakh+ customers · 10+ years in Giridih
+          {BUSINESS_MASTER.experienceClaim}
         </div>
 
         {/* Main Heading */}
@@ -103,21 +105,29 @@ export const HeroSection: React.FC = () => {
               <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
             ))}
           </div>
-          <span className="font-medium">5.0 Google Rating · 2 Lakh+ Happy Customers</span>
+          <a
+            href={BUSINESS_MASTER.googleReviewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium hover:underline"
+          >
+            Customer Verified Reviews on Google Maps
+          </a>
         </div>
 
         {/* Highlights Counter Grid */}
         <dl className="animate-fade-up mt-10 grid w-full max-w-2xl grid-cols-3 gap-3 sm:gap-4">
           {[
+            ["Est. 2016", "Founded in Giridih"],
             ["10+", "Years Experience"],
-            ["1M+", "Repairs Completed"],
-            ["5.0", "Customer Rating"],
+            ["Free", "Bench Diagnosis"],
           ].map(([n, l]) => (
             <div
               key={l}
               className="rounded-2xl border border-cyan-500/20 bg-slate-900/70 backdrop-blur-md p-4 shadow-lg text-center"
             >
               <dt className="font-display text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+
                 {n}
               </dt>
               <dd className="mt-1 text-[11px] uppercase tracking-wider text-slate-300 font-mono">

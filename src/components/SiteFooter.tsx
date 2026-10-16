@@ -8,13 +8,14 @@ import {
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL } from "@/data/site";
+import { BUSINESS_MASTER, DATA_SAFETY_AND_PRIVACY_SUMMARY } from "@/config/superTelecomConfig";
 
-const PHONE = "+918002903643";
-const PHONE_DISPLAY = "+91 80029 03643";
-const WHATSAPP = "918002903643";
-const EMAIL = "supertelecom1002@gmail.com";
-const MAPS_PLACE = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
-const DIRECTIONS = "https://www.google.com/maps/dir/?api=1&destination=24.1854,86.3040";
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
+const EMAIL = BUSINESS_MASTER.email;
+const MAPS_PLACE = BUSINESS_MASTER.mapsUrl;
+const DIRECTIONS = "https://www.google.com/maps/dir/?api=1&destination=24.1843,86.3075";
 const SITE = SITE_URL;
 
 const SOCIALS = [
@@ -364,7 +365,7 @@ export function SiteFooter() {
               <address className="space-y-2.5 text-xs not-italic text-muted-foreground">
                 <div className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-                  <span>Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301</span>
+                  <span>{BUSINESS_MASTER.fullAddress}</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Phone className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
@@ -372,7 +373,7 @@ export function SiteFooter() {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Clock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-                  <span>Mon – Sun: 10:00 AM – 9:30 PM</span>
+                  <span>{BUSINESS_MASTER.hours.shortDisplay}</span>
                 </div>
               </address>
               <ul className="flex flex-wrap gap-2 pt-1" aria-label="Social profiles">
@@ -406,8 +407,8 @@ export function SiteFooter() {
                 <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-surface/60 border border-border/60">
                   <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="block text-foreground font-semibold">100% Data Safe Guarantee</strong>
-                    <span className="text-muted-foreground text-[11px]">Strict zero snooping policy on customer devices</span>
+                    <strong className="block text-foreground font-semibold">{DATA_SAFETY_AND_PRIVACY_SUMMARY.trustPill}</strong>
+                    <span className="text-muted-foreground text-[11px]">{DATA_SAFETY_AND_PRIVACY_SUMMARY.shortAdvisory}</span>
                   </div>
                 </div>
 
@@ -422,11 +423,19 @@ export function SiteFooter() {
                 <div className="flex items-start gap-2.5 p-3 rounded-2xl bg-surface/60 border border-border/60">
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="block text-foreground font-semibold">Google 5.0 Star Rating</strong>
-                    <span className="text-muted-foreground text-[11px]">1,200+ verified customer reviews in Giridih</span>
+                    <strong className="block text-foreground font-semibold">Customer Reviews on Google Maps</strong>
+                    <a
+                      href={BUSINESS_MASTER.googleReviewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline text-[11px] font-medium block"
+                    >
+                      View ratings &amp; verified reviews on Google Maps &rarr;
+                    </a>
                   </div>
                 </div>
               </div>
+
 
               <div className="pt-1 flex flex-col gap-2">
                 <a

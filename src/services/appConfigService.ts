@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { getLiveGiridihStoreStatus } from "@/utils/storeHours";
 
 export interface AppConfig {
   tool_speaker_cleaner: boolean;
@@ -215,35 +216,11 @@ export function isLabOpenNow(override: "auto" | "open" | "closed" = "auto"): {
   statusText: string;
   subText: string;
 } {
-  const safeOverride = override || "auto";
-  if (safeOverride === "open") {
-    return {
-      isOpen: true,
-      statusText: "Lab Open Now",
-      subText: "Technicians On-Duty • Walk-in Welcome",
-    };
-  }
-  if (safeOverride === "closed") {
-    return {
-      isOpen: false,
-      statusText: "Lab Closed",
-      subText: "Opens 10:00 AM Tomorrow",
-    };
-  }
-
-  // Auto mode: 10:00 AM to 9:30 PM IST (UTC+5:30)
-  const now = new Date();
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-  const istMinutes = (utcMinutes + 330) % 1440; // IST is UTC + 5h30m
-
-  const openTime = 10 * 60; // 10:00 AM
-  const closeTime = 21 * 60 + 30; // 9:30 PM
-
-  const isOpen = istMinutes >= openTime && istMinutes <= closeTime;
-
+  const status = getLiveGiridihStoreStatus(override);
   return {
-    isOpen,
-    statusText: isOpen ? "Lab Open Now" : "Lab Closed",
-    subText: isOpen ? "Closes 9:30 PM" : "Opens 10:00 AM Tomorrow",
+    isOpen: status.isOpen,
+    statusText: status.statusText,
+    subText: status.subText,
   };
 }
+

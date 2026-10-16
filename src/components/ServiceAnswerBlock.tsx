@@ -1,4 +1,5 @@
 import { Phone, MessageCircle, MapPin, AlertTriangle, ShieldAlert, CheckCircle2, Clock, Wrench } from "lucide-react";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
 // Reusable Direct Answer Box for AI Citation, AEO, & High-Intent Local Conversion
 export interface ServiceAnswerBlockProps {
@@ -18,7 +19,7 @@ export const ServiceAnswerBlock = ({
   turnaround,
   diagnosticSteps,
   diyWarning = "Avoid charging or powering on devices with suspected short circuits or liquid ingress. DIY prying with metal tools risks puncturing lithium batteries and thermal runaway.",
-  limitations = "Severe PCB substrate fractures or catastrophic delamination on core AP chips may be deemed non-viable if replacement costs exceed device market valuation.",
+  limitations = "Final repair viability and transparent charges are confirmed in writing after physical bench inspection before work begins.",
 }: ServiceAnswerBlockProps) => (
   <section
     itemScope
@@ -62,10 +63,10 @@ export const ServiceAnswerBlock = ({
         </span>
         <p className="text-slate-300">{turnaround}</p>
         <p className="mt-2 font-mono text-[11px] text-slate-400">
-          Super Telecom Workshop: Barganda Road, Near Shivam Clinic, Giridih
+          Super Telecom Workshop: {BUSINESS_MASTER.fullAddress}
         </p>
         <p className="mt-0.5 font-mono text-[11px] text-cyan-400">
-          Hours: Monday – Sunday · 10:00 AM – 9:30 PM
+          Hours: {BUSINESS_MASTER.hours.fullDisplay}
         </p>
       </div>
 
@@ -104,13 +105,13 @@ export const ServiceAnswerBlock = ({
     {/* Direct High Intent Actions */}
     <div className="mt-6 flex flex-wrap items-center gap-3 pt-4 border-t border-slate-800">
       <a
-        href="tel:+918002903643"
+        href={BUSINESS_MASTER.phoneCallHref}
         className="inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-medium rounded-lg text-xs transition"
       >
-        <Phone className="h-3.5 w-3.5" /> Call +91 80029 03643
+        <Phone className="h-3.5 w-3.5" /> Call {BUSINESS_MASTER.phoneDisplay}
       </a>
       <a
-        href="https://wa.me/918002903643?text=Hello%20Super%20Telecom,%20I%20need%20a%20repair%20quote"
+        href={`${BUSINESS_MASTER.whatsappBaseUrl}?text=Hello%20Super%20Telecom,%20I%20need%20a%20repair%20quote`}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs transition"
@@ -118,7 +119,7 @@ export const ServiceAnswerBlock = ({
         <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Direct Inquiry
       </a>
       <a
-        href="https://maps.google.com/?q=Barganda+Road+Near+Shivam+Clinic+Giridih"
+        href={BUSINESS_MASTER.mapsUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg text-xs transition"

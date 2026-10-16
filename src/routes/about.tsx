@@ -19,12 +19,13 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { SITE_URL } from "@/data/site";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
-const PHONE = "+918002903643";
-const PHONE_DISPLAY = "+91 80029 03643";
-const WHATSAPP = "918002903643";
-const MAPS = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
+const MAPS = BUSINESS_MASTER.mapsUrl;
 
 const TITLE = "About Super Telecom — Premier Mobile Hardware Lab in Giridih";
 const DESC =
@@ -158,23 +159,31 @@ export default function AboutPage() {
         {/* 3 Key Milestones */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-12">
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-center space-y-1.5 shadow-sm">
-            <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 font-display block">10+</span>
-            <span className="text-xs font-bold text-slate-900 dark:text-white block">Years of Bench Mastery</span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Serving Giridih continuously since 2016</span>
+            <span className="text-3xl font-black text-cyan-600 dark:text-cyan-400 font-display block">10+ Years</span>
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">Bench Experience</span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 block">{BUSINESS_MASTER.experienceClaim}</span>
           </div>
 
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-center space-y-1.5 shadow-sm">
-            <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-display block">25,000+</span>
-            <span className="text-xs font-bold text-slate-900 dark:text-white block">Successful Board Repairs</span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 block">From cracked glass to dead motherboards</span>
+            <span className="text-3xl font-black text-emerald-600 dark:text-emerald-400 font-display block">In-House</span>
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">Chip-Level Lab</span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Stereomicroscope BGA rework &amp; line restoration</span>
           </div>
 
           <div className="p-5 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 text-center space-y-1.5 shadow-sm">
-            <span className="text-3xl font-black text-purple-600 dark:text-purple-400 font-display block">4.9 / 5.0</span>
-            <span className="text-xs font-bold text-slate-900 dark:text-white block">Customer Trust Rating</span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 block">1,200+ Verified 5-Star Reviews</span>
+            <span className="text-3xl font-black text-purple-600 dark:text-purple-400 font-display block">Verified</span>
+            <span className="text-xs font-bold text-slate-900 dark:text-white block">Google Maps Reviews</span>
+            <a
+              href={MAPS}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-primary hover:underline font-semibold block"
+            >
+              Read Customer Reviews on Google Maps &rarr;
+            </a>
           </div>
         </div>
+
 
         {/* Our Story */}
         <section className="space-y-4 mb-12">

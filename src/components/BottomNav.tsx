@@ -22,6 +22,7 @@ import { RepairTrackerModal } from "@/components/repair/RepairTrackerModal";
 import { SmartAuthDrawer } from "@/components/auth/SmartAuthDrawer";
 import { useLauncher } from "@/context/LauncherContext";
 import { useGamingMode } from "@/context/GamingModeContext";
+import { PROMOTIONS_CONFIG } from "@/config/superTelecomConfig";
 
 export const BottomNav: React.FC = () => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -128,16 +129,18 @@ export const BottomNav: React.FC = () => {
         )}
 
         {/* 5. Profile / VIP */}
-        <button
-          type="button"
-          onClick={() => setVipOpen(true)}
-          className="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-all active:scale-95"
-        >
-          <div className="relative">
-            <UserCheck className="h-5 w-5 text-purple-400" />
-          </div>
-          <span className="text-[10px] font-semibold tracking-tight mt-0.5 text-purple-400">VIP Hub</span>
-        </button>
+        {PROMOTIONS_CONFIG.vipHub.isActive && (
+          <button
+            type="button"
+            onClick={() => setVipOpen(true)}
+            className="flex flex-col items-center justify-center flex-1 py-1 text-slate-400 hover:text-slate-200 transition-all active:scale-95"
+          >
+            <div className="relative">
+              <UserCheck className="h-5 w-5 text-purple-400" />
+            </div>
+            <span className="text-[10px] font-semibold tracking-tight mt-0.5 text-purple-400">VIP Hub</span>
+          </button>
+        )}
       </nav>
 
       {/* Lab Tools Hub Modal */}

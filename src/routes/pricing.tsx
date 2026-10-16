@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SERVICES } from "@/data/services";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { REPAIR_PRICE_DISCLAIMER } from "@/config/superTelecomConfig";
 import { ChevronRight, Phone, MessageCircle, MapPin, AlertCircle, ArrowRight, ShieldCheck, Clock } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -210,7 +211,7 @@ function PricingPage() {
           <AlertCircle className="h-5 w-5 flex-none text-primary mt-0.5" />
           <div>
             <strong className="text-foreground block mb-0.5">Written Estimate Policy:</strong>
-            All figures below represent honest working ranges. Final price is confirmed in writing after physical bench inspection before work begins. No hidden charges or surprise bench fees.
+            {REPAIR_PRICE_DISCLAIMER}
           </div>
         </div>
 

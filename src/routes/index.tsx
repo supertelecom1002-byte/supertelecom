@@ -23,6 +23,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SiteFooter } from "@/components/SiteFooter";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL, STORE_ADDRESS, STORE_STREET_ADDRESS } from "@/data/site";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import { ServiceChips } from "@/components/mobile/ServiceChips";
 import { Header } from "@/components/Header";
 import { SafeReviewsSection } from "@/components/ReviewsSection";
@@ -134,13 +135,6 @@ export const Route = createFileRoute("/")({
             { "@type": "AdministrativeArea", name: "Makatpur" },
             { "@type": "State", name: "Jharkhand" },
           ],
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "1280",
-            bestRating: "5",
-            worstRating: "1",
-          },
           hasOfferCatalog: {
             "@type": "OfferCatalog",
             name: "Mobile Repair Services Giridih",
@@ -243,8 +237,8 @@ const EMAIL = "supertelecom1002@gmail.com";
 
 const FAQS: [string, string][] = [
   ["How long does a typical repair take?", "Most repairs — screen, battery, charging port — are completed in 30 to 60 minutes. Complex motherboard or water damage repairs may take 24–48 hours. We give you an exact estimate before starting."],
-  ["Do you offer warranty on repairs?", "Yes. Every repair is backed by a warranty ranging from 30 days to 6 months, depending on the part. Second-hand phones also come with a warranty."],
-  ["Is my data safe during repair?", "Absolutely. Your data is never accessed unless required (like a software flash) and only with your permission. We recommend a backup before major repairs and can help you with it."],
+  ["Do you offer warranty on repairs?", "Yes. Every repair is backed by a warranty ranging from 30 to 90 days depending on the service and part grade."],
+  ["Is my data safe during repair?", "Super Telecom follows strict data privacy practices. We do not require customer lock-screen passcodes for hardware repairs. As a standard safety practice, we always advise customers to back up data before repair work."],
   ["Are second-hand phones tested and reliable?", "Every used phone goes through a strict quality check — battery health, display, cameras, network, sensors — and is sold with a warranty."],
   ["What payment methods do you accept?", "Cash, UPI (GPay/PhonePe/Paytm), all debit and credit cards, and net banking."],
   ["What are your business hours?", "We're open Monday to Sunday, 10:00 AM to 9:30 PM. Walk in anytime or book ahead on WhatsApp."],
@@ -304,7 +298,6 @@ function HomePage() {
           <BeforeAfterSlider />
           <DailyUpdatesSection />
           <SafeReviewsSection />
-          <FAQ />
           <LocalFaqSection />
           <Contact />
           <VisitStore />
@@ -344,11 +337,11 @@ function BackgroundFX() {
 
 function TrustBar() {
   const items = [
-    [Shield, "6-Month Warranty"],
+    [Shield, "Up to 90 Days Warranty"],
     [Award, "10+ Years Experience"],
     [Clock, "Same-Day Repairs"],
     [ShieldCheck, "Genuine Spare Parts"],
-    [Star, "5.0 Google Rating"],
+    [Star, "Top Rated on Google"],
   ];
   return (
     <section className="border-y border-border/50 py-6 glass-strong">
@@ -392,8 +385,8 @@ function About() {
             <p className="mt-6 text-muted-foreground">
               For more than ten years, Super Telecom has been the go-to destination in Giridih
               for reliable mobile repairs and quality second-hand smartphones. What started as a
-              small shop has grown into a full-service mobile care center serving 2 Lakh+
-              happy customers across Jharkhand.
+              dedicated repair lab on Barganda Road has grown into a trusted mobile care center
+              serving customers across Giridih and surrounding districts.
             </p>
             <p className="mt-4 text-muted-foreground">
               Our team of skilled technicians combines professional repair tools with high-grade spare
@@ -419,10 +412,10 @@ function About() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              ["10+", "Years of experience"],
-              ["2 Lakh+", "Happy customers"],
-              ["1M+", "Repairs completed"],
-              ["5.0", "Customer rating"],
+              ["10+", "Years of Experience in Giridih"],
+              ["2016", "Established in Giridih"],
+              ["30–60m", "Fast Display & Battery Swaps"],
+              ["90 Days", "Parts & Service Warranty"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">
                 <div className="font-display text-4xl font-bold text-gradient sm:text-5xl">{n}</div>
@@ -590,8 +583,8 @@ function WhyUs() {
     [ShieldCheck, "Quality Repairs", "Genuine parts and thorough quality checks."],
     [Sparkles, "Affordable Pricing", "Fair, transparent pricing with no hidden charges."],
     [Clock, "Fast Service", "Most repairs completed the same day."],
-    [Shield, "Trusted Local Business", "Loved by 2 Lakh+ happy customers across Giridih."],
-    [Star, "Customer Satisfaction", "5.0 average rating from real Google reviews."],
+    [Shield, "Trusted Local Business", "Established 2016 • 10+ Years Experience in Giridih."],
+    [Star, "Customer Satisfaction", "Top-rated local lab with verified Google Maps reviews."],
     [Cable, "Latest Equipment", "Modern tools for chip-level and micro-soldering work."],
   ];
   return (
@@ -646,7 +639,7 @@ function Gallery() {
         <SectionHeader
           eyebrow="Flagship Lab"
           title="Inside Super Telecom Workshop"
-          sub="Take a look inside our Barganda Road smartphone engineering laboratory and optical workstations."
+          sub="Illustrative preview of our Barganda Road smartphone engineering laboratory, optical workstations, and micro-soldering equipment standards."
         />
         <div className="mt-8 sm:mt-14 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
           {labPhotos.map((item, i) => (
@@ -677,6 +670,9 @@ function Gallery() {
             </div>
           ))}
         </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground font-mono">
+          * Workshop photos represent illustrative facility standards and diagnostic equipment used at Super Telecom.
+        </p>
       </div>
     </section>
   );
@@ -684,38 +680,6 @@ function Gallery() {
 
 function Testimonials() {
   return <SafeReviewsSection />;
-}
-
-function FAQ() {
-  const faqs = FAQS;
-  return (
-    <section id="faq" className="py-8 sm:py-16 md:py-24">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        <SectionHeader eyebrow="FAQ" title="Answers to common questions" />
-        <div className="mt-8 sm:mt-12 space-y-2.5 sm:space-y-3">
-          {faqs.map(([q, a], i) => (
-            <FAQItem key={i} q={q} a={a} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FAQItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="overflow-hidden rounded-2xl glass">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-secondary"
-      >
-        <span className="font-medium">{q}</span>
-        <ChevronDown className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && <div className="border-t border-border/50 px-5 py-4 text-sm leading-relaxed text-muted-foreground">{a}</div>}
-    </div>
-  );
 }
 
 type BookingSummary = {
@@ -1088,7 +1052,7 @@ function VisitStore() {
                   </div>
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Star className="h-4 w-4 text-primary fill-primary" />
-                    <span>5.0 Rating · 2 Lakh+ happy customers</span>
+                    <span>{BUSINESS_MASTER.experienceClaim}</span>
                   </div>
                 </div>
 

@@ -18,12 +18,13 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { SITE_URL } from "@/data/site";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
-const PHONE = "+918002903643";
-const PHONE_DISPLAY = "+91 80029 03643";
-const WHATSAPP = "918002903643";
-const EMAIL = "support@supertelecom.shop";
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
+const EMAIL = BUSINESS_MASTER.email;
 
 const TITLE = "Privacy Policy & Hardware Permissions | Super Telecom Giridih";
 const DESC =
@@ -304,7 +305,7 @@ export default function PrivacyPage() {
             <div className="space-y-1">
               <span className="text-[10px] text-cyan-400 font-mono block">Physical Workshop Address</span>
               <span className="text-slate-300 block">
-                {STORE_STREET_ADDRESS}, Near Shivam Clinic, Giridih, Jharkhand 815301
+                {BUSINESS_MASTER.fullAddress}
               </span>
             </div>
           </div>

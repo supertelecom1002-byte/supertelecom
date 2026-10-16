@@ -37,21 +37,19 @@ export const PlayProtectBridge: React.FC<{ className?: string }> = ({ className 
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                100% Genuine OS Bridge
+                Android Settings Shortcut
               </span>
-              <span className="text-[10px] font-mono text-slate-400">Android Certified</span>
+              <span className="text-[10px] font-mono text-slate-400">System Intent</span>
             </div>
             <h3 className="text-sm font-black text-white mt-0.5">
-              Official Android App &amp; Malware Scan
+              Open Device Google Play Protect
             </h3>
           </div>
         </div>
       </div>
 
       <p className="text-xs text-slate-300 mt-3 leading-relaxed">
-        Third-party apps cannot legally spy on your private apps. Super Telecom triggers Google's
-        official <strong>Play Protect</strong> engine to scan 100% of your installed apps safely
-        without asking for intrusive permissions.
+        Browsers cannot legally inspect installed apps or scan device files. On Android phones, this shortcut opens your native <strong>Google Play Protect</strong> settings activity so you can trigger Google's official malware scanner safely.
       </p>
 
       <div className="mt-3.5 space-y-2">
@@ -61,7 +59,7 @@ export const PlayProtectBridge: React.FC<{ className?: string }> = ({ className 
           className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
         >
           <Sparkles className="h-4 w-4" />
-          <span>🚀 Run Official Google Play Protect Scan</span>
+          <span>Open Google Play Protect Settings</span>
           <ExternalLink className="h-3.5 w-3.5 ml-1" />
         </button>
 
@@ -69,14 +67,13 @@ export const PlayProtectBridge: React.FC<{ className?: string }> = ({ className 
           <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] animate-in fade-in">
             <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
             <span>
-              Google Play Protect intent launched. Check your Android notification bar or settings
-              for full app scan results.
+              Google Play Protect intent launched. Check your Android notification bar or device settings for scan results.
             </span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono px-1">
             <AlertCircle className="h-3 w-3 text-emerald-400" />
-            <span>Direct intent &bull; Zero fake alarms &bull; Google Security Architecture</span>
+            <span>Native Android intent &bull; Client-side launcher &bull; No app tracking</span>
           </div>
         )}
       </div>

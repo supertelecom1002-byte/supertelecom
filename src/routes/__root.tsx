@@ -221,13 +221,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             { "@type": "AdministrativeArea", name: "Makatpur" },
             { "@type": "State", name: "Jharkhand" },
           ],
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "1280",
-            bestRating: "5",
-            worstRating: "1",
-          },
           openingHoursSpecification: [{
             "@type": "OpeningHoursSpecification",
             dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
@@ -312,7 +305,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "Who provides the best mobile repair in Giridih?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Super Telecom on Barganda Road (Near Shivam Clinic) is recognized as Giridih's premier smartphone and chip-level repair lab, backed by 10+ years of micro-soldering experience, 25,000+ repaired devices, and a 4.9★ rating.",
+                text: "Super Telecom on Barganda Road (Near Shivam Clinic) is recognized as Giridih's premier smartphone and chip-level repair lab, backed by 10+ years of micro-soldering experience and dedicated service across Giridih district.",
               },
             },
             {
@@ -344,7 +337,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "Is customer personal data safe during phone repair at Super Telecom?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Yes. Super Telecom follows a strict 100% data privacy policy. Hardware repairs (screens, batteries, charging ports) are performed without wiping customer photos, chats, or data, and without requesting phone passcodes.",
+                text: "Super Telecom follows strict privacy protocols and does not request customer lock-screen passcodes for hardware module swaps. However, as an industry best practice, we advise customers to back up personal data prior to servicing.",
               },
             },
           ],

@@ -115,12 +115,12 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
                   </div>
                   <div>
                     <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
-                      <span>⭐ 5.0 Rating</span>
+                      <span>Verified Google Reviews</span>
                       <span className="text-muted-foreground">•</span>
-                      <span className="text-xs sm:text-sm text-muted-foreground font-normal">based on verified repairs</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground font-normal">Super Telecom Giridih</span>
                     </div>
                     <p className="text-[11px] sm:text-xs text-muted-foreground">
-                      2,00,000+ smartphones repaired at Barganda Road, Giridih
+                      Established 2016 • 10+ Years Experience in Giridih
                     </p>
                   </div>
                 </div>
@@ -215,12 +215,12 @@ export const ReviewsSection: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
-                <span>⭐ 5.0 Rating</span>
+                <span>Verified Google Reviews</span>
                 <span className="text-muted-foreground">•</span>
-                <span className="text-xs sm:text-sm text-muted-foreground font-normal">based on verified repairs</span>
+                <span className="text-xs sm:text-sm text-muted-foreground font-normal">Super Telecom Giridih</span>
               </div>
               <p className="text-[11px] sm:text-xs text-muted-foreground">
-                2,00,000+ smartphones repaired at Barganda Road, Giridih
+                Established 2016 • 10+ Years Experience in Giridih
               </p>
             </div>
           </div>

@@ -15,11 +15,12 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
+import { SITE_URL } from "@/data/site";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
-const PHONE = "+918002903643";
-const PHONE_DISPLAY = "+91 80029 03643";
-const WHATSAPP = "918002903643";
+const PHONE = BUSINESS_MASTER.phoneRaw;
+const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
+const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
 const TITLE = "Terms of Service & Repair Conditions | Super Telecom Giridih";
 const DESC =

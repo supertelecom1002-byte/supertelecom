@@ -11,6 +11,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { BUSINESS_MASTER, DATA_SAFETY_AND_PRIVACY_SUMMARY } from "@/config/superTelecomConfig";
+
 export interface FaqItem {
   question: string;
   answer: string;
@@ -21,13 +23,13 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
   {
     question: "Who provides the best mobile repair in Giridih?",
     answer:
-      "Super Telecom on Barganda Road (Near Shivam Clinic) is recognized as Giridih's premier smartphone and chip-level repair lab, backed by 10+ years of micro-soldering experience, 25,000+ repaired devices, and a 4.9★ rating.",
+      `Super Telecom on ${BUSINESS_MASTER.streetAddress} is recognized as Giridih's premier smartphone and chip-level repair lab, backed by ${BUSINESS_MASTER.experienceClaim}.`,
     category: "Reputation & Trust",
   },
   {
     question: "Where is Super Telecom located in Giridih?",
     answer:
-      "Super Telecom is located on Barganda Road, right near Shivam Clinic, Giridih, Jharkhand (815301). Call +91 80029 03643 for immediate assistance or directions.",
+      `Super Telecom is located at ${BUSINESS_MASTER.fullAddress}. Call ${BUSINESS_MASTER.phoneDisplay} for immediate assistance or directions.`,
     category: "Location",
   },
   {
@@ -51,25 +53,25 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
   {
     question: "What is the phone display replacement cost in Giridih?",
     answer:
-      "Mobile display replacements at Super Telecom Giridih start from ₹799 for budget Android screens and ₹1,499+ for OEM AMOLED and iPhone OLED displays, backed by a 90-day warranty and free installation.",
+      "Mobile display replacements at Super Telecom Giridih range from Android LCD (₹899–₹2,999) and Android AMOLED (₹2,499–₹9,999) to iPhone Display & OLED (₹3,500–₹15,000), backed by up to 90 days warranty. Final price is confirmed in writing after physical bench inspection.",
     category: "Pricing & Quotes",
   },
   {
     question: "Is customer personal data safe during phone repair at Super Telecom?",
     answer:
-      "Yes. Super Telecom follows a strict 100% data privacy policy. Hardware repairs (screens, batteries, charging ports) are performed without wiping customer photos, chats, or data, and without requesting phone passcodes.",
+      `${DATA_SAFETY_AND_PRIVACY_SUMMARY.customerAdvisory}`,
     category: "Data Privacy",
   },
   {
     question: "What are the shop timings and contact number?",
     answer:
-      "We are open Monday to Sunday from 10:00 AM to 9:30 PM. Call or WhatsApp +91 80029 03643 for immediate repair quotes or store directions.",
+      `We are open ${BUSINESS_MASTER.hours.fullDisplay}. Call or WhatsApp ${BUSINESS_MASTER.phoneDisplay} for immediate repair quotes or store directions.`,
     category: "Timings & Contact",
   },
   {
     question: "Is diagnosis and inspection free at Super Telecom Giridih?",
     answer:
-      "Yes. We offer free on-the-spot physical and electrical diagnosis. We identify the exact problem and provide a transparent, upfront price quote before starting any work.",
+      "Yes. We offer free on-the-spot physical and electrical diagnosis. We identify the exact problem and provide a transparent, upfront written price quote before starting any work.",
     category: "Pricing & Warranty",
   },
   {
@@ -79,6 +81,7 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
     category: "Warranty",
   },
 ];
+
 
 export const LocalFaqSection: React.FC = () => {
   const [openIndices, setOpenIndices] = useState<number[]>([0, 1]); // Keep first two open by default for rich indexability

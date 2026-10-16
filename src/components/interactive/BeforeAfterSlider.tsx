@@ -17,35 +17,35 @@ const CASE_STUDIES: CaseStudy[] = [
   {
     id: "iphone-glass",
     tabLabel: "iPhone Glass Restoration",
-    title: "iPhone 14 Pro Max • OCA Glass Lamination",
-    description: "Shattered front gorilla glass replaced using precision cryo-separation & OCA vacuum debubbler, saving the customer over ₹12,000 while retaining 100% genuine factory Apple OLED colors & 120Hz ProMotion.",
+    title: "iPhone Display Glass Refurbishment",
+    description: "Shattered front gorilla glass replaced using precision cryo-separation & OCA vacuum debubbler, helping retain genuine factory OLED display and touch sensitivity.",
     beforeImg: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=1200&q=80",
     afterImg: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
-    damageTag: "SEVERE SHATTER • TOUCH OK",
-    restoredTag: "FACTORY RETINA PRESERVED",
-    specs: ["Retained Original Apple Display", "OCA Vacuum Laminated", "True Tone Calibrated"],
+    damageTag: "CRACKED OUTER GLASS",
+    restoredTag: "OCA REFURBISHED",
+    specs: ["Factory OLED Panel Retained", "OCA Vacuum Lamination", "Touch Functionality Verified"],
   },
   {
     id: "amoled-line",
-    tabLabel: "Laser AMOLED Green Line Fix",
-    title: "Samsung S22 Ultra • Laser Trace Bonding",
-    description: "Post-update vertical green and pink line defect rectified via microscopic laser trace welding on flex cables without expensive screen replacement.",
+    tabLabel: "AMOLED Display Restoration",
+    title: "AMOLED Flexible Panel Inspection",
+    description: "Screen panel flex circuit evaluation and precision micro-rework to address display artifact issues without unnecessary whole-unit replacement where viable.",
     beforeImg: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80",
     afterImg: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
-    damageTag: "VERTICAL LINE DEFECT",
-    restoredTag: "ZERO LINES • 100% REPAIRED",
-    specs: ["No Display Replacement Needed", "Original 120Hz Intact", "60-Day Line Warranty"],
+    damageTag: "DISPLAY ANOMALY",
+    restoredTag: "PANEL RESTORED",
+    specs: ["Flex Trace Diagnostic", "Display Uniformity Restored", "Part-Grade Warranty Backed"],
   },
   {
     id: "board-revival",
-    tabLabel: "Dead Board Revival",
-    title: "OnePlus 9 Pro • Dual-Layer CPU Reballing",
-    description: "Dead handset due to Qualcomm Snapdragon 888 thermal dry solder short-circuit. Dual-layer motherboard desoldered, cleaned, reballed with silver solder spheres, and revived.",
+    tabLabel: "Motherboard BGA Rework",
+    title: "Multi-Layer Motherboard IC Reballing",
+    description: "Thermal failure or short-circuit diagnostics on multi-layer PCBs. IC chips desoldered, cleaned, and micro-reballed with high-grade solder spheres under stereoscopic magnification.",
     beforeImg: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
     afterImg: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
-    damageTag: "COMPLETELY DEAD • 0.00A DRAW",
-    restoredTag: "FULL DATA PRESERVED",
-    specs: ["Double-Decker BGA Reball", "100% Data Preserved", "Thermal Paste Replaced"],
+    damageTag: "NO POWER / BOARD SHORT",
+    restoredTag: "CIRCUIT RECOVERED",
+    specs: ["BGA Chip Reballing", "Micro-soldering Bench", "Thermal Compound Replaced"],
   },
 ];
 
@@ -86,13 +86,13 @@ export const BeforeAfterSlider: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold uppercase mb-4 shadow-sm">
             <Activity className="h-3.5 w-3.5 text-cyan-400" />
-            Empirical Hardware Evidence
+            Repair Bench Showcase
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Micro-Precision Restoration Proof
+            Precision Restoration Comparisons
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-400 leading-relaxed">
-            Drag the industrial slider below to inspect genuine transformations achieved on our Barganda Road micro-soldering benches.
+            Illustrative visual comparison showing the level of micro-precision and optical finishing delivered by our Giridih hardware laboratory.
           </p>
         </div>
 
@@ -216,6 +216,10 @@ export const BeforeAfterSlider: React.FC = () => {
               </span>
             </div>
           </div>
+          {/* Honest Illustrative Caption Disclaimer */}
+          <p className="mt-4 text-center text-xs text-slate-500 font-mono">
+            * Images are for illustrative technical demonstration of repair processes and finishing standards. Actual repairs undergo thorough physical inspection at our Barganda Road shop.
+          </p>
         </div>
       </div>
     </section>

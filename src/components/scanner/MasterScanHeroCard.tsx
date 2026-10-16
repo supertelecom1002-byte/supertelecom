@@ -104,10 +104,10 @@ export const MasterScanHeroCard: React.FC<MasterScanHeroCardProps> = ({
 
         <div className="mt-2 text-center">
           <h3 className="text-sm font-black text-white tracking-tight flex items-center justify-center gap-1.5">
-            <span>360° Real Hardware Diagnostic</span>
+            <span>Interactive Hardware Diagnostic Suite</span>
           </h3>
           <p className="text-[11px] text-cyan-300/80 font-mono mt-0.5">
-            Tap to run full hardware audit &amp; clean
+            Test display, audio, touch digitizer &amp; frame rate
           </p>
         </div>
       </div>
@@ -152,7 +152,7 @@ export const MasterScanHeroCard: React.FC<MasterScanHeroCardProps> = ({
         className="w-full mt-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-cyan-400 via-cyan-500 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-slate-950 font-black text-xs sm:text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95 transition-all cursor-pointer z-10 relative"
       >
         <Zap className="h-4 w-4 fill-slate-950" />
-        <span>🚀 RUN 360° DEVICE HEALTH SCAN</span>
+        <span>LAUNCH HARDWARE TEST SUITE</span>
       </button>
     </div>
   );

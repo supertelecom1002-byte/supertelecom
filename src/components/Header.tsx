@@ -32,6 +32,7 @@ import {
   DEFAULT_APP_CONFIG,
 } from "@/services/appConfigService";
 import { LabToolsHub } from "@/components/tools/LabToolsHub";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
 interface HeaderProps {
   isHomePage?: boolean;
@@ -88,8 +89,8 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
     { label: "Contact", to: isHomePage ? "#contact" : "/#contact" },
   ];
 
-  const PHONE = "+918002903643";
-  const WHATSAPP = "918002903643";
+  const PHONE = BUSINESS_MASTER.phoneRaw;
+  const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
   return (
     <header className="w-full select-none md:select-auto">

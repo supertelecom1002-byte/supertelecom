@@ -15,8 +15,12 @@ import {
   Check,
 } from "lucide-react";
 import { EditableBlock } from "@/components/admin/visual/EditableBlock";
+import { BUSINESS_MASTER, DATA_SAFETY_AND_PRIVACY_SUMMARY } from "@/config/superTelecomConfig";
+import { getLiveGiridihStoreStatus } from "@/utils/storeHours";
 
 export const Hero: React.FC = () => {
+  const storeStatus = getLiveGiridihStoreStatus();
+
   const scrollToCalculator = (e: React.MouseEvent) => {
     e.preventDefault();
     const el = document.getElementById("repair-calculator") || document.getElementById("pricing-matrix");
@@ -68,20 +72,20 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Status Pill */}
-              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 text-[10px] font-semibold">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span>Open till 9:30 PM</span>
+              <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${storeStatus.isOpen ? "bg-emerald-950/80 border-emerald-500/30 text-emerald-400" : "bg-rose-950/80 border-rose-500/30 text-rose-400"} border text-[10px] font-semibold`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${storeStatus.isOpen ? "bg-emerald-400" : "bg-rose-400"}`} />
+                <span>{storeStatus.badgeText}</span>
               </div>
             </div>
 
             {/* Headline and Description */}
             <div className="space-y-1">
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
                 <EditableBlock
                   contentKey="hero_h1_title"
-                  defaultValue="Giridih’s Premier Flagship Smartphone & Chip-Level Repair Lab"
+                  defaultValue={BUSINESS_MASTER.h1Title}
                 />
-              </h1>
+              </h2>
               <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
                 <EditableBlock
                   contentKey="hero_h1_subtitle"
@@ -95,11 +99,11 @@ export const Hero: React.FC = () => {
             <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-300">
               <span className="flex items-center gap-1 text-amber-400 font-bold">
                 <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                <span>5.0</span>
+                <span>Google Maps Verified</span>
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-cyan-300 font-semibold truncate">
-                2,00,000+ Restored
+                10+ Years Experience
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-slate-400">Est. 2016</span>
@@ -118,7 +122,7 @@ export const Hero: React.FC = () => {
             </a>
 
             <a
-              href="tel:+918002903643"
+              href={`tel:${BUSINESS_MASTER.phoneRaw}`}
               className="py-2.5 px-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-500/40 text-white font-semibold flex items-center justify-center gap-1.5 active:scale-95 transition-all text-xs"
             >
               <Phone className="h-3.5 w-3.5 text-cyan-400" />
@@ -142,7 +146,7 @@ export const Hero: React.FC = () => {
             </div>
             <div className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200">
               <CheckCircle2 className="h-3.5 w-3.5 text-amber-400 flex-none" />
-              <span className="font-medium text-[10px]">100% Data Safe</span>
+              <span className="font-medium text-[10px]">{DATA_SAFETY_AND_PRIVACY_SUMMARY.trustPill}</span>
             </div>
           </div>
         </div>
@@ -165,15 +169,15 @@ export const Hero: React.FC = () => {
                 <span>BARGANDA ROAD LAB</span>
                 <span className="text-slate-500">•</span>
                 <Clock className="h-3 w-3 text-cyan-400" />
-                <span>OPEN TODAY TILL 9:30 PM</span>
+                <span>{storeStatus.badgeText.toUpperCase()}</span>
               </span>
             </div>
 
-            {/* Main Headline */}
+            {/* Main Headline - Single H1 on Page */}
             <h1 className="mt-6 font-display text-4xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
               <EditableBlock
                 contentKey="hero_h1_title"
-                defaultValue="Giridih’s Premier Flagship Smartphone & Chip-Level Repair Lab"
+                defaultValue={BUSINESS_MASTER.h1Title}
               />
             </h1>
 
@@ -181,7 +185,7 @@ export const Hero: React.FC = () => {
             <p className="mt-5 text-base lg:text-lg text-slate-300 max-w-2xl leading-relaxed">
               <EditableBlock
                 contentKey="hero_h1_subtitle"
-                defaultValue="Advanced motherboard micro-soldering, double-decker CPU reballing, and 30-minute original display restoration for iPhone, Samsung Ultra & OnePlus."
+                defaultValue="Advanced motherboard micro-soldering, double-decker CPU reballing, and 30-minute original display restoration for iPhone, Samsung Ultra &amp; OnePlus."
                 type="textarea"
               />
             </p>
@@ -212,7 +216,7 @@ export const Hero: React.FC = () => {
               </a>
 
               <a
-                href="tel:+918002903643"
+                href={`tel:${BUSINESS_MASTER.phoneRaw}`}
                 className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-white px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-500/40 active:scale-95 min-h-[48px]"
               >
                 <Phone className="h-4 w-4 text-cyan-400" />
@@ -234,7 +238,7 @@ export const Hero: React.FC = () => {
                 </div>
               </div>
               <span className="font-medium text-slate-300">
-                Over <strong className="text-white">2,00,000+</strong> smartphones diagnosed &amp; repaired in Giridih Since 2016
+                {BUSINESS_MASTER.experienceClaim}
               </span>
             </div>
           </div>

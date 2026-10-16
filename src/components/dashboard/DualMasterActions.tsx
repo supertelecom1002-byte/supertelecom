@@ -57,13 +57,13 @@ export const DualMasterActions: React.FC<DualMasterActionsProps> = ({
             <Zap className="w-6 h-6 animate-pulse" />
           </div>
           <span className="text-[11px] font-mono tracking-wider uppercase text-cyan-600 dark:text-cyan-400 font-bold block">
-            1-Tap Booster
+            Storage Utility
           </span>
           <h3 className="text-sm font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-            360° Turbo Clean &amp; Boost
+            Web Cache &amp; Storage Clean
           </h3>
           <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
-            Purge cache, RAM &amp; lag
+            Clear cache storage &amp; temporary data
           </p>
         </button>
 
@@ -77,13 +77,13 @@ export const DualMasterActions: React.FC<DualMasterActionsProps> = ({
             <Stethoscope className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
           </div>
           <span className="text-[11px] font-mono tracking-wider uppercase text-emerald-600 dark:text-emerald-400 font-bold block">
-            Lab Doctor
+            Lab Diagnostic Suite
           </span>
           <h3 className="text-sm font-black text-slate-900 dark:text-white leading-tight mt-0.5">
-            Full Hardware Checkup
+            Interactive Hardware Tests
           </h3>
           <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">
-            Amperes, IC, Display &amp; Health
+            Display, Touch, Audio &amp; Power Checks
           </p>
         </button>
       </div>

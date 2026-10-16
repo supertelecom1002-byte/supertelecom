@@ -8,6 +8,7 @@ export interface ServiceInfo {
   short: string;
   intro: string;
   benefits: string[];
+  commonSymptoms?: string[];
   process: string[];
   brands: string[];
   faqs: [string, string][];
@@ -26,6 +27,12 @@ export const SERVICES: ServiceInfo[] = [
     short: "Cracked or broken display fixed same day.",
     intro:
       "If your phone screen is cracked, black, flickering or unresponsive to touch, Super Telecom on Barganda Road, Giridih replaces it with high-quality OEM and premium aftermarket displays. We repair iPhone, Samsung, Xiaomi (Redmi), Realme, OPPO, Vivo, OnePlus and every popular brand — most jobs finished the same day.",
+    commonSymptoms: [
+      "Cracked outer touch glass with sharp edges",
+      "Black screen, ink bleeding, or flickering backlight",
+      "Touch screen unresponsive, phantom ghost touches",
+      "Horizontal or vertical green/pink lines on OLED panel",
+    ],
     benefits: [
       "Same-day screen replacement for most models",
       "Genuine OEM & tested premium displays",
@@ -58,13 +65,19 @@ export const SERVICES: ServiceInfo[] = [
     keywords: "Battery Replacement Giridih, Mobile Battery Repair Giridih, iPhone Battery Giridih, Phone Battery Change Giridih",
     short: "Fix fast drain, swelling, sudden shut-off.",
     intro:
-      "Phone dying by afternoon? Battery bloating or restarting randomly? Super Telecom in Giridih uses genuine, warranty-backed batteries so your phone lasts a full day again. We service every major brand and complete most battery replacements in under 45 minutes.",
+      "A degraded or swollen phone battery can be frustrating and risky. Super Telecom on Barganda Road, Giridih provides reliable battery replacements for iPhone, Samsung, Xiaomi, and all major brands using tested, zero-cycle high-density cells with store warranty.",
+    commonSymptoms: [
+      "Battery drains rapidly within 2 to 4 hours of use",
+      "Phone shuts off suddenly when battery percentage drops below 30%",
+      "Swollen battery causing back panel or display to separate",
+      "Phone running unusually hot during basic tasks or idle standby",
+    ],
     benefits: [
       "100% genuine, tested batteries only",
-      "6-month warranty on the new battery",
+      "Up to 90-day warranty on the new battery",
       "Free battery-health check",
       "Fixes swelling, drain and random shutdowns",
-      "Trusted by 2 Lakh+ customers in Giridih",
+      "Established 2016 • 10+ Years Experience in Giridih",
     ],
     process: [
       "Bring your phone to Barganda Road, Giridih",
@@ -92,6 +105,12 @@ export const SERVICES: ServiceInfo[] = [
     short: "Chip-level repairs by skilled technicians.",
     intro:
       "Motherboard problems are the most complex — dead phone, no display, no charging, no network. Super Telecom in Giridih runs a full chip-level (BGA) repair lab with microscopes, hot-air stations and rework tools. Our senior technicians have 10+ years of PCB repair experience.",
+    commonSymptoms: [
+      "Completely dead phone with zero ampere pull on DC power bench",
+      "Stuck in continuous boot loop on boot logo or restarting every few minutes",
+      "No network signal, Wi-Fi greyed out, or Baseband unknown error",
+      "Audio IC malfunction with disabled loudspeaker during calls",
+    ],
     benefits: [
       "10+ years of chip-level experience",
       "Microscope-based BGA/IC rework",
@@ -125,6 +144,12 @@ export const SERVICES: ServiceInfo[] = [
     short: "Ultrasonic cleaning + full board recovery.",
     intro:
       "Water, rain, tea or sweat — liquid damage needs urgent professional care. At Super Telecom in Giridih we use ultrasonic cleaning tanks and chip-level rework to recover water-damaged phones. The sooner you reach us, the higher the success rate.",
+    commonSymptoms: [
+      "Phone dropped in water, rain, bucket, or beverage",
+      "Corrosion or green oxidization visible inside charging port",
+      "Device heating rapidly immediately when powered on",
+      "Black display with vibrations and ringtone audio still functioning",
+    ],
     benefits: [
       "Rush the phone in — power off, don't charge",
       "Ultrasonic bath to remove corrosion",
