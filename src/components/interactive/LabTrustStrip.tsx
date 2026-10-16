@@ -23,9 +23,9 @@ const LAB_METRICS: MetricItem[] = [
   },
   {
     icon: ShieldAlert,
-    metric: "100% Data Safe",
-    label: "Zero data wipe during screen & port repairs",
-    tag: "PRIVACY ASSURED",
+    metric: "Data Privacy First",
+    label: "Hardware repairs without personal storage access",
+    tag: "CUSTOMER PRIVACY",
   },
   {
     icon: Zap,

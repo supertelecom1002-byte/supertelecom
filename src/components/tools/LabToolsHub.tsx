@@ -216,9 +216,9 @@ export const TOOLS: ToolDefinition[] = [
   {
     id: "doctor_diagnostic",
     category: "system",
-    title: "Lab Doctor Hardware Checkup & Ampere Profiler",
-    subtitle: "Real charging current in mA, IC health, 5-point motherboard checkup & prescription.",
-    tag: "Ampere & IC",
+    title: "Battery & Performance Browser Profiler",
+    subtitle: "Estimates charging flow via BatteryManager API, FPS cadence & local memory quota.",
+    tag: "Browser APIs",
     badgeColor: "text-emerald-400 bg-emerald-950/80 border-emerald-500/30",
     icon: Stethoscope,
   },

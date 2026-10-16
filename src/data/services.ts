@@ -90,7 +90,7 @@ export const SERVICES: ServiceInfo[] = [
     faqs: [
       ["How much does a phone battery cost in Giridih?", "Android batteries typically start around ₹500, iPhone batteries are higher. Visit Super Telecom Giridih for the exact rate."],
       ["Do you use genuine batteries?", "Yes. We only fit genuine or brand-tested batteries with warranty. No cheap local cells."],
-      ["Will battery replacement erase my data?", "No — your data is 100% safe. Only the battery is removed and replaced."],
+      ["Will battery replacement erase my data?", "Standard battery replacement does not touch your user storage. However, as an industry best practice, we always advise maintaining a current personal backup before any hardware service."],
     ],
     priceRange: "₹500 - ₹8,000",
     duration: "20-45 minutes",

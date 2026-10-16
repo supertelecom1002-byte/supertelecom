@@ -9,17 +9,20 @@ import {
   ShieldCheck,
   MessageCircle,
   AlertCircle,
-  Sparkles,
   Phone,
   Check,
+  Lock,
 } from "lucide-react";
 import {
-  findRepairJob,
+  findRepairJobSecure,
+  maskCustomerPhone,
+  maskCustomerName,
   type RepairJob,
   STAGE_METADATA,
   type RepairStage,
   buildWhatsAppStatusUrl,
 } from "@/services/repairJobsService";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
 interface RepairTrackerModalProps {
   isOpen: boolean;
@@ -39,24 +42,37 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
   onClose,
   initialQuery = "",
 }) => {
-  const [query, setQuery] = useState(initialQuery);
+  const [jobId, setJobId] = useState(initialQuery);
+  const [phoneLast4, setPhoneLast4] = useState("");
   const [loading, setLoading] = useState(false);
   const [job, setJob] = useState<RepairJob | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!query.trim()) return;
+    const cleanId = jobId.trim().toUpperCase();
+    const cleanDigits = phoneLast4.replace(/\D/g, "");
+
+    if (!cleanId) {
+      setErrorMsg("Please enter your Job Sheet ID (e.g. ST-8821).");
+      return;
+    }
+    if (cleanDigits.length !== 4) {
+      setErrorMsg("Please enter the last 4 digits of your registered phone number.");
+      return;
+    }
 
     setLoading(true);
     setErrorMsg(null);
 
     try {
-      const match = await findRepairJob(query);
+      const match = await findRepairJobSecure(cleanId, cleanDigits);
       if (match) {
         setJob(match);
       } else {
-        setErrorMsg(`No active repair job found matching "${query}". Try sample ID: ST-1082 or phone: 9876543210.`);
+        setErrorMsg(
+          `No active repair job found matching Job ID "${cleanId}" with phone ending in "${cleanDigits}". Please verify your job sheet or contact our lab desk.`
+        );
         setJob(null);
       }
     } catch {
@@ -87,11 +103,11 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-              <Search className="h-6 w-6" />
+              <ShieldCheck className="h-6 w-6" />
             </div>
             <div>
               <h3 className="font-bold text-lg text-white">Live Job Sheet &amp; Repair Tracker</h3>
-              <p className="text-xs text-slate-400">Real-Time Optical Bench Status &amp; QC Pipeline</p>
+              <p className="text-xs text-slate-400">Secure Two-Factor Bench Status &amp; QC Pipeline</p>
             </div>
           </div>
           <button
@@ -103,49 +119,46 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
           </button>
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="h-4 w-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Enter Job Sheet ID (e.g. ST-1082) or 10-digit Phone..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500"
-            />
+        {/* Secure Search Bar */}
+        <form onSubmit={handleSearch} className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+            <div className="sm:col-span-7 relative">
+              <Search className="h-4 w-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Job Sheet ID (e.g. ST-8821)..."
+                value={jobId}
+                onChange={(e) => setJobId(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 uppercase font-mono"
+              />
+            </div>
+            <div className="sm:col-span-3 relative">
+              <Lock className="h-4 w-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                maxLength={4}
+                placeholder="Phone Last 4"
+                value={phoneLast4}
+                onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, ""))}
+                className="w-full pl-9 pr-3 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <button
+                type="submit"
+                disabled={loading || !jobId.trim() || phoneLast4.length !== 4}
+                className="w-full h-full py-3 px-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
+              >
+                {loading ? "..." : "Track"}
+              </button>
+            </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-5 py-3 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 disabled:opacity-50"
-          >
-            {loading ? "Tracking..." : "Track"}
-          </button>
         </form>
 
-        {/* Demo Hint */}
-        {!job && !errorMsg && (
-          <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-            <span>
-              Demo Job Sheet available: Click to test with <strong className="text-cyan-400 font-mono">ST-1082</strong>
-            </span>
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("ST-1082");
-                findRepairJob("ST-1082")
-                  .then((res) => {
-                    if (res) setJob(res);
-                  })
-                  .catch(() => {});
-              }}
-              className="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-300 font-bold border border-cyan-500/30 text-[11px]"
-            >
-              Load ST-1082
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+          <Lock className="h-3 w-3 text-cyan-400 shrink-0" />
+          <span>Two-factor check protects customer repair information and contact privacy.</span>
+        </div>
 
         {/* Error message */}
         {errorMsg && (
@@ -168,7 +181,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
                   </span>
                 </div>
                 <h4 className="font-bold text-sm text-white mt-1">{job.device_model}</h4>
-                <p className="text-xs text-slate-400">Customer: {job.customer_name}</p>
+                <p className="text-xs text-slate-400">Customer: {maskCustomerName(job.customer_name)} &bull; {maskCustomerPhone(job.customer_phone)}</p>
               </div>
 
               <div className="text-left sm:text-right border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
@@ -257,7 +270,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
               </a>
 
               <a
-                href="tel:+918002903643"
+                href={`tel:${BUSINESS_MASTER.phoneRaw}`}
                 className="py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all"
               >
                 <Phone className="h-4 w-4 text-cyan-400" />

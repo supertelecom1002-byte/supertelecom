@@ -155,7 +155,7 @@ function ToolsPage() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-xs sm:text-sm tracking-wide uppercase shadow-lg shadow-cyan-500/25 active:scale-95 transition-all cursor-pointer"
               >
                 <Zap className="h-4 w-4 fill-slate-950" />
-                <span>Launch 360° Device Health Scanner &amp; Cleaner</span>
+                <span>Launch Browser Cache &amp; Storage Cleaner</span>
               </button>
             </div>
           </div>

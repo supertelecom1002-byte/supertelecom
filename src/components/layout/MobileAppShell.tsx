@@ -631,7 +631,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                   </div>
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white">iPhone Lab Care</h4>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
-                    FaceID, battery health % bypass, rear glass laser fix.
+                    FaceID calibration, OEM battery health restore, rear glass laser separation.
                   </p>
                   <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 block pt-1">
                     Certified Lab &bull; Warranty
@@ -864,7 +864,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">Live Job Sheet Pipeline</h3>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Enter your Super Telecom Job Sheet number (e.g. <strong>ST-1082</strong>) or registered phone number to check stage in our Barganda Road Lab.
+                Enter your Super Telecom Job Sheet number (e.g. <strong>ST-8821</strong>) and phone digits to check stage in our Barganda Road Lab.
               </p>
               <button
                 type="button"

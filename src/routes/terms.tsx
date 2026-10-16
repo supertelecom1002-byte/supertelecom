@@ -17,6 +17,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE_URL } from "@/data/site";
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
+import { LEGAL_POLICY_CONFIG } from "@/config/legalPoliciesConfig";
 
 const PHONE = BUSINESS_MASTER.phoneRaw;
 const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
@@ -183,11 +184,17 @@ export default function TermsPage() {
               <p>
                 Once a device has been serviced or diagnosed and the customer is notified that it is <strong>"Ready for Pickup"</strong> (via Phone Call, SMS, WhatsApp, or Online Job Sheet status):
               </p>
-              <ul className="list-disc pl-5 space-y-1.5">
-                <li>Customers must collect their repaired handset within <strong>45 days</strong> of initial completion notification.</li>
-                <li>Devices remaining unclaimed after 45 days may incur a nominal storage fee of ₹20/day to cover inventory storage and insurance.</li>
-                <li>Devices left unclaimed beyond <strong>90 days</strong> without prior written arrangement may be recycled or safely disposed of to defray bench part expenses in accordance with local commercial trade regulations in Jharkhand.</li>
-              </ul>
+              {LEGAL_POLICY_CONFIG.unclaimedDevicePolicy.isOwnerAndLegallyConfirmed ? (
+                <ul className="list-disc pl-5 space-y-1.5">
+                  <li>Customers must collect their repaired handset within <strong>45 days</strong> of initial completion notification.</li>
+                  <li>Devices remaining unclaimed after 45 days may incur a nominal storage fee of ₹20/day to cover inventory storage and insurance.</li>
+                  <li>Devices left unclaimed beyond <strong>90 days</strong> without prior written arrangement may be recycled or safely disposed of to defray bench part expenses in accordance with local commercial trade regulations in Jharkhand.</li>
+                </ul>
+              ) : (
+                <p className="text-slate-600 dark:text-slate-300">
+                  {LEGAL_POLICY_CONFIG.unclaimedDevicePolicy.neutralStatement}
+                </p>
+              )}
             </div>
           </div>
 

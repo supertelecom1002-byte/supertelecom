@@ -453,14 +453,14 @@ export const DeepScanEngine: React.FC<DeepScanEngineProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-black tracking-tight text-white">
-                  360° DEVICE HEALTH &amp; JUNK CLEANER
+                  BROWSER CACHE &amp; STORAGE CLEANER
                 </span>
                 <span className="px-1.5 py-0.2 rounded-md bg-cyan-950 border border-cyan-500/40 text-[9px] font-mono text-cyan-300 font-bold">
                   v2.6
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono block">
-                Super Telecom Lab Hardware Engine &bull; Barganda Road
+                Browser Web Storage &amp; Diagnostic Check &bull; Barganda Road
               </span>
             </div>
           </div>

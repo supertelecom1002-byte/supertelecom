@@ -4,7 +4,9 @@ import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import {
-  findRepairJob,
+  findRepairJobSecure,
+  maskCustomerPhone,
+  maskCustomerName,
   type RepairJob,
   STAGE_METADATA,
   type RepairStage,
@@ -14,13 +16,10 @@ import {
   Search,
   CheckCircle2,
   Clock,
-  Cpu,
-  Smartphone,
-  ShieldCheck,
   MessageCircle,
   AlertCircle,
-  Phone,
-  Sparkles,
+  ShieldCheck,
+  Lock,
 } from "lucide-react";
 import { SITE_URL } from "@/data/site";
 
@@ -40,7 +39,7 @@ export const Route = createFileRoute("/track")({
       {
         name: "description",
         content:
-          "Check live job sheet status for your smartphone repair at Super Telecom, Barganda Road, Giridih. Live pipeline tracking from intake to QC testing and delivery.",
+          "Check live job sheet status for your smartphone repair at Super Telecom, Barganda Road, Giridih. Secure two-factor pipeline tracking from intake to QC testing and delivery.",
       },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/track` }],
@@ -49,25 +48,36 @@ export const Route = createFileRoute("/track")({
 });
 
 function TrackPage() {
-  const [query, setQuery] = useState("");
+  const [jobId, setJobId] = useState("");
+  const [phoneLast4, setPhoneLast4] = useState("");
   const [loading, setLoading] = useState(false);
   const [job, setJob] = useState<RepairJob | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!query.trim()) return;
+    const cleanId = jobId.trim().toUpperCase();
+    const cleanDigits = phoneLast4.replace(/\D/g, "");
+
+    if (!cleanId) {
+      setErrorMsg("Please enter your Job Sheet ID (e.g. ST-8821).");
+      return;
+    }
+    if (cleanDigits.length !== 4) {
+      setErrorMsg("Please enter the last 4 digits of your registered phone number.");
+      return;
+    }
 
     setLoading(true);
     setErrorMsg(null);
 
     try {
-      const match = await findRepairJob(query);
+      const match = await findRepairJobSecure(cleanId, cleanDigits);
       if (match) {
         setJob(match);
       } else {
         setErrorMsg(
-          `No active repair job found matching "${query}". Try sample ID: ST-1082 or phone: 9876543210.`
+          `No active repair job found matching Job ID "${cleanId}" with phone ending in "${cleanDigits}". Please verify your job sheet or contact our lab desk.`
         );
         setJob(null);
       }
@@ -98,8 +108,8 @@ function TrackPage() {
           {/* Hero */}
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs font-mono font-bold tracking-tight">
-              <Search className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-              <span>LIVE REPAIR PIPELINE TRACKER</span>
+              <ShieldCheck className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+              <span>SECURE REPAIR PIPELINE TRACKER</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -107,65 +117,59 @@ function TrackPage() {
             </h1>
 
             <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-              Enter your Super Telecom Job Sheet number (e.g.{" "}
-              <strong className="text-foreground">ST-1082</strong>) or registered
-              phone number to monitor progress across our Barganda Road ESD bench.
+              Enter your Super Telecom Job Sheet number and the last 4 digits of your registered contact number to securely check progress across our Barganda Road ESD bench.
             </p>
           </div>
 
-          {/* Search Box */}
+          {/* Secure Search Box */}
           <div className="p-6 rounded-3xl bg-card border border-border shadow-xl space-y-4">
-            <form onSubmit={handleSearch} className="flex gap-3">
-              <div className="relative flex-1">
+            <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              <div className="sm:col-span-6 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Enter Job ID (e.g. ST-1082) or 10-digit phone number..."
-                  className="w-full pl-12 pr-4 py-3.5 text-sm sm:text-base bg-background border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-amber-500 transition-colors"
+                  value={jobId}
+                  onChange={(e) => setJobId(e.target.value)}
+                  placeholder="Job Sheet ID (e.g. ST-8821)"
+                  className="w-full pl-12 pr-4 py-3.5 text-sm sm:text-base bg-background border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-amber-500 transition-colors uppercase font-mono"
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading || !query.trim()}
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm tracking-wide flex items-center gap-2 shadow-lg shadow-amber-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
-              >
-                {loading ? (
-                  <span>Searching...</span>
-                ) : (
-                  <>
-                    <Search className="h-4 w-4" />
-                    <span>Track Device</span>
-                  </>
-                )}
-              </button>
+              <div className="sm:col-span-3 relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={phoneLast4}
+                  onChange={(e) => setPhoneLast4(e.target.value.replace(/\D/g, ""))}
+                  placeholder="Phone Last 4"
+                  className="w-full pl-11 pr-4 py-3.5 text-sm sm:text-base bg-background border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-amber-500 transition-colors font-mono"
+                />
+              </div>
+
+              <div className="sm:col-span-3">
+                <button
+                  type="submit"
+                  disabled={loading || !jobId.trim() || phoneLast4.length !== 4}
+                  className="w-full h-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {loading ? (
+                    <span>Verifying...</span>
+                  ) : (
+                    <>
+                      <Search className="h-4 w-4" />
+                      <span>Track Status</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>Quick Test Samples:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery("ST-1082");
-                  findRepairJob("ST-1082").then(setJob);
-                }}
-                className="text-amber-600 dark:text-amber-400 font-mono font-bold hover:underline"
-              >
-                ST-1082 (iPhone 13)
-              </button>
-              <span>&bull;</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery("ST-1083");
-                  findRepairJob("ST-1083").then(setJob);
-                }}
-                className="text-amber-600 dark:text-amber-400 font-mono font-bold hover:underline"
-              >
-                ST-1083 (S22 Ultra)
-              </button>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
+              <Lock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <span>
+                <strong>Privacy Protected:</strong> Two-factor verification protects your personal repair records from unauthenticated sequential browsing.
+              </span>
             </div>
 
             {errorMsg && (
@@ -191,10 +195,10 @@ function TrackPage() {
                     </span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-foreground mt-1">
-                    Customer: {job.customer_name}
+                    Customer: {maskCustomerName(job.customer_name)}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Issue: {job.issue_description}
+                    Phone: {maskCustomerPhone(job.customer_phone)} &bull; Issue: {job.issue_description}
                   </p>
                 </div>
 

@@ -232,7 +232,7 @@ export default function WarrantyPage() {
               <span className="h-6 w-6 rounded-full bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 font-bold flex items-center justify-center text-xs">1</span>
               <h3 className="font-bold text-slate-900 dark:text-white">Bring Your Job Sheet</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Present your original repair invoice, printed receipt, or digital Job Sheet number (e.g. ST-1082).
+                Present your original repair invoice, printed receipt, or digital Job Sheet number (e.g. ST-8821).
               </p>
             </div>
 

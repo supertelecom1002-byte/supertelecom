@@ -8,7 +8,7 @@ export type RepairStage =
   | "delivered";
 
 export interface RepairJob {
-  id: string; // e.g. "ST-1082"
+  id: string; // e.g. "ST-8821"
   customer_name: string;
   customer_phone: string;
   device_model: string;
@@ -58,9 +58,9 @@ export const STAGE_METADATA: Record<
 
 const DEFAULT_JOBS: RepairJob[] = [
   {
-    id: "ST-1082",
-    customer_name: "Amit Sharma",
-    customer_phone: "9876543210",
+    id: "ST-8821",
+    customer_name: "Amit S.",
+    customer_phone: "XXXXXX3210",
     device_model: "iPhone 13 (Midnight 128GB)",
     issue_description: "Cracked OLED display & touch dead zone in lower third",
     estimated_cost: 4499,
@@ -70,9 +70,9 @@ const DEFAULT_JOBS: RepairJob[] = [
     updated_at: "2026-10-11T10:15:00.000Z",
   },
   {
-    id: "ST-1083",
-    customer_name: "Pooja Verma",
-    customer_phone: "9123456780",
+    id: "ST-8822",
+    customer_name: "Pooja V.",
+    customer_phone: "XXXXXX6780",
     device_model: "Samsung Galaxy S22 Ultra",
     issue_description: "Dead motherboard after minor liquid splash; charging port corroded",
     estimated_cost: 2999,
@@ -82,9 +82,9 @@ const DEFAULT_JOBS: RepairJob[] = [
     updated_at: "2026-10-11T11:00:00.000Z",
   },
   {
-    id: "ST-1084",
-    customer_name: "Rahul Kumar",
-    customer_phone: "9988776655",
+    id: "ST-8823",
+    customer_name: "Rahul K.",
+    customer_phone: "XXXXXX6655",
     device_model: "OnePlus 9 Pro",
     issue_description: "Green vertical display line after system update",
     estimated_cost: 1999,
@@ -94,9 +94,9 @@ const DEFAULT_JOBS: RepairJob[] = [
     updated_at: "2026-10-11T09:45:00.000Z",
   },
   {
-    id: "ST-1085",
-    customer_name: "Sneha Mukherjee",
-    customer_phone: "8877665544",
+    id: "ST-8824",
+    customer_name: "Sneha M.",
+    customer_phone: "XXXXXX5544",
     device_model: "Xiaomi 12 Pro",
     issue_description: "Battery draining in 3 hours & heating up while charging",
     estimated_cost: 1450,
@@ -160,28 +160,52 @@ export async function fetchAllRepairJobs(): Promise<RepairJob[]> {
   return local;
 }
 
-export async function findRepairJob(query: string): Promise<RepairJob | null> {
-  const clean = query.trim().toUpperCase();
-  const digits = query.replace(/\D/g, "");
+export function maskCustomerPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length <= 4) return "******" + digits;
+  return `******${digits.slice(-4)}`;
+}
+
+export function maskCustomerName(name: string): string {
+  const parts = name.trim().split(" ");
+  if (parts.length <= 1) return name;
+  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+}
+
+export async function findRepairJobSecure(jobId: string, phoneLast4: string): Promise<RepairJob | null> {
+  const cleanId = jobId.trim().toUpperCase();
+  const cleanPhone = phoneLast4.replace(/\D/g, "").slice(-4);
+
+  if (!cleanId || cleanPhone.length !== 4) {
+    return null;
+  }
 
   // 1. Try Supabase
   if (isSupabaseConfigured) {
     try {
-      let q = supabase.from("repair_jobs").select("*");
-      if (clean.startsWith("ST-")) {
-        q = q.eq("id", clean);
-      } else if (digits.length >= 4) {
-        q = q.or(`id.ilike.%${clean}%,customer_phone.ilike.%${digits}%`);
-      } else {
-        q = q.ilike("id", `%${clean}%`);
+      // First attempt secure RPC if defined
+      const rpcResult = await supabase.rpc("get_repair_status_secure", {
+        p_job_id: cleanId,
+        p_phone_last4: cleanPhone,
+      });
+
+      if (!rpcResult.error && rpcResult.data && rpcResult.data.length > 0) {
+        return rpcResult.data[0] as RepairJob;
       }
 
-      const { data, error } = await q.limit(1);
+      // Filtered fallback query
+      const { data, error } = await supabase
+        .from("repair_jobs")
+        .select("*")
+        .eq("id", cleanId)
+        .like("customer_phone", `%${cleanPhone}`)
+        .limit(1);
+
       if (!error && data && data.length > 0) {
         return data[0] as RepairJob;
       }
     } catch (err) {
-      console.warn("Supabase findRepairJob fallback:", err);
+      console.warn("Supabase findRepairJobSecure fallback:", err);
     }
   }
 
@@ -189,12 +213,18 @@ export async function findRepairJob(query: string): Promise<RepairJob | null> {
   const jobs = getLocalJobs();
   const match = jobs.find(
     (j) =>
-      j.id.toUpperCase() === clean ||
-      (digits.length >= 4 && j.customer_phone.includes(digits)) ||
-      j.customer_name.toUpperCase().includes(clean)
+      j.id.toUpperCase() === cleanId &&
+      j.customer_phone.replace(/\D/g, "").endsWith(cleanPhone)
   );
 
   return match || null;
+}
+
+export async function findRepairJob(query: string, phoneLast4?: string): Promise<RepairJob | null> {
+  if (phoneLast4) {
+    return findRepairJobSecure(query, phoneLast4);
+  }
+  return null;
 }
 
 export async function createRepairJob(job: Omit<RepairJob, "created_at" | "updated_at">): Promise<RepairJob> {
