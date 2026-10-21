@@ -31,6 +31,7 @@ import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
+import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 
 
 export const Route = createFileRoute("/")({
@@ -286,21 +287,51 @@ function HomePage() {
         <BackgroundFX />
         <Header isHomePage={true} />
         <main id="main" className="w-full max-w-full overflow-x-clip overflow-y-visible">
-          <Hero />
-          <LabTrustStrip />
-          <RepairEstimator />
-          <TrustBar />
-          <About />
-          <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
-          <PricingMatrix />
-          <WhyUs />
-          <Gallery />
-          <BeforeAfterSlider />
-          <DailyUpdatesSection />
-          <SafeReviewsSection />
-          <LocalFaqSection />
-          <Contact />
-          <VisitStore />
+          <SmoothSectionReveal delayMs={0}>
+            <Hero />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={50}>
+            <LabTrustStrip />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <RepairEstimator />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={50}>
+            <TrustBar />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <About />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <Services activeCategory={serviceCategory} onSelectCategory={setServiceCategory} />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <PricingMatrix />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <WhyUs />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <Gallery />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <BeforeAfterSlider />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <DailyUpdatesSection />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <SafeReviewsSection />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <LocalFaqSection />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <Contact />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={100}>
+            <VisitStore />
+          </SmoothSectionReveal>
         </main>
 
         <Footer />
@@ -327,10 +358,10 @@ function HomePage() {
 
 function BackgroundFX() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden max-w-full">
-      <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-primary/20 blur-[140px]" />
-      <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-accent/20 blur-[120px]" />
-      <div className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden max-w-full gpu-layer">
+      <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-primary/20 blur-[140px] will-change-transform" />
+      <div className="absolute top-[40%] -right-40 h-[500px] w-[500px] rounded-full bg-accent/20 blur-[120px] will-change-transform" />
+      <div className="absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px] will-change-transform" />
     </div>
   );
 }

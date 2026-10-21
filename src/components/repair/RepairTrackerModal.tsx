@@ -96,6 +96,7 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
       onClick={onClose}
     >
       <div
+        data-lenis-prevent
         className="w-full max-w-xl bg-slate-950 border border-slate-800 rounded-3xl p-5 sm:p-7 space-y-5 shadow-2xl relative text-white max-h-[92vh] overflow-y-auto no-scrollbar"
         onClick={(e) => e.stopPropagation()}
       >

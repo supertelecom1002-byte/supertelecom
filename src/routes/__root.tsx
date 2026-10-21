@@ -26,6 +26,7 @@ import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
 import { LauncherProvider } from "@/context/LauncherContext";
 import { GamingModeProvider } from "@/context/GamingModeContext";
 import { VipPerksModal } from "@/components/auth/VipPerksModal";
+import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 
 function NotFoundComponent() {
   return (
@@ -441,14 +442,16 @@ function RootComponent() {
             <AdminAuthProvider>
               <CustomerAuthProvider>
                 <VisualEditorProvider>
-                  <Outlet />
-                  <LiveEditorBar />
-                  <FloatingAiChat />
-                  <BottomNav />
-                  <UpdateBanner />
-                  <VipPerksModal />
-                  <Toaster position="top-center" richColors />
-                  <CookieBanner />
+                  <SmoothScrollProvider>
+                    <Outlet />
+                    <LiveEditorBar />
+                    <FloatingAiChat />
+                    <BottomNav />
+                    <UpdateBanner />
+                    <VipPerksModal />
+                    <Toaster position="top-center" richColors />
+                    <CookieBanner />
+                  </SmoothScrollProvider>
                 </VisualEditorProvider>
               </CustomerAuthProvider>
             </AdminAuthProvider>

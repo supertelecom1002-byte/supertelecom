@@ -128,6 +128,7 @@ export const TurboCleanModal: React.FC<TurboCleanModalProps> = ({
       onClick={onClose}
     >
       <div
+        data-lenis-prevent
         className="bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 w-full max-w-md text-white shadow-2xl relative"
         onClick={(e) => e.stopPropagation()}
       >

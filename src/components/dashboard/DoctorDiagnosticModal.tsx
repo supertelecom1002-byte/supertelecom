@@ -250,6 +250,7 @@ export const DoctorDiagnosticModal: React.FC<DoctorDiagnosticModalProps> = ({
       onClick={onClose}
     >
       <div
+        data-lenis-prevent
         className="w-full max-w-lg bg-white dark:bg-[#030712] border border-emerald-500/30 rounded-3xl p-5 sm:p-6 shadow-2xl relative text-slate-900 dark:text-white max-h-[92dvh] overflow-y-auto no-scrollbar"
         onClick={(e) => e.stopPropagation()}
       >

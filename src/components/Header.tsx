@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
       {/* ========================================================= */}
       <nav
         aria-label="Desktop Navigation"
-        className="hidden md:flex h-[68px] sticky top-0 z-50 w-full backdrop-blur-xl bg-white/90 dark:bg-slate-950/85 border-b border-slate-200 dark:border-slate-800/80 transition-all duration-300 items-center"
+        className="hidden md:flex h-[68px] sticky top-0 z-50 w-full backdrop-blur-md bg-white/85 dark:bg-slate-950/75 border-b border-slate-200/80 dark:border-cyan-500/20 shadow-sm dark:shadow-[0_4px_24px_rgba(6,182,212,0.06)] transition-all duration-300 items-center gpu-layer will-change-transform"
       >
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6">
           {/* Left: Brand Monogram + Title + Live Status */}

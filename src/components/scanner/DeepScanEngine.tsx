@@ -440,7 +440,10 @@ export const DeepScanEngine: React.FC<DeepScanEngineProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 text-slate-100 rounded-3xl shadow-2xl shadow-cyan-950/40 overflow-hidden">
+      <div
+        data-lenis-prevent
+        className="relative w-full max-w-lg max-h-[92vh] flex flex-col bg-slate-900 border border-slate-800 text-slate-100 rounded-3xl shadow-2xl shadow-cyan-950/40 overflow-hidden"
+      >
         {/* Top Glow bar */}
         <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400" />
 

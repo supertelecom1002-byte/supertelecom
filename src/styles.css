@@ -287,3 +287,56 @@
 @utility shadow-brand {
   box-shadow: var(--shadow-brand);
 }
+
+/* ========================================================= */
+/* LENIS INERTIAL SMOOTH SCROLL ENGINE & GPU ACCELERATION    */
+/* ========================================================= */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* 120fps GPU Hardware Acceleration Classes */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Stonic-style Smooth Hover & Transition */
+.stonic-interactive {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.35s ease;
+}
+
+.stonic-interactive:hover {
+  transform: translateY(-3px) scale(1.005);
+}
+
+.stonic-interactive:active {
+  transform: translateY(0) scale(0.98);
+}

@@ -344,6 +344,7 @@ export const LabToolsHub: React.FC<LabToolsHubProps> = ({
         onClick={onClose}
       >
         <div
+          data-lenis-prevent
           className="relative max-w-4xl w-full max-h-[92vh] md:max-h-[85vh] bg-[#020617] border border-cyan-500/30 rounded-t-3xl md:rounded-3xl p-4 sm:p-6 shadow-2xl flex flex-col gap-4 text-white overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
