@@ -294,7 +294,7 @@ export const PricingMatrix: React.FC = () => {
                 {category.rows.map((row, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col justify-between rounded-2xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2 hover:border-cyan-500/40 transition-colors"
+                    className="flex flex-col justify-between rounded-2xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2 card-hover-lift"
                   >
                     <div>
                       <h4 className="font-bold text-white text-xs leading-tight line-clamp-2">

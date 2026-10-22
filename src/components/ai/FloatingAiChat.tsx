@@ -126,6 +126,12 @@ export const FloatingAiChat: React.FC = () => {
   const lookupStatus = useServerFn(lookupRepairStatus);
 
   useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("st:open-chat", handleOpen);
+    return () => window.removeEventListener("st:open-chat", handleOpen);
+  }, []);
+
+  useEffect(() => {
     window.dispatchEvent(
       new CustomEvent("st:chat-toggle", { detail: { open: isOpen } })
     );
@@ -335,20 +341,20 @@ export const FloatingAiChat: React.FC = () => {
 
   return (
     <>
-      {/* Persistent Floating Trigger Button */}
-      <div className="fixed bottom-24 right-4 z-40 md:bottom-8 md:right-8">
+      {/* Mobile-Only Floating Trigger Button (Desktop is integrated in Unified Floating Dock) */}
+      <div className="fixed bottom-20 right-4 z-40 md:hidden">
         {!isOpen && (
           <button
             type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Open Super Telecom AI Assistant"
-            className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95"
+            className="group relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
             {/* Active Pulsing Ring */}
             <span className="absolute -inset-1 rounded-full bg-cyan-400/40 animate-ping pointer-events-none" />
-            <Bot className="h-6 w-6 transition-transform group-hover:rotate-6" />
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950">
-              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+            <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
+            <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 border-2 border-slate-950">
+              <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
             </span>
           </button>
         )}

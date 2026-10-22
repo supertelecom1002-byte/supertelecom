@@ -7,7 +7,7 @@ import {
   Phone, MessageCircle, MapPin, Calendar, Star, Clock, Shield, Award, Wrench,
   Smartphone, Battery, Zap, Volume2, Mic, Camera, Cpu, Wifi, Download, Droplet,
   Fingerprint, RefreshCw, HardDrive, Headphones, Watch, Cable, ShieldCheck,
-  Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X,
+  Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X, Bot,
 } from "lucide-react";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
@@ -32,6 +32,7 @@ import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
+import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { lazy, Suspense } from "react";
 
 // Lazy-load 3D Smartphone Teardown Experience
@@ -311,6 +312,11 @@ function HomePage() {
             <SmartphoneTeardown3D />
           </Suspense>
 
+          {/* Interactive Visual Fault Finder ("अपनी समस्या चुनें") */}
+          <SmoothSectionReveal delayMs={60}>
+            <VisualFaultFinder />
+          </SmoothSectionReveal>
+
           <SmoothSectionReveal delayMs={100}>
             <RepairEstimator />
           </SmoothSectionReveal>
@@ -537,7 +543,7 @@ function Services({
 
         <div className="mt-6 sm:mt-10 grid grid-cols-2 gap-2.5 sm:gap-5 px-1 sm:px-0 lg:grid-cols-3 xl:grid-cols-4">
           {filteredServices.map(([Icon, title, desc, _cat, slug, duration]) => (
-            <div key={title} className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl glass p-3 sm:p-6 transition-all active:scale-95 hover:-translate-y-1 hover:shadow-glow min-h-[48px]">
+            <div key={title} className="group relative flex flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl glass p-3 sm:p-6 transition-all active:scale-95 card-hover-lift min-h-[48px]">
               <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-brand opacity-0 blur-3xl transition-opacity group-hover:opacity-40" />
               <div className="relative">
                 <div className="grid h-8 w-8 sm:h-12 sm:w-12 place-items-center rounded-xl sm:rounded-2xl bg-gradient-brand shadow-brand">
@@ -933,51 +939,83 @@ function Field({ label, name, type = "text", required, className = "" }: any) {
 const Footer = SiteFooter;
 
 function FloatingActions() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const on = () => setShow(window.scrollY > 400);
-    on();
-    window.addEventListener("scroll", on);
-    return () => window.removeEventListener("scroll", on);
-  }, []);
-  return (
-    <div className="hidden md:flex fixed bottom-6 right-6 z-40 flex-col gap-3">
+  const [showTop, setShowTop] = useState(false);
 
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleOpenAiBot = () => {
+    window.dispatchEvent(new CustomEvent("st:open-chat"));
+  };
+
+  return (
+    <aside
+      aria-label="Quick Communication Dock"
+      className="hidden md:flex fixed bottom-6 right-6 z-40 items-center gap-1.5 p-1.5 rounded-full bg-slate-950/90 border border-slate-800 shadow-2xl backdrop-blur-xl ring-1 ring-cyan-500/20 select-none animate-in fade-in slide-in-from-bottom-3 duration-300"
+    >
+      {/* 1. WhatsApp Action */}
       <a
-        href={`https://wa.me/${WHATSAPP}`}
+        href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20assistance%20with%20my%20phone%20repair`}
         target="_blank"
-        rel="noreferrer"
+        rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
-        className="group relative grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-white shadow-elegant transition-transform hover:scale-110"
+        title="WhatsApp Super Telecom"
+        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
-        <MessageCircle className="h-6 w-6" />
-        <span className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-emerald-500 opacity-40 blur-xl animate-glow" />
+        <MessageCircle className="h-5 w-5" />
       </a>
+
+      {/* 2. Direct Call Action */}
       <a
         href={`tel:${PHONE}`}
-        aria-label="Call now"
-        className="grid h-14 w-14 place-items-center rounded-full bg-gradient-brand text-primary-foreground shadow-brand transition-transform hover:scale-110"
+        aria-label="Call Super Telecom Technician"
+        title={`Call ${PHONE_DISPLAY}`}
+        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
-        <Phone className="h-6 w-6" />
+        <Phone className="h-5 w-5" />
       </a>
+
+      {/* 3. Direct Email Action */}
       <a
         href={`mailto:${EMAIL}`}
-        aria-label="Email us"
-        className="grid h-14 w-14 place-items-center rounded-full glass-strong text-white shadow-elegant transition-transform hover:scale-110"
+        aria-label="Email Super Telecom"
+        title={`Email ${EMAIL}`}
+        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:bg-slate-700 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
-        <Mail className="h-6 w-6" />
+        <Mail className="h-4 w-4" />
       </a>
-      {show && (
+
+      {/* 4. AI Assistant Bot Action */}
+      <button
+        type="button"
+        onClick={handleOpenAiBot}
+        aria-label="Open Super Telecom AI Assistant"
+        title="Ask Super Telecom AI"
+        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer"
+      >
+        <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
+        <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+        </span>
+      </button>
+
+      {/* 5. Back to Top Action */}
+      {showTop && (
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Back to top"
-          className="grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-transform hover:scale-110"
+          aria-label="Scroll back to top"
+          title="Back to top"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
         >
-          <ChevronDown className="h-5 w-5 rotate-180" />
+          <ChevronDown className="h-4 w-4 rotate-180" />
         </button>
       )}
-    </div>
+    </aside>
   );
 }
 

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Star, PenLine, ExternalLink, MessageCircle, X, ShieldCheck } from "lucide-react";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
 export interface ReviewItem {
   id?: string;
@@ -127,7 +128,7 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
 
                 <div className="flex items-center gap-2.5 w-full sm:w-auto">
                   <a
-                    href="https://maps.app.goo.gl/mu5XXCehEpocaZWY9"
+                    href={BUSINESS_MASTER.googleReviewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-xs sm:text-sm font-bold text-primary-foreground shadow-brand transition-all hover:scale-[1.02] active:scale-95"
@@ -161,34 +162,8 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
 }
 
 export const ReviewsSection: React.FC = () => {
-  const [reviews, setReviews] = useState<ReviewItem[]>(DEFAULT_REVIEWS);
+  const [reviews] = useState<ReviewItem[]>(DEFAULT_REVIEWS);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchLiveReviews = async () => {
-      try {
-        if (typeof window === "undefined") return;
-        const res = await fetch("https://htat.vercel.app/api/reviews?slug=supertelecom");
-        if (!res.ok) return;
-        const contentType = res.headers.get("content-type") || "";
-        if (!contentType.includes("application/json")) return;
-        const data = await res.json();
-        if (mounted && Array.isArray(data) && data.length > 0) {
-          setReviews(data);
-        }
-      } catch (err) {
-        console.warn("Reviews fetch bypassed, using default testimonials", err);
-      }
-    };
-
-    fetchLiveReviews();
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const safeReviews = Array.isArray(reviews) && reviews.length > 0 ? reviews : DEFAULT_REVIEWS;
 
@@ -315,7 +290,7 @@ export const ReviewsSection: React.FC = () => {
 
             <div className="space-y-3 pt-1">
               <a
-                href="https://maps.app.goo.gl/mu5XXCehEpocaZWY9"
+                href={BUSINESS_MASTER.googleReviewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-between p-3.5 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground transition-all group"
@@ -340,7 +315,7 @@ export const ReviewsSection: React.FC = () => {
               </a>
 
               <a
-                href="https://wa.me/918002903643?text=Hi%20Super%20Telecom,%20I%20would%20like%20to%20give%20feedback%20about%20my%20recent%20mobile%20repair"
+                href={`https://wa.me/${BUSINESS_MASTER.contact.whatsappRaw || "918002903643"}?text=Hi%20Super%20Telecom,%20I%20would%20like%20to%20give%20feedback%20about%20my%20recent%20mobile%20repair`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-foreground transition-all"
