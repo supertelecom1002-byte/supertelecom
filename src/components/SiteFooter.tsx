@@ -492,3 +492,6 @@ export function SiteFooter() {
     </>
   );
 }
+
+export { SiteFooter as Footer };
+export default SiteFooter;

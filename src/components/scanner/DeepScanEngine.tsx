@@ -791,3 +791,5 @@ export const DeepScanEngine: React.FC<DeepScanEngineProps> = ({
     </div>
   );
 };
+
+export default DeepScanEngine;
