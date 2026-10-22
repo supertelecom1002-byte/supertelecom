@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import { useRouterState } from "@tanstack/react-router";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin safely
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface SmoothScrollProviderProps {
   children: React.ReactNode;
@@ -26,30 +33,42 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
       smoothWheel: true,
       wheelMultiplier: 0.9,   // Controlled wheel response
       touchMultiplier: 1.5,   // Fluid touch response
-      autoRaf: false,         // Managed via explicit requestAnimationFrame loop
+      autoRaf: false,         // Managed via GSAP ticker
     });
 
     lenisRef.current = lenis;
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
+    // Synchronize Lenis with GSAP ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
+
+    const tickerCb = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(tickerCb);
+    gsap.ticker.lagSmoothing(0);
+
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
 
     return () => {
-      cancelAnimationFrame(rafId);
+      clearTimeout(refreshTimer);
+      gsap.ticker.remove(tickerCb);
       lenis.destroy();
       lenisRef.current = null;
     };
   }, []);
 
-  // Instant scroll-to-top on route navigation
+  // Instant scroll-to-top on route navigation and refresh ScrollTrigger pinned triggers
   useEffect(() => {
     if (lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
     }
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+    return () => clearTimeout(timer);
   }, [pathname]);
 
   return <>{children}</>;

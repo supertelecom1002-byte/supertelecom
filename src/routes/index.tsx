@@ -32,6 +32,12 @@ import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
 import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
+import { lazy, Suspense } from "react";
+
+// Lazy-load 3D Smartphone Teardown Experience
+const SmartphoneTeardown3D = lazy(
+  () => import("@/components/three/SmartphoneTeardown3D")
+);
 
 
 export const Route = createFileRoute("/")({
@@ -293,6 +299,18 @@ function HomePage() {
           <SmoothSectionReveal delayMs={50}>
             <LabTrustStrip />
           </SmoothSectionReveal>
+
+          {/* 14-Point Scroll-Driven 3D Smartphone Teardown Experience */}
+          <Suspense
+            fallback={
+              <div className="w-full h-96 bg-slate-950 flex items-center justify-center text-cyan-400 font-mono text-sm">
+                Loading 3D Smartphone Teardown Experience...
+              </div>
+            }
+          >
+            <SmartphoneTeardown3D />
+          </Suspense>
+
           <SmoothSectionReveal delayMs={100}>
             <RepairEstimator />
           </SmoothSectionReveal>
