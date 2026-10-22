@@ -33,13 +33,36 @@ import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
 import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
-import { lazy, Suspense } from "react";
+import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
+import React, { lazy, Suspense } from "react";
 
-// Lazy-load 3D Smartphone Teardown Experience with resilient export fallback
+class SectionErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any) {
+    console.warn("Section boundary caught error:", error);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback || null;
+    return this.props.children;
+  }
+}
+
+// Lazy-load 3D Smartphone Teardown Experience with resilient export & catch fallback
 const SmartphoneTeardown3D = lazy(() =>
-  import("@/components/three/SmartphoneTeardown3D").then((m) => ({
-    default: m.default || m.SmartphoneTeardown3D,
-  }))
+  import("@/components/three/SmartphoneTeardown3D")
+    .then((m) => ({
+      default: m.default || m.SmartphoneTeardown3D || Smartphone3DFallback,
+    }))
+    .catch((err) => {
+      console.warn("3D Teardown chunk failed to load, falling back to static 3D card:", err);
+      return { default: Smartphone3DFallback };
+    })
 );
 
 
@@ -304,15 +327,11 @@ function HomePage() {
           </SmoothSectionReveal>
 
           {/* 14-Point Scroll-Driven 3D Smartphone Teardown Experience */}
-          <Suspense
-            fallback={
-              <div className="w-full h-96 bg-slate-950 flex items-center justify-center text-cyan-400 font-mono text-sm">
-                Loading 3D Smartphone Teardown Experience...
-              </div>
-            }
-          >
-            <SmartphoneTeardown3D />
-          </Suspense>
+          <SectionErrorBoundary fallback={<Smartphone3DFallback />}>
+            <Suspense fallback={<Smartphone3DFallback />}>
+              <SmartphoneTeardown3D />
+            </Suspense>
+          </SectionErrorBoundary>
 
           {/* Interactive Visual Fault Finder ("अपनी समस्या चुनें") */}
           <SmoothSectionReveal delayMs={60}>
@@ -360,7 +379,7 @@ function HomePage() {
           </SmoothSectionReveal>
         </main>
 
-        <Footer />
+        <SiteFooter />
         <FloatingActions />
 
         <DeepScanEngine
@@ -937,8 +956,6 @@ function Field({ label, name, type = "text", required, className = "" }: any) {
     </div>
   );
 }
-
-const Footer = SiteFooter;
 
 function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
