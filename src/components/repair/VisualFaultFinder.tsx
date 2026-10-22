@@ -327,7 +327,7 @@ export const VisualFaultFinder: React.FC = () => {
 
               <div className="space-y-2.5">
                 <a
-                  href={`https://wa.me/${BUSINESS_MASTER.contact.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
+                  href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || BUSINESS_MASTER?.contact?.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
                     `Namaste Super Telecom! Mera phone repair karwana hai. Problem: ${activeFault.hindiTitle} (${activeFault.englishTitle}). Kripya estimate aur availability batayein.`
                   )}`}
                   target="_blank"

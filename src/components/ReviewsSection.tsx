@@ -315,7 +315,7 @@ export const ReviewsSection: React.FC = () => {
               </a>
 
               <a
-                href={`https://wa.me/${BUSINESS_MASTER.contact.whatsappRaw || "918002903643"}?text=Hi%20Super%20Telecom,%20I%20would%20like%20to%20give%20feedback%20about%20my%20recent%20mobile%20repair`}
+                href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || BUSINESS_MASTER?.contact?.whatsappRaw || "918002903643"}?text=Hi%20Super%20Telecom,%20I%20would%20like%20to%20give%20feedback%20about%20my%20recent%20mobile%20repair`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-between p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-foreground transition-all"

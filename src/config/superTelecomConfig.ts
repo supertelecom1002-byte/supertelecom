@@ -28,14 +28,35 @@ export const BUSINESS_MASTER = {
   countryCode: "IN",
   fullAddress: "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301, India",
   
-  // Communications
+  // Communications & Direct Contact Fallbacks
+  phone: "+91 80029 03643",
   phoneDisplay: "+91 80029 03643",
   phoneRaw: "+918002903643",
+  phoneDigits: "8002903643",
+  phoneInternational: "+918002903643",
   phoneCallHref: "tel:+918002903643",
+  whatsapp: "+91 80029 03643",
+  whatsappRaw: "918002903643",
   whatsappNumber: "918002903643",
+  whatsappUrl: "https://wa.me/918002903643",
   whatsappBaseUrl: "https://wa.me/918002903643",
   email: "supertelecom1002@gmail.com",
   emailHref: "mailto:supertelecom1002@gmail.com",
+
+  // Nested contact object for complete backward & forward compatibility
+  contact: {
+    phone: "+91 80029 03643",
+    phoneDisplay: "+91 80029 03643",
+    phoneRaw: "+918002903643",
+    phoneDigits: "8002903643",
+    whatsapp: "+91 80029 03643",
+    whatsappRaw: "918002903643",
+    whatsappNumber: "918002903643",
+    whatsappUrl: "https://wa.me/918002903643",
+    whatsappBaseUrl: "https://wa.me/918002903643",
+    email: "supertelecom1002@gmail.com",
+    emailHref: "mailto:supertelecom1002@gmail.com",
+  },
   
   // Online Locations
   siteUrl: "https://www.supertelecom.shop",

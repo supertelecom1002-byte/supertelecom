@@ -847,7 +847,7 @@ function SmartphoneProceduralRig({
 
                   {/* Direct WhatsApp Booking Button */}
                   <a
-                    href={`https://wa.me/${BUSINESS_MASTER.contact.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
+                    href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || BUSINESS_MASTER?.contact?.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
                       `Hi Super Telecom, I saw your 3D smartphone teardown and need repair for: ${callout.englishTitle} (${callout.hindiTitle}). Please share final quote & turnaround time.`
                     )}`}
                     target="_blank"
