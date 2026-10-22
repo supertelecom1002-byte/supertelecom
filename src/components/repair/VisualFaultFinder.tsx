@@ -173,7 +173,7 @@ const FAULTS: FaultItem[] = [
   },
 ];
 
-export const VisualFaultFinder: React.FC = () => {
+const VisualFaultFinder: React.FC = () => {
   const [selectedFaultId, setSelectedFaultId] = useState<string>("screen");
 
   const activeFault = FAULTS.find((f) => f.id === selectedFaultId) || FAULTS[0];
@@ -357,4 +357,5 @@ export const VisualFaultFinder: React.FC = () => {
   );
 };
 
+export { VisualFaultFinder };
 export default VisualFaultFinder;

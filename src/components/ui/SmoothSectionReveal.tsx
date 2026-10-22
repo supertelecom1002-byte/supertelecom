@@ -7,7 +7,7 @@ interface SmoothSectionRevealProps {
   threshold?: number;
 }
 
-export const SmoothSectionReveal: React.FC<SmoothSectionRevealProps> = ({
+const SmoothSectionReveal: React.FC<SmoothSectionRevealProps> = ({
   children,
   className = "",
   delayMs = 0,
@@ -67,4 +67,5 @@ export const SmoothSectionReveal: React.FC<SmoothSectionRevealProps> = ({
   );
 };
 
+export { SmoothSectionReveal };
 export default SmoothSectionReveal;

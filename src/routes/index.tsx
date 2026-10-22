@@ -35,9 +35,11 @@ import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { lazy, Suspense } from "react";
 
-// Lazy-load 3D Smartphone Teardown Experience
-const SmartphoneTeardown3D = lazy(
-  () => import("@/components/three/SmartphoneTeardown3D")
+// Lazy-load 3D Smartphone Teardown Experience with resilient export fallback
+const SmartphoneTeardown3D = lazy(() =>
+  import("@/components/three/SmartphoneTeardown3D").then((m) => ({
+    default: m.default || m.SmartphoneTeardown3D,
+  }))
 );
 
 

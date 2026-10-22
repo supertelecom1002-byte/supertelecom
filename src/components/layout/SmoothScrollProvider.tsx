@@ -13,7 +13,7 @@ interface SmoothScrollProviderProps {
   children: React.ReactNode;
 }
 
-export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children }) => {
+const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children }) => {
   const lenisRef = useRef<Lenis | null>(null);
   const routerState = useRouterState();
   const pathname = routerState.location.pathname;
@@ -74,4 +74,5 @@ export const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ chil
   return <>{children}</>;
 };
 
+export { SmoothScrollProvider };
 export default SmoothScrollProvider;

@@ -906,7 +906,7 @@ function Smartphone3DFallback() {
 // MAIN SCROLL-DRIVEN 3D TEARDOWN CONTROLLER (550vh PINNED CONTAINER)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const SmartphoneTeardown3D: React.FC = () => {
+const SmartphoneTeardown3D: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -914,6 +914,11 @@ export const SmartphoneTeardown3D: React.FC = () => {
   const [activeCallout, setActiveCallout] = useState<string | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
   const [isInView, setIsInView] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Check WebGL availability
   useEffect(() => {
@@ -1068,7 +1073,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
         {/* THREE.JS WEBGL CANVAS (HIGH-CONTRAST STUDIO LIGHTING)         */}
         {/* ───────────────────────────────────────────────────────────── */}
         <div className="relative flex-1 w-full h-full min-h-[300px]">
-          {webglSupported && isInView ? (
+          {isMounted && webglSupported && isInView ? (
             <Suspense
               fallback={
                 <div className="h-full w-full grid place-items-center text-cyan-400 font-mono text-sm">
@@ -1194,4 +1199,5 @@ export const SmartphoneTeardown3D: React.FC = () => {
   );
 };
 
+export { SmartphoneTeardown3D };
 export default SmartphoneTeardown3D;
