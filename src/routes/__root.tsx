@@ -13,20 +13,7 @@ import { Home, Phone, MessageCircle, Wrench, ArrowRight, Compass } from "lucide-
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
-import { AdminAuthProvider } from "@/context/AdminAuthContext";
-import { AnnouncementBanner } from "@/components/public/AnnouncementBanner";
-import { VisualEditorProvider } from "@/context/VisualEditorContext";
-import { LiveEditorBar } from "@/components/admin/visual/LiveEditorBar";
-import { BottomNav } from "@/components/BottomNav";
-import { FloatingAiChat } from "@/components/ai/FloatingAiChat";
-import { UpdateBanner } from "@/components/app/UpdateBanner";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
-import { LauncherProvider } from "@/context/LauncherContext";
-import { GamingModeProvider } from "@/context/GamingModeContext";
-import { VipPerksModal } from "@/components/auth/VipPerksModal";
-import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
+import { GlobalAppShell } from "@/components/layout/GlobalAppShell";
 
 function NotFoundComponent() {
   return (
@@ -436,28 +423,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <LauncherProvider>
-          <GamingModeProvider>
-            <AdminAuthProvider>
-              <CustomerAuthProvider>
-                <VisualEditorProvider>
-                  <SmoothScrollProvider>
-                    <Outlet />
-                    <LiveEditorBar />
-                    <FloatingAiChat />
-                    <BottomNav />
-                    <UpdateBanner />
-                    <VipPerksModal />
-                    <Toaster position="top-center" richColors />
-                    <CookieBanner />
-                  </SmoothScrollProvider>
-                </VisualEditorProvider>
-              </CustomerAuthProvider>
-            </AdminAuthProvider>
-          </GamingModeProvider>
-        </LauncherProvider>
-      </ThemeProvider>
+      <GlobalAppShell>
+        <Outlet />
+        <CookieBanner />
+      </GlobalAppShell>
     </QueryClientProvider>
   );
 }
