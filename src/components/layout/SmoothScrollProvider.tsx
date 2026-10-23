@@ -16,7 +16,7 @@ interface SmoothScrollProviderProps {
 const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children }) => {
   const lenisRef = useRef<Lenis | null>(null);
   const routerState = useRouterState();
-  const pathname = routerState.location.pathname;
+  const pathname = routerState?.location?.pathname || "/";
 
   useEffect(() => {
     // Check user preference for reduced motion

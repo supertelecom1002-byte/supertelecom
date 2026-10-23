@@ -34,7 +34,7 @@ import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticMo
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
-import React, { lazy, Suspense } from "react";
+import React from "react";
 
 class SectionErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
@@ -53,17 +53,37 @@ class SectionErrorBoundary extends React.Component<
   }
 }
 
-// Lazy-load 3D Smartphone Teardown Experience with resilient export & catch fallback
-const SmartphoneTeardown3D = lazy(() =>
-  import("@/components/three/SmartphoneTeardown3D")
-    .then((m) => ({
-      default: m.default || m.SmartphoneTeardown3D || Smartphone3DFallback,
-    }))
-    .catch((err) => {
-      console.warn("3D Teardown chunk failed to load, falling back to static 3D card:", err);
-      return { default: Smartphone3DFallback };
-    })
-);
+// Safe client-loaded 3D Smartphone Teardown Experience with instant fallback
+function SmartphoneTeardownSection() {
+  const [Component, setComponent] = useState<React.ComponentType | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    import("@/components/three/SmartphoneTeardown3D")
+      .then((m) => {
+        if (active) {
+          const Comp = m.default || m.SmartphoneTeardown3D || Smartphone3DFallback;
+          setComponent(() => Comp);
+        }
+      })
+      .catch((err) => {
+        console.warn("3D Teardown load failure:", err);
+        if (active) {
+          setComponent(() => Smartphone3DFallback);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!Component) {
+    return <Smartphone3DFallback />;
+  }
+
+  const Rendered = Component;
+  return <Rendered />;
+}
 
 
 export const Route = createFileRoute("/")({
@@ -328,9 +348,7 @@ function HomePage() {
 
           {/* 14-Point Scroll-Driven 3D Smartphone Teardown Experience */}
           <SectionErrorBoundary fallback={<Smartphone3DFallback />}>
-            <Suspense fallback={<Smartphone3DFallback />}>
-              <SmartphoneTeardown3D />
-            </Suspense>
+            <SmartphoneTeardownSection />
           </SectionErrorBoundary>
 
           {/* Interactive Visual Fault Finder ("अपनी समस्या चुनें") */}
