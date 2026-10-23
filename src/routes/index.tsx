@@ -352,9 +352,11 @@ function HomePage() {
           </SectionErrorBoundary>
 
           {/* Interactive Visual Fault Finder ("अपनी समस्या चुनें") */}
-          <SmoothSectionReveal delayMs={60}>
-            <VisualFaultFinder />
-          </SmoothSectionReveal>
+          <SectionErrorBoundary>
+            <SmoothSectionReveal delayMs={60}>
+              <VisualFaultFinder />
+            </SmoothSectionReveal>
+          </SectionErrorBoundary>
 
           <SmoothSectionReveal delayMs={100}>
             <RepairEstimator />

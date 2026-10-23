@@ -56,6 +56,7 @@ const FAULTS: FaultItem[] = [
     id: "dead-phone",
     hindiTitle: "फोन ऑन नहीं हो रहा / डेड फोन",
     englishTitle: "Dead Phone & Motherboard IC Fault",
+    icon: Zap,
     symptoms: [
       "पावर बटन दबाने पर कोई रिस्पॉन्स न होना",
       "सिर्फ लोगो (Logo) पर फोन अटक जाना (Bootloop)",
@@ -73,6 +74,7 @@ const FAULTS: FaultItem[] = [
     id: "battery",
     hindiTitle: "बैटरी जल्दी खत्म होना या फूलना",
     englishTitle: "Battery Drain, Heating & Swelling",
+    icon: BatteryCharging,
     symptoms: [
       "100% से अचानक 30% पर बैटरी गिर जाना",
       "फोन का पिछला ढक्कन (Back Panel) ऊपर उठना",
@@ -90,6 +92,7 @@ const FAULTS: FaultItem[] = [
     id: "charging",
     hindiTitle: "चार्जिंग पिन ढीला या स्लो चार्जिंग",
     englishTitle: "Loose Charging Jack & Slow Charging",
+    icon: PlugZap,
     symptoms: [
       "केबल को किसी खास एंगल पर दबाने से ही चार्ज होना",
       "चार्जिंग शो करना लेकिन पर्सेंटेज न बढ़ना (Fake Charging)",
@@ -107,6 +110,7 @@ const FAULTS: FaultItem[] = [
     id: "water-damage",
     hindiTitle: "पानी या चाय में फोन गिर जाना",
     englishTitle: "Liquid Ingress & Water Damage",
+    icon: Droplets,
     symptoms: [
       "कैमरा लेंस के अंदर भाप (Moisture) जमना",
       "डिस्प्ले में रंगीन धब्बे या स्क्रीन ब्लैंक होना",
@@ -124,6 +128,7 @@ const FAULTS: FaultItem[] = [
     id: "camera",
     hindiTitle: "कैमरा धुंधला या लेंस शीशा टूटना",
     englishTitle: "Blurry Camera, OIS Shaking & Lens Crack",
+    icon: Camera,
     symptoms: [
       "फोटो खींचते समय कैमरा का कांपना (Vibrating / Buzzing)",
       "तस्वीरें धुंधली (Blurry) आना और फोकस न होना",
@@ -141,6 +146,7 @@ const FAULTS: FaultItem[] = [
     id: "sound",
     hindiTitle: "माइक या स्पीकर से आवाज़ न आना",
     englishTitle: "No Sound, Muffled Mic & Earpiece Low",
+    icon: Volume2,
     symptoms: [
       "कॉल के दौरान सामने वाले को आपकी आवाज न जाना",
       "कान वाले स्पीकर (Earpiece) की आवाज बहुत धीमी होना",
@@ -158,6 +164,7 @@ const FAULTS: FaultItem[] = [
     id: "body",
     hindiTitle: "बैक ग्लास टूटा या बॉडी डैमेज",
     englishTitle: "Cracked Back Glass & Frame Bend",
+    icon: ShieldAlert,
     symptoms: [
       "फोन का पिछला ग्लास टूट कर हाथ में चुभना",
       "फोन का फ्रेम मुड़ जाना (Bent Chassis)",
@@ -203,7 +210,7 @@ const VisualFaultFinder: React.FC = () => {
         {/* 8-Card Interactive Grid */}
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {FAULTS.map((fault) => {
-            const Icon = fault.icon;
+            const Icon = fault.icon || Smartphone;
             const isSelected = selectedFaultId === fault.id;
 
             return (

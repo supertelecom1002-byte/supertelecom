@@ -212,4 +212,4 @@ export const useVisualEditor = () => {
   return context;
 };
 
-export default VisualEditorContext;
+export default VisualEditorProvider;
