@@ -69,6 +69,7 @@ const BUY_SELL_LINKS: { label: string; to: string }[] = [
 
 const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "Home", to: "/" },
+  { label: "SmartFinder AI", to: "/smartfinder" },
   { label: "About Us", to: "/about" },
   { label: "Services", to: "/", hash: "services" },
   { label: "Pricing", to: "/pricing" },

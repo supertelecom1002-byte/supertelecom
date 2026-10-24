@@ -24,6 +24,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SitemapRouteImport } from './routes/sitemap'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SmartfinderRouteImport } from './routes/smartfinder'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TrackRouteImport } from './routes/track'
@@ -121,6 +122,11 @@ const SitemapRoute = SitemapRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SmartfinderRoute = SmartfinderRouteImport.update({
+  id: '/smartfinder',
+  path: '/smartfinder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -264,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/smartfinder': typeof SmartfinderRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/smartfinder': typeof SmartfinderRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
@@ -341,6 +349,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRouteWithChildren
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/smartfinder': typeof SmartfinderRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
@@ -383,6 +392,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap'
     | '/sitemap.xml'
+    | '/smartfinder'
     | '/terms'
     | '/tools'
     | '/track'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/sitemap'
     | '/sitemap.xml'
+    | '/smartfinder'
     | '/terms'
     | '/tools'
     | '/track'
@@ -459,6 +470,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap'
     | '/sitemap.xml'
+    | '/smartfinder'
     | '/terms'
     | '/tools'
     | '/track'
@@ -500,6 +512,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRouteWithChildren
   SitemapRoute: typeof SitemapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SmartfinderRoute: typeof SmartfinderRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   TrackRoute: typeof TrackRoute
@@ -615,6 +628,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/smartfinder': {
+      id: '/smartfinder'
+      path: '/smartfinder'
+      fullPath: '/smartfinder'
+      preLoaderRoute: typeof SmartfinderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -878,6 +898,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRouteWithChildren,
   SitemapRoute: SitemapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SmartfinderRoute: SmartfinderRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   TrackRoute: TrackRoute,

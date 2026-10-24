@@ -34,6 +34,7 @@ import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticMo
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
+import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
 import React from "react";
 
 class SectionErrorBoundary extends React.Component<
@@ -355,6 +356,15 @@ function HomePage() {
           <SectionErrorBoundary>
             <SmoothSectionReveal delayMs={60}>
               <VisualFaultFinder />
+            </SmoothSectionReveal>
+          </SectionErrorBoundary>
+
+          {/* SmartFinder AI Discovery, Scanner & Resale Valuation Engine */}
+          <SectionErrorBoundary>
+            <SmoothSectionReveal delayMs={75}>
+              <section id="smartfinder" className="w-full relative">
+                <SmartFinderPlatform />
+              </section>
             </SmoothSectionReveal>
           </SectionErrorBoundary>
 
