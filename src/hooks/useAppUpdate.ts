@@ -140,11 +140,17 @@ export function useAppUpdate(): AppUpdateState {
       window.location.reload();
     };
 
-    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    if (typeof navigator !== "undefined" && navigator?.serviceWorker) {
+      navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    }
 
     return () => {
       isMounted = false;
-      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+      try {
+        if (typeof navigator !== "undefined" && navigator?.serviceWorker) {
+          navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+        }
+      } catch {}
     };
   }, [handleUpdateDetected]);
 

@@ -919,25 +919,38 @@ const SmartphoneTeardown3D: React.FC = () => {
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      try {
+        observer.disconnect();
+      } catch {}
+    };
   }, []);
 
   // GSAP ScrollTrigger timeline pinning
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return;
 
-    const trigger = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1.2,
-      onUpdate: (self) => {
-        setScrollProgress(self.progress);
-      },
-    });
+    let trigger: ScrollTrigger | null = null;
+    try {
+      trigger = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2,
+        onUpdate: (self) => {
+          setScrollProgress(self.progress);
+        },
+      });
+    } catch (e) {
+      console.warn("ScrollTrigger creation error:", e);
+    }
 
     return () => {
-      trigger.kill();
+      try {
+        trigger?.kill();
+      } catch (err) {
+        console.warn("ScrollTrigger kill error:", err);
+      }
     };
   }, []);
 

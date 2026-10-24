@@ -19,54 +19,85 @@ const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children })
   const pathname = routerState?.location?.pathname || "/";
 
   useEffect(() => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
+
     // Check user preference for reduced motion
     const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReducedMotion) return;
 
-    // Initialize Lenis with Stonic-style inertia damping
-    const lenis = new Lenis({
-      lerp: 0.08,             // Buttery smooth momentum damping
-      duration: 1.2,          // Inertial duration
-      smoothWheel: true,
-      wheelMultiplier: 0.9,   // Controlled wheel response
-      touchMultiplier: 1.5,   // Fluid touch response
-      autoRaf: false,         // Managed via GSAP ticker
-    });
+    let lenis: Lenis | null = null;
+    let tickerCb: ((time: number) => void) | null = null;
+    let refreshTimer: any = null;
 
-    lenisRef.current = lenis;
+    try {
+      // Initialize Lenis with safe window / document references
+      lenis = new Lenis({
+        wrapper: window,
+        content: document.documentElement,
+        lerp: 0.08,             // Buttery smooth momentum damping
+        duration: 1.2,          // Inertial duration
+        smoothWheel: true,
+        wheelMultiplier: 0.9,   // Controlled wheel response
+        touchMultiplier: 1.5,   // Fluid touch response
+        autoRaf: false,         // Managed via GSAP ticker
+      });
 
-    // Synchronize Lenis with GSAP ScrollTrigger
-    lenis.on("scroll", ScrollTrigger.update);
+      lenisRef.current = lenis;
 
-    const tickerCb = (time: number) => {
-      lenis.raf(time * 1000);
-    };
+      // Synchronize Lenis with GSAP ScrollTrigger
+      lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add(tickerCb);
-    gsap.ticker.lagSmoothing(0);
+      tickerCb = (time: number) => {
+        lenis?.raf(time * 1000);
+      };
 
-    const refreshTimer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 200);
+      gsap.ticker.add(tickerCb);
+      gsap.ticker.lagSmoothing(0);
+
+      refreshTimer = setTimeout(() => {
+        try {
+          ScrollTrigger.refresh();
+        } catch {}
+      }, 200);
+    } catch (err) {
+      console.warn("[SmoothScrollProvider] Lenis init failed, using native scroll:", err);
+    }
 
     return () => {
-      clearTimeout(refreshTimer);
-      gsap.ticker.remove(tickerCb);
-      lenis.destroy();
+      if (refreshTimer) clearTimeout(refreshTimer);
+      if (tickerCb) {
+        try {
+          gsap.ticker.remove(tickerCb);
+        } catch {}
+      }
+      if (lenis) {
+        try {
+          lenis.off("scroll", ScrollTrigger.update);
+        } catch {}
+        try {
+          lenis.destroy();
+        } catch (err) {
+          console.warn("[SmoothScrollProvider] Safe cleanup caught:", err);
+        }
+      }
       lenisRef.current = null;
     };
   }, []);
 
   // Instant scroll-to-top on route navigation and refresh ScrollTrigger pinned triggers
   useEffect(() => {
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    }
+    if (typeof window === "undefined") return;
+    try {
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(0, { immediate: true });
+      }
+    } catch {}
     const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
+      try {
+        ScrollTrigger.refresh();
+      } catch {}
     }, 120);
     return () => clearTimeout(timer);
   }, [pathname]);

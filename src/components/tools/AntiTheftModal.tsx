@@ -114,30 +114,35 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
     if (!isArmed || isTriggered || typeof window === "undefined") return;
 
     let batteryInstance: any = null;
+    let chargingHandler: (() => void) | null = null;
     const nav = navigator as any;
 
-    if (nav.getBattery) {
+    if (nav?.getBattery) {
       nav.getBattery().then((battery: any) => {
         batteryInstance = battery;
-        setInitialCharging(battery.charging);
+        setInitialCharging(battery?.charging);
 
-        const handleChargingChange = () => {
-          if (!battery.charging) {
+        chargingHandler = () => {
+          if (!battery?.charging) {
             triggerAlarm();
           }
         };
 
-        battery.addEventListener("chargingchange", handleChargingChange);
-        return () => {
-          battery.removeEventListener("chargingchange", handleChargingChange);
-        };
+        try {
+          battery?.addEventListener?.("chargingchange", chargingHandler);
+        } catch {}
       }).catch(() => {});
     }
 
     return () => {
-      if (batteryInstance) {
-        batteryInstance.onchargingchange = null;
-      }
+      try {
+        if (batteryInstance && chargingHandler) {
+          batteryInstance?.removeEventListener?.("chargingchange", chargingHandler);
+        }
+        if (batteryInstance) {
+          batteryInstance.onchargingchange = null;
+        }
+      } catch {}
     };
   }, [isArmed, isTriggered]);
 
@@ -165,9 +170,14 @@ export const AntiTheftModal: React.FC<AntiTheftModalProps> = ({ isOpen, onClose 
       motionLastRef.current = current;
     };
 
-    window.addEventListener("devicemotion", handleMotion);
+    try {
+      window.addEventListener("devicemotion", handleMotion);
+    } catch {}
+
     return () => {
-      window.removeEventListener("devicemotion", handleMotion);
+      try {
+        window.removeEventListener("devicemotion", handleMotion);
+      } catch {}
     };
   }, [isArmed, isTriggered]);
 

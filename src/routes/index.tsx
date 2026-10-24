@@ -286,7 +286,7 @@ export const Route = createFileRoute("/")({
 const PHONE = "+918002903643";
 const PHONE_DISPLAY = "+91 80029 03643";
 const WHATSAPP = "918002903643";
-const MAPS = "https://maps.google.com/?q=Super+Telecom+Giridih+Jharkhand";
+const MAPS = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
 const EMAIL = "supertelecom1002@gmail.com";
 
 const FAQS: [string, string][] = [

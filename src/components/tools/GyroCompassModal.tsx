@@ -60,7 +60,9 @@ export const GyroCompassModal: React.FC<GyroCompassModalProps> = ({ isOpen, onCl
     }
 
     return () => {
-      window.removeEventListener("deviceorientation", handleOrientation);
+      try {
+        window.removeEventListener("deviceorientation", handleOrientation);
+      } catch {}
     };
   }, [isOpen]);
 

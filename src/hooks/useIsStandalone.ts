@@ -25,12 +25,20 @@ export function useIsStandalone() {
       const listener = (e: MediaQueryListEvent) => {
         setIsStandalone(e.matches || checkStandalone());
       };
-      if (mediaQuery.addEventListener) {
+      if (mediaQuery && typeof mediaQuery.addEventListener === "function") {
         mediaQuery.addEventListener("change", listener);
-        return () => mediaQuery.removeEventListener("change", listener);
-      } else if ((mediaQuery as any).addListener) {
+        return () => {
+          try {
+            mediaQuery.removeEventListener("change", listener);
+          } catch {}
+        };
+      } else if (mediaQuery && typeof (mediaQuery as any).addListener === "function") {
         (mediaQuery as any).addListener(listener);
-        return () => (mediaQuery as any).removeListener(listener);
+        return () => {
+          try {
+            (mediaQuery as any).removeListener(listener);
+          } catch {}
+        };
       }
     } catch {
       // ignore
