@@ -11,7 +11,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Home, Phone, MessageCircle, Wrench, ArrowRight, Compass } from "lucide-react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { GlobalAppShell } from "@/components/layout/GlobalAppShell";
 
@@ -90,11 +89,8 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
+  console.error("TanStack Root Error Component:", error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

@@ -18,7 +18,6 @@ import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as DownloadRouteImport } from './routes/download'
 import { Route as LocationsRouteImport } from './routes/locations'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -29,8 +28,6 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as WarrantyRouteImport } from './routes/warranty'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin.analytics'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -47,7 +44,6 @@ import { Route as ServicesDisplayReplacementGiridihRouteImport } from './routes/
 import { Route as ServicesIphoneRepairSpecialistGiridihRouteImport } from './routes/services.iphone-repair-specialist-giridih'
 import { Route as ServicesMotherboardChipLevelRepairGiridihRouteImport } from './routes/services.motherboard-chip-level-repair-giridih'
 import { Route as ServicesWaterDamageMobileRepairGiridihRouteImport } from './routes/services.water-damage-mobile-repair-giridih'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -92,11 +88,6 @@ const DownloadRoute = DownloadRouteImport.update({
 const LocationsRoute = LocationsRouteImport.update({
   id: '/locations',
   path: '/locations',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -149,18 +140,6 @@ const WarrantyRoute = WarrantyRouteImport.update({
   path: '/warranty',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -247,12 +226,6 @@ const ServicesWaterDamageMobileRepairGiridihRoute =
     path: '/water-damage-mobile-repair-giridih',
     getParentRoute: () => ServicesRoute,
   } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -264,7 +237,6 @@ export interface FileRoutesByFullPath {
   '/cookie-policy': typeof CookiePolicyRoute
   '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
-  '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRouteWithChildren
@@ -275,8 +247,6 @@ export interface FileRoutesByFullPath {
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
   '/warranty': typeof WarrantyRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
@@ -293,7 +263,6 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/brands/': typeof BrandsIndexRoute
   '/services/': typeof ServicesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -302,7 +271,6 @@ export interface FileRoutesByTo {
   '/cookie-policy': typeof CookiePolicyRoute
   '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
-  '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap': typeof SitemapRoute
@@ -312,8 +280,6 @@ export interface FileRoutesByTo {
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
   '/warranty': typeof WarrantyRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
@@ -330,7 +296,6 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/brands': typeof BrandsIndexRoute
   '/services': typeof ServicesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -343,7 +308,6 @@ export interface FileRoutesById {
   '/cookie-policy': typeof CookiePolicyRoute
   '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
-  '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/services': typeof ServicesRouteWithChildren
@@ -354,8 +318,6 @@ export interface FileRoutesById {
   '/tools': typeof ToolsRoute
   '/track': typeof TrackRoute
   '/warranty': typeof WarrantyRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/chat-stream': typeof ApiChatStreamRoute
@@ -372,7 +334,6 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/brands/': typeof BrandsIndexRoute
   '/services/': typeof ServicesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -386,7 +347,6 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/download'
     | '/locations'
-    | '/mcp'
     | '/pricing'
     | '/privacy'
     | '/services'
@@ -397,8 +357,6 @@ export interface FileRouteTypes {
     | '/tools'
     | '/track'
     | '/warranty'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
     | '/admin/login'
     | '/api/chat-stream'
@@ -415,7 +373,6 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/brands/'
     | '/services/'
-    | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -424,7 +381,6 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/download'
     | '/locations'
-    | '/mcp'
     | '/pricing'
     | '/privacy'
     | '/sitemap'
@@ -434,8 +390,6 @@ export interface FileRouteTypes {
     | '/tools'
     | '/track'
     | '/warranty'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
     | '/admin/login'
     | '/api/chat-stream'
@@ -452,7 +406,6 @@ export interface FileRouteTypes {
     | '/blog'
     | '/brands'
     | '/services'
-    | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
     | '/'
@@ -464,7 +417,6 @@ export interface FileRouteTypes {
     | '/cookie-policy'
     | '/download'
     | '/locations'
-    | '/mcp'
     | '/pricing'
     | '/privacy'
     | '/services'
@@ -475,8 +427,6 @@ export interface FileRouteTypes {
     | '/tools'
     | '/track'
     | '/warranty'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/admin/analytics'
     | '/admin/login'
     | '/api/chat-stream'
@@ -493,7 +443,6 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/brands/'
     | '/services/'
-    | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -506,7 +455,6 @@ export interface RootRouteChildren {
   CookiePolicyRoute: typeof CookiePolicyRoute
   DownloadRoute: typeof DownloadRoute
   LocationsRoute: typeof LocationsRouteWithChildren
-  McpRoute: typeof McpRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ServicesRoute: typeof ServicesRouteWithChildren
@@ -517,10 +465,7 @@ export interface RootRouteChildren {
   ToolsRoute: typeof ToolsRoute
   TrackRoute: typeof TrackRoute
   WarrantyRoute: typeof WarrantyRoute
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
-  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatStreamRoute: typeof ApiChatStreamRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -586,13 +531,6 @@ declare module '@tanstack/react-router' {
       path: '/locations'
       fullPath: '/locations'
       preLoaderRoute: typeof LocationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -663,20 +601,6 @@ declare module '@tanstack/react-router' {
       path: '/warranty'
       fullPath: '/warranty'
       preLoaderRoute: typeof WarrantyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -791,13 +715,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesWaterDamageMobileRepairGiridihRouteImport
       parentRoute: typeof ServicesRoute
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -892,7 +809,6 @@ const rootRouteChildren: RootRouteChildren = {
   CookiePolicyRoute: CookiePolicyRoute,
   DownloadRoute: DownloadRoute,
   LocationsRoute: LocationsRouteWithChildren,
-  McpRoute: McpRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ServicesRoute: ServicesRouteWithChildren,
@@ -903,11 +819,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsRoute: ToolsRoute,
   TrackRoute: TrackRoute,
   WarrantyRoute: WarrantyRoute,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
-  Char91DotwellKnownChar93OauthProtectedResourceRoute:
-    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatStreamRoute: ApiChatStreamRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
