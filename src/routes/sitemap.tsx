@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SERVICES } from "@/data/services";
+import { REPAIR_SERVICES_SILO_DATA } from "@/data/repairServicesSiloData";
 import { BRANDS } from "@/data/brands";
 import { POSTS } from "@/data/blog";
 import { SITE_URL } from "@/data/site";
@@ -67,6 +68,19 @@ function SitemapPage() {
               <li key={b.slug}>
                 <Link to="/brands/$brand" params={{ brand: b.slug }} className="text-primary hover:underline">
                   {b.name} Repair Giridih
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="mt-10">
+          <h2 className="font-display text-xl font-bold">16 Dedicated Single-Service Silos in Giridih</h2>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {REPAIR_SERVICES_SILO_DATA.map((s) => (
+              <li key={s.slug}>
+                <Link to="/services/$slug" params={{ slug: s.slug }} className="text-primary hover:underline font-medium">
+                  {s.title} ({s.hindiTitle})
                 </Link>
               </li>
             ))}

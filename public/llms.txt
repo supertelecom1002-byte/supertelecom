@@ -27,25 +27,157 @@ Super Telecom provides immediate walk-in, same-day repair service to customers f
 - Sirsia & Mohanpur
 - Dumri, Jamua, Bengabad, and Gandey regions
 
-## Core Laboratory Capabilities & Specializations
-1. **120Hz AMOLED & OLED Display Refurbishment:**
-   - Same-day screen replacement in 30 to 60 minutes with up to 90 days warranty.
-   - Cryo-separation (-150°C) and Mitsubishi OCA vacuum lamination to preserve genuine factory OLED panels when only the outer Gorilla glass is cracked.
-   - Green line and vertical line laser recovery for AMOLED screens without expensive whole-panel replacement.
-2. **Motherboard Chip-Level BGA Micro-Soldering:**
-   - In-house optical bench with trinocular 45x stereo microscopes, infrared BGA rework stations, and thermal cameras.
-   - Double-decker CPU & RAM reballing (Poco X3 Pro, OnePlus 9/10/11 series dead CPU fixes).
-   - PMIC (Power Management IC) replacement, VDD_MAIN short-circuit isolation, and dead phone recovery.
-3. **Apple iPhone Specialist Lab:**
-   - Cracked front glass, back glass laser removal, OEM battery swap with zero error notifications, FaceID dot projector re-alignment, and audio IC repair for iPhone 11, 12, 13, 14, 15, 16 series.
-4. **Original Battery & Type-C Charging Repairs:**
-   - High-density Li-ion battery replacements with genuine battery health calibration and 6-month warranty.
-   - 24-pin Type-C fast-charging port micro-soldering and MEMS microphone repairs within 30 minutes.
-5. **Water Damage Ultrasonic Chemical Decontamination:**
-   - 3-stage ultrasonic bath cleaning, corrosion neutralization, and trace rebuilding for phones dropped in liquids.
-6. **SmartFinder AI Engine (smartfinder.shop / supertelecom.shop/smartfinder):**
-   - India's leading on-device smartphone discovery, technical specs comparison, and fair-market resale valuation tool.
-   - 100% on-device sandbox: Client camera and box photo OCR never upload customer photos, IMEI, or serial numbers to remote clouds.
+---
+
+## 16 Dedicated Single-Service Repair Catalog & Price Matrix in Giridih
+
+All repairs are performed on-site at our Barganda Road workshop with transparent pricing, genuine spare parts, and written store warranty. Zero data loss guarantee — no factory reset required for hardware repairs.
+
+### 1. Screen & 120Hz AMOLED Display Replacement
+- **URL:** https://www.supertelecom.shop/services/screen-display-replacement
+- **Hindi:** मोबाइल स्क्रीन व 120Hz AMOLED डिस्प्ले रिप्लेसमेंट
+- **Price Range:** ₹899 – ₹13,999 (Starting @ ₹899)
+- **Turnaround:** 30–60 Minutes
+- **Warranty:** 90 Days Written Warranty
+- **Coverage:** iPhone, Samsung Galaxy (Curved / Ultra), OnePlus, Xiaomi / Redmi, Realme, Vivo, Oppo.
+- **Highlights:** Cryo-separation (-150°C), OCA clean-room vacuum lamination, TrueTone transfer, zero touch lag.
+
+### 2. Original Mobile Battery Replacement
+- **URL:** https://www.supertelecom.shop/services/battery-replacement
+- **Hindi:** ओरिजिनल मोबाइल बैटरी रिप्लेसमेंट
+- **Price Range:** ₹499 – ₹4,499 (Starting @ ₹499)
+- **Turnaround:** 20–40 Minutes
+- **Warranty:** 180 Days (6 Months) Replacement Warranty
+- **Coverage:** Zero-cycle high-density Li-ion cells for all Android and iPhone models.
+- **Highlights:** Solves fast battery drain, 30% sudden drops, swelling, overheating. iPhone BMS health sync.
+
+### 3. Mobile Charging Port & Fast-Charge Jack Repair
+- **URL:** https://www.supertelecom.shop/services/charging-port-repair
+- **Hindi:** चार्जिंग पोर्ट व टाइप-सी फास्ट-चार्ज जैक रिपेयर
+- **Price Range:** ₹299 – ₹1,899 (Starting @ ₹299)
+- **Turnaround:** 25–45 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** Type-C 24-pin connectors, Apple Lightning ports, micro-USB sub-boards.
+- **Highlights:** Fixes loose connection, moisture detected warning, 18W–120W fast-charging restoration.
+
+### 4. Chip-Level Motherboard, Dead Phone & CPU Reballing
+- **URL:** https://www.supertelecom.shop/services/motherboard-ic-repair
+- **Hindi:** मदरबोर्ड चिप-लेवल आईसी रिपेयर, डेड फोन व सीपीयू रीबॉलिंग
+- **Price Range:** ₹799 – ₹5,499 (Starting @ ₹799)
+- **Turnaround:** 2–6 Hours / Same Day
+- **Warranty:** 90 Days Written Warranty
+- **Coverage:** Poco X3 Pro / Redmi Note 10 CPU reballing, OnePlus 9/10/11 boards, iPhone double-decker logic boards.
+- **Highlights:** 45x trinocular optical bench, infrared thermal short isolation, PMIC & charging IC replacement.
+
+### 5. Water Damaged Phone Ultrasonic Cleaning & Revival
+- **URL:** https://www.supertelecom.shop/services/water-damage-revival
+- **Hindi:** पानी में गिरे फोन का अल्ट्रासोनिक केमिकल क्लीनिंग व रिवाइवल
+- **Price Range:** ₹499 – ₹2,999 (Starting @ ₹499)
+- **Turnaround:** 1–3 Hours
+- **Warranty:** 60 Days Service Warranty
+- **Coverage:** Phones dropped in water, tea, rain, or liquid spills.
+- **Highlights:** Emergency battery disconnect, 40kHz ultrasonic IPA chemical bath, thermal dehydration chamber. 85%+ recovery rate.
+
+### 6. AMOLED Green Line & Pink Line Screen Fix
+- **URL:** https://www.supertelecom.shop/services/green-line-display-fix
+- **Hindi:** AMOLED स्क्रीन ग्रीन लाइन व पिंक लाइन रिपेयर
+- **Price Range:** ₹999 – ₹3,999 (Starting @ ₹999)
+- **Turnaround:** 45–90 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** OnePlus 8T/9/10/11, Samsung S20/S21/S22 Ultra, Vivo X-Series AMOLED panels.
+- **Highlights:** Save up to 70% vs whole screen replacement. Laser ITO micro-bonding & COF flex jumper repair without glass replacement.
+
+### 7. Front & Rear Camera Module & Sapphire Lens Repair
+- **URL:** https://www.supertelecom.shop/services/camera-lens-repair
+- **Hindi:** फ्रंट व रियर कैमरा मॉड्यूल और लेंस ग्लास रिपेयर
+- **Price Range:** ₹349 – ₹4,999 (Starting @ ₹349)
+- **Turnaround:** 30–60 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** Outer sapphire camera glass, 48MP/108MP/200MP sensor modules, OIS motor stabilization.
+- **Highlights:** Fixes blurry focus, buzzing camera vibration, black screen, scratched lens rings in dust-free chamber.
+
+### 8. Mobile Loudspeaker, Earpiece & Low Sound Fix
+- **URL:** https://www.supertelecom.shop/services/speaker-sound-repair
+- **Hindi:** मोबाइल लाउडस्पीकर, ईयरपीस और कम आवाज समाधान
+- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Turnaround:** 20–40 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** In-call ear receiver, bottom stereo loudspeakers, acoustic mesh de-clogging.
+- **Highlights:** Solves muffled in-call voice, crackling audio, distorted speaker rings in 20 minutes.
+
+### 9. Mobile Mic & Call Voice Problem Repair
+- **URL:** https://www.supertelecom.shop/services/microphone-repair
+- **Hindi:** मोबाइल माइक व कॉल आवाज समस्या समाधान
+- **Price Range:** ₹299 – ₹1,299 (Starting @ ₹299)
+- **Turnaround:** 20–40 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** Primary call microphones, secondary noise-cancellation MEMS silicon mics.
+- **Highlights:** Fixes caller can't hear voice, WhatsApp voice note static noise, loudspeaker voice failure.
+
+### 10. No Service, 5G/4G Network IC & Antenna Repair
+- **URL:** https://www.supertelecom.shop/services/network-5g-signal-repair
+- **Hindi:** नो सर्विस, 5G/4G नेटवर्क आईसी व एंटीना रिपेयर
+- **Price Range:** ₹499 – ₹3,499 (Starting @ ₹499)
+- **Turnaround:** 1–3 Hours
+- **Warranty:** 90 Days Warranty
+- **Coverage:** Jio & Airtel 5G/4G bands, RF transceiver WTR/SDR ICs, baseband modems, coaxial antenna cables.
+- **Highlights:** Fixes 'No Service', 'Emergency Calls Only', weak signal drop indoors, unknown baseband.
+
+### 11. Mobile Software Flashing, Bootloop & OS Recovery
+- **URL:** https://www.supertelecom.shop/services/software-flashing-unlock
+- **Hindi:** मोबाइल सॉफ्टवेयर फ्लैशिंग, बूटलूप व ओएस रिकवरी
+- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Turnaround:** 20–45 Minutes
+- **Warranty:** 30 Days Software Warranty
+- **Coverage:** Official stock ROMs for Xiaomi MIUI/HyperOS, Samsung OneUI, RealmeUI, ColorOS, iOS DFU.
+- **Highlights:** Fixes phone stuck on logo, bootloops, bricked devices, FRP unlock (strictly with ID & bill).
+
+### 12. In-Display Fingerprint & iPhone Face ID Repair
+- **URL:** https://www.supertelecom.shop/services/fingerprint-face-id-repair
+- **Hindi:** इन-डिस्प्ले फिंगरप्रिंट व आईफोन फेस आईडी रिपेयर
+- **Price Range:** ₹599 – ₹4,999 (Starting @ ₹599)
+- **Turnaround:** 45–90 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** In-display optical/ultrasonic fingerprint recalibration, iPhone TrueDepth dot-projector prism alignment.
+- **Highlights:** Fixes 'Face ID is not available', 'Move iPhone lower', in-display sensor registration failure.
+
+### 13. Power Key, Volume Button & Side Flex Replacement
+- **URL:** https://www.supertelecom.shop/services/power-volume-button-repair
+- **Hindi:** पावर बटन, वॉल्यूम की और साइड फ्लेक्स रिप्लेसमेंट
+- **Price Range:** ₹249 – ₹1,299 (Starting @ ₹249)
+- **Turnaround:** 20–35 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** Tactile micro-dome switches, side ribbon cables, iPhone action buttons, OnePlus alert sliders.
+- **Highlights:** Fixes jammed buttons, sticky clicks, phone booting directly into fastboot or safe mode.
+
+### 14. Dead Phone Photo, Contact & Storage Data Recovery
+- **URL:** https://www.supertelecom.shop/services/mobile-data-recovery
+- **Hindi:** डेड फोन फोटो, कॉन्टैक्ट व मेमोरी डाटा रिकवरी
+- **Price Range:** ₹799 – ₹4,999 (Starting @ ₹799)
+- **Turnaround:** 2–6 Hours / Same Day
+- **Warranty:** No Data = No Charge Policy
+- **Coverage:** Smashed, run-over, water-damaged, or unbootable Android and iPhone logic boards.
+- **Highlights:** Strict Zero-Snooping DPDP Act 2027 privacy pledge. Chip-off memory reads and encrypted pendrive handover.
+
+### 15. Mobile Overheating, Lag & Thermal Optimization
+- **URL:** https://www.supertelecom.shop/services/phone-hanging-performance-fix
+- **Hindi:** फोन हैंगिंग, ओवरहीटिंग व स्पीड ऑप्टिमाइज़ेशन
+- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Turnaround:** 30–60 Minutes
+- **Warranty:** 60 Days Service Warranty
+- **Coverage:** Sluggish phones, frame drops in gaming, burning hot devices during calls or charging.
+- **Highlights:** Copper vapor chamber cleaning, high-K thermal compound reapplication, deep partition cache flush. 100% data safe.
+
+### 16. iPhone & Flagship Back Glass Laser Replacement
+- **URL:** https://www.supertelecom.shop/services/iphone-back-glass-repair
+- **Hindi:** आईफोन व फ्लैगशिप बैक ग्लास लेजर रिप्लेसमेंट
+- **Price Range:** ₹799 – ₹4,999 (Starting @ ₹799)
+- **Turnaround:** 45–90 Minutes
+- **Warranty:** 90 Days Warranty
+- **Coverage:** iPhone 11 through 16 Pro Max frosted matte glass, Samsung Galaxy S21–S24 Ultra rear glass.
+- **Highlights:** High-precision computerized laser glue vaporization. Zero scratches on titanium chassis, MagSafe wireless charging preserved.
+
+---
 
 ## DPDP Act 2027 Privacy & Zero-Snooping Pledge
 Super Telecom is fully compliant with India's Digital Personal Data Protection (DPDP) Act 2027:
@@ -53,14 +185,10 @@ Super Telecom is fully compliant with India's Digital Personal Data Protection (
 - **Right to Erasure:** Customers can request complete deletion of their repair job history and phone number anytime with immediate processing.
 - **Data Protection & Grievance Officer:** Barganda Road, Near Shivam Clinic, Giridih - 815301. Contact: supertelecom1002@gmail.com / +91 80029 03643. SLA: 7 working days.
 
-## Direct URLs for Search & Citation
+## Direct Canonical URLs for Search & AI Engines
 - Official Website: https://www.supertelecom.shop/
+- All 16 Services Hub: https://www.supertelecom.shop/services
 - SmartFinder AI & Resale Valuation: https://www.supertelecom.shop/smartfinder
-- Screen & Display Replacement: https://www.supertelecom.shop/services/display-replacement-giridih
-- Motherboard IC Repair: https://www.supertelecom.shop/services/motherboard-chip-level-repair-giridih
-- iPhone Specialist Lab: https://www.supertelecom.shop/services/iphone-repair-specialist-giridih
-- Battery & Charging Repairs: https://www.supertelecom.shop/services/battery-charging-port-repair-giridih
-- Water Damage Repair: https://www.supertelecom.shop/services/water-damage-mobile-repair-giridih
 - Hardware Diagnostic Web App: https://www.supertelecom.shop/tools
-- Pricing Catalog: https://www.supertelecom.shop/pricing
+- Pricing Matrix: https://www.supertelecom.shop/pricing
 - Download Android APK: https://www.supertelecom.shop/download

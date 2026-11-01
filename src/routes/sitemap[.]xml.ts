@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { SERVICES } from "@/data/services";
+import { REPAIR_SERVICES_SILO_DATA } from "@/data/repairServicesSiloData";
 import { BRANDS } from "@/data/brands";
 import { POSTS } from "@/data/blog";
 import { SITE_URL } from "@/data/site";
@@ -26,10 +27,16 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/cookie-policy", changefreq: "yearly", priority: "0.3" },
           { path: "/locations/barganda-road-mobile-repair", changefreq: "weekly", priority: "0.9", lastmod: "2026-09-20" },
 
+          ...REPAIR_SERVICES_SILO_DATA.map((s) => ({
+            path: `/services/${s.slug}`,
+            changefreq: "weekly",
+            priority: "0.9",
+            lastmod: "2026-11-01",
+          })),
           ...SERVICES.map((s) => ({
             path: `/services/${s.slug}`,
             changefreq: "monthly",
-            priority: "0.9",
+            priority: "0.85",
           })),
           ...BRANDS.map((b) => ({
             path: `/brands/${b.slug}`,

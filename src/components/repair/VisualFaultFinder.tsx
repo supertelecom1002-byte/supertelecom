@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import {
   Smartphone,
@@ -16,11 +17,11 @@ import {
   Phone,
   ArrowRight,
   Sparkles,
-  HelpCircle,
 } from "lucide-react";
 
 interface FaultItem {
   id: string;
+  serviceSlug: string;
   hindiTitle: string;
   englishTitle: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -36,6 +37,7 @@ interface FaultItem {
 const FAULTS: FaultItem[] = [
   {
     id: "screen",
+    serviceSlug: "screen-display-replacement",
     hindiTitle: "टूटी स्क्रीन या टच काम न करना",
     englishTitle: "Broken Display & Touch Screen Issue",
     icon: Smartphone,
@@ -47,13 +49,14 @@ const FAULTS: FaultItem[] = [
     ],
     solution: "Grade-A AMOLED / Original Service Pack डिस्प्ले रिप्लेसमेंट विथ जीरो-टच OCA लैमिनेशन।",
     startingPrice: "₹899 से शुरू",
-    duration: "45–90 मिनट",
+    duration: "30–60 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-cyan-500/20 to-blue-500/10 border-cyan-500/40 text-cyan-400",
     badge: "Most Common",
   },
   {
     id: "dead-phone",
+    serviceSlug: "motherboard-ic-repair",
     hindiTitle: "फोन ऑन नहीं हो रहा / डेड फोन",
     englishTitle: "Dead Phone & Motherboard IC Fault",
     icon: Zap,
@@ -66,12 +69,13 @@ const FAULTS: FaultItem[] = [
     solution: "45X ट्राइनोकुलर माइक्रोस्कोप से शार्ट-सर्किट डिटेक्शन और पावर IC / CPU माइक्रो-सोल्डरिंग।",
     startingPrice: "₹799 से शुरू",
     duration: "2–4 घंटे",
-    warranty: "60–90 Days Warranty",
+    warranty: "90 Days Warranty",
     accentColor: "from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400",
     badge: "Chip-Level",
   },
   {
     id: "battery",
+    serviceSlug: "battery-replacement",
     hindiTitle: "बैटरी जल्दी खत्म होना या फूलना",
     englishTitle: "Battery Drain, Heating & Swelling",
     icon: BatteryCharging,
@@ -82,14 +86,15 @@ const FAULTS: FaultItem[] = [
       "सामान्य उपयोग में भी फोन का गर्म होना",
     ],
     solution: "100% Brand-New 0-Cycle लिथियम-आयन पॉलीमर बैटरी विथ ओरिजिनल NTC थर्मल सेंसर।",
-    startingPrice: "₹699 से शुरू",
-    duration: "30–45 मिनट",
+    startingPrice: "₹499 से शुरू",
+    duration: "20–40 मिनट",
     warranty: "6 Months Warranty",
     accentColor: "from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400",
     badge: "100% Safe",
   },
   {
     id: "charging",
+    serviceSlug: "charging-port-repair",
     hindiTitle: "चार्जिंग पिन ढीला या स्लो चार्जिंग",
     englishTitle: "Loose Charging Jack & Slow Charging",
     icon: PlugZap,
@@ -100,14 +105,15 @@ const FAULTS: FaultItem[] = [
       "फास्ट चार्जिंग सपोर्ट न करना",
     ],
     solution: "24-Pin Gold-Plated Type-C / Lightning सॉकेट रिप्लेसमेंट विथ ESD सर्ज प्रोटेक्शन।",
-    startingPrice: "₹349 से शुरू",
-    duration: "30 मिनट",
+    startingPrice: "₹299 से शुरू",
+    duration: "25–45 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-sky-500/20 to-indigo-500/10 border-sky-500/40 text-sky-400",
     badge: "Instant Fix",
   },
   {
     id: "water-damage",
+    serviceSlug: "water-damage-revival",
     hindiTitle: "पानी या चाय में फोन गिर जाना",
     englishTitle: "Liquid Ingress & Water Damage",
     icon: Droplets,
@@ -118,14 +124,15 @@ const FAULTS: FaultItem[] = [
       "पानी में गिरने के बाद फोन का बंद हो जाना",
     ],
     solution: "अल्ट्रासोनिक केमिकल डी-ऑक्सीडेशन क्लीनिंग और थर्मल कैमरा इंस्पेक्शन।",
-    startingPrice: "₹599 से शुरू",
-    duration: "Same-Day",
-    warranty: "Lab Tested",
+    startingPrice: "₹499 से शुरू",
+    duration: "1–3 घंटे",
+    warranty: "60 Days Warranty",
     accentColor: "from-blue-500/20 to-cyan-500/10 border-blue-500/40 text-blue-400",
     badge: "Emergency",
   },
   {
     id: "camera",
+    serviceSlug: "camera-lens-repair",
     hindiTitle: "कैमरा धुंधला या लेंस शीशा टूटना",
     englishTitle: "Blurry Camera, OIS Shaking & Lens Crack",
     icon: Camera,
@@ -136,14 +143,15 @@ const FAULTS: FaultItem[] = [
       "कैमरा ऐप खोलने पर ब्लैक स्क्रीन दिखना",
     ],
     solution: "सैफायर लेंस ग्लास रिप्लेसमेंट और क्लीनरूम डस्ट-फ्री कैमरा मॉड्यूल अलाइनमेंट।",
-    startingPrice: "₹499 से शुरू",
-    duration: "45 मिनट",
+    startingPrice: "₹349 से शुरू",
+    duration: "30–60 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-purple-500/20 to-pink-500/10 border-purple-500/40 text-purple-400",
     badge: "Cleanroom",
   },
   {
     id: "sound",
+    serviceSlug: "speaker-sound-repair",
     hindiTitle: "माइक या स्पीकर से आवाज़ न आना",
     englishTitle: "No Sound, Muffled Mic & Earpiece Low",
     icon: Volume2,
@@ -155,13 +163,14 @@ const FAULTS: FaultItem[] = [
     ],
     solution: "हाई-फिडेलिटी स्टीरियो स्पीकर / नॉइज़-कैंसलिंग MEMS माइक रिप्लेसमेंट।",
     startingPrice: "₹299 से शुरू",
-    duration: "30 मिनट",
+    duration: "20–40 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-rose-500/20 to-red-500/10 border-rose-500/40 text-rose-400",
     badge: "Sound Restored",
   },
   {
     id: "body",
+    serviceSlug: "iphone-back-glass-repair",
     hindiTitle: "बैक ग्लास टूटा या बॉडी डैमेज",
     englishTitle: "Cracked Back Glass & Frame Bend",
     icon: ShieldAlert,
@@ -173,8 +182,8 @@ const FAULTS: FaultItem[] = [
     ],
     solution: "लेज़र कट बैक पैनल रिप्लेसमेंट और टाइटेनियम/एल्युमिनियम फ्रेम अलाइनमेंट।",
     startingPrice: "₹499 से शुरू",
-    duration: "1 घंटा",
-    warranty: "OEM Finish",
+    duration: "45–90 मिनट",
+    warranty: "90 Days Warranty",
     accentColor: "from-slate-500/20 to-zinc-500/10 border-slate-500/40 text-slate-300",
     badge: "Factory Look",
   },
@@ -214,9 +223,8 @@ const VisualFaultFinder: React.FC = () => {
             const isSelected = selectedFaultId === fault.id;
 
             return (
-              <button
+              <div
                 key={fault.id}
-                type="button"
                 onClick={() => setSelectedFaultId(fault.id)}
                 className={`relative flex flex-col justify-between text-left p-4 sm:p-5 rounded-2xl sm:rounded-3xl border transition-all duration-300 cursor-pointer ${
                   isSelected
@@ -256,14 +264,38 @@ const VisualFaultFinder: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Price pill */}
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                  <span className="text-xs font-bold text-cyan-300">{fault.startingPrice}</span>
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1 font-mono">
-                    <Clock className="h-3 w-3 text-cyan-400" /> {fault.duration}
-                  </span>
+                {/* Price pill & Quick Link */}
+                <div className="mt-4 pt-3 border-t border-slate-800/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-cyan-300">{fault.startingPrice}</span>
+                    <span className="text-[10px] text-slate-400 flex items-center gap-1 font-mono">
+                      <Clock className="h-3 w-3 text-cyan-400" /> {fault.duration}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 text-[11px]">
+                    <Link
+                      to="/services/$slug"
+                      params={{ slug: fault.serviceSlug }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-bold text-cyan-400 hover:underline flex items-center gap-0.5"
+                    >
+                      <span>Guide & Price</span> <ArrowRight className="h-2.5 w-2.5" />
+                    </Link>
+                    <a
+                      href={`https://wa.me/${BUSINESS_MASTER.whatsappNumber}?text=${encodeURIComponent(
+                        `Hi Super Telecom! Please give me a quote for "${fault.hindiTitle}" in Giridih.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-emerald-400 hover:underline font-semibold"
+                    >
+                      Quote
+                    </a>
+                  </div>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -319,7 +351,7 @@ const VisualFaultFinder: React.FC = () => {
             </div>
 
             {/* Right Column: Pricing & Direct Action CTA (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-slate-950 border border-slate-800/90 text-center lg:text-left space-y-5">
+            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-slate-950 border border-slate-800/90 text-center lg:text-left space-y-4">
               <div className="space-y-1">
                 <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
                   पारदर्शी अनुमानित खर्च (Transparent Estimate)
@@ -333,22 +365,31 @@ const VisualFaultFinder: React.FC = () => {
               </div>
 
               <div className="space-y-2.5">
+                <Link
+                  to="/services/$slug"
+                  params={{ slug: activeFault.serviceSlug }}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 hover:scale-[1.02] active:scale-95 transition-all text-center"
+                >
+                  <span>View Full Guide & Price</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+
                 <a
-                  href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || BUSINESS_MASTER?.contact?.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
+                  href={`https://wa.me/${BUSINESS_MASTER.whatsappNumber}?text=${encodeURIComponent(
                     `Namaste Super Telecom! Mera phone repair karwana hai. Problem: ${activeFault.hindiTitle} (${activeFault.englishTitle}). Kripya estimate aur availability batayein.`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all text-center"
                 >
-                  <MessageCircle className="h-4 w-4" /> WhatsApp पर बात करें / Estimate लें
+                  <MessageCircle className="h-4 w-4" /> WhatsApp Quote (खर्च पूछें)
                 </a>
 
                 <a
-                  href={BUSINESS_MASTER.phoneCallHref}
-                  className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold text-xs sm:text-sm hover:bg-slate-800 transition-colors"
+                  href={`tel:${BUSINESS_MASTER.phoneRaw}`}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-5 rounded-xl bg-slate-900 border border-slate-700 text-white font-semibold text-xs hover:bg-slate-800 transition-colors text-center"
                 >
-                  <Phone className="h-4 w-4 text-cyan-400" /> डायरेक्ट कॉल: {BUSINESS_MASTER.phoneDisplay}
+                  <Phone className="h-3.5 w-3.5 text-cyan-400" /> डायरेक्ट कॉल: {BUSINESS_MASTER.phoneDisplay}
                 </a>
               </div>
 

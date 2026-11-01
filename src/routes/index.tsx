@@ -7,7 +7,7 @@ import {
   Phone, MessageCircle, MapPin, Calendar, Star, Clock, Shield, Award, Wrench,
   Smartphone, Battery, Zap, Volume2, Mic, Camera, Cpu, Wifi, Download, Droplet,
   Fingerprint, RefreshCw, HardDrive, Headphones, Watch, Cable, ShieldCheck,
-  Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X, Bot,
+  Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X, Bot, Activity,
 } from "lucide-react";
 import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
@@ -539,20 +539,22 @@ function About() {
 }
 
 const REPAIR_SERVICES: Array<[any, string, string, string, string, string]> = [
-  [Smartphone, "Screen & Display", "Screen replacement, display repair, touch & LCD fixes for all brands.", "screen", "display-replacement", "30 – 60 min"],
-  [Battery, "Battery Replacement", "Genuine batteries with warranty. Fixes drain & backup issues.", "battery", "battery-replacement", "30 – 45 min"],
-  [Zap, "Charging Port", "Charging port repair, charging issue diagnosis and clean-up.", "battery", "charging-port-repair", "30 – 45 min"],
-  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio.", "screen", "speaker-repair", "30 – 45 min"],
-  [Mic, "Microphone", "Mic repair for call clarity, voice notes and video recording.", "other", "microphone-repair", "30 – 45 min"],
-  [Camera, "Camera Repair", "Front/rear camera, lens replacement and focus issue fixes.", "iphone", "camera-repair", "30 – 60 min"],
-  [Cpu, "Motherboard & IC", "Advanced motherboard, IC and chip-level repairs by experts.", "motherboard", "motherboard-repair", "2 – 6 hours"],
-  [Wifi, "Network Issues", "SIM slot, network, signal and connectivity troubleshooting.", "motherboard", "network-repair", "1 – 3 hours"],
-  [Download, "Software & Flashing", "Software install, updates, flashing and boot loop repair.", "motherboard", "software-repair", "45 – 90 min"],
-  [Droplet, "Water Damage", "Water-damaged and dead phone recovery with ultrasonic cleaning.", "water", "water-damage-repair", "Same day"],
-  [Fingerprint, "Fingerprint & Face", "Fingerprint sensor and face unlock repair and calibration.", "iphone", "iphone-repair", "45 – 90 min"],
-  [RefreshCw, "Performance Fix", "Hanging, heating and slow-phone optimization and cleanup.", "motherboard", "dead-phone-repair", "Same day"],
-  [HardDrive, "Data Recovery", "Recover contacts, photos and backup before/after repairs.", "motherboard", "data-recovery", "1 – 2 days"],
-  [Wrench, "Buttons & Ports", "Power, volume, home button, SIM tray and memory slot repair.", "battery", "button-repair", "30 – 45 min"],
+  [Smartphone, "Screen & AMOLED Display", "120Hz AMOLED & LCD display replacement, glass separation & green line recovery.", "screen", "screen-display-replacement", "30 – 60 min"],
+  [Battery, "Original Battery Replacement", "Genuine high-backup zero-cycle batteries with 180 days written replacement warranty.", "battery", "battery-replacement", "20 – 40 min"],
+  [Zap, "Charging Port & Jack", "Type-C, Lightning & micro-USB port repair, moisture bypass & fast-charge restoration.", "battery", "charging-port-repair", "25 – 45 min"],
+  [Cpu, "Motherboard & CPU Reballing", "45x trinocular chip-level micro-soldering, dead phone recovery & Poco CPU reballing.", "motherboard", "motherboard-ic-repair", "2 – 6 hours"],
+  [Droplet, "Water Damage Revival", "Emergency ultrasonic chemical decontamination bath, liquid corrosion removal & revival.", "water", "water-damage-revival", "1 – 3 hours"],
+  [Activity, "AMOLED Green & Pink Line Fix", "Save 70% vs screen replacement with specialized AMOLED flex bonding & laser rework.", "screen", "green-line-display-fix", "45 – 90 min"],
+  [Camera, "Camera & Sapphire Lens", "Front/rear camera modules, blurry focus fix, OIS stabilization & sapphire glass.", "iphone", "camera-lens-repair", "30 – 60 min"],
+  [Volume2, "Speaker & Sound", "Speaker, earpiece and ringer repair for crystal-clear audio.", "screen", "speaker-sound-repair", "20 – 40 min"],
+  [Mic, "Microphone & Call Voice", "MEMS digital mic replacement, voice note fix & noise-cancelling microphone repair.", "other", "microphone-repair", "20 – 40 min"],
+  [Wifi, "5G Signal & Network IC", "No service, emergency calls only, weak 5G/4G antenna and baseband WTR IC repair.", "motherboard", "network-5g-signal-repair", "1 – 3 hours"],
+  [Download, "Software Flashing & Bootloop", "Official stock ROM flashing, bootloop unbrick, FRP Google account & OS recovery.", "motherboard", "software-flashing-unlock", "20 – 45 min"],
+  [Fingerprint, "Fingerprint & iPhone Face ID", "In-display optical fingerprint calibration, iPhone Face ID dot-projector micro-rework.", "iphone", "fingerprint-face-id-repair", "45 – 90 min"],
+  [Wrench, "Power & Volume Buttons", "Jammed tactile buttons, volume flex repair & fastboot loop key replacement.", "battery", "power-volume-button-repair", "20 – 35 min"],
+  [HardDrive, "Dead Phone Data Recovery", "Confidential photo, contact & WhatsApp recovery from dead/broken phones. Zero-snooping.", "motherboard", "mobile-data-recovery", "Same day"],
+  [RefreshCw, "Hanging & Overheating Fix", "Hardware thermal paste reapplication, copper shield cleaning & deep cache optimization.", "motherboard", "phone-hanging-performance-fix", "30 – 60 min"],
+  [Shield, "iPhone Back Glass Laser Fix", "Precision laser separation for iPhone 11–16 Pro Max back glass with zero frame damage.", "iphone", "iphone-back-glass-repair", "45 – 90 min"],
 ];
 
 const ACCESSORY_CATEGORIES = [
@@ -616,17 +618,17 @@ function Services({
                   <Link
                     to="/services/$slug"
                     params={{ slug }}
-                    className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5 text-[11px] sm:text-xs"
+                    className="font-bold text-cyan-400 hover:text-cyan-300 hover:underline inline-flex items-center gap-1 text-[11px] sm:text-xs"
                   >
-                    <span>Details</span> <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                    <span>View Full Guide & Price</span> <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
                   <a
                     href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20help%20with%20${encodeURIComponent(title)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-semibold text-emerald-400 hover:underline text-[11px] sm:text-xs"
+                    className="font-bold text-emerald-400 hover:text-emerald-300 hover:underline text-[11px] sm:text-xs"
                   >
-                    Quote
+                    WhatsApp Quote
                   </a>
                 </div>
               </div>
@@ -720,25 +722,25 @@ function Gallery() {
       title: "Microscope Motherboard Soldering",
       sub: "BGA chip replacement & 0.02mm jumper micro-soldering",
       badge: "45X Trinocular Bench",
-      img: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+      img: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=1200&q=80",
     },
     {
       title: "Precision Electronics Micro-rework",
       sub: "Hot-air reflow, CPU reballing, and ESD-safe chip servicing",
       badge: "Surface Mount IC Rework",
-      img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+      img: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
     },
     {
       title: "Clean Hardware Diagnostics",
       sub: "Thermal imaging & digital multi-meter line short isolation",
       badge: "Diagnostic Subsystem",
-      img: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      img: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=1200&q=80",
     },
     {
       title: "Display Restoration Bench",
       sub: "Curved AMOLED touch glass separation & OCA lamination",
       badge: "Clean Bench Chamber",
-      img: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+      img: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80",
     },
   ];
 
