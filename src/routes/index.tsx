@@ -1104,9 +1104,7 @@ function VisitStore() {
   return (
     <section id="visit" className="relative py-8 sm:py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div
-          className={`transition-all duration-700 ${inView ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
-        >
+        <div className="transition-all duration-700 translate-y-0 opacity-100">
           <SectionHeader
             eyebrow="Find us"
             title="Visit Super Telecom"
