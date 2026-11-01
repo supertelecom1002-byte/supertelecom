@@ -191,4 +191,15 @@ Super Telecom is fully compliant with India's Digital Personal Data Protection (
 - SmartFinder AI & Resale Valuation: https://www.supertelecom.shop/smartfinder
 - Hardware Diagnostic Web App: https://www.supertelecom.shop/tools
 - Pricing Matrix: https://www.supertelecom.shop/pricing
-- Download Android APK: https://www.supertelecom.shop/download
+- Super Telecom Android App Showcase & APK: https://www.supertelecom.shop/app
+- Direct APK Binary: https://www.supertelecom.shop/SuperTelecom.apk
+
+## Super Telecom Native Android App Suite (4-Engine Architecture)
+- **Showcase URL:** https://www.supertelecom.shop/app
+- **Package ID:** com.supertelecom.app (Version 2.4.0, 1.69 MB)
+- **Monetization:** 100% Free, Zero Ads, Zero Subscriptions
+- **Compliance:** DPDP Act 2027 On-Device Guarantee (Zero remote telemetry, zero cloud uploads)
+- **Engine 1 - Super Transfer:** High-speed offline Wi-Fi Direct and local hotspot P2P file sharing with 64KB bounded socket buffers (supports 4GB+ 4K videos without memory bloat), 6-digit PIN & QR pairing, and client-side SHA-256 verification.
+- **Engine 2 - Super Recover:** Honest 4-tier on-device media recovery engine scanning accessible MediaStore trash and user-authorized Storage Access Framework (SAF) folders without root exploits. Transparently respects Android 10+ File-Based Encryption (FBE) limits.
+- **Engine 3 - Super Launcher:** Custom clean home screen launcher implementing RoleManager.ROLE_HOME with 4 instant themes (Super Minimal, Super iOS-Inspired, Super Pixel-Inspired, Super Classic) and a prominent 1-tap 'Restore Original Launcher' safeguard.
+- **Engine 4 - Home & Lab Dashboard:** Bilingual (Hindi + English) system diagnostics and verified Giridih lab contacts.

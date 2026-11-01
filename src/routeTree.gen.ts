@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ApkRouteImport } from './routes/apk'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as BrandsRouteImport } from './routes/brands'
 import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
@@ -63,6 +64,11 @@ const AdminRoute = AdminRouteImport.update({
 const ApkRoute = ApkRouteImport.update({
   id: '/apk',
   path: '/apk',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/apk': typeof ApkRoute
+  '/app': typeof AppRoute
   '/blog': typeof BlogRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/apk': typeof ApkRoute
+  '/app': typeof AppRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/download': typeof DownloadRoute
   '/locations': typeof LocationsRouteWithChildren
@@ -303,6 +311,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/apk': typeof ApkRoute
+  '/app': typeof AppRoute
   '/blog': typeof BlogRouteWithChildren
   '/brands': typeof BrandsRouteWithChildren
   '/cookie-policy': typeof CookiePolicyRoute
@@ -342,6 +351,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/apk'
+    | '/app'
     | '/blog'
     | '/brands'
     | '/cookie-policy'
@@ -378,6 +388,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/apk'
+    | '/app'
     | '/cookie-policy'
     | '/download'
     | '/locations'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/apk'
+    | '/app'
     | '/blog'
     | '/brands'
     | '/cookie-policy'
@@ -450,6 +462,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   ApkRoute: typeof ApkRoute
+  AppRoute: typeof AppRoute
   BlogRoute: typeof BlogRouteWithChildren
   BrandsRoute: typeof BrandsRouteWithChildren
   CookiePolicyRoute: typeof CookiePolicyRoute
@@ -496,6 +509,13 @@ declare module '@tanstack/react-router' {
       path: '/apk'
       fullPath: '/apk'
       preLoaderRoute: typeof ApkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -804,6 +824,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   ApkRoute: ApkRoute,
+  AppRoute: AppRoute,
   BlogRoute: BlogRouteWithChildren,
   BrandsRoute: BrandsRouteWithChildren,
   CookiePolicyRoute: CookiePolicyRoute,

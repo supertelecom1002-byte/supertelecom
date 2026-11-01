@@ -1,4 +1,4 @@
-package com.supertelecom.gamingos.launcher
+package com.supertelecom.feature.launcher
 
 import android.app.Activity
 import android.app.role.RoleManager
@@ -6,48 +6,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.provider.Settings
+import com.supertelecom.model.AppItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-data class AppItem(
-    val label: String,
-    val packageName: String,
-    val activityName: String,
-    val icon: Drawable?,
-    val isGame: Boolean
-)
 
 class AppRepository(private val context: Context) {
 
     private val packageManager: PackageManager = context.packageManager
 
-    // Popular game signatures for auto-detection heuristics
-    private val knownGameKeywords = listOf(
-        "freefire",
-        "pubg",
-        "bgmi",
-        "callofduty",
-        "shooter",
-        "genshin",
-        "asphalt",
-        "roblox",
-        "minecraft",
-        "brawlstars",
-        "clashofclans",
-        "shadowfight",
-        "subwaysurfers",
-        "supercell",
-        "ea.gp",
-        "gameloft",
-        "krafton",
-        "riotgames",
-        "epicgames"
-    )
-
-    suspend fun loadInstalledApps(): Pair<List<AppItem>, List<AppItem>> = withContext(Dispatchers.IO) {
+    suspend fun loadInstalledApps(): List<AppItem> = withContext(Dispatchers.IO) {
         val launcherIntent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
@@ -63,41 +32,33 @@ class AppRepository(private val context: Context) {
         }
 
         val allApps = mutableListOf<AppItem>()
-        val games = mutableListOf<AppItem>()
         val selfPackage = context.packageName
 
         for (resolveInfo in resolveInfos) {
             val pkg = resolveInfo.activityInfo.packageName
-            if (pkg == selfPackage) continue // Skip self in launcher grid
+            if (pkg == selfPackage) continue
 
             val label = resolveInfo.loadLabel(packageManager).toString()
             val icon = resolveInfo.loadIcon(packageManager)
             val activityName = resolveInfo.activityInfo.name
-
             val isGame = isApplicationGame(pkg)
 
-            val item = AppItem(
-                label = label,
-                packageName = pkg,
-                activityName = activityName,
-                icon = icon,
-                isGame = isGame
+            allApps.add(
+                AppItem(
+                    label = label,
+                    packageName = pkg,
+                    activityName = activityName,
+                    icon = icon,
+                    isGame = isGame
+                )
             )
-
-            allApps.add(item)
-            if (isGame) {
-                games.add(item)
-            }
         }
 
-        val sortedApps = allApps.sortedBy { it.label.lowercase() }
-        val sortedGames = games.sortedBy { it.label.lowercase() }
-
-        Pair(sortedApps, sortedGames)
+        allApps.sortedBy { it.label.lowercase() }
     }
 
     private fun isApplicationGame(packageName: String): Boolean {
-        try {
+        return try {
             val appInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getApplicationInfo(
                     packageName,
@@ -107,23 +68,10 @@ class AppRepository(private val context: Context) {
                 @Suppress("DEPRECATION")
                 packageManager.getApplicationInfo(packageName, 0)
             }
-
-            // 1. Android official category check (API 26+)
-            if (appInfo.category == ApplicationInfo.CATEGORY_GAME) {
-                return true
-            }
-
-            // 2. Package heuristic matching
-            val lowerPkg = packageName.lowercase()
-            for (keyword in knownGameKeywords) {
-                if (lowerPkg.contains(keyword)) {
-                    return true
-                }
-            }
+            appInfo.category == ApplicationInfo.CATEGORY_GAME
         } catch (_: Exception) {
-            // Ignore unresolvable app info
+            false
         }
-        return false
     }
 
     fun launchApp(packageName: String): Boolean {
@@ -146,7 +94,10 @@ class AppRepository(private val context: Context) {
             addCategory(Intent.CATEGORY_HOME)
         }
         val resolveInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            packageManager.resolveActivity(intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()))
+            packageManager.resolveActivity(
+                intent,
+                PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong())
+            )
         } else {
             @Suppress("DEPRECATION")
             packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
@@ -166,16 +117,23 @@ class AppRepository(private val context: Context) {
             }
         }
 
-        // Fallback: Launch Home Settings
-        val homeSettingsIntent = Intent(Settings.ACTION_HOME_SETTINGS).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
+        openHomeSettings(activity)
+    }
+
+    fun openHomeSettings(activity: Activity) {
         try {
+            val homeSettingsIntent = Intent(Settings.ACTION_HOME_SETTINGS).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
             activity.startActivity(homeSettingsIntent)
         } catch (_: Exception) {
-            activity.startActivity(Intent(Settings.ACTION_SETTINGS).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            })
+            try {
+                activity.startActivity(Intent(Settings.ACTION_SETTINGS).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+            } catch (_: Exception) {
+                // Ignore fallback error
+            }
         }
     }
 

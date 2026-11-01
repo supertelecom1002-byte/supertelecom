@@ -786,5 +786,4 @@ function LegacyServicePage({ service }: { service: ServiceInfo }) {
   );
 }
 
-export { DedicatedSingleServicePage, LegacyServicePage };
 export default ServiceRouteComponent;

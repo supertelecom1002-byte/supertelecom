@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cyber Gaming OS</string>
-    <string name="launcher_tagline">Super Telecom Cyber-Gamer Hub</string>
-    <string name="game_vault_title">Game Turbo Vault</string>
-    <string name="hardware_telemetry_title">Hardware Telemetry</string>
-    <string name="ram_gauge">Active Memory</string>
-    <string name="battery_status">Battery &amp; Thermal</string>
-    <string name="refresh_rate">Display Refresh</string>
-    <string name="floating_crosshair">Floating HUD Crosshair</string>
-    <string name="switch_launcher">Default Home Launcher</string>
-    <string name="search_apps_hint">Search cyber vault...</string>
-    <string name="turbo_boost_launch">BOOST &amp; LAUNCH</string>
-    <string name="overlay_permission_desc">Screen overlay permission is needed for the Floating Crosshair HUD</string>
-    <string name="crosshair_active">HUD Crosshair Active</string>
-    <string name="crosshair_stopped">HUD Crosshair Stopped</string>
+    <string name="app_name">Super Telecom</string>
+    <string name="app_tagline">Super Transfer, Super Recover &amp; Super Launcher</string>
+    
+    <!-- Navigation Tabs -->
+    <string name="tab_home">Home</string>
+    <string name="tab_home_hi">होम</string>
+    <string name="tab_transfer">Transfer</string>
+    <string name="tab_transfer_hi">ट्रांसफर</string>
+    <string name="tab_recover">Recover</string>
+    <string name="tab_recover_hi">रिकवर</string>
+    <string name="tab_launcher">Launcher</string>
+    <string name="tab_launcher_hi">लॉन्चर</string>
+
+    <!-- Super Transfer -->
+    <string name="transfer_title">Super Transfer</string>
+    <string name="transfer_subtitle">Fast Offline Wi-Fi Direct &amp; Hotspot File Sharing</string>
+    <string name="send_files">Send Files</string>
+    <string name="receive_files">Receive Files</string>
+    <string name="scan_to_connect">Scan to Connect</string>
+    <string name="select_photos">Photos</string>
+    <string name="select_videos">Videos</string>
+    <string name="select_documents">Documents</string>
+    <string name="select_other">All Files</string>
+    <string name="pairing_code">6-Digit Pairing PIN</string>
+
+    <!-- Super Recover -->
+    <string name="recover_title">Super Recover</string>
+    <string name="recover_subtitle">Honest On-Device Media Recovery Engine</string>
+    <string name="scan_media">Scan Storage</string>
+    <string name="category_photos">Photos</string>
+    <string name="category_videos">Videos</string>
+    <string name="category_audio">Audio &amp; Recordings</string>
+    <string name="category_documents">Documents</string>
+
+    <!-- Super Launcher -->
+    <string name="launcher_title">Super Launcher</string>
+    <string name="restore_original_launcher">Restore Original Launcher (पुराना लॉन्चर वापस लाएं)</string>
+    <string name="theme_minimal">Super Minimal</string>
+    <string name="theme_ios">Super iOS-Inspired</string>
+    <string name="theme_pixel">Super Pixel-Inspired</string>
+    <string name="theme_classic">Super Classic</string>
+
+    <!-- DPDP 2027 -->
+    <string name="dpdp_title">DPDP Act 2027 Privacy Guarantee</string>
+    <string name="dpdp_desc">100% on-device operation. Zero remote telemetry, zero analytics tracking, and zero cloud uploads. Your data never leaves your smartphone.</string>
 </resources>

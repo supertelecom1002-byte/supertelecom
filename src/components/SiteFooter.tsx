@@ -75,7 +75,7 @@ const QUICK_LINKS: { label: string; to: string; hash?: string }[] = [
   { label: "About Us", to: "/about" },
   { label: "Services", to: "/", hash: "services" },
   { label: "Pricing", to: "/pricing" },
-  { label: "Download App", to: "/download" },
+  { label: "Download App", to: "/app" },
   { label: "Privacy Policy", to: "/privacy" },
   { label: "Terms of Service", to: "/terms" },
   { label: "Warranty Policy", to: "/warranty" },
@@ -94,7 +94,7 @@ const LEGAL_COMPLIANCE_LINKS: { label: string; to: string }[] = [
   { label: "Terms & Conditions", to: "/terms" },
   { label: "90-Day Lab Warranty", to: "/warranty" },
   { label: "About Our Lab & Team", to: "/about" },
-  { label: "Download Android APK", to: "/download" },
+  { label: "Download Android APK", to: "/app" },
   { label: "Repair Price List", to: "/pricing" },
   { label: "Cookie Policy", to: "/cookie-policy" },
   { label: "HTML Sitemap", to: "/sitemap" },
@@ -107,7 +107,7 @@ const CORE_SERVICES_LINKS: { label: string; to: string }[] = [
   { label: "High-Density Battery Swap", to: "/services/battery-replacement" },
   { label: "Charging Port & Audio Repair", to: "/services/charging-port-repair" },
   { label: "Water Damage Revival", to: "/services/water-damage-repair" },
-  { label: "16-in-1 Offline Lab Tools", to: "/download" },
+  { label: "16-in-1 Offline Lab Tools", to: "/app" },
   { label: "Certified Pre-Owned Phones", to: "/services/second-hand-mobile" },
 ];
 

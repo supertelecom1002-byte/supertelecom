@@ -75,10 +75,10 @@ function ApkDirectDownloadPage() {
 
         <div className="pt-3 border-t border-slate-800 flex items-center justify-center gap-4 text-xs">
           <a
-            href="/download"
+            href="/app"
             className="inline-flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors font-mono"
           >
-            <span>Full Features &amp; Guide</span>
+            <span>Full Features &amp; Guide (/app)</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </a>
         </div>
@@ -86,3 +86,5 @@ function ApkDirectDownloadPage() {
     </div>
   );
 }
+
+export default ApkDirectDownloadPage;

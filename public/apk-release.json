@@ -1,0 +1,25 @@
+{
+  "appName": "Super Telecom",
+  "tagline": "Super Transfer, Super Recover & Super Launcher",
+  "versionName": "2.4.0",
+  "versionCode": 24,
+  "packageId": "com.supertelecom.app",
+  "minSdk": 24,
+  "minAndroidVersion": "Android 7.0 (Nougat)",
+  "targetSdk": 34,
+  "targetAndroidVersion": "Android 14 (Upside Down Cake)",
+  "fileSize": 1769205,
+  "fileSizeHuman": "1.69 MB",
+  "releaseDate": "2026-11-01",
+  "sha256": "3ebc895e5bb1d5080268bb61fa3454e9c3dfdabf9313307cb4a7aeab81287afc",
+  "downloadUrl": "/SuperTelecom.apk",
+  "downloadFilename": "SuperTelecom-Release.apk",
+  "architecture": "universal (arm64-v8a, armeabi-v7a, x86_64)",
+  "compliance": "DPDP Act 2027 On-Device Certified",
+  "features": [
+    "Super Transfer: High-speed Wi-Fi Direct and Hotspot chunked socket streaming",
+    "Super Recover: Honest 4-tier on-device MediaStore & SAF media discovery",
+    "Super Launcher: 4 instant themes (Minimal, iOS-Inspired, Pixel-Inspired, Classic) with 1-tap restore",
+    "Zero Ads, Zero Telemetry, 100% Free with zero paywalls"
+  ]
+}

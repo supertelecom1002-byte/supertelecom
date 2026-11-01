@@ -51,7 +51,7 @@ function SitemapPage() {
             <li><Link to="/blog" className="text-primary hover:underline">Blog</Link></li>
             <li><Link to="/sitemap" className="text-primary hover:underline">Sitemap</Link></li>
             <li><Link to="/about" className="text-primary hover:underline">About Super Telecom Lab</Link></li>
-            <li><Link to="/download" className="text-primary hover:underline">Download Official Mobile App</Link></li>
+            <li><Link to="/app" className="text-primary hover:underline">Super Telecom App (Transfer, Recover &amp; Launcher)</Link></li>
             <li><Link to="/tools" className="text-primary hover:underline">16+ Free Hardware Diagnostics Suite</Link></li>
             <li><Link to="/track" className="text-primary hover:underline">Live Repair Job Tracker</Link></li>
             <li><Link to="/privacy" className="text-primary hover:underline">Privacy Policy &amp; Permissions</Link></li>

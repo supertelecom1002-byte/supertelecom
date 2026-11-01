@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.CyberGamingOS" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">@color/cyber_bg_black</item>
-        <item name="android:navigationBarColor">@color/cyber_bg_black</item>
-        <item name="android:windowBackground">@color/cyber_bg_black</item>
+    <style name="Theme.SuperTelecom" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#020617</item>
+        <item name="android:navigationBarColor">#020617</item>
+        <item name="android:windowBackground">#020617</item>
     </style>
 
-    <style name="Theme.CyberGamingOS.Fullscreen" parent="Theme.CyberGamingOS">
+    <style name="Theme.SuperTelecom.Fullscreen" parent="Theme.SuperTelecom">
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:statusBarColor">@color/cyber_bg_black</item>
-        <item name="android:navigationBarColor">@color/cyber_bg_black</item>
+        <item name="android:statusBarColor">#020617</item>
+        <item name="android:navigationBarColor">#020617</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowLightNavigationBar">false</item>
     </style>
+
+    <!-- Legacy compatibility alias -->
+    <style name="Theme.CyberGamingOS" parent="Theme.SuperTelecom" />
+    <style name="Theme.CyberGamingOS.Fullscreen" parent="Theme.SuperTelecom.Fullscreen" />
 </resources>

@@ -41,11 +41,11 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
           setDeferredPrompt(null);
         }
       } catch {
-        // fallback to /download
-        window.location.href = "/download";
+        // fallback to /app
+        window.location.href = "/app";
       }
     } else {
-      window.location.href = "/download";
+      window.location.href = "/app";
     }
   };
 
@@ -112,7 +112,7 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
           </button>
         ) : (
           <Link
-            to="/download"
+            to="/app"
             className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs font-mono active:scale-95 transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1 whitespace-nowrap cursor-pointer"
           >
             <Download className="h-3.5 w-3.5" />

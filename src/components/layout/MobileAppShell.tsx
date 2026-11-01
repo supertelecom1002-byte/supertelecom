@@ -314,7 +314,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         <div className="flex items-center gap-1.5">
           {!isStandalone && (
             <Link
-              to="/download"
+              to="/app"
               onClick={() => triggerVibration(15)}
               aria-label="Install Super Telecom App"
               className="h-8 px-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-500 hover:from-cyan-500 hover:to-blue-400 text-white dark:text-slate-950 font-bold text-[10px] font-mono flex items-center gap-1 active:scale-90 transition-all shadow-xs whitespace-nowrap"

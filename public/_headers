@@ -8,25 +8,34 @@
   Content-Type: application/json
   Access-Control-Allow-Origin: *
 
+/apk-release.json
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=300
+
 /sw.js
   Cache-Control: no-cache, no-store, must-revalidate
 
 /SuperTelecom.apk
   Content-Type: application/vnd.android.package-archive
-  Content-Disposition: attachment; filename="SuperTelecom-v2.4.0.apk"
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
+  Cache-Control: public, max-age=3600
+  X-Content-Type-Options: nosniff
 
 /supertelecom.apk
   Content-Type: application/vnd.android.package-archive
-  Content-Disposition: attachment; filename="SuperTelecom-v2.4.0.apk"
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
+  Cache-Control: public, max-age=3600
+  X-Content-Type-Options: nosniff
 
 /Super%20Telecom.apk
   Content-Type: application/vnd.android.package-archive
-  Content-Disposition: attachment; filename="SuperTelecom-v2.4.0.apk"
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
+  Cache-Control: public, max-age=3600
+  X-Content-Type-Options: nosniff
 
 /apk
   Content-Type: application/vnd.android.package-archive
-  Content-Disposition: attachment; filename="SuperTelecom-v2.4.0.apk"
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
+  Cache-Control: public, max-age=3600
+  X-Content-Type-Options: nosniff

@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.supertelecom.gamingos"
+    namespace = "com.supertelecom"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.supertelecom.gamingos"
-        minSdk = 26
+        applicationId = "com.supertelecom.app"
+        minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 24
+        versionName = "2.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
