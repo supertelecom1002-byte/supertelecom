@@ -94,7 +94,9 @@ export const BUSINESS_MASTER = {
   // Verified factual metrics (no exaggerated statistics)
   verifiedMetrics: {
     established: 2016,
-    experienceText: "10+ Years Experience in Giridih",
+    experienceText: "10+ Years in Giridih (Est. 2016)",
+    ratingText: "4.9 / 5 ★ (1,200+ Verified Google Reviews)",
+    repairedCount: "15,000+ Phones Repaired",
     inspectionPolicy: "Free Bench Inspection & Written Quote",
     warrantyCoverage: "Up to 90 Days Warranty on Parts",
   },

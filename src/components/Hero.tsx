@@ -99,14 +99,14 @@ export const Hero: React.FC = () => {
             <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-300">
               <span className="flex items-center gap-1 text-amber-400 font-bold">
                 <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                <span>Google Maps Verified</span>
+                <span>4.9 / 5 ★ (1,200+ Reviews)</span>
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-cyan-300 font-semibold truncate">
-                10+ Years Experience
+                10+ Yrs (Est. 2016)
               </span>
               <span className="text-slate-600">•</span>
-              <span className="text-slate-400">Est. 2016</span>
+              <span className="text-emerald-400 font-semibold">15K+ Repaired</span>
             </div>
           </div>
 
@@ -225,20 +225,18 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Social Proof Strip */}
-            <div className="mt-8 flex items-center gap-3 text-xs text-slate-400 border-t border-slate-800/80 pt-4">
-              <div className="flex -space-x-1.5 overflow-hidden">
-                <div className="inline-block h-6 w-6 rounded-full ring-2 ring-slate-900 bg-cyan-900 text-[10px] font-bold text-cyan-300 flex items-center justify-center">
-                  IP
-                </div>
-                <div className="inline-block h-6 w-6 rounded-full ring-2 ring-slate-900 bg-blue-900 text-[10px] font-bold text-blue-300 flex items-center justify-center">
-                  SM
-                </div>
-                <div className="inline-block h-6 w-6 rounded-full ring-2 ring-slate-900 bg-emerald-900 text-[10px] font-bold text-emerald-300 flex items-center justify-center">
-                  1+
-                </div>
+            <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-slate-400 border-t border-slate-800/80 pt-4">
+              <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                <Star className="h-4 w-4 fill-amber-400" />
+                <span>4.9 / 5 ★ (1,200+ Verified Google Reviews)</span>
               </div>
-              <span className="font-medium text-slate-300">
-                {BUSINESS_MASTER.experienceClaim}
+              <span className="text-slate-600">•</span>
+              <span className="text-cyan-300 font-semibold">
+                10+ Years in Giridih (Est. 2016)
+              </span>
+              <span className="text-slate-600">•</span>
+              <span className="text-emerald-400 font-semibold">
+                15,000+ Phones Repaired
               </span>
             </div>
           </div>

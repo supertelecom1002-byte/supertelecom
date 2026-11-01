@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from "react";
 import {
   Phone, MessageCircle, MapPin, Mail, Clock, Navigation, Calendar,
   Star, ShieldCheck, Zap, Wrench, ChevronDown, Facebook, Instagram, Youtube,
-  ArrowUpRight, CreditCard, BadgeCheck,
+  ArrowUpRight, CreditCard, BadgeCheck, Lock,
 } from "lucide-react";
 import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SITE_URL } from "@/data/site";
 import { BUSINESS_MASTER, DATA_SAFETY_AND_PRIVACY_SUMMARY } from "@/config/superTelecomConfig";
+import { DpdpDataRightsModal } from "@/components/compliance/DpdpComplianceHub";
+import { GIRIDIH_LOCALITIES } from "@/components/seo/LocalSeoSchema";
 
 const PHONE = BUSINESS_MASTER.phoneRaw;
 const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
@@ -118,10 +120,10 @@ const FOOTER_FAQS: [string, string][] = [
 ];
 
 const COUNTERS: { value: number; suffix: string; label: string; decimals?: number }[] = [
-  { value: 10, suffix: "+", label: "Years in Giridih" },
-  { value: 25, suffix: "K+", label: "Repairs Handled" },
-  { value: 10, suffix: "K+", label: "Satisfied Customers" },
-  { value: 5.0, suffix: " / 5", label: "Customer Rating", decimals: 1 },
+  { value: 10, suffix: "+ Years", label: "Est. 2016 in Giridih" },
+  { value: 15, suffix: "K+", label: "Phones Repaired" },
+  { value: 12, suffix: "K+", label: "Happy Customers" },
+  { value: 4.9, suffix: " / 5 ★", label: "1,200+ Verified Google Reviews", decimals: 1 },
 ];
 
 const BADGES = [
@@ -211,6 +213,7 @@ function FooterCol({ title, items, id }: { title: string; items: { label: string
 
 export function SiteFooter() {
   const { ref, inView } = useInView<HTMLDivElement>();
+  const [dpdpModalOpen, setDpdpModalOpen] = useState(false);
 
   const footerSchema = {
     "@context": "https://schema.org",
@@ -439,6 +442,13 @@ export function SiteFooter() {
 
 
               <div className="pt-1 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDpdpModalOpen(true)}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-cyan-500/40 bg-cyan-950/40 px-3.5 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-900/60 transition-all cursor-pointer"
+                >
+                  <Lock className="h-3.5 w-3.5 text-cyan-400" /> DPDP 2027 Privacy &amp; Data Rights
+                </button>
                 <a
                   href={MAPS_PLACE}
                   target="_blank"
@@ -467,8 +477,25 @@ export function SiteFooter() {
             </div>
           </section>
 
+          {/* ---------------- Giridih Localities SEO Coverage ---------------- */}
+          <section aria-label="Giridih Local Service Coverage Areas" className="mt-10 rounded-2xl border border-border/50 bg-surface/40 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-widest text-primary shrink-0">
+                Local Giridih Service Coverage:
+              </span>
+              {GIRIDIH_LOCALITIES.map((loc) => (
+                <span
+                  key={loc}
+                  className="rounded-full border border-border/60 bg-background/50 px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+                >
+                  {loc}
+                </span>
+              ))}
+            </div>
+          </section>
+
           {/* ---------------- Payments ---------------- */}
-          <section aria-label="Accepted payment methods" className="mt-10 flex flex-wrap items-center gap-2">
+          <section aria-label="Accepted payment methods" className="mt-8 flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               <CreditCard className="h-4 w-4 text-primary" aria-hidden /> We accept
             </span>
@@ -490,6 +517,8 @@ export function SiteFooter() {
 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(footerSchema) }} />
       </footer>
+
+      <DpdpDataRightsModal isOpen={dpdpModalOpen} onClose={() => setDpdpModalOpen(false)} />
     </>
   );
 }

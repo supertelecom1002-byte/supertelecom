@@ -1,14 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "env": {
-    "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
-  },
-  "build": {
-    "env": {
-      "DANGEROUSLY_DEPLOY_VULNERABLE_TANSTACK_START_XSS": "1"
-    }
-  },
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(self)"
+        }
+      ]
+    },
     {
       "source": "/.well-known/assetlinks.json",
       "headers": [
@@ -94,6 +107,10 @@
   "rewrites": [
     {
       "source": "/supertelecom.apk",
+      "destination": "/SuperTelecom.apk"
+    },
+    {
+      "source": "/Super%20Telecom.apk",
       "destination": "/SuperTelecom.apk"
     },
     {

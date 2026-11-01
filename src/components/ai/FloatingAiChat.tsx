@@ -341,19 +341,19 @@ export const FloatingAiChat: React.FC = () => {
 
   return (
     <>
-      {/* Mobile-Only Floating Trigger Button (Desktop is integrated in Unified Floating Dock) */}
+      {/* Subpage Mobile Floating Trigger Button (Homepage uses Unified Floating Dock to prevent overlap) */}
       <div className="fixed bottom-20 right-4 z-40 md:hidden">
-        {!isOpen && (
+        {!isOpen && typeof window !== "undefined" && window.location.pathname !== "/" && (
           <button
             type="button"
             onClick={() => setIsOpen(true)}
             aria-label="Open Super Telecom AI Assistant"
-            className="group relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-xl shadow-cyan-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
             {/* Active Pulsing Ring */}
             <span className="absolute -inset-1 rounded-full bg-cyan-400/40 animate-ping pointer-events-none" />
-            <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
-            <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 border-2 border-slate-950">
+            <Bot className="h-4 w-4 transition-transform group-hover:rotate-6" />
+            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-emerald-500 border-2 border-slate-950">
               <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
             </span>
           </button>

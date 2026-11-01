@@ -32,6 +32,7 @@ import {
   Database,
   CheckCheck,
 } from "lucide-react";
+import { DpdpCameraNotice, DpdpConsentCheckbox } from "@/components/compliance/DpdpComplianceHub";
 import {
   SMARTPHONE_CATALOGUE,
   SmartDevice,
@@ -99,6 +100,7 @@ export function SmartFinderPlatform() {
   const [deviceAgeMonths, setDeviceAgeMonths] = useState<number>(10);
   const [inspectionChecks, setInspectionChecks] = useState<InspectionChecks>(DEFAULT_INSPECTION_CHECKS);
   const [valuationResult, setValuationResult] = useState<ValuationResult | null>(null);
+  const [smartFinderConsent, setSmartFinderConsent] = useState(false);
 
   // Admin / Diagnostics State
   const [showAdminDrawer, setShowAdminDrawer] = useState(false);
@@ -767,14 +769,12 @@ export function SmartFinderPlatform() {
                       <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={scanStatus === "scanning"}
-                        className="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-sky-600 hover:bg-sky-500 text-white transition flex items-center justify-center gap-2"
+                        className="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-sky-600 hover:bg-sky-500 text-white transition flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <Upload className="w-4 h-4" /> Upload Box Photo
                       </button>
                     </div>
-                    <span className="text-[11px] text-slate-500 block">
-                      🔒 Zero Server Storage: Images are analyzed entirely on-device via HTML5 Canvas.
-                    </span>
+                    <DpdpCameraNotice className="mt-3 text-left" />
                   </div>
                 )}
 
@@ -1188,22 +1188,41 @@ export function SmartFinderPlatform() {
                     </div>
                   )}
 
+                  {/* DPDP 2027 Consent */}
+                  <div className="pt-2">
+                    <DpdpConsentCheckbox
+                      checked={smartFinderConsent}
+                      onChange={setSmartFinderConsent}
+                      className="bg-slate-950/80 border-slate-800"
+                    />
+                  </div>
+
                   {/* Lock Quote CTA */}
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <span className="text-xs text-slate-400">
                       Quote valid for 7 days with free inspection at Super Telecom Giridih.
                     </span>
 
-                    <a
-                      href={`https://wa.me/918002903643?text=${encodeURIComponent(
-                        `Hi Super Telecom Giridih, I checked resale valuation for my ${resaleDevice.brand} ${resaleDevice.marketingModelName} (${deviceAgeMonths} months old). The estimated quote is ₹${valuationResult.superTelecomInstantQuote}. I would like to book a physical inspection at your Barganda Road workshop.`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center gap-2 transition shadow-lg"
-                    >
-                      <MessageCircle className="w-4 h-4" /> Lock In Quote via WhatsApp (+91 80029 03643)
-                    </a>
+                    {smartFinderConsent ? (
+                      <a
+                        href={`https://wa.me/918002903643?text=${encodeURIComponent(
+                          `Hi Super Telecom Giridih, I checked resale valuation for my ${resaleDevice.brand} ${resaleDevice.marketingModelName} (${deviceAgeMonths} months old). The estimated quote is ₹${valuationResult.superTelecomInstantQuote}. I would like to book a physical inspection at your Barganda Road workshop.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center gap-2 transition shadow-lg"
+                      >
+                        <MessageCircle className="w-4 h-4" /> Lock In Quote via WhatsApp (+91 80029 03643)
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => alert("कृपया ऊपर दिए गए DPDP Act 2027 सहमति चेकबॉक्स को चेक करें।")}
+                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-slate-800 text-slate-400 flex items-center justify-center gap-2 transition cursor-not-allowed opacity-80"
+                      >
+                        <MessageCircle className="w-4 h-4" /> सहमति आवश्यक (Check Consent to Lock Quote)
+                      </button>
+                    )}
                   </div>
                 </div>
               )}

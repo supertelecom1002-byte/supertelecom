@@ -8,6 +8,12 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.supertelecom.shop/smartfinder</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://www.supertelecom.shop/locations/barganda-road-mobile-repair</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>weekly</changefreq>

@@ -35,6 +35,8 @@ import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
 import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
+import { LocalSeoSchema } from "@/components/seo/LocalSeoSchema";
+import { DpdpConsentCheckbox } from "@/components/compliance/DpdpComplianceHub";
 import React from "react";
 
 class SectionErrorBoundary extends React.Component<
@@ -330,6 +332,7 @@ function HomePage() {
 
   return (
     <>
+      <LocalSeoSchema />
       {/* 100% Native Mobile App Experience (md:hidden) */}
       <div className="md:hidden">
         <MobileAppShell />
@@ -518,10 +521,10 @@ function About() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              ["10+", "Years of Experience in Giridih"],
-              ["2016", "Established in Giridih"],
-              ["30–60m", "Fast Display & Battery Swaps"],
-              ["90 Days", "Parts & Service Warranty"],
+              ["4.9★", "1,200+ Verified Google Reviews"],
+              ["10+ Yrs", "In Giridih (Established 2016)"],
+              ["15,000+", "Smartphones Successfully Repaired"],
+              ["90 Days", "Parts & Micro-Soldering Warranty"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">
                 <div className="font-display text-4xl font-bold text-gradient sm:text-5xl">{n}</div>
@@ -818,22 +821,31 @@ function Contact() {
   const [booking, setBooking] = useState<BookingSummary | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dpdpConsent, setDpdpConsent] = useState(false);
   const sendBooking = useServerFn(submitBooking);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (submitting || sent) return; // prevent duplicate submissions
+    if (submitting || sent) return;
+    if (!dpdpConsent) {
+      setError("कृपया DPDP Act 2027 के तहत डेटा शेयरिंग सहमति चेकबॉक्स को चेक करें।");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     const fd = new FormData(e.currentTarget);
+    // Strict input sanitization (strip HTML tags, trim, and length limits)
+    const sanitize = (val: FormDataEntryValue | null) =>
+      String(val ?? "").replace(/<[^>]*>?/gm, "").trim().slice(0, 500);
+
     try {
       const res = await sendBooking({
         data: {
-          name: String(fd.get("name") ?? ""),
-          phone: String(fd.get("phone") ?? ""),
-          model: String(fd.get("model") ?? ""),
-          service: String(fd.get("service") ?? ""),
-          message: String(fd.get("message") ?? ""),
+          name: sanitize(fd.get("name")),
+          phone: sanitize(fd.get("phone")),
+          model: sanitize(fd.get("model")),
+          service: sanitize(fd.get("service")),
+          message: sanitize(fd.get("message")),
         },
       });
       const summary: BookingSummary = {
@@ -899,10 +911,19 @@ function Contact() {
                 </label>
                 <textarea id="contact-message" name="message" rows={4} className="w-full rounded-xl border border-input bg-background/60 px-4 py-3 text-sm outline-none focus:border-primary" />
               </div>
+              <DpdpConsentCheckbox
+                checked={dpdpConsent}
+                onChange={setDpdpConsent}
+                required={true}
+                className="sm:col-span-2 mt-2"
+              />
             </div>
+            {error && (
+              <p className="mt-3 text-xs text-rose-400 font-semibold">{error}</p>
+            )}
             <button
               type="submit"
-              disabled={submitting || sent}
+              disabled={submitting || sent || !dpdpConsent}
               className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-brand px-6 py-3 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
             >
               {sent ? (<><Check className="mr-2 h-4 w-4" /> Request Sent</>) : submitting ? "Sending…" : (<><Send className="mr-2 h-4 w-4" /> Send booking request</>)}
@@ -1003,7 +1024,7 @@ function FloatingActions() {
   return (
     <aside
       aria-label="Quick Communication Dock"
-      className="hidden md:flex fixed bottom-6 right-6 z-40 items-center gap-1.5 p-1.5 rounded-full bg-slate-950/90 border border-slate-800 shadow-2xl backdrop-blur-xl ring-1 ring-cyan-500/20 select-none animate-in fade-in slide-in-from-bottom-3 duration-300"
+      className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-40 flex items-center gap-1.5 p-1.5 rounded-full bg-slate-950/90 border border-slate-800 shadow-2xl backdrop-blur-xl ring-1 ring-cyan-500/20 select-none animate-in fade-in slide-in-from-bottom-3 duration-300"
     >
       {/* 1. WhatsApp Action */}
       <a
@@ -1012,9 +1033,9 @@ function FloatingActions() {
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
         title="WhatsApp Super Telecom"
-        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
+        className="group relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
-        <MessageCircle className="h-5 w-5" />
+        <MessageCircle className="h-4 w-4 md:h-5 md:w-5" />
       </a>
 
       {/* 2. Direct Call Action */}
@@ -1022,17 +1043,17 @@ function FloatingActions() {
         href={`tel:${PHONE}`}
         aria-label="Call Super Telecom Technician"
         title={`Call ${PHONE_DISPLAY}`}
-        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
+        className="group relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
-        <Phone className="h-5 w-5" />
+        <Phone className="h-4 w-4 md:h-5 md:w-5" />
       </a>
 
-      {/* 3. Direct Email Action */}
+      {/* 3. Direct Email Action (desktop only to preserve compact mobile dock) */}
       <a
         href={`mailto:${EMAIL}`}
         aria-label="Email Super Telecom"
         title={`Email ${EMAIL}`}
-        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:bg-slate-700 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
+        className="hidden sm:flex group relative h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:bg-slate-700 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
       >
         <Mail className="h-4 w-4" />
       </a>
@@ -1043,9 +1064,9 @@ function FloatingActions() {
         onClick={handleOpenAiBot}
         aria-label="Open Super Telecom AI Assistant"
         title="Ask Super Telecom AI"
-        className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer"
+        className="group relative flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer"
       >
-        <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
+        <Bot className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:rotate-6" />
         <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-80" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
@@ -1059,7 +1080,7 @@ function FloatingActions() {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="Scroll back to top"
           title="Back to top"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <ChevronDown className="h-4 w-4 rotate-180" />
         </button>
@@ -1068,51 +1089,16 @@ function FloatingActions() {
   );
 }
 
-const STORE_LAT = 24.1854;
-const STORE_LNG = 86.3040;
-const MAPS_EMBED = "https://www.google.com/maps?q=Super+Telecom+Barganda+Road+Near+Shivam+Clinic+Giridih+Jharkhand+815301&output=embed";
+const STORE_LAT = 24.1802958;
+const STORE_LNG = 86.2974917;
+const MAPS_EMBED = "https://maps.google.com/maps?q=Super+Telecom+Barganda+Road+Near+Shivam+Clinic+Giridih+Jharkhand+815301&t=&z=16&ie=UTF8&iwloc=&output=embed";
 const MAPS_PLACE = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
 
 function VisitStore() {
-  const [visible, setVisible] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = document.getElementById("visit");
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setVisible(true);
-            setInView(true);
-            io.disconnect();
-            break;
-          }
-        }
-      },
-      { rootMargin: "150px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   const directionsHref = () => {
-    if (typeof window !== "undefined" && "geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const url = `https://www.google.com/maps/dir/?api=1&origin=${pos.coords.latitude},${pos.coords.longitude}&destination=${STORE_LAT},${STORE_LNG}&travelmode=driving`;
-          window.open(url, "_blank", "noopener,noreferrer");
-        },
-        () => {
-          window.open(`https://www.google.com/maps/dir/?api=1&destination=${STORE_LAT},${STORE_LNG}`, "_blank", "noopener,noreferrer");
-        },
-        { timeout: 5000 },
-      );
-    } else {
-      window.open(`https://www.google.com/maps/dir/?api=1&destination=${STORE_LAT},${STORE_LNG}`, "_blank", "noopener,noreferrer");
-    }
+    window.open(MAPS_PLACE, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -1140,17 +1126,15 @@ function VisitStore() {
                       </div>
                     </div>
                   )}
-                  {visible && (
-                    <iframe
-                      title="Super Telecom store location on Google Maps"
-                      src={MAPS_EMBED}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      onLoad={() => setMapLoaded(true)}
-                      className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-700 ${mapLoaded ? "opacity-100" : "opacity-0"}`}
-                      allowFullScreen
-                    />
-                  )}
+                  <iframe
+                    title="Super Telecom store location on Google Maps"
+                    src={MAPS_EMBED}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    onLoad={() => setMapLoaded(true)}
+                    className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-700 ${mapLoaded ? "opacity-100" : "opacity-0"}`}
+                    allowFullScreen
+                  />
 
                   <a
                     href={MAPS_PLACE}
@@ -1193,13 +1177,15 @@ function VisitStore() {
                 </div>
 
                 <div className="mt-7 grid gap-3">
-                  <button
-                    onClick={directionsHref}
-                    className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-brand px-5 py-3 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:-translate-y-0.5"
+                  <a
+                    href={MAPS_PLACE}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-brand px-5 py-3 text-sm font-semibold text-primary-foreground shadow-brand transition-transform hover:-translate-y-0.5 text-center cursor-pointer"
                   >
                     <MapPin className="h-4 w-4" /> Get Directions
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </button>
+                  </a>
                   <div className="grid grid-cols-2 gap-3">
                     <a
                       href={`tel:${PHONE}`}

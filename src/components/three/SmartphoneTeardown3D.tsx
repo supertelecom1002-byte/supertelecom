@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useRef, useState, useMemo } from "react";
+import React, { Suspense, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, PerspectiveCamera, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -22,13 +22,12 @@ import {
   Zap,
   Eye,
   ChevronRight,
-  Maximize2,
-  Volume2,
   Clock,
-  ExternalLink,
+  Volume2,
 } from "lucide-react";
+import { Smartphone3DFallback } from "./Smartphone3DFallback";
 
-// Ensure GSAP ScrollTrigger plugin is registered
+// Ensure GSAP ScrollTrigger plugin is registered in browser
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -47,75 +46,88 @@ interface GuidedCallout {
   warranty: string;
   sceneRange: [number, number];
   badgeText: string;
-  icon: "layers" | "cpu" | "zap" | "eye" | "activity";
+  icon: "layers" | "cpu" | "zap" | "eye" | "activity" | "audio";
   position3D: [number, number, number];
 }
 
 const GUIDED_CALLOUTS: GuidedCallout[] = [
   {
     id: "display",
-    hindiTitle: "OLED डिस्प्ले व 120Hz टच ग्लास",
-    englishTitle: "Super Retina AMOLED Screen & Digitizer",
-    symptoms: "टूटी स्क्रीन, हरी लाइन (Green Line), ब्लैक स्पॉट, टच काम न करना या फ्लिकरिंग।",
+    hindiTitle: "120Hz AMOLED डिस्प्ले व टच डिजिटाइज़र",
+    englishTitle: "120Hz Super Retina AMOLED & Touch Digitizer",
+    symptoms: "टूटी स्क्रीन, ग्रीन/पिंक लाइन, ब्लैक स्पॉट, टच अनरेस्पॉन्सिव या फ्लिकरिंग।",
     startingPrice: "₹899 से शुरू",
-    timeEstimate: "45–90 मिनट में तैयार",
-    warranty: "90 Days Warranty",
+    timeEstimate: "30–60 मिनट",
+    warranty: "90 दिन वारंटी",
     sceneRange: [0.10, 0.32],
     badgeText: "AMOLED Display",
     icon: "layers",
-    position3D: [0, 0.4, 0.8],
+    position3D: [0, 0.4, 0.85],
   },
   {
     id: "motherboard",
     hindiTitle: "मदरबोर्ड, BGA चिप व पावर IC",
-    englishTitle: "Logic Board, BGA SoC & Power IC",
-    symptoms: "डेड फोन, ऑटो-रीस्टार्ट, नो नेटवर्क, चार्जिंग एरर, अचानक बंद हो जाना।",
+    englishTitle: "Chip-Level Logic Board & BGA PMIC",
+    symptoms: "डेड फोन, ऑटो-रीस्टार्ट, नो नेटवर्क/नो सिम, चार्जिंग एरर, शार्ट सर्किट।",
     startingPrice: "₹799 से शुरू",
-    timeEstimate: "2–4 घंटे (माइक्रो-सोल्डरिंग)",
-    warranty: "60–90 Days Warranty",
+    timeEstimate: "2–4 घंटे",
+    warranty: "60–90 दिन वारंटी",
     sceneRange: [0.26, 0.50],
     badgeText: "Logic Board & IC",
     icon: "cpu",
-    position3D: [-0.4, 1.1, 0.6],
+    position3D: [-0.4, 1.1, 0.7],
   },
   {
     id: "battery",
     hindiTitle: "5,000mAh लिथियम बैटरी पैक",
-    englishTitle: "Dual-Cell Lithium Battery & Thermal Guard",
-    symptoms: "बैटरी जल्दी खत्म होना, 40% पर फोन बंद होना, बैटरी का फूलना या हीटिंग।",
+    englishTitle: "High-Density Li-Ion Battery & Thermal Guard",
+    symptoms: "बैटरी जल्दी ड्रेन होना, 40% पर फोन बंद होना, हीटिंग या बैटरी फूलना।",
     startingPrice: "₹699 से शुरू",
-    timeEstimate: "30–45 मिनट (100% सेफ सेल)",
-    warranty: "6 Months Warranty",
+    timeEstimate: "30–45 मिनट",
+    warranty: "6 महीने वारंटी",
     sceneRange: [0.44, 0.68],
     badgeText: "Battery Pack",
     icon: "zap",
-    position3D: [0.35, -0.6, 0.6],
+    position3D: [0.35, -0.6, 0.7],
   },
   {
     id: "camera",
-    hindiTitle: "ट्रिपल OIS कैमरा व लेंस ग्लास",
+    hindiTitle: "ट्रिपल OIS कैमरा व सफायर लेंस",
     englishTitle: "Triple OIS Camera Array & Sapphire Lens",
     symptoms: "धुंधली फोटो, कैमरा शेकिंग/वाइब्रेशन, टूटा लेंस शीशा, ब्लैक कैमरा ऐप।",
     startingPrice: "₹499 से शुरू",
-    timeEstimate: "45 मिनट (क्लीनरूम अलाइनमेंट)",
-    warranty: "90 Days Warranty",
+    timeEstimate: "45 मिनट",
+    warranty: "90 दिन वारंटी",
     sceneRange: [0.60, 0.82],
     badgeText: "Triple Camera",
     icon: "eye",
-    position3D: [-0.6, 1.4, -0.6],
+    position3D: [-0.6, 1.4, -0.7],
   },
   {
     id: "subboard",
-    hindiTitle: "USB-C चार्जिंग पोर्ट व माइक बोर्ड",
-    englishTitle: "High-Frequency USB-C Sub-Board & Mic",
-    symptoms: "ढीला चार्जर, स्लो चार्जिंग, कॉल में आपकी आवाज़ न जाना या नो साउंड।",
+    hindiTitle: "USB-C चार्जिंग सब-बोर्ड व माइक",
+    englishTitle: "Reinforced Type-C Sub-Board & MEMS Mic",
+    symptoms: "ढीला चार्जर, स्लो चार्जिंग, कॉल में आवाज़ कटना या नो साउंड।",
     startingPrice: "₹349 से शुरू",
-    timeEstimate: "30 मिनट में तैयार",
-    warranty: "90 Days Warranty",
+    timeEstimate: "30 मिनट",
+    warranty: "90 दिन वारंटी",
     sceneRange: [0.62, 0.88],
     badgeText: "Charging Port",
     icon: "activity",
-    position3D: [0, -2.1, -0.4],
+    position3D: [0, -2.1, -0.5],
+  },
+  {
+    id: "audio",
+    hindiTitle: "ईयरपीस व स्टीरियो लाउडस्पीकर",
+    englishTitle: "Earpiece & Stereo Loudspeaker Module",
+    symptoms: "कॉल में धीमी आवाज़, स्पीकर में खरखराहट (Distortion), रिंगटोन न बजना।",
+    startingPrice: "₹299 से शुरू",
+    timeEstimate: "30 मिनट",
+    warranty: "90 दिन वारंटी",
+    sceneRange: [0.18, 0.40],
+    badgeText: "Acoustic Module",
+    icon: "audio",
+    position3D: [0.6, -1.9, 0.7],
   },
 ];
 
@@ -136,8 +148,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "Assembled",
     progress: 0.02,
     range: [0, 0.12],
-    tagline: "Flagship Engineering • Precision Inside & Out",
-    subtext: "Scroll smoothly or click buttons below to inspect microscopic hardware layers.",
+    tagline: "फ्लैगशिप स्मार्टफोन आर्किटेक्चर • 100% सील्ड चेसिस",
+    subtext: "स्क्रॉल करें या नीचे बटन दबाएं और गिरिडीह लैब की माइक्रोस्कोपिक रिपेयर बेंच का अनुभव लें।",
   },
   {
     index: 2,
@@ -145,8 +157,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "AMOLED Screen",
     progress: 0.20,
     range: [0.12, 0.28],
-    tagline: "Super Retina AMOLED & 120Hz Digitizer",
-    subtext: "Ultra-thin OLED layer detached with zero stress on the copper touch matrix.",
+    tagline: "120Hz सुपर रेटिना AMOLED व टच डिजिटाइज़र",
+    subtext: "बिना कॉपर टच मैट्रिक्स को नुकसान पहुंचाए ओसीए वैक्यूम तकनीक से ग्लास अलग किया जाता है।",
   },
   {
     index: 3,
@@ -154,8 +166,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "Logic Board & IC",
     progress: 0.36,
     range: [0.28, 0.45],
-    tagline: "Chip-Level BGA Micro-Soldering Bench",
-    subtext: "Silver EMI shield lifts off exposing high-density SoC, PMIC & 0.02mm micro-traces.",
+    tagline: "चिप-लेवल BGA माइक्रो-सोल्डरिंग बेंच",
+    subtext: "सिल्वर ईएमआई शील्ड हटते ही हाई-डेंसिटी चिपसेट, पीएमआईसी और 0.02mm माइक्रो-जंपर दिखते हैं।",
   },
   {
     index: 4,
@@ -163,8 +175,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "Li-Ion Battery",
     progress: 0.53,
     range: [0.45, 0.62],
-    tagline: "5,000mAh Dual-Cell Li-ion & Qi2 Induction Loop",
-    subtext: "Dual pull-tab battery extraction and copper wireless charging coil isolation.",
+    tagline: "5,000mAh लिथियम-आयन व Qi2 वायरलेस इंडक्शन लूप",
+    subtext: "थर्मल गार्ड प्रोटेक्शन व ओरिजिनल बीएमएस कंट्रोलर के साथ सुरक्षित बैटरी इंस्टॉलेशन।",
   },
   {
     index: 5,
@@ -172,8 +184,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "Optics & Port",
     progress: 0.70,
     range: [0.62, 0.78],
-    tagline: "Triple OIS Camera & Reinforced Type-C",
-    subtext: "Independent camera suspension prisms and 24-pin fast-charge sub-circuits.",
+    tagline: "ट्रिपल OIS कैमरा बैरल व रीइन्फोर्स्ड Type-C",
+    subtext: "सफायर लेंस सुरक्षा और 24-पिन फास्ट चार्जिंग सब-सर्किट की क्लीनरूम जांच।",
   },
   {
     index: 6,
@@ -181,8 +193,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "360° Exploded",
     progress: 0.85,
     range: [0.78, 0.90],
-    tagline: "Complete 360° Exploded Architecture",
-    subtext: "Over 12 integrated subsystems floating simultaneously. Every micro-component verified.",
+    tagline: "पूर्ण 360° एक्सप्लोडेड 3D आर्किटेक्चर",
+    subtext: "12 अलग-अलग हार्डवेयर लेयर्स एक साथ अलग होकर हर कॉम्पोनेन्ट की स्थिति दर्शाते हैं।",
   },
   {
     index: 7,
@@ -190,8 +202,8 @@ const STEPPER_STAGES: StepperStage[] = [
     shortName: "Diagnostic Ready",
     progress: 0.98,
     range: [0.90, 1.0],
-    tagline: "Magnetic Reassembly & Lab Diagnostic Verification",
-    subtext: "Hermetically sealed chassis locked and 100% bench-tested ready for customer delivery.",
+    tagline: "मैग्नेटिक री-असेंबली व 100% बेंच टेस्टेड रेडी",
+    subtext: "फोन पूरी तरह पैक और 16-पॉइंट हार्डवेयर डायग्नोस्टिक पास करके डिलीवरी के लिए तैयार।",
   },
 ];
 
@@ -204,6 +216,7 @@ interface RigProps {
   isPaused: boolean;
   activeCallout: string | null;
   onSelectCallout: (id: string) => void;
+  userRotation: { x: number; y: number };
 }
 
 function SmartphoneProceduralRig({
@@ -211,6 +224,7 @@ function SmartphoneProceduralRig({
   isPaused,
   activeCallout,
   onSelectCallout,
+  userRotation,
 }: RigProps) {
   const mainRigRef = useRef<THREE.Group>(null);
 
@@ -233,25 +247,25 @@ function SmartphoneProceduralRig({
   // Materials with high contrast, bright metals, vivid colors and studio reflections
   const materials = useMemo(() => {
     return {
-      // 1. Titanium Frame (Bright Polished Silver with Cyan Edge Glint)
+      // 1. Titanium Frame (Brushed Titanium Silver)
       titaniumChassis: new THREE.MeshStandardMaterial({
-        color: "#94a3b8", // Bright titanium silver
-        metalness: 0.9,
-        roughness: 0.18,
+        color: "#94a3b8",
+        metalness: 0.88,
+        roughness: 0.22,
       }),
       titaniumPolished: new THREE.MeshStandardMaterial({
         color: "#cbd5e1",
-        metalness: 0.96,
-        roughness: 0.1,
+        metalness: 0.95,
+        roughness: 0.12,
       }),
 
-      // 2. Front Glass (Crystal Clear Sapphire with Subtle Refraction)
+      // 2. Front Glass (Sapphire Front Surface)
       frontGlass: new THREE.MeshPhysicalMaterial({
         color: "#f8fafc",
-        transmission: 0.96,
-        opacity: 0.92,
+        transmission: 0.95,
+        opacity: 0.9,
         transparent: true,
-        roughness: 0.02,
+        roughness: 0.03,
         ior: 1.52,
         reflectivity: 0.9,
         clearcoat: 1.0,
@@ -261,33 +275,33 @@ function SmartphoneProceduralRig({
       amoledActive: new THREE.MeshStandardMaterial({
         color: "#0369a1",
         emissive: "#0284c7",
-        emissiveIntensity: 0.65,
+        emissiveIntensity: 0.7,
         roughness: 0.15,
         metalness: 0.25,
       }),
 
       // 4. Motherboard (Deep Emerald Green with Gold Traces)
       pcbGreen: new THREE.MeshStandardMaterial({
-        color: "#064e3b", // Deep emerald teal
+        color: "#064e3b",
         roughness: 0.35,
         metalness: 0.15,
       }),
       copperGold: new THREE.MeshStandardMaterial({
-        color: "#fbbf24", // 24k vibrant gold
+        color: "#fbbf24",
         metalness: 0.95,
         roughness: 0.15,
       }),
       emiShield: new THREE.MeshStandardMaterial({
-        color: "#f1f5f9", // Polished silver aluminium shield
+        color: "#f1f5f9",
         metalness: 0.98,
-        roughness: 0.12,
+        roughness: 0.1,
       }),
 
       // 5. Battery Pack (Cobalt Blue Titanium Pouch)
       batteryCobalt: new THREE.MeshStandardMaterial({
-        color: "#1e3a5f", // Cobalt navy blue
+        color: "#1e3a5f",
         metalness: 0.65,
-        roughness: 0.28,
+        roughness: 0.25,
       }),
 
       // 6. Camera Module (Metallic Ring & Sapphire Glass)
@@ -310,9 +324,9 @@ function SmartphoneProceduralRig({
       // 8. Rear AG Frosted Glass
       rearGlass: new THREE.MeshPhysicalMaterial({
         color: "#1e293b",
-        roughness: 0.3,
+        roughness: 0.32,
         metalness: 0.25,
-        clearcoat: 0.7,
+        clearcoat: 0.75,
       }),
 
       // 9. Precision Torx Screws
@@ -332,12 +346,11 @@ function SmartphoneProceduralRig({
 
     // ─────────────────────────────────────────────────────────────
     // CRITICAL Z-CLIPPING & VISIBILITY RULES:
-    // When phone is in closed state (p < 0.06 or p > 0.95), internal parts
-    // (motherboard, battery, coil, sub-board, haptics, internal screws)
+    // When phone is in closed state (p < 0.08 or p > 0.94), internal parts
     // MUST have visible = false so no internal coil or box pokes out of
     // the chassis or screen!
     // ─────────────────────────────────────────────────────────────
-    const isExploded = p >= 0.06 && p < 0.96;
+    const isExploded = p >= 0.08 && p < 0.94;
 
     if (motherboardRef.current) motherboardRef.current.visible = isExploded;
     if (batteryRef.current) batteryRef.current.visible = isExploded;
@@ -345,7 +358,7 @@ function SmartphoneProceduralRig({
     if (subBoardRef.current) subBoardRef.current.visible = isExploded;
     if (speakerHapticsRef.current) speakerHapticsRef.current.visible = isExploded;
     if (screwsGroupRef.current) screwsGroupRef.current.visible = isExploded;
-    if (cameraModuleRef.current) cameraModuleRef.current.visible = true; // Always visible on rear
+    if (cameraModuleRef.current) cameraModuleRef.current.visible = true;
 
     // Interpolation curves
     const s2 = THREE.MathUtils.smoothstep(p, 0.12, 0.28);
@@ -355,15 +368,16 @@ function SmartphoneProceduralRig({
     const s6 = THREE.MathUtils.smoothstep(p, 0.78, 0.90);
     const s7 = THREE.MathUtils.smoothstep(p, 0.90, 1.0);
 
-    // Main Rig Turntable & Tilt
-    const baseRotX = 0.2 + (s2 * 0.1) - (s3 * 0.22) + (s6 * 0.15) - (s7 * 0.25);
+    // Main Rig Turntable & Tilt (Combining scroll progression + user manual tilt)
+    const baseRotX = 0.2 + (s2 * 0.1) - (s3 * 0.22) + (s6 * 0.15) - (s7 * 0.25) + userRotation.x;
     const baseRotY =
       0.45 +
       (s2 * 0.15) -
       (s3 * 0.3) +
       (s5 * 0.45) +
       (s6 * Math.PI * 0.55) -
-      (s7 * Math.PI * 0.55 + s7 * 0.7);
+      (s7 * Math.PI * 0.55 + s7 * 0.7) +
+      userRotation.y;
     const idleFloat = !isPaused ? Math.sin(state.clock.elapsedTime * 1.2) * 0.03 : 0;
 
     mainRigRef.current.rotation.x = THREE.MathUtils.lerp(
@@ -455,7 +469,7 @@ function SmartphoneProceduralRig({
       );
     }
 
-    // 6. Wireless Induction Coil (Retracts completely inside chassis or floats back)
+    // 6. Wireless Induction Coil
     if (wirelessCoilRef.current) {
       const targetZ = -0.02 - (s4 * 0.7) - (s6 * 0.6) + (s7 * 1.3);
       wirelessCoilRef.current.position.z = THREE.MathUtils.lerp(
@@ -537,7 +551,6 @@ function SmartphoneProceduralRig({
         <mesh material={materials.frontGlass} castShadow>
           <boxGeometry args={[2.8, 5.8, 0.02]} />
         </mesh>
-        {/* Sleek slim black screen border */}
         <mesh position={[0, 0, -0.006]}>
           <boxGeometry args={[2.78, 5.78, 0.01]} />
           <meshBasicMaterial color="#020617" wireframe />
@@ -566,7 +579,7 @@ function SmartphoneProceduralRig({
           <circleGeometry args={[0.075, 32]} />
           <meshBasicMaterial color="#020617" />
         </mesh>
-        {/* Boot Logo / Live System Battery Icon on reassembly */}
+        {/* Super Telecom Boot Emblem when reassembled */}
         {scrollProgress > 0.88 && (
           <mesh position={[0, 0.2, 0.014]}>
             <circleGeometry args={[0.55, 32]} />
@@ -599,11 +612,9 @@ function SmartphoneProceduralRig({
       {/* 4. TITANIUM MID-FRAME CHASSIS (Central Anchor)                */}
       {/* ───────────────────────────────────────────────────────────── */}
       <group ref={chassisRef} position={[0, 0, 0]}>
-        {/* Bright Silver-Titanium Bezel Frame */}
         <mesh material={materials.titaniumChassis} castShadow receiveShadow>
           <boxGeometry args={[2.84, 5.84, 0.18]} />
         </mesh>
-        {/* High-Contrast Cyan Rim Contour Glow Wireframe */}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2.86, 5.86, 0.182]} />
           <meshBasicMaterial color="#00f0ff" wireframe transparent opacity={0.25} />
@@ -619,10 +630,10 @@ function SmartphoneProceduralRig({
       </group>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 5. MOTHERBOARD PCB & BGA PROCESSOR (Emerald Green & Gold)     */}
+      {/* 5. L-SHAPED MOTHERBOARD PCB & BGA SOC (Emerald Green & Gold)  */}
       {/* ───────────────────────────────────────────────────────────── */}
       <group ref={motherboardRef} position={[-0.4, 1.1, 0.02]}>
-        {/* Emerald Green PCB substrate */}
+        {/* L-Shaped Main PCB Substrate */}
         <mesh material={materials.pcbGreen} castShadow>
           <boxGeometry args={[1.5, 2.2, 0.04]} />
         </mesh>
@@ -630,7 +641,7 @@ function SmartphoneProceduralRig({
         <mesh position={[0, 0.2, 0.03]} material={materials.copperGold}>
           <boxGeometry args={[0.68, 0.68, 0.03]} />
         </mesh>
-        {/* Glowing Processor Core */}
+        {/* Glowing Processor Core Die */}
         <mesh position={[0, 0.2, 0.046]}>
           <planeGeometry args={[0.5, 0.5]} />
           <meshBasicMaterial color="#38bdf8" />
@@ -675,12 +686,10 @@ function SmartphoneProceduralRig({
       {/* 7. QI2 COPPER WIRELESS INDUCTION COIL                         */}
       {/* ───────────────────────────────────────────────────────────── */}
       <group ref={wirelessCoilRef} position={[0, -0.2, -0.02]}>
-        {/* Ferrite disc */}
         <mesh>
           <cylinderGeometry args={[0.85, 0.85, 0.018, 32]} />
           <meshStandardMaterial color="#0f172a" roughness={0.7} />
         </mesh>
-        {/* Concentric bright copper winding rings */}
         {[0.35, 0.5, 0.65, 0.78].map((radius, idx) => (
           <mesh key={idx} rotation={[Math.PI / 2, 0, 0]} material={materials.copperCoil}>
             <torusGeometry args={[radius, 0.02, 8, 32]} />
@@ -744,7 +753,7 @@ function SmartphoneProceduralRig({
       </group>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 11. REAR MATTE AG GLASS & LASER BRANDING                      */}
+      {/* 11. REAR MATTE AG GLASS                                       */}
       {/* ───────────────────────────────────────────────────────────── */}
       <group ref={rearGlassRef} position={[0, 0, -0.09]}>
         <mesh material={materials.rearGlass} castShadow receiveShadow>
@@ -753,21 +762,17 @@ function SmartphoneProceduralRig({
       </group>
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* 12. EXPLODING TORX PRECISION SCREWS                           */}
+      {/* 12. PRECISION CORNER TORX SCREWS                              */}
       {/* ───────────────────────────────────────────────────────────── */}
       <group ref={screwsGroupRef} position={[0, 0, -0.12]}>
         {[
           [-1.2, 2.6],
           [1.2, 2.6],
-          [-1.2, 0],
-          [1.2, 0],
           [-1.2, -2.6],
           [1.2, -2.6],
-          [-0.3, -2.7],
-          [0.3, -2.7],
         ].map(([x, y], idx) => (
           <mesh key={idx} position={[x, y, 0]} material={materials.screwsMetallic}>
-            <cylinderGeometry args={[0.03, 0.03, 0.06, 12]} />
+            <cylinderGeometry args={[0.035, 0.035, 0.06, 12]} />
           </mesh>
         ))}
       </group>
@@ -833,7 +838,7 @@ function SmartphoneProceduralRig({
 
                   {/* Symptoms */}
                   <div className="mt-2 rounded-xl bg-slate-900/90 p-2 border border-slate-800 text-[11px]">
-                    <span className="font-bold text-amber-400">लक्षण: </span>
+                    <span className="font-bold text-amber-400">खराबी के लक्षण: </span>
                     <span className="text-slate-300">{callout.symptoms}</span>
                   </div>
 
@@ -847,14 +852,14 @@ function SmartphoneProceduralRig({
 
                   {/* Direct WhatsApp Booking Button */}
                   <a
-                    href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || BUSINESS_MASTER?.contact?.whatsappRaw || "918002903643"}?text=${encodeURIComponent(
-                      `Hi Super Telecom, I saw your 3D smartphone teardown and need repair for: ${callout.englishTitle} (${callout.hindiTitle}). Please share final quote & turnaround time.`
+                    href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || "918002903643"}?text=${encodeURIComponent(
+                      `नमस्ते सुपर टेलीकॉम गिरिडीह, मैंने आपका 3D स्मार्टफोन टियरडाउन देखा और मुझे इस पुर्जे की रिपेयर करवानी है: ${callout.englishTitle} (${callout.hindiTitle})। कृपया खर्च और समय बताएं।`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
                   >
-                    <MessageCircle className="h-3.5 w-3.5" /> Book This Repair
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp पर बुक करें
                   </a>
                 </div>
               </div>
@@ -866,13 +871,11 @@ function SmartphoneProceduralRig({
   );
 }
 
-import { Smartphone3DFallback } from "./Smartphone3DFallback";
-
 // ─────────────────────────────────────────────────────────────────────────────
-// MAIN SCROLL-DRIVEN 3D TEARDOWN CONTROLLER (550vh PINNED CONTAINER)
+// MAIN SCROLL-DRIVEN 3D TEARDOWN CONTROLLER (TIGHT 260vh/210vh PINNED CONTAINER)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const SmartphoneTeardown3D: React.FC = () => {
+export const SmartphoneTeardown3D: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -881,6 +884,9 @@ const SmartphoneTeardown3D: React.FC = () => {
   const [webglSupported, setWebglSupported] = useState(true);
   const [isInView, setIsInView] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
+  const [userRotation, setUserRotation] = useState({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const prevPointerRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     setIsMounted(true);
@@ -915,7 +921,7 @@ const SmartphoneTeardown3D: React.FC = () => {
           setIsInView(entry.isIntersecting);
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "150px" }
     );
 
     observer.observe(el);
@@ -926,7 +932,7 @@ const SmartphoneTeardown3D: React.FC = () => {
     };
   }, []);
 
-  // GSAP ScrollTrigger timeline pinning
+  // GSAP ScrollTrigger timeline pinning locked to 260vh desktop / 210vh mobile
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return;
 
@@ -936,7 +942,7 @@ const SmartphoneTeardown3D: React.FC = () => {
         trigger: containerRef.current,
         start: "top top",
         end: "bottom bottom",
-        scrub: 1.2,
+        scrub: 1.0,
         onUpdate: (self) => {
           setScrollProgress(self.progress);
         },
@@ -953,6 +959,27 @@ const SmartphoneTeardown3D: React.FC = () => {
       }
     };
   }, []);
+
+  // Pointer drag events for interactive 3D orbit/tilt
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDraggingRef.current = true;
+    prevPointerRef.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    const deltaX = (e.clientX - prevPointerRef.current.x) * 0.005;
+    const deltaY = (e.clientY - prevPointerRef.current.y) * 0.005;
+    prevPointerRef.current = { x: e.clientX, y: e.clientY };
+    setUserRotation((prev) => ({
+      x: THREE.MathUtils.clamp(prev.x + deltaY, -0.6, 0.6),
+      y: THREE.MathUtils.clamp(prev.y + deltaX, -1.0, 1.0),
+    }));
+  };
+
+  const handlePointerUp = () => {
+    isDraggingRef.current = false;
+  };
 
   // Active scene info based on scroll progress
   const currentScene = useMemo(() => {
@@ -979,8 +1006,9 @@ const SmartphoneTeardown3D: React.FC = () => {
     setActiveCallout((prev) => (prev === id ? null : id));
   };
 
-  // Reset view to assembled state
+  // Reset view to assembled state and clear manual tilt
   const handleResetView = () => {
+    setUserRotation({ x: 0, y: 0 });
     if (containerRef.current) {
       window.scrollTo({
         top: containerRef.current.offsetTop,
@@ -993,7 +1021,7 @@ const SmartphoneTeardown3D: React.FC = () => {
     <section
       ref={containerRef}
       id="teardown-3d"
-      className="relative w-full h-[550vh] bg-slate-950 text-white select-none"
+      className="relative w-full h-[210vh] md:h-[260vh] bg-slate-950 text-white select-none"
     >
       {/* ───────────────────────────────────────────────────────────── */}
       {/* PINNED STICKY 3D STAGE (100vh FULLSCREEN VIEWPORT)            */}
@@ -1009,7 +1037,7 @@ const SmartphoneTeardown3D: React.FC = () => {
         {/* ───────────────────────────────────────────────────────────── */}
         {/* TOP STATUS BAR & HEADER OVERLAY                               */}
         {/* ───────────────────────────────────────────────────────────── */}
-        <div className="relative z-20 w-full pt-6 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="relative z-20 w-full pt-4 sm:pt-6 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400 text-xs font-mono font-bold tracking-wider uppercase backdrop-blur-md">
               <Sparkles className="h-3 w-3 animate-pulse" />
@@ -1017,7 +1045,7 @@ const SmartphoneTeardown3D: React.FC = () => {
               <span className="text-slate-500">•</span>
               <span className="text-white">Scene {currentScene.index} of 7</span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight font-display text-white">
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight font-display text-white">
               {currentScene.tagline}
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
@@ -1031,7 +1059,7 @@ const SmartphoneTeardown3D: React.FC = () => {
               type="button"
               onClick={() => setIsPaused(!isPaused)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-              title={isPaused ? "Resume subtle float" : "Pause float"}
+              title={isPaused ? "फ़्लोटिंग शुरू करें" : "फ़्लोटिंग रोकें"}
             >
               {isPaused ? <Play className="h-3.5 w-3.5 text-cyan-400" /> : <Pause className="h-3.5 w-3.5 text-cyan-400" />}
               <span className="hidden sm:inline">{isPaused ? "Resume" : "Pause"}</span>
@@ -1040,42 +1068,44 @@ const SmartphoneTeardown3D: React.FC = () => {
               type="button"
               onClick={handleResetView}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
-              title="Reset phone to assembled state"
+              title="मूल स्थिति में लाएं (Reset View)"
             >
               <RotateCcw className="h-3.5 w-3.5 text-cyan-400" />
-              <span className="hidden sm:inline">Reset</span>
+              <span>Reset View</span>
             </button>
           </div>
         </div>
 
         {/* ───────────────────────────────────────────────────────────── */}
-        {/* THREE.JS WEBGL CANVAS (HIGH-CONTRAST STUDIO LIGHTING)         */}
+        {/* THREE.JS WEBGL CANVAS WITH INTERACTIVE ORBIT / TILT           */}
         {/* ───────────────────────────────────────────────────────────── */}
-        <div className="relative flex-1 w-full h-full min-h-[300px]">
+        <div
+          className="relative flex-1 w-full h-full min-h-[260px] cursor-grab active:cursor-grabbing touch-none"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        >
           {isMounted && webglSupported && isInView ? (
             <Suspense
               fallback={
                 <div className="h-full w-full grid place-items-center text-cyan-400 font-mono text-sm">
-                  Loading 3D Smartphone Rig...
+                  3D स्मार्टफोन लैब लोड हो रही है...
                 </div>
               }
             >
               <Canvas
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
                 dpr={[1, 2]}
-                className="w-full h-full cursor-grab active:cursor-grabbing"
+                className="w-full h-full"
               >
                 <PerspectiveCamera makeDefault position={[0, 0, 7.8]} fov={42} />
 
                 {/* HIGH-CONTRAST 3-POINT STUDIO LIGHTING */}
                 <ambientLight intensity={1.1} />
-                {/* 1. Front Key Light (Bright Neutral) */}
                 <directionalLight position={[4, 8, 8]} intensity={2.8} castShadow color="#ffffff" />
-                {/* 2. Cyan Rim Light (Back-Side Definition) */}
                 <directionalLight position={[-6, -3, -5]} intensity={3.5} color="#00f0ff" />
-                {/* 3. Warm Fill Light (Soft Gold Shadow Fill) */}
                 <directionalLight position={[-4, 5, 4]} intensity={1.5} color="#f59e0b" />
-                {/* 4. Overhead Accent Spot */}
                 <spotLight position={[0, 8, 2]} intensity={2.2} angle={0.6} penumbra={0.8} color="#e0f2fe" />
 
                 <Float
@@ -1088,6 +1118,7 @@ const SmartphoneTeardown3D: React.FC = () => {
                     isPaused={isPaused}
                     activeCallout={activeCallout}
                     onSelectCallout={handleSelectCallout}
+                    userRotation={userRotation}
                   />
                 </Float>
               </Canvas>
@@ -1100,48 +1131,7 @@ const SmartphoneTeardown3D: React.FC = () => {
         {/* ───────────────────────────────────────────────────────────── */}
         {/* BOTTOM METRICS, INTERACTIVE STEPPER & ACTION OVERLAYS         */}
         {/* ───────────────────────────────────────────────────────────── */}
-        <div className="relative z-20 w-full pb-6 px-4 sm:px-8 max-w-7xl mx-auto space-y-4">
-          {/* Scene 7 Reassembly Call-to-Actions (Appears at 90%+ scroll) */}
-          {scrollProgress > 0.88 && (
-            <div className="mx-auto max-w-2xl rounded-3xl border border-cyan-500/50 bg-slate-900/95 p-5 sm:p-6 backdrop-blur-2xl shadow-2xl shadow-cyan-950/60 animate-in zoom-in-95 duration-400 text-center space-y-4">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-bold">
-                <CheckCircle2 className="h-3.5 w-3.5" /> 100% Diagnostic Verified
-              </div>
-              <h3 className="text-lg sm:text-2xl font-bold font-display text-white">
-                Need Your Smartphone Inspected by a Master Technician?
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
-                Visit our Barganda Road laboratory (Near Shivam Clinic, Giridih) or get instant transparent estimates online.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
-                <a
-                  href={`${BUSINESS_MASTER.whatsappBaseUrl}?text=Hello%20Super%20Telecom,%20I%20saw%20your%203D%20smartphone%20teardown%20and%20want%20to%20book%20a%20chip-level%20repair%20diagnosis.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-brand px-5 py-2.5 text-xs font-bold text-primary-foreground shadow-brand hover:scale-105 transition-transform"
-                >
-                  <MessageCircle className="h-4 w-4" /> Book Chip-Level Diagnostic
-                </a>
-                <a
-                  href={BUSINESS_MASTER.phoneCallHref}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/90 px-4 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 transition-colors"
-                >
-                  <Phone className="h-4 w-4 text-cyan-400" /> Call {BUSINESS_MASTER.phoneDisplay}
-                </a>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById("diagnostics");
-                    if (el) el.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  className="inline-flex items-center gap-1.5 text-xs text-cyan-400 underline underline-offset-4 hover:text-cyan-300 font-mono cursor-pointer"
-                >
-                  Run 16+ Free Hardware Tests <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
-
+        <div className="relative z-20 w-full pb-4 sm:pb-6 px-4 sm:px-8 max-w-7xl mx-auto space-y-3">
           {/* Interactive Clickable 7-Step Stepper Bar */}
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-1 overflow-x-auto pb-1 text-[10px] sm:text-xs font-mono">
@@ -1178,5 +1168,4 @@ const SmartphoneTeardown3D: React.FC = () => {
   );
 };
 
-export { SmartphoneTeardown3D, Smartphone3DFallback };
 export default SmartphoneTeardown3D;
