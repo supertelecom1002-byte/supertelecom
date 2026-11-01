@@ -4,10 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -15,12 +15,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.supertelecom.model.NavTab
+import com.supertelecom.model.RecentTaskItem
+import com.supertelecom.model.TaskType
 import com.supertelecom.theme.*
 
 @Composable
@@ -30,298 +33,372 @@ fun HomeScreen(
     onNavigateTab: (NavTab) -> Unit
 ) {
     var showDpdpDialog by remember { mutableStateOf(false) }
-    var showAboutDialog by remember { mutableStateOf(false) }
+    var showContactDialog by remember { mutableStateOf(false) }
 
-    Column(
+    val recentTasks = remember {
+        listOf(
+            RecentTaskItem(
+                id = "1",
+                title = "Family_Tour_Khandoli.mp4",
+                subtitle = if (isHindi) "सुपर ट्रांसफर (सफलतापूर्वक भेजा गया)" else "Super Transfer (Sent to Nearby Device)",
+                sizeBytes = 1_850_000_000L,
+                timeAgo = if (isHindi) "10 मिनट पहले" else "10 mins ago",
+                type = TaskType.TRANSFER_SENT,
+                statusText = if (isHindi) "100% पूरा (SHA-256 Verified)" else "100% Complete (SHA-256)"
+            ),
+            RecentTaskItem(
+                id = "2",
+                title = "Aadhaar_Document_Scan.pdf",
+                subtitle = if (isHindi) "सुपर रिकवर (आंतरिक ट्रैश से बरामद)" else "Super Recover (Restored from Trash)",
+                sizeBytes = 2_400_000L,
+                timeAgo = if (isHindi) "45 मिनट पहले" else "45 mins ago",
+                type = TaskType.RECOVERED_MEDIA,
+                statusText = if (isHindi) "सफलतापूर्वक सुरक्षित सेव" else "Restored Successfully"
+            ),
+            RecentTaskItem(
+                id = "3",
+                title = "Office_Meeting_Notes.m4a",
+                subtitle = if (isHindi) "सुपर ट्रांसफर (प्राप्त किया गया)" else "Super Transfer (Received from Pixel)",
+                sizeBytes = 14_800_000L,
+                timeAgo = if (isHindi) "2 घंटे पहले" else "2 hours ago",
+                type = TaskType.TRANSFER_RECEIVED,
+                statusText = if (isHindi) "100% पूरा" else "100% Complete"
+            )
+        )
+    }
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(BgDark)
-            .statusBarsPadding()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .statusBarsPadding(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
     ) {
-        // Top App Bar
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
+        item {
+            // ── TOP BAR ──
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "SUPER",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Black,
-                            color = CyanAccent,
-                            letterSpacing = 1.sp
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                Brush.linearGradient(listOf(CyanAccent, Color(0xFF2563EB)))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "ST",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                color = BgDark
+                            )
                         )
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "TELECOM",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Black,
-                            color = TextPrimary,
-                            letterSpacing = 1.sp
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Column {
+                        Text(
+                            text = "Super Telecom App",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Black,
+                                color = TextPrimary,
+                                fontSize = 18.sp
+                            )
                         )
-                    )
+                        Text(
+                            text = if (isHindi) "ट्रांसफर • रिकवरी • लॉन्चर सुइट" else "Transfer • Recover • Launcher",
+                            style = MaterialTheme.typography.labelSmall.copy(color = CyanAccent)
+                        )
+                    }
                 }
-                Text(
-                    text = if (isHindi) "गिरिडीह का #1 मोबाइल रिपेयर व यूटिलिटी हब" else "Giridih #1 Repair & Utility Hub",
-                    style = MaterialTheme.typography.labelSmall
-                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Language Switcher
+                    Button(
+                        onClick = onToggleLanguage,
+                        colors = ButtonDefaults.buttonColors(containerColor = CardDark),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .height(38.dp)
+                            .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Translate,
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (isHindi) "ENG" else "हिंदी",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = TextPrimary
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Settings / Info Button
+                    IconButton(
+                        onClick = { showContactDialog = true },
+                        modifier = Modifier
+                            .size(38.dp)
+                            .background(CardDark, CircleShape)
+                            .border(1.dp, CardBorder, CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = TextSecondary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Language Toggle Pill
-                Button(
-                    onClick = onToggleLanguage,
-                    colors = ButtonDefaults.buttonColors(containerColor = CardDark),
-                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.border(1.dp, CardBorder, RoundedCornerShape(12.dp))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Translate,
-                        contentDescription = "Language",
-                        tint = CyanAccent,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = if (isHindi) "ENG" else "हिंदी",
-                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = TextPrimary)
-                    )
-                }
+            Spacer(modifier = Modifier.height(14.dp))
 
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Info / DPDP Button
-                IconButton(
-                    onClick = { showDpdpDialog = true },
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(CardDark, CircleShape)
-                        .border(1.dp, CardBorder, CircleShape)
-                ) {
+            // DPDP Act 2027 Trust Strip
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(EmeraldAccent.copy(alpha = 0.08f))
+                    .border(1.dp, EmeraldAccent.copy(alpha = 0.25f), RoundedCornerShape(14.dp))
+                    .clickable { showDpdpDialog = true }
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Shield,
-                        contentDescription = "DPDP Privacy",
+                        contentDescription = null,
                         tint = EmeraldAccent,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // DPDP Trust Badge
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(EmeraldAccent.copy(alpha = 0.08f))
-                .border(1.dp, EmeraldAccent.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
-                .clickable { showDpdpDialog = true }
-                .padding(horizontal = 14.dp, vertical = 10.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.VerifiedUser,
-                    contentDescription = null,
-                    tint = EmeraldAccent,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = if (isHindi) "DPDP ACT 2027 पूर्ण सुरक्षित • शून्य क्लाउड अपलोड" else "DPDP ACT 2027 COMPLIANT • 100% ON-DEVICE",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldAccent
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "100% ऑन-डिवाइस प्राइवेसी • DPDP ACT 2027" else "DPDP ACT 2027 CERTIFIED • ZERO CLOUD UPLOADS",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldAccent
+                            )
                         )
-                    )
-                    Text(
-                        text = if (isHindi) "आपका कोई भी डेटा किसी सर्वर पर नहीं भेजा जाता है।" else "Zero telemetry. Your files never leave your smartphone.",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp)
+                        Text(
+                            text = if (isHindi) "कोई भी फाइल सर्वर पर नहीं जाती। 0 ट्रैकिंग, 0 विज्ञापन।" else "All transfers & scans run locally on phone. Zero remote calls.",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp)
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        tint = EmeraldAccent,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
-                Icon(
-                    imageVector = Icons.Default.ChevronRight,
-                    contentDescription = null,
-                    tint = EmeraldAccent,
-                    modifier = Modifier.size(16.dp)
-                )
             }
-        }
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
-        // Quick Launch Hub
-        Text(
-            text = if (isHindi) "प्रमुख यूटिलिटी मॉड्यूल" else "Super Capability Suite",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
-        Text(
-            text = if (isHindi) "बिना इंटरनेट ऑफलाइन शेयरिंग, मीडिया रिकवरी और क्लीन लॉन्चर" else "Offline file transfer, deep media discovery, and safe home launcher",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Module Card 1: Super Transfer
-        CapabilityCard(
-            title = if (isHindi) "Super Transfer (फ़ाइल शेयरिंग)" else "Super Transfer",
-            subtitle = if (isHindi) "Wi-Fi Direct और लोकल हॉटस्पॉट से बड़ी 4GB+ फाइल्स 60MB/s तक भेजें" else "High-speed Wi-Fi Direct chunked streaming (up to 60 MB/s)",
-            badge = if (isHindi) "शून्य इंटरनेट" else "Zero Internet",
-            badgeColor = CyanAccent,
-            icon = Icons.Default.SwapHoriz,
-            onClick = { onNavigateTab(NavTab.TRANSFER) }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Module Card 2: Super Recover
-        CapabilityCard(
-            title = if (isHindi) "Super Recover (मीडिया रिकवरी)" else "Super Recover",
-            subtitle = if (isHindi) "हटाए गए फोटो, वीडियो व ऑडियो की ईमानदार 4-स्तरीय ऑन-डिवाइस स्कैनिंग" else "Honest 4-tier on-device discovery for lost photos, videos & docs",
-            badge = if (isHindi) "शून्य रूट रिस्क" else "Zero Root Required",
-            badgeColor = EmeraldAccent,
-            icon = Icons.Default.Restore,
-            onClick = { onNavigateTab(NavTab.RECOVER) }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // Module Card 3: Super Launcher
-        CapabilityCard(
-            title = if (isHindi) "Super Launcher (कस्टम होम स्क्रीन)" else "Super Launcher",
-            subtitle = if (isHindi) "4 आकर्षक थीम्स (Minimal, iOS, Pixel, Classic) और 1-क्लिक ओरिजिनल रीस्टोर" else "4 instant clean themes with safe 1-tap original launcher restore",
-            badge = if (isHindi) "सुरक्षित स्विच" else "Safe Role Switch",
-            badgeColor = AmberAccent,
-            icon = Icons.Default.Apps,
-            onClick = { onNavigateTab(NavTab.LAUNCHER) }
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Recent Task Log & Diagnostics
-        Text(
-            text = if (isHindi) "डिवाइस डायग्नोस्टिक व स्टेटस" else "Device Status & Integrity",
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(CardDark)
-                .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
-                .padding(14.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatusRow(
-                    label = if (isHindi) "ऐप आर्किटेक्चर" else "App Architecture",
-                    value = "4-Engine Native Compose v2.4.0",
-                    statusColor = CyanAccent
-                )
-                StatusRow(
-                    label = if (isHindi) "प्राइवेसी शील्ड" else "Privacy Shield",
-                    value = if (isHindi) "सक्रिय (DPDP 2027 अनुपालन)" else "Active (DPDP 2027 On-Device)",
-                    statusColor = EmeraldAccent
-                )
-                StatusRow(
-                    label = if (isHindi) "नेटवर्क टेलीमेट्री" else "Network Telemetry",
-                    value = if (isHindi) "शून्य बाहरी कनेक्शन (0 KB/s)" else "Zero Remote Calls (0 KB/s)",
-                    statusColor = EmeraldAccent
-                )
-                StatusRow(
-                    label = if (isHindi) "लैब वर्कशॉप" else "Lab Workshop",
-                    value = "Station Road, Giridih (Est. 2016)",
-                    statusColor = TextSecondary
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // About Button
-        OutlinedButton(
-            onClick = { showAboutDialog = true },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextSecondary),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(imageVector = Icons.Default.Info, contentDescription = null, modifier = Modifier.size(16.dp))
-            Spacer(modifier = Modifier.width(6.dp))
+            // ── 3 LARGE ACTION CARDS ──
             Text(
-                text = if (isHindi) "सुपर टेलीकॉम गिरिडीह के बारे में" else "About Super Telecom Giridih",
-                style = MaterialTheme.typography.labelSmall
+                text = if (isHindi) "मुख्य एक्शन मॉड्यूल्स" else "Core Capability Engines",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Action Card 1: Super Transfer (Blue/Cyan Gradient)
+            BigActionCard(
+                title = if (isHindi) "सुपर ट्रांसफर (Super Transfer)" else "Super Transfer",
+                subtitle = if (isHindi)
+                    "बिना इंटरनेट एक फोन से दूसरे फोन में फोटो, वीडियो, रिकॉर्डिंग और फाइलें भेजें"
+                else
+                    "Send 4GB+ videos, photos, and files between phones offline at up to 60 MB/s",
+                ctaText = if (isHindi) "अभी फाइल भेजें या प्राप्त करें →" else "Start File Transfer →",
+                gradient = Brush.linearGradient(listOf(Color(0xFF0369A1), Color(0xFF0891B2))),
+                icon = Icons.Default.Send,
+                onClick = { onNavigateTab(NavTab.TRANSFER) }
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Action Card 2: Super Recover (Green/Emerald Gradient)
+            BigActionCard(
+                title = if (isHindi) "सुपर रिकवर (Super Recover)" else "Super Recover",
+                subtitle = if (isHindi)
+                    "डिलीट हुई फोटो, वीडियो, ऑडियो रिकॉर्डिंग और डॉक्यूमेंट्स को स्कैन व रिकवर करें"
+                else
+                    "Deep-scan deleted photos, videos, recordings & documents with honest 4-tier discovery",
+                ctaText = if (isHindi) "डेटा रिकवर शुरू करें →" else "Start Media Recovery →",
+                gradient = Brush.linearGradient(listOf(Color(0xFF065F46), Color(0xFF059669))),
+                icon = Icons.Default.Restore,
+                onClick = { onNavigateTab(NavTab.RECOVER) }
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Action Card 3: Super Launcher (Purple/Indigo Gradient)
+            BigActionCard(
+                title = if (isHindi) "सुपर लॉन्चर (Super Launcher)" else "Super Launcher",
+                subtitle = if (isHindi)
+                    "4 प्रीमियम थीम्स के साथ अपने फोन की होम-स्क्रीन को कस्टमाइज़ करें"
+                else
+                    "Customize home screen with 4 clean themes (Minimal, iOS, Pixel, Classic) & 1-tap restore",
+                ctaText = if (isHindi) "लॉन्चर थीम बदलें →" else "Explore Launcher Themes →",
+                gradient = Brush.linearGradient(listOf(Color(0xFF4C1D95), Color(0xFF6D28D9))),
+                icon = Icons.Default.Smartphone,
+                onClick = { onNavigateTab(NavTab.LAUNCHER) }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ── RECENT COMPLETED TASKS ──
+            Text(
+                text = if (isHindi) "हाल के पूरे किए गए काम (Recent Completed Tasks)" else "Recent Completed Tasks",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        items(recentTasks) { task ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(CardDark)
+                    .border(1.dp, CardBorder, RoundedCornerShape(14.dp))
+                    .padding(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                when (task.type) {
+                                    TaskType.TRANSFER_SENT -> CyanAccent.copy(alpha = 0.15f)
+                                    TaskType.TRANSFER_RECEIVED -> EmeraldAccent.copy(alpha = 0.15f)
+                                    TaskType.RECOVERED_MEDIA -> AmberAccent.copy(alpha = 0.15f)
+                                }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = when (task.type) {
+                                TaskType.TRANSFER_SENT -> Icons.Default.ArrowUpward
+                                TaskType.TRANSFER_RECEIVED -> Icons.Default.ArrowDownward
+                                TaskType.RECOVERED_MEDIA -> Icons.Default.CheckCircle
+                            },
+                            contentDescription = null,
+                            tint = when (task.type) {
+                                TaskType.TRANSFER_SENT -> CyanAccent
+                                TaskType.TRANSFER_RECEIVED -> EmeraldAccent
+                                TaskType.RECOVERED_MEDIA -> AmberAccent
+                            },
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = task.title,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "${task.subtitle} • ${(task.sizeBytes / 1_000_000.0).format(1)} MB",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = task.statusText,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldAccent,
+                                fontSize = 10.sp
+                            )
+                        )
+                        Text(
+                            text = task.timeAgo,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                color = TextMuted,
+                                fontSize = 10.sp
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    // DPDP Act 2027 Dialog
+    // DPDP Dialog
     if (showDpdpDialog) {
         AlertDialog(
             onDismissRequest = { showDpdpDialog = false },
             title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.Security, contentDescription = null, tint = EmeraldAccent)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isHindi) "DPDP Act 2027 प्राइवेसी गारंटी" else "DPDP Act 2027 Guarantee",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = if (isHindi)
-                            "सुपर टेलीकॉम ऐप पूरी तरह से ऑन-डिवाइस कार्य करता है:\n\n• शून्य रिमोट टेलीमेट्री: आपका कोई भी पर्सनल डेटा, फोन नंबर या मीडिया किसी बाहरी सर्वर पर नहीं जाता।\n• लोकल P2P ट्रांसफर: फाइल्स केवल आपके लोकल वाई-फाई या हॉटस्पॉट पर बिना इंटरनेट भेजी जाती हैं।\n• ईमानदार रिकवरी: केवल अधिकृत मीडियास्टोर और स्टोरेज एक्सेस फ्रेमवर्क के माध्यम से स्कैनिंग की जाती है।"
-                        else
-                            "Super Telecom operates strictly under on-device data minimization principles:\n\n• Zero Remote Telemetry: No analytics, tracking or surveillance SDKs are included.\n• Local P2P Transfer: Data flows exclusively over your direct Wi-Fi/hotspot link.\n• Honest Recovery: Scans only authorized MediaStore and Storage Access Framework folders.\n• Zero Subscriptions: 100% Free with no paywalls.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showDpdpDialog = false }) {
-                    Text(text = if (isHindi) "समझ गया" else "Understood", color = CyanAccent)
-                }
-            },
-            containerColor = CardDark,
-            tonalElevation = 6.dp
-        )
-    }
-
-    // About Store Dialog
-    if (showAboutDialog) {
-        AlertDialog(
-            onDismissRequest = { showAboutDialog = false },
-            title = {
                 Text(
-                    text = if (isHindi) "सुपर टेलीकॉम — गिरिडीह" else "Super Telecom Giridih",
+                    text = if (isHindi) "DPDP Act 2027 प्राइवेसी गारंटी" else "DPDP Act 2027 On-Device Guarantee",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
             },
             text = {
                 Text(
                     text = if (isHindi)
-                        "स्थान: स्टेशन रोड, गिरिडीह, झारखंड 815301\nस्थापना: 2016 (10+ वर्ष का अनुभव)\nरेटिंग: 4.9 / 5 ★ (1,200+ सत्यापित समीक्षाएं)\n\nविशेषज्ञता: 45x माइक्रोस्कोप मदरबोर्ड BGA सोल्डरिंग, कर्व्ड AMOLED ग्लास रिप्लेसमेंट, CPU रीबॉलिंग और इमरजेंसी वाटर डैमेज रिवाइवल।"
+                        "सुपर टेलीकॉम ऐप 100% ऑन-डिवाइस काम करता है:\n\n• कोई भी फाइल किसी बाहरी क्लाउड सर्वर पर नहीं भेजी जाती।\n• ट्रांसफर केवल लोकल वाई-फाई/हॉटस्पॉट पर सीधे फोन-टू-फोन होता है।\n• रिकवरी स्कैन पूरी तरह आपके फोन की इंटरनल मेमोरी पर चलता है।\n• शून्य ट्रैकिंग, शून्य विज्ञापन, शून्य सब्सक्रिप्शन।"
                     else
-                        "Address: Station Road, Giridih, Jharkhand 815301\nEstablished: 2016 (10+ Years Experience)\nRating: 4.9 / 5 ★ (1,200+ Verified Reviews)\n\nSpecialization: 45x Trinocular BGA Micro-soldering, Curved AMOLED Glass Separation, CPU Reballing, and Emergency Water Damage Revival.",
+                        "Super Telecom operates under strict on-device data minimization:\n\n• Zero Remote Telemetry: No analytics, tracking or surveillance SDKs.\n• Local Socket P2P: File sharing runs strictly over local Wi-Fi / hotspot.\n• Honest Recovery: Scans only local MediaStore and SAF folders.\n• Zero Subscriptions: 100% free forever.",
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
             confirmButton = {
-                TextButton(onClick = { showAboutDialog = false }) {
+                TextButton(onClick = { showDpdpDialog = false }) {
+                    Text(text = if (isHindi) "समझ गया" else "Understood", color = CyanAccent)
+                }
+            },
+            containerColor = CardDark
+        )
+    }
+
+    // Store & Settings Dialog
+    if (showContactDialog) {
+        AlertDialog(
+            onDismissRequest = { showContactDialog = false },
+            title = {
+                Text(
+                    text = if (isHindi) "सुपर टेलीकॉम (गिरिडीह)" else "Super Telecom Giridih",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            },
+            text = {
+                Text(
+                    text = if (isHindi)
+                        "स्थान: बरगंडा रोड (शिवम क्लिनिक के पास), गिरिडीह, झारखंड 815301\nकॉल / वॉट्सऐप: +91 80029 03643\nसमय: सुबह 10:00 से रात 9:30 बजे (सातों दिन)\n\nविशेषज्ञता: 45x माइक्रोस्कोप मदरबोर्ड BGA सोल्डरिंग, कर्व्ड AMOLED ग्लास रिप्लेसमेंट, CPU रीबॉलिंग और वाटर डैमेज रिवाइवल।"
+                    else
+                        "Address: Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301\nCall/WhatsApp: +91 80029 03643\nHours: 10:00 AM – 9:30 PM (7 Days a week)\n\nSpecialist in 45x Trinocular Motherboard Soldering, Curved AMOLED Glass Separation, and Water Damage Revival.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { showContactDialog = false }) {
                     Text(text = if (isHindi) "बंद करें" else "Close", color = CyanAccent)
                 }
             },
@@ -331,92 +408,87 @@ fun HomeScreen(
 }
 
 @Composable
-private fun CapabilityCard(
+private fun BigActionCard(
     title: String,
     subtitle: String,
-    badge: String,
-    badgeColor: Color,
+    ctaText: String,
+    gradient: Brush,
     icon: ImageVector,
     onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(CardDark)
-            .border(1.dp, CardBorder, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(18.dp))
+            .background(gradient)
             .clickable(onClick = onClick)
-            .padding(14.dp)
+            .padding(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(46.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(badgeColor.copy(alpha = 0.15f))
-                    .border(1.dp, badgeColor.copy(alpha = 0.3f), RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(imageVector = icon, contentDescription = null, tint = badgeColor, modifier = Modifier.size(24.dp))
-            }
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .background(Color.Black.copy(alpha = 0.25f), RoundedCornerShape(12.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
 
-            Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(badgeColor.copy(alpha = 0.15f))
-                            .padding(horizontal = 6.dp, vertical = 2.dp)
-                    ) {
-                        Text(
-                            text = badge,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = badgeColor
-                            )
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Black,
+                            color = Color.White,
+                            fontSize = 17.sp
                         )
-                    }
+                    )
                 }
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp)
-                )
             }
 
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = null,
-                tint = TextMuted,
-                modifier = Modifier.size(16.dp)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 12.sp,
+                    lineHeight = 17.sp
+                )
             )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Big Action Button inside Card
+            Button(
+                onClick = onClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Black.copy(alpha = 0.35f),
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = ctaText,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                )
+            }
         }
     }
 }
 
-@Composable
-private fun StatusRow(label: String, value: String, statusColor: Color) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp))
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = statusColor
-            )
-        )
-    }
-}
+private fun Double.format(digits: Int) = "%.${digits}f".format(this)

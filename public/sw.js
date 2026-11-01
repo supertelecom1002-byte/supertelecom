@@ -1,7 +1,7 @@
-// Super Telecom Cyber-Lab Service Worker v3.2 (Strict Offline-First Engine)
-// 100% Client-Side Hardware Diagnostics • Controlled Manual Update Workflow
+// Super Telecom Cyber-Lab Service Worker v3.4 (Strict Offline-First Engine)
+// 100% Client-Side Hardware Diagnostics • Immediate Hot-Fix Ingestion
 
-const CACHE_NAME = "supertelecom-offline-v3.2";
+const CACHE_NAME = "supertelecom-offline-v3.4";
 
 // Core App Shell & Offline Hubs to Pre-Cache
 const PRECACHE_ASSETS = [
@@ -24,7 +24,7 @@ const PRECACHE_ASSETS = [
   "/og-image.png",
 ];
 
-// Pre-cache core shell during install without silent skipWaiting
+// Pre-cache core shell during install and skipWaiting for seamless update
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
@@ -37,9 +37,9 @@ self.addEventListener("install", (event) => {
         )
       );
     })
-    // CRITICAL: DO NOT call self.skipWaiting() automatically.
-    // Controlled update workflow requires remaining in waiting state until explicit user interaction.
   );
+  // Auto-activate immediately so users get latest critical bundle bugfixes
+  self.skipWaiting();
 });
 
 // Clean up old caches on activation

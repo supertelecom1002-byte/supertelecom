@@ -41,7 +41,6 @@ fun SuperLauncherScreen(
     val context = LocalContext.current
     var currentTheme by remember { mutableStateOf(LauncherTheme.MINIMAL) }
     var searchQuery by remember { mutableStateOf("") }
-    var showThemeDialog by remember { mutableStateOf(false) }
 
     val currentTime = remember {
         val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -72,27 +71,42 @@ fun SuperLauncherScreen(
                 }
             )
             .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 110.dp)
     ) {
-        // Top Control Row: Theme selector + Restore Original Launcher
+        // ── TOP 2 SYSTEM ACTION BUTTONS ──
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Theme Picker Button
-            OutlinedButton(
-                onClick = { showThemeDialog = true },
+            // Set as Default Home Button
+            Button(
+                onClick = {
+                    if (context is Activity) {
+                        appRepository.requestDefaultLauncherRole(context)
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
-                border = ButtonDefaults.outlinedButtonBorder.copy(brush = androidx.compose.ui.graphics.SolidColor(CardBorder)),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isDefaultLauncher) EmeraldAccent.copy(alpha = 0.2f) else CyanAccent,
+                    contentColor = if (isDefaultLauncher) EmeraldAccent else BgDark
+                ),
+                border = if (isDefaultLauncher) androidx.compose.foundation.BorderStroke(1.dp, EmeraldAccent) else null
             ) {
-                Icon(imageVector = Icons.Default.Palette, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(16.dp))
+                Icon(
+                    imageVector = if (isDefaultLauncher) Icons.Default.CheckCircle else Icons.Default.Home,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = if (isHindi) currentTheme.titleHi else currentTheme.titleEn,
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                    text = if (isDefaultLauncher)
+                        (if (isHindi) "डिफ़ॉल्ट सक्रिय" else "Default Active")
+                    else
+                        (if (isHindi) "डिफ़ॉल्ट बनाएं" else "Set Default Home"),
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 )
             }
 
@@ -103,26 +117,61 @@ fun SuperLauncherScreen(
                         appRepository.openHomeSettings(context)
                     }
                 },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = RoseAccent.copy(alpha = 0.15f),
                     contentColor = RoseAccent
                 ),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-                modifier = Modifier.border(1.dp, RoseAccent.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                border = androidx.compose.foundation.BorderStroke(1.dp, RoseAccent.copy(alpha = 0.4f))
             ) {
-                Icon(imageVector = Icons.Default.SettingsBackupRestore, contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(Icons.Default.SettingsBackupRestore, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = if (isHindi) "पुराना लॉन्चर वापस लाएं" else "Restore Launcher",
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                    text = if (isHindi) "पुराना लॉन्चर वापस" else "Restore Launcher",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Clock & Date Widget (Adapts to Theme)
+        // ── 4 THEME SELECTION BUTTONS ──
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            ThemeSelectButton(
+                title = if (isHindi) "1. मिनिमल" else "1. Minimal",
+                isSelected = currentTheme == LauncherTheme.MINIMAL,
+                modifier = Modifier.weight(1f),
+                onClick = { currentTheme = LauncherTheme.MINIMAL }
+            )
+            ThemeSelectButton(
+                title = if (isHindi) "2. iOS स्टाइल" else "2. iOS",
+                isSelected = currentTheme == LauncherTheme.IOS_INSPIRED,
+                modifier = Modifier.weight(1f),
+                onClick = { currentTheme = LauncherTheme.IOS_INSPIRED }
+            )
+            ThemeSelectButton(
+                title = if (isHindi) "3. पिक्सल" else "3. Pixel",
+                isSelected = currentTheme == LauncherTheme.PIXEL_INSPIRED,
+                modifier = Modifier.weight(1f),
+                onClick = { currentTheme = LauncherTheme.PIXEL_INSPIRED }
+            )
+            ThemeSelectButton(
+                title = if (isHindi) "4. क्लासिक" else "4. Classic",
+                isSelected = currentTheme == LauncherTheme.CLASSIC,
+                modifier = Modifier.weight(1f),
+                onClick = { currentTheme = LauncherTheme.CLASSIC }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Clock & Date Widget (Adapts to Active Theme)
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -130,7 +179,7 @@ fun SuperLauncherScreen(
             Text(
                 text = currentTime,
                 style = MaterialTheme.typography.headlineLarge.copy(
-                    fontSize = 54.sp,
+                    fontSize = 48.sp,
                     fontWeight = FontWeight.Light,
                     letterSpacing = 2.sp,
                     fontFamily = when (currentTheme) {
@@ -149,12 +198,12 @@ fun SuperLauncherScreen(
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.Medium,
                     color = TextSecondary,
-                    fontSize = 13.sp
+                    fontSize = 12.sp
                 )
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Search Bar
         OutlinedTextField(
@@ -162,18 +211,15 @@ fun SuperLauncherScreen(
             onValueChange = { searchQuery = it },
             placeholder = {
                 Text(
-                    text = if (isHindi) "ऐप्स खोजें..." else "Search apps...",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = TextMuted)
+                    text = if (isHindi) "ऐप्स खोजें... (Search apps)" else "Search apps...",
+                    style = MaterialTheme.typography.bodyMedium.copy(color = TextMuted, fontSize = 12.sp)
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = when (currentTheme) {
-                        LauncherTheme.PIXEL_INSPIRED -> CyanAccent
-                        else -> TextMuted
-                    }
+                    tint = if (currentTheme == LauncherTheme.PIXEL_INSPIRED) CyanAccent else TextMuted
                 )
             },
             trailingIcon = {
@@ -185,10 +231,11 @@ fun SuperLauncherScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(52.dp)
                 .clip(
                     when (currentTheme) {
-                        LauncherTheme.PIXEL_INSPIRED -> RoundedCornerShape(28.dp)
-                        LauncherTheme.IOS_INSPIRED -> RoundedCornerShape(16.dp)
+                        LauncherTheme.PIXEL_INSPIRED -> RoundedCornerShape(26.dp)
+                        LauncherTheme.IOS_INSPIRED -> RoundedCornerShape(14.dp)
                         else -> RoundedCornerShape(12.dp)
                     }
                 )
@@ -202,42 +249,9 @@ fun SuperLauncherScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Default Launcher Banner if not set
-        if (!isDefaultLauncher) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(CyanAccent.copy(alpha = 0.08f))
-                    .border(1.dp, CyanAccent.copy(alpha = 0.25f), RoundedCornerShape(14.dp))
-                    .clickable {
-                        if (context is Activity) {
-                            appRepository.requestDefaultLauncherRole(context)
-                        }
-                    }
-                    .padding(10.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.CheckCircleOutline, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = if (isHindi) "सुपर लॉन्चर को डिफॉल्ट बनाएं" else "Set as Default Home Launcher",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = CyanAccent)
-                        )
-                        Text(
-                            text = if (isHindi) "टैप करें और 'Home app' में Super Telecom चुनें" else "Tap here and select Super Telecom as Default Home",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 10.sp)
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        // App Drawer Grid
+        // App Grid / Drawer
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             modifier = Modifier.weight(1f),
@@ -253,65 +267,31 @@ fun SuperLauncherScreen(
             }
         }
     }
+}
 
-    // Theme Switcher Dialog
-    if (showThemeDialog) {
-        AlertDialog(
-            onDismissRequest = { showThemeDialog = false },
-            title = {
-                Text(
-                    text = if (isHindi) "लॉन्चर थीम चुनें" else "Choose Launcher Theme",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    LauncherTheme.values().forEach { theme ->
-                        val isSelected = theme == currentTheme
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(if (isSelected) CyanAccent.copy(alpha = 0.15f) else CardDark)
-                                .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(12.dp))
-                                .clickable {
-                                    currentTheme = theme
-                                    showThemeDialog = false
-                                }
-                                .padding(12.dp)
-                        ) {
-                            Column {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    RadioButton(
-                                        selected = isSelected,
-                                        onClick = {
-                                            currentTheme = theme
-                                            showThemeDialog = false
-                                        },
-                                        colors = RadioButtonDefaults.colors(selectedColor = CyanAccent)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (isHindi) theme.titleHi else theme.titleEn,
-                                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                    )
-                                }
-                                Text(
-                                    text = theme.subtitleEn,
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp, color = TextMuted),
-                                    modifier = Modifier.padding(start = 32.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showThemeDialog = false }) {
-                    Text(text = if (isHindi) "पूर्ण" else "Done", color = CyanAccent)
-                }
-            },
-            containerColor = CardDark
+@Composable
+private fun ThemeSelectButton(
+    title: String,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(44.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (isSelected) CyanAccent else CardDark)
+            .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontSize = 11.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                color = if (isSelected) BgDark else TextSecondary
+            )
         )
     }
 }
@@ -336,20 +316,10 @@ private fun AppGridItem(app: AppItem, theme: LauncherTheme, onClick: () -> Unit)
                         LauncherTheme.CLASSIC -> RoundedCornerShape(12.dp)
                     }
                 )
-                .background(
-                    when (theme) {
-                        LauncherTheme.MINIMAL -> Color(0xFF1E293B)
-                        LauncherTheme.IOS_INSPIRED -> Color(0xFF1E293B)
-                        LauncherTheme.PIXEL_INSPIRED -> Color(0xFF1E293B)
-                        LauncherTheme.CLASSIC -> CardDark
-                    }
-                )
+                .background(CardDark)
                 .border(
                     1.dp,
-                    when (theme) {
-                        LauncherTheme.MINIMAL -> Color(0xFF334155)
-                        else -> CardBorder
-                    },
+                    if (theme == LauncherTheme.PIXEL_INSPIRED) CyanAccent.copy(alpha = 0.4f) else CardBorder,
                     when (theme) {
                         LauncherTheme.IOS_INSPIRED -> RoundedCornerShape(14.dp)
                         LauncherTheme.PIXEL_INSPIRED -> CircleShape
@@ -359,16 +329,11 @@ private fun AppGridItem(app: AppItem, theme: LauncherTheme, onClick: () -> Unit)
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // App Initials as icon fallback
             Text(
                 text = app.label.take(1).uppercase(),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    color = when (theme) {
-                        LauncherTheme.PIXEL_INSPIRED -> CyanGlow
-                        LauncherTheme.MINIMAL -> TextPrimary
-                        else -> TextPrimary
-                    }
+                    color = if (theme == LauncherTheme.PIXEL_INSPIRED) CyanGlow else TextPrimary
                 )
             )
         }
@@ -380,10 +345,7 @@ private fun AppGridItem(app: AppItem, theme: LauncherTheme, onClick: () -> Unit)
             style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 11.sp,
                 textAlign = TextAlign.Center,
-                color = when (theme) {
-                    LauncherTheme.MINIMAL -> Color(0xFFCBD5E1)
-                    else -> TextPrimary
-                }
+                color = TextPrimary
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
