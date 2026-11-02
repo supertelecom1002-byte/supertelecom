@@ -110,14 +110,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           Promise.all(names.map((name) => caches.delete(name))).finally(() => {
             if ("serviceWorker" in navigator) {
               navigator.serviceWorker.getRegistrations().then((regs) => {
-                regs.forEach((r) => r.update());
+                regs.forEach((r) => r.unregister());
               });
             }
-            window.location.reload();
+            window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + Date.now());
           });
         });
       } else {
-        window.location.reload();
+        window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + Date.now());
       }
     }
   }, [error]);
@@ -449,7 +449,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const globalCacheBusterScript = `(function(){if(typeof window==='undefined')return;var VER='st_v5_0';try{if(localStorage.getItem('st_cache_gen')!==VER){localStorage.setItem('st_cache_gen',VER);if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){if(k!=='supertelecom-offline-v5.0'){caches.delete(k);}});});}}}catch(e){}window.addEventListener('error',function(e){var msg=(e&&(e.message||(e.error&&e.error.message)))||'';if(typeof msg==='string'&&(msg.indexOf('inView')!==-1||msg.indexOf('routes-alUw0lcb')!==-1||msg.indexOf('Loading chunk')!==-1||msg.indexOf('is not defined')!==-1)){var key='st_auto_wipe_ts';var last=parseInt(sessionStorage.getItem(key)||'0',10);var now=Date.now();if(now-last>10000){sessionStorage.setItem(key,String(now));if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}if('caches' in window){caches.keys().then(function(keys){Promise.all(keys.map(function(k){return caches.delete(k);})).finally(function(){window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);});});}else{window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);}}}});})();`;
+const globalCacheBusterScript = `(function(){if(typeof window==='undefined')return;var VER='st_v5_0';try{if(localStorage.getItem('st_cache_gen')!==VER){localStorage.setItem('st_cache_gen',VER);if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){if(k!=='supertelecom-offline-v5.0'){caches.delete(k);}});});}}}catch(e){}window.addEventListener('error',function(e){var msg=(e&&(e.message||(e.error&&e.error.message)))||'';if(typeof msg==='string'&&(msg.indexOf('inView')!==-1||msg.indexOf('routes-')!==-1||msg.indexOf('Loading chunk')!==-1||msg.indexOf('is not defined')!==-1)){var key='st_auto_wipe_ts';var last=parseInt(sessionStorage.getItem(key)||'0',10);var now=Date.now();if(now-last>10000){sessionStorage.setItem(key,String(now));if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}if('caches' in window){caches.keys().then(function(keys){Promise.all(keys.map(function(k){return caches.delete(k);})).finally(function(){window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);});});}else{window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);}}}});})();`;
 const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';var isD=t==='dark';document.documentElement.classList.toggle('dark',isD);var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.setAttribute('content',isD?'#020617':'#ffffff');}catch(e){}})();`;
 const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){if(reg){reg.update();reg.onupdatefound=function(){var ins=reg.installing;if(ins){ins.onstatechange=function(){if(ins.state==='installed'&&navigator.serviceWorker.controller){ins.postMessage({type:'SKIP_WAITING'});}};}};}}).catch(function(){});});}`;
 const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;

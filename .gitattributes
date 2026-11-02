@@ -1,0 +1,11 @@
+# Treat binary files as binary so git never tries CRLF conversion
+*.apk binary
+*.aab binary
+*.jks binary
+*.keystore binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.zip binary

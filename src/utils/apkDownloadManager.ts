@@ -41,10 +41,10 @@ export const KNOWN_RELEASE_APK: ApkReleaseMetadata = {
   packageId: "com.supertelecom.app",
   minSdk: 24,
   targetSdk: 36,
-  fileSize: 1769205,
-  fileSizeHuman: "1.69 MB",
+  fileSize: 15854353,
+  fileSizeHuman: "15.12 MB",
   releaseDate: "2026-11-02",
-  sha256: "3ebc895e5bb1d5080268bb61fa3454e9c3dfdabf9313307cb4a7aeab81287afc",
+  sha256: "af8b6df0f481e55208bc65c8932cebefb80314d22d1770af30c9416e350a5b74",
   downloadUrl: "/SuperTelecom.apk",
   downloadFilename: "SuperTelecom-Release.apk",
 };

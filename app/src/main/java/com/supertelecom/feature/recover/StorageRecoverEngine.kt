@@ -1,5 +1,6 @@
 package com.supertelecom.feature.recover
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -110,8 +111,8 @@ class StorageRecoverEngine(private val context: Context) {
 
                 val bundle = Bundle().apply {
                     putInt(MediaStore.QUERY_ARG_MATCH_TRASHED, MediaStore.MATCH_ONLY)
-                    putString(MediaStore.QUERY_ARG_SQL_SORT_ORDER, "${MediaStore.MediaColumns.DATE_MODIFIED} DESC")
-                    putInt(MediaStore.QUERY_ARG_LIMIT, 50)
+                    putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, "${MediaStore.MediaColumns.DATE_MODIFIED} DESC")
+                    putInt(ContentResolver.QUERY_ARG_LIMIT, 50)
                 }
 
                 context.contentResolver.query(uri, projection, bundle, null)?.use { cursor ->
@@ -165,7 +166,7 @@ class StorageRecoverEngine(private val context: Context) {
 
     private fun findHiddenFilesRecursive(
         dir: File,
-        results: mutableListOf<RecoverItem>,
+        results: MutableList<RecoverItem>,
         category: RecoverCategory,
         depth: Int,
         maxDepth: Int
@@ -248,7 +249,7 @@ class StorageRecoverEngine(private val context: Context) {
         val list = mutableListOf<RecoverItem>()
         val externalCache = context.externalCacheDir ?: return list
 
-        val files = externalCache.listFiles() ?: return
+        val files = externalCache.listFiles() ?: return list
         for (f in files) {
             if (f.isDirectory) continue
             val cat = getCategoryForExtension(f.extension) ?: continue
@@ -296,13 +297,12 @@ class StorageRecoverEngine(private val context: Context) {
     private fun traverseSafDirectory(
         treeUri: Uri,
         docId: String,
-        results: mutableListOf<RecoverItem>,
+        results: MutableList<RecoverItem>,
         selectedCategory: RecoverCategory,
         depth: Int,
         maxDepth: Int
     ) {
         if (depth > maxDepth) return
-        ensureActive()
 
         val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, docId)
         val projection = arrayOf(

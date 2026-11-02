@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.supertelecom"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.supertelecom.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 25
         versionName = "2.5.0"
 
@@ -24,8 +27,8 @@ android {
         create("release") {
             val keystorePropertiesFile = rootProject.file("keystore.properties")
             if (keystorePropertiesFile.exists()) {
-                val properties = java.util.Properties().apply {
-                    keystorePropertiesFile.inputStream().use { load(it) }
+                val properties = Properties().apply {
+                    keystorePropertiesFile.inputStream().use { stream -> this.load(stream) }
                 }
                 storeFile = rootProject.file(properties.getProperty("storeFile") ?: "keystore/release.jks")
                 storePassword = properties.getProperty("storePassword")

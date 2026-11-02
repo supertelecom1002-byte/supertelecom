@@ -21,7 +21,7 @@
         } catch(e) {}
         window.addEventListener('error', function(e) {
           var msg = (e && (e.message || (e.error && e.error.message))) || '';
-          if (typeof msg === 'string' && (msg.indexOf('inView') !== -1 || msg.indexOf('routes-alUw0lcb') !== -1 || msg.indexOf('Loading chunk') !== -1 || msg.indexOf('is not defined') !== -1)) {
+          if (typeof msg === 'string' && (msg.indexOf('inView') !== -1 || msg.indexOf('routes-') !== -1 || msg.indexOf('Loading chunk') !== -1 || msg.indexOf('is not defined') !== -1)) {
             var key = 'st_auto_wipe_ts';
             var last = parseInt(sessionStorage.getItem(key) || '0', 10);
             var now = Date.now();
