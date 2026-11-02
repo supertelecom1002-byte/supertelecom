@@ -95,8 +95,8 @@ export const BUSINESS_MASTER = {
   verifiedMetrics: {
     established: 2016,
     experienceText: "10+ Years in Giridih (Est. 2016)",
-    ratingText: "4.9 / 5 ★ (1,200+ Verified Google Reviews)",
-    repairedCount: "15,000+ Phones Repaired",
+    ratingText: "Top-Rated Local Mobile Repair Shop (Google Maps)",
+    repairedCount: "Serving Giridih Since 2016",
     inspectionPolicy: "Free Bench Inspection & Written Quote",
     warrantyCoverage: "Up to 90 Days Warranty on Parts",
   },

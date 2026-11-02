@@ -101,16 +101,15 @@ export const Hero: React.FC = () => {
 
             {/* Rating & Stats Bar */}
             <div className="flex items-center justify-between gap-1 pt-2 border-t border-slate-800/80 text-[10px] font-mono text-slate-300">
-              <span className="flex items-center gap-1 text-amber-400 font-bold">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                <span>4.9 / 5 ★ (1,200+ Reviews)</span>
+              <span className="flex items-center gap-1 text-cyan-300 font-bold">
+                <span>Top-Rated Local Care</span>
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-cyan-300 font-semibold truncate">
                 10+ Yrs (Est. 2016)
               </span>
               <span className="text-slate-600">•</span>
-              <span className="text-emerald-400 font-semibold">15K+ Repaired</span>
+              <span className="text-emerald-400 font-semibold">16+ Services</span>
             </div>
           </div>
 
@@ -292,9 +291,9 @@ export const Hero: React.FC = () => {
 
             {/* Social Proof Strip */}
             <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-slate-400 border-t border-slate-800/80 pt-4">
-              <div className="flex items-center gap-1.5 text-amber-400 font-bold">
-                <Star className="h-4 w-4 fill-amber-400" />
-                <span>4.9 / 5 ★ (1,200+ Verified Google Reviews)</span>
+              <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                <Shield className="h-4 w-4 text-cyan-400" />
+                <span>Verified Local Shop on Google Maps</span>
               </div>
               <span className="text-slate-600">•</span>
               <span className="text-cyan-300 font-semibold">
@@ -302,7 +301,7 @@ export const Hero: React.FC = () => {
               </span>
               <span className="text-slate-600">•</span>
               <span className="text-emerald-400 font-semibold">
-                15,000+ Phones Repaired
+                16+ Dedicated Repair Silos
               </span>
             </div>
           </div>

@@ -70,8 +70,8 @@ export const LOCAL_SERVICES_OFFERINGS = [
 
 export const LOCAL_SEO_FAQS = [
   {
-    question: "Which is the #1 mobile repair shop in Giridih for same-day display replacement?",
-    answer: "Super Telecom on Barganda Road (Near Shivam Clinic, Giridih) is the highest-rated mobile repair laboratory in Giridih with a 4.9/5 star Google rating from 1,200+ verified customers. We provide same-day 30-to-60 minute display replacement with up to 90 days warranty.",
+    question: "Which is the recommended mobile repair shop in Giridih for same-day display replacement?",
+    answer: "Super Telecom on Barganda Road (Near Shivam Clinic, Giridih) is a trusted, dedicated smartphone and chip-level repair lab in Giridih. We provide fast display replacement with warranty, expert motherboard diagnosis, and transparent component-level servicing.",
   },
   {
     question: "Do you repair dead phones and motherboard IC issues in Giridih?",
@@ -79,7 +79,7 @@ export const LOCAL_SEO_FAQS = [
   },
   {
     question: "Is customer data safe during mobile repair at Super Telecom Giridih?",
-    answer: "Yes, 100%. Super Telecom strictly complies with the Digital Personal Data Protection (DPDP) Act 2027 and maintains a Zero-Snooping Workshop Pledge. Passcodes are never required for hardware repairs (screens, batteries, charging ports), and customer photo galleries, chats, or files are never accessed.",
+    answer: "Yes. Super Telecom adheres to the Digital Personal Data Protection (DPDP) Act 2027 standards with a strict Zero-Snooping workshop policy. Customer device passcodes are not required for hardware repairs (screens, batteries, charging ports), and personal files and photos remain completely private.",
   },
   {
     question: "Where is Super Telecom located in Giridih?",
@@ -118,8 +118,8 @@ export function getCombinedLocalSeoSchema() {
         },
         geo: {
           "@type": "GeoCoordinates",
-          latitude: 24.1802958,
-          longitude: 86.2974917,
+          latitude: BUSINESS_MASTER.coordinates.latitude,
+          longitude: BUSINESS_MASTER.coordinates.longitude,
         },
         hasMap: "https://maps.app.goo.gl/mu5XXCehEpocaZWY9",
         openingHoursSpecification: [
@@ -138,13 +138,6 @@ export function getCombinedLocalSeoSchema() {
             closes: "21:30",
           },
         ],
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "1240",
-          bestRating: "5",
-          worstRating: "1",
-        },
         areaServed: GIRIDIH_LOCALITIES.map((locality) => ({
           "@type": "AdministrativeArea",
           name: `${locality}, Giridih`,

@@ -1,7 +1,7 @@
-// Super Telecom Cyber-Lab Service Worker v4.0 (Strict Offline-First Engine)
+// Super Telecom Cyber-Lab Service Worker v5.0 (Strict Network-First Code Delivery Engine)
 // 100% Client-Side Hardware Diagnostics • Immediate Hot-Fix Ingestion • Auto-Cache Invalidation
 
-const CACHE_NAME = "supertelecom-offline-v4.0";
+const CACHE_NAME = "supertelecom-offline-v5.0";
 
 // Core App Shell & Offline Hubs to Pre-Cache
 const PRECACHE_ASSETS = [
@@ -42,7 +42,7 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Clean up old caches on activation
+// Clean up all old caches on activation
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
@@ -51,7 +51,7 @@ self.addEventListener("activate", (event) => {
         return Promise.all(
           keys.map((key) => {
             if (key !== CACHE_NAME) {
-              console.log("[SW] Removing outdated cache bucket:", key);
+              console.log("[SW v5.0] Evicting outdated cache bucket:", key);
               return caches.delete(key);
             }
           })
@@ -88,7 +88,7 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// Offline-first fetch strategy
+// Strategic fetch engine: Network-First for JS/CSS & Navigation; Cache-First for static media
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -112,7 +112,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // 1. Navigation Requests (HTML Page loads / Route transitions):
-  // Network-First with Stale Cache Fallback + Root fallback for SPA offline routes
+  // STRICT NETWORK-FIRST: Never serve stale HTML while online
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
@@ -138,19 +138,38 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 2. Static Assets (Scripts, Styles, Images, Fonts, Audio, Manifest):
+  // 2. JavaScript Code Chunks & Stylesheets:
+  // STRICT NETWORK-FIRST: Always fetch latest deployed bundles to prevent stale code ReferenceErrors
+  const isCodeAsset = url.pathname.match(/\.(js|mjs|css)$/i) || url.pathname.includes("/assets/");
+  if (isCodeAsset) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // Fall back to cache only when offline
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
+  // 3. Static Media Assets (Images, Fonts, Audio, Icons):
   // Cache-First with Background Network Revalidation
-  const isStaticAsset =
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff|woff2|ttf|mp3|wav|ogg|json)$/i) ||
-    url.pathname.startsWith("/assets/") ||
+  const isMediaAsset =
+    url.pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|woff|woff2|ttf|mp3|wav|ogg)$/i) ||
     url.pathname.startsWith("/static/") ||
     PRECACHE_ASSETS.includes(url.pathname);
 
-  if (isStaticAsset) {
+  if (isMediaAsset) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
-          // Revalidate in background when online
           fetch(event.request)
             .then((networkResponse) => {
               if (networkResponse && networkResponse.status === 200) {
@@ -162,7 +181,6 @@ self.addEventListener("fetch", (event) => {
           return cachedResponse;
         }
 
-        // Not yet cached: fetch from network and store copy
         return fetch(event.request)
           .then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
@@ -177,7 +195,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 3. All other requests: Network with Cache fallback
+  // 4. All other requests: Network with Cache fallback
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {

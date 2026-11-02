@@ -150,8 +150,8 @@ function ServicesIndex() {
             <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/70 px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-cyan-300">
               <MapPin className="h-3.5 w-3.5 text-cyan-400" /> Barganda Road, Giridih
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-950/60 px-3 py-1 text-xs font-mono font-bold text-amber-300">
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> 4.9 ★ (1,200+ Reviews)
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/60 px-3.5 py-1 text-xs font-mono font-bold text-cyan-300">
+              <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" /> Dedicated Repair Lab
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950/60 px-3 py-1 text-xs font-mono font-bold text-emerald-300">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> 10+ Years (Est. 2016)

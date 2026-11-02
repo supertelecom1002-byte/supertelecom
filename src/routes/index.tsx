@@ -144,115 +144,15 @@ export const Route = createFileRoute("/")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": ["ElectronicsRepairStore", "MobilePhoneRepairShop", "LocalBusiness"],
-          "@id": `${SITE_URL}/#business`,
-          name: "Super Telecom",
-          alternateName: "Super Telecom Mobile Repairing Centre & Chip-Level Lab Giridih",
+          "@type": "WebPage",
+          "@id": `${SITE_URL}/#webpage`,
+          url: `${SITE_URL}/`,
+          name: "Super Telecom | Best Mobile Repair in Giridih | Barganda Road Chip-Level Lab",
           description:
             "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools.",
-          image: `${SITE_URL}/favicon.png`,
-          telephone: "+918002903643",
-          email: "supertelecom1002@gmail.com",
-          url: `${SITE_URL}/`,
-          priceRange: "₹₹",
-          currenciesAccepted: "INR",
-          paymentAccepted: "Cash, UPI (GPay/PhonePe/Paytm), Debit Card, Credit Card, Net Banking",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "Barganda Road, Near Shivam Clinic",
-            addressLocality: "Giridih",
-            addressRegion: "Jharkhand",
-            postalCode: "815301",
-            addressCountry: "IN",
-          },
-          geo: { "@type": "GeoCoordinates", latitude: 24.1843, longitude: 86.3075 },
-          hasMap: "https://maps.app.goo.gl/mu5XXCehEpocaZWY9",
-          openingHoursSpecification: [
-            {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ],
-              opens: "10:00",
-              closes: "21:30",
-            },
-          ],
-          areaServed: [
-            { "@type": "AdministrativeArea", name: "Giridih" },
-            { "@type": "AdministrativeArea", name: "Barganda" },
-            { "@type": "AdministrativeArea", name: "Pachamba" },
-            { "@type": "AdministrativeArea", name: "Bada Chowk" },
-            { "@type": "AdministrativeArea", name: "Makatpur" },
-            { "@type": "State", name: "Jharkhand" },
-          ],
-          hasOfferCatalog: {
-            "@type": "OfferCatalog",
-            name: "Mobile Repair Services Giridih",
-            itemListElement: [
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: "Smartphone Screen Replacement",
-                  description: "Cracked or broken display replacement for iPhone and Android with same-day 90-day warranty.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "799",
-                  maxPrice: "9999",
-                },
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: "Motherboard IC Micro-Soldering",
-                  description: "Chip-level BGA reballing, short circuit isolation, power IC replacement, and dead phone recovery.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "799",
-                  maxPrice: "3500",
-                },
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: "Battery & Charging Port Replacement",
-                  description: "High-backup original battery replacement and Type-C port repair with 90-day warranty.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "499",
-                  maxPrice: "2499",
-                },
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Service",
-                  name: "Water Damage Ultrasonic Revival",
-                  description: "Precision ultrasonic chemical cleaning, board drying, and component short-circuit restoration.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "499",
-                  maxPrice: "2500",
-                },
-              },
-            ],
-          },
+          about: { "@id": `${SITE_URL}/#business` },
+          primaryImageOfPage: `${SITE_URL}/favicon.png`,
+          inLanguage: "en-IN",
         }),
       },
       {
@@ -521,9 +421,9 @@ function About() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              ["4.9★", "1,200+ Verified Google Reviews"],
               ["10+ Yrs", "In Giridih (Established 2016)"],
-              ["15,000+", "Smartphones Successfully Repaired"],
+              ["16+", "Dedicated Hardware Repair Silos"],
+              ["100%", "DPDP 2027 Privacy Compliant Lab"],
               ["90 Days", "Parts & Micro-Soldering Warranty"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">

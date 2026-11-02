@@ -753,13 +753,13 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 ))}
-                <span className="font-bold text-slate-900 dark:text-white ml-1 text-xs">4.9 / 5.0</span>
+                <span className="font-bold text-slate-900 dark:text-white ml-1 text-xs">Customer Review</span>
               </div>
               <p className="text-[11px] text-slate-700 dark:text-slate-300">
                 &ldquo;Giridih me best mobile screen replacement service! Original display 1 ghante me laga diya.&rdquo;
               </p>
               <span className="text-[10px] text-slate-500 font-mono block">
-                1,200+ Verified Repairs &bull; Barganda Road, Giridih
+                Local Customer Feedback &bull; Barganda Road, Giridih
               </span>
             </div>
           </div>

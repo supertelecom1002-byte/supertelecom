@@ -120,10 +120,10 @@ const FOOTER_FAQS: [string, string][] = [
 ];
 
 const COUNTERS: { value: number; suffix: string; label: string; decimals?: number }[] = [
-  { value: 10, suffix: "+ Years", label: "Est. 2016 in Giridih" },
-  { value: 15, suffix: "K+", label: "Phones Repaired" },
-  { value: 12, suffix: "K+", label: "Happy Customers" },
-  { value: 4.9, suffix: " / 5 ★", label: "1,200+ Verified Google Reviews", decimals: 1 },
+  { value: 10, suffix: "+ Years", label: "Serving Giridih Since 2016" },
+  { value: 16, suffix: "+", label: "Dedicated Repair Services" },
+  { value: 100, suffix: "%", label: "DPDP 2027 Privacy Standard" },
+  { value: 90, suffix: " Days", label: "Repair Service Warranty" },
 ];
 
 const BADGES = [
@@ -214,66 +214,6 @@ function FooterCol({ title, items, id }: { title: string; items: { label: string
 export function SiteFooter() {
   const { ref, inView } = useInView<HTMLDivElement>();
   const [dpdpModalOpen, setDpdpModalOpen] = useState(false);
-
-  const footerSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": ["LocalBusiness", "ElectronicsStore"],
-        "@id": `${SITE}/#business`,
-        name: "Super Telecom",
-        description:
-          "Mobile repair shop in Giridih, Jharkhand for screen, battery, charging port, IC and software repair. Super Telecom also offers phone unlocking and accessories.",
-        image: `${SITE}/favicon.png`,
-        telephone: PHONE,
-        email: EMAIL,
-        url: `${SITE}/`,
-        priceRange: "₹₹",
-        address: {
-          "@type": "PostalAddress",
-          streetAddress: "Barganda Road, Near Shivam Clinic",
-          addressLocality: "Giridih",
-          addressRegion: "Jharkhand",
-          postalCode: "815301",
-          addressCountry: "IN",
-        },
-        geo: { "@type": "GeoCoordinates", latitude: 24.1854, longitude: 86.304 },
-        hasMap: MAPS_PLACE,
-        openingHoursSpecification: [
-          {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday",
-              "Sunday",
-            ],
-            opens: "10:00",
-            closes: "21:30",
-          },
-        ],
-        areaServed: { "@type": "City", name: "Giridih" },
-      },
-      {
-        "@type": "Service",
-        "@id": `${SITE}/#repair-service`,
-        serviceType: "Mobile Phone Repair",
-        provider: { "@id": `${SITE}/#business` },
-        areaServed: { "@type": "City", name: "Giridih" },
-        hasOfferCatalog: {
-          "@type": "OfferCatalog",
-          name: "Mobile Repair Services in Giridih",
-          itemListElement: SERVICE_LINKS.map((s) => ({
-            "@type": "Offer",
-            itemOffered: { "@type": "Service", name: s.label, url: `${SITE}${s.to}` },
-          })),
-        },
-      },
-    ],
-  };
 
   return (
     <>
@@ -510,12 +450,10 @@ export function SiteFooter() {
           <div className="mt-10 flex flex-col gap-2 border-t border-border/50 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 Super Telecom Lab. All Rights Reserved. Engineered for Giridih &amp; Beyond.</p>
             <p className="sm:text-right font-medium text-slate-700 dark:text-slate-300">
-              Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301 &bull; 100% Customer Data Privacy Guarantee.
+              Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301 &bull; DPDP 2027 Privacy Compliant.
             </p>
           </div>
         </div>
-
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(footerSchema) }} />
       </footer>
 
       <DpdpDataRightsModal isOpen={dpdpModalOpen} onClose={() => setDpdpModalOpen(false)} />

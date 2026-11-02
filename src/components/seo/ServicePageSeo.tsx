@@ -25,18 +25,19 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
         telephone: BUSINESS_MASTER.phoneRaw,
         image: `${SITE_URL}/super-telecom-logo.png`,
         priceRange: "₹₹",
+        hasMap: BUSINESS_MASTER.mapsUrl,
         address: {
           "@type": "PostalAddress",
-          streetAddress: BUSINESS_MASTER.addressStreet,
-          addressLocality: "Giridih",
-          addressRegion: "Jharkhand",
-          postalCode: "815301",
-          addressCountry: "IN",
+          streetAddress: BUSINESS_MASTER.streetAddress,
+          addressLocality: BUSINESS_MASTER.city,
+          addressRegion: BUSINESS_MASTER.state,
+          postalCode: BUSINESS_MASTER.postalCode,
+          addressCountry: BUSINESS_MASTER.countryCode,
         },
         geo: {
           "@type": "GeoCoordinates",
-          latitude: BUSINESS_MASTER.geoLatitude,
-          longitude: BUSINESS_MASTER.geoLongitude,
+          latitude: BUSINESS_MASTER.coordinates.latitude,
+          longitude: BUSINESS_MASTER.coordinates.longitude,
         },
         openingHoursSpecification: [
           {
@@ -54,13 +55,6 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
             closes: "21:30",
           },
         ],
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "1240",
-          bestRating: "5",
-          worstRating: "1",
-        },
       },
       {
         "@type": "Service",
