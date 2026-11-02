@@ -36,7 +36,8 @@ fun SuperLauncherScreen(
     isHindi: Boolean,
     allApps: List<AppItem>,
     isDefaultLauncher: Boolean,
-    appRepository: AppRepository
+    appRepository: AppRepository,
+    bottomPadding: androidx.compose.ui.unit.Dp = 110.dp
 ) {
     val context = LocalContext.current
     var currentTheme by remember { mutableStateOf(LauncherTheme.MINIMAL) }
@@ -71,7 +72,7 @@ fun SuperLauncherScreen(
                 }
             )
             .statusBarsPadding()
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 110.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
     ) {
         // ── TOP 2 SYSTEM ACTION BUTTONS ──
         Row(
@@ -255,6 +256,7 @@ fun SuperLauncherScreen(
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
             modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(bottom = bottomPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {

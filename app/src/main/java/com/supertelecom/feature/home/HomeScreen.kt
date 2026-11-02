@@ -30,7 +30,8 @@ import com.supertelecom.theme.*
 fun HomeScreen(
     isHindi: Boolean,
     onToggleLanguage: () -> Unit,
-    onNavigateTab: (NavTab) -> Unit
+    onNavigateTab: (NavTab) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     var showDpdpDialog by remember { mutableStateOf(false) }
     var showContactDialog by remember { mutableStateOf(false) }
@@ -72,7 +73,7 @@ fun HomeScreen(
             .fillMaxSize()
             .background(BgDark)
             .statusBarsPadding(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
+        contentPadding = contentPadding
     ) {
         item {
             // ── TOP BAR ──

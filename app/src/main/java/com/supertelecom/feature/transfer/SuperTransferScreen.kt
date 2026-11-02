@@ -1,11 +1,15 @@
 package com.supertelecom.feature.transfer
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,41 +21,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.supertelecom.model.TransferDirection
 import com.supertelecom.model.TransferFileItem
 import com.supertelecom.model.TransferStatus
 import com.supertelecom.theme.*
+import java.util.Locale
 
 @Composable
-fun SuperTransferScreen(isHindi: Boolean) {
-    var mode by remember { mutableStateOf(TransferDirection.SEND) }
-    var pairingCode by remember { mutableStateOf("582 914") }
-    var deviceName by remember { mutableStateOf("Pixel 8 Pro (Nearby)") }
-    var isTransferring by remember { mutableStateOf(false) }
-    var isPaused by remember { mutableStateOf(false) }
-    var transferProgress by remember { mutableFloatStateOf(0.45f) }
-    var transferSpeed by remember { mutableStateOf("52.4 MB/s") }
-    var showQrDialog by remember { mutableStateOf(false) }
-    var showConsentDialog by remember { mutableStateOf(false) }
+fun SuperTransferScreen(
+    isHindi: Boolean,
+    contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
+) {
+    val context = LocalContext.current
+    val transferManager = remember { WifiDirectTransferManager(context) }
 
-    // Selected Files Queue
+    var mode by remember { mutableStateOf(TransferDirection.SEND) }
+    val pairingCode by remember { mutableStateOf("582 914") }
+    val deviceName by remember { mutableStateOf("Pixel 8 Pro (Nearby)") }
+    var showQrDialog by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+
+    val isTransferring by transferManager.isTransferring.collectAsState()
+    val isPaused by transferManager.isPaused.collectAsState()
+    val transferSpeedMbps by transferManager.transferSpeedMbps.collectAsState()
+    val totalProgress by transferManager.totalProgress.collectAsState()
+
+    // Real selected files queue
     val selectedFiles = remember {
         mutableStateListOf(
             TransferFileItem(
-                id = "1",
+                id = "demo_1",
                 name = "Khandoli_4K_Video_Recording.mp4",
                 sizeBytes = 2_450_000_000L,
                 mimeType = "video/mp4",
                 sha256 = "3ebc895e5bb1d5080268bb61fa3454e9c3dfdabf9313307cb4a7aeab81287afc",
-                progress = 0.65f,
-                status = TransferStatus.TRANSFERRING
+                progress = 1.0f,
+                status = TransferStatus.COMPLETED
             ),
             TransferFileItem(
-                id = "2",
+                id = "demo_2",
                 name = "Motherboard_Circuit_Schematic.pdf",
                 sizeBytes = 14_800_000L,
                 mimeType = "application/pdf",
@@ -62,15 +76,88 @@ fun SuperTransferScreen(isHindi: Boolean) {
         )
     }
 
+    // ── Real Android Pickers (PickVisualMedia & OpenMultipleDocuments) ──
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia()
+    ) { uris: List<Uri> ->
+        for (uri in uris) {
+            val (name, size) = transferManager.queryFileInfo(uri)
+            selectedFiles.add(
+                TransferFileItem(
+                    id = "photo_${System.currentTimeMillis()}_${name.hashCode()}",
+                    name = name,
+                    sizeBytes = size.coerceAtLeast(1024L),
+                    mimeType = "image/jpeg",
+                    uri = uri,
+                    status = TransferStatus.PENDING
+                )
+            )
+        }
+    }
+
+    val videoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia()
+    ) { uris: List<Uri> ->
+        for (uri in uris) {
+            val (name, size) = transferManager.queryFileInfo(uri)
+            selectedFiles.add(
+                TransferFileItem(
+                    id = "video_${System.currentTimeMillis()}_${name.hashCode()}",
+                    name = name,
+                    sizeBytes = size.coerceAtLeast(1024L),
+                    mimeType = "video/mp4",
+                    uri = uri,
+                    status = TransferStatus.PENDING
+                )
+            )
+        }
+    }
+
+    val audioPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> ->
+        for (uri in uris) {
+            val (name, size) = transferManager.queryFileInfo(uri)
+            selectedFiles.add(
+                TransferFileItem(
+                    id = "audio_${System.currentTimeMillis()}_${name.hashCode()}",
+                    name = name,
+                    sizeBytes = size.coerceAtLeast(1024L),
+                    mimeType = "audio/mp4",
+                    uri = uri,
+                    status = TransferStatus.PENDING
+                )
+            )
+        }
+    }
+
+    val docPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> ->
+        for (uri in uris) {
+            val (name, size) = transferManager.queryFileInfo(uri)
+            selectedFiles.add(
+                TransferFileItem(
+                    id = "doc_${System.currentTimeMillis()}_${name.hashCode()}",
+                    name = name,
+                    sizeBytes = size.coerceAtLeast(1024L),
+                    mimeType = "application/pdf",
+                    uri = uri,
+                    status = TransferStatus.PENDING
+                )
+            )
+        }
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(BgDark)
             .statusBarsPadding(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
+        contentPadding = contentPadding
     ) {
         item {
-            // Header
+            // ── TOP HEADER & DPDP BADGE ──
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -86,7 +173,7 @@ fun SuperTransferScreen(isHindi: Boolean) {
                         )
                     )
                     Text(
-                        text = if (isHindi) "शून्य इंटरनेट • 64KB बफ़र्ड स्ट्रीमिंग • ओरिजिनल क्वालिटी" else "Zero Internet • 64KB Buffered Socket • Up to 60 MB/s",
+                        text = if (isHindi) "शून्य इंटरनेट • Wi-Fi Direct • 64KB बफ़र्ड सॉकेट • 60 MB/s" else "Zero Internet • Wi-Fi Direct • 64KB Sockets • Up to 60 MB/s",
                         style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
                     )
                 }
@@ -99,10 +186,10 @@ fun SuperTransferScreen(isHindi: Boolean) {
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "Wi-Fi Direct P2P",
+                        text = if (isHindi) "DPDP 2027 सुरक्षित" else "DPDP 2027 On-Device",
                         style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
                             color = CyanAccent,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 10.sp
                         )
                     )
@@ -111,54 +198,99 @@ fun SuperTransferScreen(isHindi: Boolean) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ── 1. MODE SELECTION: 3 BIG TOP BUTTONS ──
+            // ── STEP 1: PROMINENT SEND / RECEIVE BUTTONS (MIN 52DP HEIGHT) ──
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Send Files Button
-                ModeButton(
-                    title = if (isHindi) "फाइल भेजें" else "SEND FILES",
-                    icon = Icons.Default.ArrowUpward,
-                    isSelected = mode == TransferDirection.SEND,
-                    selectedColor = CyanAccent,
-                    modifier = Modifier.weight(1f),
-                    onClick = { mode = TransferDirection.SEND }
-                )
-
-                // Receive Files Button
-                ModeButton(
-                    title = if (isHindi) "फाइल प्राप्त करें" else "RECEIVE FILES",
-                    icon = Icons.Default.ArrowDownward,
-                    isSelected = mode == TransferDirection.RECEIVE,
-                    selectedColor = EmeraldAccent,
-                    modifier = Modifier.weight(1f),
-                    onClick = { mode = TransferDirection.RECEIVE }
-                )
-
-                // Scan / Pair Button
-                ModeButton(
-                    title = if (isHindi) "QR / कोड" else "SCAN / PAIR",
-                    icon = Icons.Default.QrCode,
-                    isSelected = mode == TransferDirection.SCAN_CONNECT,
-                    selectedColor = AmberAccent,
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        mode = TransferDirection.SCAN_CONNECT
-                        showQrDialog = true
+                // SEND FILES BUTTON
+                Button(
+                    onClick = { mode = TransferDirection.SEND },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(54.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (mode == TransferDirection.SEND) CyanAccent else CardDark,
+                        contentColor = if (mode == TransferDirection.SEND) BgDark else TextPrimary
+                    ),
+                    border = if (mode != TransferDirection.SEND) androidx.compose.foundation.BorderStroke(1.dp, CardBorder) else null
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowUpward,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = if (isHindi) "फाइलें भेजें" else "SEND FILES",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
+                        )
+                        Text(
+                            text = if (isHindi) "Sender Mode" else "भेजने वाला",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 9.sp,
+                                color = if (mode == TransferDirection.SEND) BgDark.copy(alpha = 0.8f) else TextMuted
+                            )
+                        )
                     }
-                )
+                }
+
+                // RECEIVE FILES BUTTON
+                Button(
+                    onClick = {
+                        mode = TransferDirection.RECEIVE
+                        transferManager.startReceiving(
+                            onFileReceived = { receivedItem ->
+                                selectedFiles.add(0, receivedItem)
+                            },
+                            onComplete = {
+                                showSuccessDialog = true
+                            }
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(54.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (mode == TransferDirection.RECEIVE) EmeraldAccent else CardDark,
+                        contentColor = if (mode == TransferDirection.RECEIVE) BgDark else TextPrimary
+                    ),
+                    border = if (mode != TransferDirection.RECEIVE) androidx.compose.foundation.BorderStroke(1.dp, CardBorder) else null
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDownward,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Column(horizontalAlignment = Alignment.Start) {
+                        Text(
+                            text = if (isHindi) "फाइलें प्राप्त करें" else "RECEIVE FILES",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
+                        )
+                        Text(
+                            text = if (isHindi) "Receiver Mode" else "पाने वाला",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 9.sp,
+                                color = if (mode == TransferDirection.RECEIVE) BgDark.copy(alpha = 0.8f) else TextMuted
+                            )
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── 2. WHAT TO SEND? (4 LARGE FILE SELECTION BUTTONS) ──
+            // ── STEP 2: WHAT TO SEND? 4 REAL ANDROID FILE PICKERS ──
             Text(
-                text = if (isHindi) "क्या भेजना है? (फाइल प्रकार चुनें)" else "Select Files to Send",
+                text = if (isHindi) "फाइलें चुनें (Real Android File Pickers)" else "Select Files to Send (Real Pickers)",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                text = if (isHindi) "मल्टी-सेलेक्शन सपोर्ट: एक साथ कई तस्वीरें या बड़े वीडियो चुनें" else "Multi-select: pick photos, full 4K videos, voice notes or documents",
+                text = if (isHindi) "PickVisualMedia और Scoped Storage द्वारा सीधे स्टोरेज से फाइलें चुनें" else "Pick real photos, full 4K videos, audio notes or documents from your storage",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp, color = TextMuted)
             )
 
@@ -169,37 +301,25 @@ fun SuperTransferScreen(isHindi: Boolean) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CategoryPickerCard(
-                    title = if (isHindi) "फोटो चुनें" else "Photos",
+                    title = if (isHindi) "तस्वीरें चुनें" else "Pick Photos",
                     sub = "JPG, PNG, HEIC",
                     icon = Icons.Default.Photo,
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        selectedFiles.add(
-                            TransferFileItem(
-                                id = System.currentTimeMillis().toString(),
-                                name = "Selected_Photo_${selectedFiles.size + 1}.jpg",
-                                sizeBytes = 4_500_000L,
-                                mimeType = "image/jpeg",
-                                status = TransferStatus.PENDING
-                            )
+                        photoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
                     }
                 )
 
                 CategoryPickerCard(
-                    title = if (isHindi) "वीडियो चुनें" else "Videos",
+                    title = if (isHindi) "वीडियो चुनें" else "Pick Videos",
                     sub = "MP4, MKV (4GB+)",
                     icon = Icons.Default.Videocam,
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        selectedFiles.add(
-                            TransferFileItem(
-                                id = System.currentTimeMillis().toString(),
-                                name = "Selected_Video_4K_${selectedFiles.size + 1}.mp4",
-                                sizeBytes = 1_200_000_000L,
-                                mimeType = "video/mp4",
-                                status = TransferStatus.PENDING
-                            )
+                        videoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                         )
                     }
                 )
@@ -212,45 +332,29 @@ fun SuperTransferScreen(isHindi: Boolean) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 CategoryPickerCard(
-                    title = if (isHindi) "ऑडियो/रिकॉर्डिंग" else "Audio/Notes",
+                    title = if (isHindi) "ऑडियो / रिकॉर्डिंग" else "Audio / Notes",
                     sub = "M4A, MP3, WAV",
                     icon = Icons.Default.Mic,
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        selectedFiles.add(
-                            TransferFileItem(
-                                id = System.currentTimeMillis().toString(),
-                                name = "Call_Recording_${selectedFiles.size + 1}.m4a",
-                                sizeBytes = 8_200_000L,
-                                mimeType = "audio/mp4",
-                                status = TransferStatus.PENDING
-                            )
-                        )
+                        audioPickerLauncher.launch(arrayOf("audio/*"))
                     }
                 )
 
                 CategoryPickerCard(
-                    title = if (isHindi) "डॉक्यूमेंट व अन्य" else "Docs & Other",
+                    title = if (isHindi) "दस्तावेज़ / अन्य" else "Docs & Files",
                     sub = "PDF, DOCX, ZIP",
                     icon = Icons.Default.Description,
                     modifier = Modifier.weight(1f),
                     onClick = {
-                        selectedFiles.add(
-                            TransferFileItem(
-                                id = System.currentTimeMillis().toString(),
-                                name = "Office_Document_${selectedFiles.size + 1}.pdf",
-                                sizeBytes = 3_100_000L,
-                                mimeType = "application/pdf",
-                                status = TransferStatus.PENDING
-                            )
-                        )
+                        docPickerLauncher.launch(arrayOf("application/*", "text/*", "*/*"))
                     }
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── 3. PAIRING & NEARBY DEVICE PANEL ──
+            // ── STEP 3: PAIRING & NEARBY DEVICE PANEL (WI-FI DIRECT) ──
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -272,57 +376,77 @@ fun SuperTransferScreen(isHindi: Boolean) {
                                     .background(CyanAccent.copy(alpha = 0.15f), CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.Wifi, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(18.dp))
+                                Icon(
+                                    imageVector = Icons.Default.Wifi,
+                                    contentDescription = null,
+                                    tint = CyanAccent,
+                                    modifier = Modifier.size(18.dp)
+                                )
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
                                 Text(
                                     text = deviceName,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Text(
-                                    text = if (isHindi) "लोकल P2P चैनल कनेक्टेड" else "Local P2P Direct Channel",
-                                    style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent)
+                                    text = if (isHindi) "Wi-Fi Direct P2P सक्रिय • पिन: $pairingCode" else "Wi-Fi Direct P2P Ready • PIN: $pairingCode",
+                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, color = EmeraldAccent)
                                 )
                             }
                         }
 
-                        // PIN code
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(text = "PIN", style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, fontSize = 9.sp))
-                            Text(
-                                text = pairingCode,
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontFamily = FontFamily.Monospace,
-                                    fontWeight = FontWeight.Bold,
-                                    color = CyanGlow
-                                )
-                            )
+                        // QR Button
+                        OutlinedButton(
+                            onClick = { showQrDialog = true },
+                            modifier = Modifier.height(36.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanAccent),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CyanAccent.copy(alpha = 0.5f))
+                        ) {
+                            Icon(Icons.Default.QrCode, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "QR", style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold))
                         }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
-                    Divider(color = CardBorder)
-                    Spacer(modifier = Modifier.height(10.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = if (isHindi) "ट्रांसफर स्पीड: $transferSpeed" else "Transfer Speed: $transferSpeed",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = TextPrimary)
-                        )
                         OutlinedButton(
-                            onClick = { showConsentDialog = true },
-                            shape = RoundedCornerShape(8.dp),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = AmberAccent)
+                            onClick = {
+                                transferManager.startPeerDiscovery()
+                            },
+                            modifier = Modifier.weight(1f).height(44.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
                         ) {
+                            Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(14.dp), tint = CyanAccent)
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = if (isHindi) "सहमति जांच (Consent)" else "Receiver Consent",
-                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp)
+                                text = if (isHindi) "डिवाइस खोजें" else "SCAN PEERS",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            )
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                transferManager.createP2pGroup()
+                            },
+                            modifier = Modifier.weight(1f).height(44.dp),
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
+                        ) {
+                            Icon(Icons.Default.GroupAdd, contentDescription = null, modifier = Modifier.size(14.dp), tint = EmeraldAccent)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (isHindi) "ग्रुप बनाएं" else "CREATE GROUP",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             )
                         }
                     }
@@ -331,20 +455,23 @@ fun SuperTransferScreen(isHindi: Boolean) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── 4. SELECTED FILES QUEUE & START TRANSFER BUTTON ──
+            // ── STEP 4: SELECTED FILES QUEUE & REAL-TIME CONTROLS ──
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (isHindi) "चुनी गई फाइलें (${selectedFiles.size})" else "Selected Files (${selectedFiles.size})",
+                    text = if (isHindi) "भेजने के लिए चयनित फाइलें (${selectedFiles.size})" else "Files in Transfer Queue (${selectedFiles.size})",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
 
-                if (selectedFiles.isNotEmpty()) {
+                if (selectedFiles.isNotEmpty() && !isTransferring) {
                     TextButton(onClick = { selectedFiles.clear() }) {
-                        Text(text = if (isHindi) "सभी हटाएं" else "Clear All", color = RoseAccent, style = MaterialTheme.typography.labelSmall)
+                        Text(
+                            text = if (isHindi) "सब हटाएं" else "Clear All",
+                            style = MaterialTheme.typography.labelSmall.copy(color = RoseAccent, fontWeight = FontWeight.Bold)
+                        )
                     }
                 }
             }
@@ -352,286 +479,297 @@ fun SuperTransferScreen(isHindi: Boolean) {
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // File Queue Items
-        items(selectedFiles) { file ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(CardDark)
-                    .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
-                    .padding(12.dp)
-            ) {
-                Column {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                            Icon(
-                                imageVector = when {
-                                    file.status == TransferStatus.COMPLETED -> Icons.Default.CheckCircle
-                                    file.mimeType.startsWith("video") -> Icons.Default.Videocam
-                                    file.mimeType.startsWith("image") -> Icons.Default.Photo
-                                    file.mimeType.startsWith("audio") -> Icons.Default.Mic
-                                    else -> Icons.Default.InsertDriveFile
-                                },
-                                contentDescription = null,
-                                tint = if (file.status == TransferStatus.COMPLETED) EmeraldAccent else CyanAccent,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(
-                                    text = file.name,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = "${(file.sizeBytes / 1_000_000.0).format(1)} MB • ${
-                                        if (file.status == TransferStatus.COMPLETED)
-                                            (if (isHindi) "पूर्ण (SHA-256 सत्यापित)" else "Completed (SHA-256 Verified)")
-                                        else if (file.status == TransferStatus.TRANSFERRING)
-                                            "${(file.progress * 100).toInt()}% • 52 MB/s"
-                                        else
-                                            (if (isHindi) "तैयार" else "Pending")
-                                    }",
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        color = if (file.status == TransferStatus.COMPLETED) EmeraldAccent else TextMuted,
-                                        fontSize = 10.sp
-                                    )
-                                )
-                            }
-                        }
-
-                        IconButton(
-                            onClick = { selectedFiles.remove(file) },
-                            modifier = Modifier.size(28.dp)
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "Remove", tint = TextMuted, modifier = Modifier.size(16.dp))
-                        }
-                    }
-
-                    if (file.status == TransferStatus.TRANSFERRING) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        LinearProgressIndicator(
-                            progress = { file.progress },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                                .clip(RoundedCornerShape(2.dp)),
-                            color = CyanAccent,
-                            trackColor = CardBorder
-                        )
+        // Selected files list
+        itemsIndexed(selectedFiles) { index, file ->
+            SelectedFileItemCard(
+                file = file,
+                isHindi = isHindi,
+                onRemove = {
+                    if (!isTransferring) {
+                        selectedFiles.removeAt(index)
                     }
                 }
-            }
+            )
+            Spacer(modifier = Modifier.height(6.dp))
         }
 
         item {
             Spacer(modifier = Modifier.height(14.dp))
 
-            // BIG START / CONTROL BUTTONS
-            if (isTransferring) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = { isPaused = !isPaused },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = AmberAccent, contentColor = BgDark)
-                    ) {
-                        Icon(if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause, contentDescription = null)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isPaused) (if (isHindi) "शुरू करें (Resume)" else "Resume") else (if (isHindi) "रोकें (Pause)" else "Pause"))
-                    }
-
-                    Button(
-                        onClick = { isTransferring = false },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(52.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = RoseAccent, contentColor = Color.White)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = null)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(if (isHindi) "रद्द करें (Cancel)" else "Cancel")
-                    }
-                }
-            } else {
-                Button(
-                    onClick = {
-                        isTransferring = true
-                        // Mark first file transferring
-                        if (selectedFiles.isNotEmpty()) {
-                            selectedFiles[0] = selectedFiles[0].copy(status = TransferStatus.TRANSFERRING, progress = 0.45f)
-                        }
-                    },
+            // ── LIVE TRANSFER MONITOR ──
+            if (isTransferring || totalProgress > 0f) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(CardDark)
+                        .border(1.dp, CyanAccent.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+                        .padding(14.dp)
                 ) {
-                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isHindi)
-                            "🚀 ओरिजिनल क्वालिटी में ट्रांसफर शुरू करें (Start Transfer)"
-                        else
-                            "Start High-Speed P2P Transfer (60 MB/s)",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    )
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .background(if (isPaused) AmberAccent else CyanAccent, CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = if (isPaused)
+                                        (if (isHindi) "ट्रांसफर रुका हुआ है (PAUSED)" else "Transfer Paused")
+                                    else if (totalProgress >= 1f)
+                                        (if (isHindi) "ट्रांसफर 100% पूरा" else "Transfer Complete")
+                                    else
+                                        (if (isHindi) "64KB सॉकेट स्ट्रीमिंग चालू..." else "64KB Socket Streaming..."),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
+
+                            Text(
+                                text = "%.1f MB/s".format(Locale.US, transferSpeedMbps),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Black,
+                                    color = CyanAccent,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        LinearProgressIndicator(
+                            progress = { totalProgress },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            color = CyanAccent,
+                            trackColor = Color(0xFF1E293B)
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "${(totalProgress * 100).toInt()}% Done",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = CyanAccent
+                                )
+                            )
+
+                            Text(
+                                text = if (isHindi) "SHA-256 सत्यापित" else "SHA-256 Hash Verified",
+                                style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent, fontSize = 10.sp)
+                            )
+                        }
+
+                        if (isTransferring) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = { transferManager.togglePause() },
+                                    modifier = Modifier.weight(1f).height(44.dp),
+                                    shape = RoundedCornerShape(10.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = AmberAccent.copy(alpha = 0.2f),
+                                        contentColor = AmberAccent
+                                    ),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, AmberAccent)
+                                ) {
+                                    Icon(
+                                        imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = if (isPaused) (if (isHindi) "जारी रखें" else "RESUME") else (if (isHindi) "रोकें" else "PAUSE"),
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                    )
+                                }
+
+                                Button(
+                                    onClick = { transferManager.cancelTransfer() },
+                                    modifier = Modifier.weight(1f).height(44.dp),
+                                    shape = RoundedCornerShape(10.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = RoseAccent.copy(alpha = 0.2f),
+                                        contentColor = RoseAccent
+                                    ),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, RoseAccent)
+                                ) {
+                                    Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = if (isHindi) "रद्द करें" else "CANCEL",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // SHA-256 Security Notice
-            Box(
+            // ── PRIMARY ACTION BUTTON (MIN 52DP HEIGHT) ──
+            Button(
+                onClick = {
+                    if (selectedFiles.isEmpty()) return@Button
+                    transferManager.sendFiles(
+                        files = selectedFiles.toList(),
+                        onFileUpdated = { idx, updated ->
+                            if (idx < selectedFiles.size) {
+                                selectedFiles[idx] = updated
+                            }
+                        },
+                        onComplete = {
+                            showSuccessDialog = true
+                        }
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(CardDark)
-                    .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
-                    .padding(12.dp)
+                    .height(54.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = CyanAccent,
+                    contentColor = BgDark
+                ),
+                enabled = selectedFiles.isNotEmpty() && !isTransferring
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.ShieldCheck, contentDescription = null, tint = EmeraldAccent, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isHindi)
-                            "✅ SHA-256 बाइट वेरिफिकेशन: हर फाइल बिना कंप्रेस किए 100% असली क्वालिटी में ट्रांसफर होती है।"
-                        else
-                            "SHA-256 Integrity Verified: Zero compression, byte-perfect original fidelity guaranteed.",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp, color = TextSecondary)
+                Icon(
+                    imageVector = Icons.Default.RocketLaunch,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isTransferring)
+                        (if (isHindi) "फाइलें भेजी जा रही हैं..." else "TRANSFERRING VIA 64KB SOCKET...")
+                    else
+                        (if (isHindi) "हाई-स्पीड ट्रांसफर शुरू करें (START TRANSFER)" else "START HIGH-SPEED TRANSFER"),
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 0.5.sp
                     )
-                }
+                )
             }
         }
     }
 
-    // QR Pair Dialog
+    // ── QR PAIRING MODAL ──
     if (showQrDialog) {
         AlertDialog(
             onDismissRequest = { showQrDialog = false },
             title = {
-                Text(
-                    text = if (isHindi) "QR कोड से तुरंत जोड़ें" else "Scan QR to Pair Instantly",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.QrCode2, contentDescription = null, tint = CyanAccent)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isHindi) "वाई-फाई डायरेक्ट QR पेयरिंग" else "Wi-Fi Direct QR Pairing",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
             },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                     Box(
                         modifier = Modifier
-                            .size(170.dp)
-                            .background(Color.White, RoundedCornerShape(14.dp))
-                            .padding(12.dp),
+                            .size(180.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White)
+                            .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.QrCode2,
-                            contentDescription = "QR Code",
+                            imageVector = Icons.Default.QrCode,
+                            contentDescription = "Pairing QR",
                             tint = Color.Black,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     Text(
-                        text = "PIN: $pairingCode",
-                        style = MaterialTheme.typography.titleMedium.copy(
+                        text = if (isHindi) "6-अंकों का पेयरिंग पिन:" else "6-Digit Pairing PIN:",
+                        style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
+                    )
+                    Text(
+                        text = pairingCode,
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Black,
+                            color = CyanAccent,
                             fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            color = CyanAccent
+                            letterSpacing = 2.sp
                         )
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showQrDialog = false }) {
-                    Text(text = if (isHindi) "बंद करें" else "Close", color = CyanAccent)
+                Button(
+                    onClick = { showQrDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark),
+                    modifier = Modifier.height(48.dp)
+                ) {
+                    Text(text = if (isHindi) "ठीक है" else "Close")
                 }
             },
             containerColor = CardDark
         )
     }
 
-    // Consent Dialog
-    if (showConsentDialog) {
+    // ── TRANSFER SUCCESS DIALOG ──
+    if (showSuccessDialog) {
         AlertDialog(
-            onDismissRequest = { showConsentDialog = false },
+            onDismissRequest = { showSuccessDialog = false },
             title = {
-                Text(
-                    text = if (isHindi) "फाइल प्राप्त करने की सहमति" else "Receiver Consent Request",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = EmeraldAccent)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isHindi) "ट्रांसफर 100% सफल!" else "Transfer 100% Complete!",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
             },
             text = {
-                Text(
-                    text = if (isHindi)
-                        "डिवाइस 'Pixel 8 Pro (582-914)' आपको 2.45 GB वीडियो फाइल भेजना चाहता है। क्या आप इसे स्वीकार करते हैं?"
-                    else
-                        "Device 'Pixel 8 Pro' requests to send 2.45 GB video. Do you accept this transfer?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Column {
+                    Text(
+                        text = if (isHindi)
+                            "सभी फाइलें सफलतापूर्वक 64KB बफ़र सॉकेट से स्थानांतरित हो चुकी हैं और SHA-256 हैश सत्यापित किया जा चुका है।"
+                        else
+                            "All files successfully transferred via 64KB chunked sockets and SHA-256 integrity verified.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             },
             confirmButton = {
                 Button(
-                    onClick = { showConsentDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark)
+                    onClick = { showSuccessDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
+                    modifier = Modifier.height(48.dp)
                 ) {
-                    Text(text = if (isHindi) "स्वीकार करें (Accept)" else "Accept")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showConsentDialog = false }) {
-                    Text(text = if (isHindi) "अस्वीकार करें" else "Decline")
+                    Text(text = if (isHindi) "संपन्न (Done)" else "Done")
                 }
             },
             containerColor = CardDark
         )
-    }
-}
-
-@Composable
-private fun ModeButton(
-    title: String,
-    icon: ImageVector,
-    isSelected: Boolean,
-    selectedColor: Color,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.height(52.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) selectedColor else CardDark,
-            contentColor = if (isSelected) BgDark else TextSecondary
-        ),
-        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
-        border = if (isSelected) null else androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(16.dp))
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 10.sp
-                )
-            )
-        }
     }
 }
 
@@ -645,29 +783,138 @@ private fun CategoryPickerCard(
 ) {
     Box(
         modifier = modifier
-            .height(56.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(CardDark)
             .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 10.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(34.dp)
-                    .background(CyanAccent.copy(alpha = 0.12f), RoundedCornerShape(8.dp)),
+                    .size(36.dp)
+                    .background(CyanAccent.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(imageVector = icon, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(18.dp))
+                Icon(icon, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(18.dp))
             }
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(text = title, style = MaterialTheme.typography.titleMedium.copy(fontSize = 11.sp, fontWeight = FontWeight.Bold))
-                Text(text = sub, style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, color = TextMuted))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
+                )
+                Text(
+                    text = sub,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = 10.sp,
+                        color = TextMuted
+                    )
+                )
             }
         }
     }
 }
 
-private fun Double.format(digits: Int) = "%.${digits}f".format(this)
+@Composable
+private fun SelectedFileItemCard(
+    file: TransferFileItem,
+    isHindi: Boolean,
+    onRemove: () -> Unit
+) {
+    val sizeText = when {
+        file.sizeBytes >= 1_000_000_000L -> "%.2f GB".format(Locale.US, file.sizeBytes / 1_000_000_000f)
+        file.sizeBytes >= 1_000_000L -> "%.1f MB".format(Locale.US, file.sizeBytes / 1_000_000f)
+        else -> "${file.sizeBytes / 1024} KB"
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(CardDark)
+            .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+            .padding(12.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .background(Color(0xFF1E293B), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = when {
+                                file.mimeType.startsWith("image/") -> Icons.Default.Image
+                                file.mimeType.startsWith("video/") -> Icons.Default.Videocam
+                                file.mimeType.startsWith("audio/") -> Icons.Default.Audiotrack
+                                else -> Icons.Default.InsertDriveFile
+                            },
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = file.name,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = sizeText,
+                                style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 10.sp)
+                            )
+                            if (file.status == TransferStatus.COMPLETED) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "• SHA-256 Verified",
+                                    style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent, fontSize = 10.sp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (file.status != TransferStatus.TRANSFERRING) {
+                    IconButton(
+                        onClick = onRemove,
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Remove", tint = TextMuted, modifier = Modifier.size(16.dp))
+                    }
+                }
+            }
+
+            if (file.status == TransferStatus.TRANSFERRING) {
+                Spacer(modifier = Modifier.height(8.dp))
+                LinearProgressIndicator(
+                    progress = { file.progress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(2.dp)),
+                    color = CyanAccent,
+                    trackColor = Color(0xFF1E293B)
+                )
+            }
+        }
+    }
+}

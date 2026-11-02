@@ -1183,14 +1183,13 @@ function AppShowcasePage() {
                     : "Step 1 — Choose Media Categories"}
                 </h4>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {[
+                    { key: "all", title: isHindi ? "सभी (All)" : "All Files", sub: "Deep Scan", icon: RotateCcw },
                     { key: "photos", title: isHindi ? "फोटो" : "Photos", sub: "JPG, PNG, HEIC", icon: ImageIcon },
-                    { key: "videos", title: isHindi ? "वीडियो" : "Videos", sub: "MP4, MKV, MOV", icon: VideoIcon },
-                    { key: "recordings", title: isHindi ? "कॉल व वॉइस रिकॉर्डिंग" : "Recordings", sub: "M4A, AMR, WAV", icon: Mic },
-                    { key: "music", title: isHindi ? "म्यूजिक व गाने" : "Music", sub: "MP3, AAC, FLAC", icon: Music },
+                    { key: "videos", title: isHindi ? "वीडियो" : "Videos", sub: "MP4, MKV", icon: VideoIcon },
+                    { key: "recordings", title: isHindi ? "ऑडियो" : "Audio", sub: "M4A, MP3, WAV", icon: Mic },
                     { key: "docs", title: isHindi ? "दस्तावेज़" : "Documents", sub: "PDF, DOCX, ZIP", icon: FileText },
-                    { key: "all", title: isHindi ? "सभी फाइलें" : "All Recoverable", sub: "Deep Full Scan", icon: RotateCcw },
                   ].map((cat) => {
                     const isSelected = recoverCategory === cat.key;
                     const IconComp = cat.icon;

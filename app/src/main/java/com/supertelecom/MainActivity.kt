@@ -95,24 +95,39 @@ class MainActivity : ComponentActivity() {
                     },
                     containerColor = BgDark
                 ) { paddingValues ->
-                    Box(modifier = Modifier.padding(paddingValues)) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = paddingValues.calculateTopPadding())
+                    ) {
+                        val bottomInset = paddingValues.calculateBottomPadding() + 24.dp
+                        val screenContentPadding = PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 12.dp,
+                            bottom = bottomInset.coerceAtLeast(110.dp)
+                        )
                         when (currentTab) {
                             NavTab.HOME -> HomeScreen(
                                 isHindi = isHindi,
                                 onToggleLanguage = { isHindi = !isHindi },
-                                onNavigateTab = { currentTab = it }
+                                onNavigateTab = { currentTab = it },
+                                contentPadding = screenContentPadding
                             )
                             NavTab.TRANSFER -> SuperTransferScreen(
-                                isHindi = isHindi
+                                isHindi = isHindi,
+                                contentPadding = screenContentPadding
                             )
                             NavTab.RECOVER -> SuperRecoverScreen(
-                                isHindi = isHindi
+                                isHindi = isHindi,
+                                contentPadding = screenContentPadding
                             )
                             NavTab.LAUNCHER -> SuperLauncherScreen(
                                 isHindi = isHindi,
                                 allApps = allAppsState,
                                 isDefaultLauncher = isDefaultLauncherState,
-                                appRepository = appRepository
+                                appRepository = appRepository,
+                                bottomPadding = bottomInset.coerceAtLeast(110.dp)
                             )
                         }
                     }
