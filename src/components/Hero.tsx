@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Wrench,
   Phone,
@@ -13,6 +14,9 @@ import {
   Star,
   Shield,
   Check,
+  Rocket,
+  Download,
+  Info,
 } from "lucide-react";
 import { EditableBlock } from "@/components/admin/visual/EditableBlock";
 import { BUSINESS_MASTER, DATA_SAFETY_AND_PRIVACY_SUMMARY } from "@/config/superTelecomConfig";
@@ -110,6 +114,37 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
+          {/* Primary App Suite & Native APK Action Strip */}
+          <div className="space-y-2 pt-1 w-full">
+            <Link
+              to="/app"
+              className="w-full py-3 px-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 text-slate-950 font-black flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.35)] active:scale-95 transition-all text-xs"
+            >
+              <Rocket className="h-4 w-4" />
+              <span>🚀 Open Super Telecom Suite (Transfer • Recover • Launcher)</span>
+            </Link>
+
+            <a
+              href="/download/android"
+              download="SuperTelecom-Release.apk"
+              className="w-full py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-850 text-cyan-300 font-bold flex items-center justify-center gap-2 text-xs active:scale-95 transition-all"
+            >
+              <Download className="h-3.5 w-3.5 text-cyan-400" />
+              <span>📲 Download True Native Android APK (v2.5.0)</span>
+            </a>
+
+            {/* Old App vs New Native App Notice */}
+            <div className="rounded-xl border border-cyan-500/30 bg-slate-900/90 p-3 text-[11px] text-slate-300 flex items-start gap-2.5">
+              <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5 leading-snug">
+                <p className="font-bold text-white">Notice: Old App vs New Native App</p>
+                <p className="text-slate-400">
+                  यदि फोन में पुराना TWA ब्राउज़र ऐप (<code>shop.supertelecom.www.twa</code>) है, तो उसे अनइन्स्टॉल करके नया <code>com.supertelecom.app</code> इनस्टॉल करें, या ऊपर दिया गया <strong>Open Super Telecom Suite</strong> बटन दबाएं।
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Primary Store Actions (Full width, easy thumb reach) */}
           <div className="grid grid-cols-2 gap-2 w-full">
             <a
@@ -201,6 +236,37 @@ export const Hero: React.FC = () => {
               <span className="inline-flex items-center gap-1.5 text-slate-300">
                 <Activity className="h-3.5 w-3.5 text-cyan-400" /> 0.02mm Jumper Precision
               </span>
+            </div>
+
+            {/* Primary App Suite & Native APK Action Strip */}
+            <div className="mt-7 flex flex-wrap items-center gap-3 w-full">
+              <Link
+                to="/app"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 text-slate-950 px-6 py-4 text-sm font-black shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all hover:scale-[1.02] active:scale-95 min-h-[52px]"
+              >
+                <Rocket className="h-5 w-5" />
+                <span>🚀 Open Super Telecom Suite (Transfer • Recover • Launcher)</span>
+              </Link>
+
+              <a
+                href="/download/android"
+                download="SuperTelecom-Release.apk"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 text-cyan-300 px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-400 active:scale-95 min-h-[52px]"
+              >
+                <Download className="h-4 w-4 text-cyan-400" />
+                <span>📲 Download True Native Android APK (v2.5.0)</span>
+              </a>
+            </div>
+
+            {/* Old App vs New Native App Notice */}
+            <div className="mt-3.5 rounded-2xl border border-cyan-500/30 bg-slate-900/80 p-4 text-xs text-slate-300 flex items-start gap-3 backdrop-blur-xl max-w-2xl">
+              <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-white text-xs">Old App vs New Native App Notice:</p>
+                <p className="text-slate-400 leading-relaxed text-[11px]">
+                  यदि आपके फोन में पुराना TWA ब्राउज़र-आधारित ऐप (<code>shop.supertelecom.www.twa</code>) इन्स्टॉल है, तो उसे अनइन्स्टॉल करके नया <code>com.supertelecom.app</code> इनस्टॉल करें, या ऊपर दिए गए <strong>Open Super Telecom Suite</strong> बटन से सीधे सभी फीचर्स इस्तेमाल करें।
+                </p>
+              </div>
             </div>
 
             {/* Action Buttons */}

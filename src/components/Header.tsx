@@ -20,6 +20,7 @@ import {
   RefreshCw,
   Sparkles,
   Award,
+  Rocket,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
@@ -250,6 +251,14 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
             <ThemeToggle />
 
+            <Link
+              to="/app"
+              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 px-3.5 py-2 text-xs font-black text-slate-950 shadow-md shadow-cyan-500/20 hover:scale-[1.03] active:scale-95 transition-all whitespace-nowrap"
+            >
+              <Rocket className="h-3.5 w-3.5" />
+              <span>Open App Suite</span>
+            </Link>
+
             <a
               href={isHomePage ? "#contact" : "/#contact"}
               className="inline-flex items-center gap-1.5 rounded-full bg-gradient-brand px-4 py-2 text-xs font-bold text-primary-foreground shadow-brand transition-all hover:scale-[1.03] active:scale-95 whitespace-nowrap"
@@ -443,14 +452,23 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
             {/* Drawer Bottom Actions & App Update */}
             <div className="mt-5 pt-4 border-t border-slate-800 space-y-2.5">
+              <Link
+                to="/app"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 text-slate-950 font-black text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition-all"
+              >
+                <Rocket className="h-4 w-4" />
+                <span>🚀 Open Super Telecom Suite</span>
+              </Link>
+
               {!isStandalone && (
                 <Link
                   to="/app"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-slate-900 text-cyan-300 font-bold text-xs shadow-md active:scale-95 transition-all"
                 >
                   <Download className="h-4 w-4" />
-                  <span>Download Super Telecom App</span>
+                  <span>Download Native Android APK</span>
                 </Link>
               )}
 

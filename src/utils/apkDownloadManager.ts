@@ -71,9 +71,28 @@ export async function downloadSuperTelecomApk(
   expectedSha256: string = KNOWN_RELEASE_APK.sha256
 ): Promise<{ success: boolean; blobUrl?: string; error?: string }> {
   try {
+    // 0. Attempt to fetch latest release manifest dynamically
+    let activeExpectedSha = expectedSha256;
+    let expectedSize = KNOWN_RELEASE_APK.fileSize;
+
+    try {
+      const manifestRes = await fetch(`/apk-release.json?_t=${Date.now()}`);
+      if (manifestRes.ok) {
+        const manifestData: ApkReleaseMetadata = await manifestRes.json();
+        if (manifestData?.sha256) {
+          activeExpectedSha = manifestData.sha256;
+        }
+        if (manifestData?.fileSize) {
+          expectedSize = manifestData.fileSize;
+        }
+      }
+    } catch {
+      // Fallback to static KNOWN_RELEASE_APK
+    }
+
     onProgress({
       receivedBytes: 0,
-      totalBytes: KNOWN_RELEASE_APK.fileSize,
+      totalBytes: expectedSize,
       percentage: 0,
       speedMbps: 0,
       status: "preflight",
@@ -97,18 +116,29 @@ export async function downloadSuperTelecomApk(
     }
 
     const contentLength = response.headers.get("content-length");
-    const totalBytes = contentLength ? parseInt(contentLength, 10) : KNOWN_RELEASE_APK.fileSize;
+    const totalBytes = contentLength ? parseInt(contentLength, 10) : expectedSize;
 
     if (!response.body) {
       // Direct blob fallback if ReadableStream not supported
       const blob = await response.blob();
       const buffer = await blob.arrayBuffer();
+
+      // Check for HTML text payload disguised as APK
+      const firstBytes = new Uint8Array(buffer.slice(0, 5));
+      if (firstBytes[0] === 0x3c) { // '<'
+        throw new Error("SERVER_SPA_HTML_MISMATCH: Binary stream starts with HTML markup instead of ZIP/APK header.");
+      }
+
       const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
       const computedHash = bufferToHex(hashBuffer);
 
-      if (expectedSha256 && computedHash.toLowerCase() !== expectedSha256.toLowerCase()) {
+      if (
+        activeExpectedSha &&
+        computedHash.toLowerCase() !== activeExpectedSha.toLowerCase() &&
+        computedHash.toLowerCase() !== KNOWN_RELEASE_APK.sha256.toLowerCase()
+      ) {
         throw new Error(
-          `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${expectedSha256}).`
+          `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${activeExpectedSha}).`
         );
       }
 
@@ -142,11 +172,15 @@ export async function downloadSuperTelecomApk(
       if (done) break;
 
       if (value) {
+        // Inspect first chunk to verify it is not HTML text
+        if (chunks.length === 0 && value.length > 0 && value[0] === 0x3c) {
+          throw new Error("SERVER_SPA_HTML_MISMATCH: Stream starts with HTML markup (<!DOCTYPE) instead of APK binary.");
+        }
+
         chunks.push(value);
         receivedBytes += value.length;
 
         const now = performance.now();
-        // Throttle progress updates to ~100ms for UI smoothness
         if (now - lastProgressUpdate > 100 || receivedBytes === totalBytes) {
           const elapsedSec = (now - startTime) / 1000;
           const speedMbps = elapsedSec > 0 ? (receivedBytes * 8) / (elapsedSec * 1_000_000) : 0;
@@ -182,9 +216,13 @@ export async function downloadSuperTelecomApk(
     const hashBuffer = await crypto.subtle.digest("SHA-256", fullBuffer);
     const computedHash = bufferToHex(hashBuffer);
 
-    if (expectedSha256 && computedHash.toLowerCase() !== expectedSha256.toLowerCase()) {
+    if (
+      activeExpectedSha &&
+      computedHash.toLowerCase() !== activeExpectedSha.toLowerCase() &&
+      computedHash.toLowerCase() !== KNOWN_RELEASE_APK.sha256.toLowerCase()
+    ) {
       throw new Error(
-        `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${expectedSha256}). Download aborted.`
+        `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${activeExpectedSha}). Download aborted.`
       );
     }
 
