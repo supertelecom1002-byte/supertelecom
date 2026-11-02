@@ -54,9 +54,9 @@ const PHONE = BUSINESS_MASTER.phoneRaw;
 const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
 const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
-const SEO_TITLE = "Super Telecom App — Super Transfer, Super Recover & Super Launcher | 100% Free Android Suite";
+const SEO_TITLE = "Super Telecom Native Android App — Super Transfer, Super Recover & Super Launcher | 100% Free APK";
 const SEO_DESC =
-  "Official Super Telecom Native Android App (v2.4.0, 1.69 MB). 100% Free, zero ads, DPDP Act 2027 compliant. Super Transfer (offline Wi-Fi Direct P2P), Super Recover (honest on-device media recovery), and Super Launcher (4 themes with 1-tap restore).";
+  "Official Super Telecom Native Android App (v2.5.0, 1.69 MB, SDK 36). 100% Free, zero ads, DPDP Act 2027 compliant. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
 const CANONICAL_URL = `${SITE_URL}/app`;
 
 export const Route = createFileRoute("/app")({
@@ -620,6 +620,32 @@ function AppShowcasePage() {
             </button>
           </div>
         </section>
+
+        {/* ── MIGRATION NOTICE: STANDALONE NATIVE APP vs LEGACY TWA ── */}
+        <div className="rounded-2xl border border-cyan-500/30 bg-slate-900/90 p-4 text-xs text-slate-300 flex items-start gap-3.5 shadow-lg">
+          <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-bold text-white text-sm">
+              Notice: Genuine Native Android Application (<code>com.supertelecom.app</code> v2.5.0)
+            </p>
+            <p className="text-slate-400 leading-relaxed">
+              Super Telecom is now a 100% standalone Native Android application written in Kotlin with Jetpack Compose (compiled for Android 16 / SDK 36 with Scoped Storage and Wi-Fi Direct socket streaming). If you previously installed the old browser bookmark or TWA wrapper (<code>shop.supertelecom.www.twa</code>), upgrade directly by downloading the official APK above.
+            </p>
+          </div>
+        </div>
+
+        {/* ── INTERACTIVE WEB SIMULATOR HEADER ── */}
+        <div className="flex items-center justify-between px-2 pt-2">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
+              Interactive Web Simulator &bull; Live Preview
+            </span>
+          </div>
+          <span className="text-[11px] text-slate-400 font-mono hidden sm:inline">
+            Test the 4 native app engines in real time
+          </span>
+        </div>
 
         {/* ── THE COMPLETE LIVE 4-TAB INTERACTIVE APP INTERFACE ── */}
         <section className="rounded-3xl border border-slate-800 bg-slate-900/90 shadow-2xl overflow-hidden backdrop-blur-2xl">

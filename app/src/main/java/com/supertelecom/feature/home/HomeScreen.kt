@@ -31,42 +31,11 @@ fun HomeScreen(
     isHindi: Boolean,
     onToggleLanguage: () -> Unit,
     onNavigateTab: (NavTab) -> Unit,
+    recentTasks: List<RecentTaskItem> = emptyList(),
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     var showDpdpDialog by remember { mutableStateOf(false) }
     var showContactDialog by remember { mutableStateOf(false) }
-
-    val recentTasks = remember {
-        listOf(
-            RecentTaskItem(
-                id = "1",
-                title = "Family_Tour_Khandoli.mp4",
-                subtitle = if (isHindi) "सुपर ट्रांसफर (सफलतापूर्वक भेजा गया)" else "Super Transfer (Sent to Nearby Device)",
-                sizeBytes = 1_850_000_000L,
-                timeAgo = if (isHindi) "10 मिनट पहले" else "10 mins ago",
-                type = TaskType.TRANSFER_SENT,
-                statusText = if (isHindi) "100% पूरा (SHA-256 Verified)" else "100% Complete (SHA-256)"
-            ),
-            RecentTaskItem(
-                id = "2",
-                title = "Aadhaar_Document_Scan.pdf",
-                subtitle = if (isHindi) "सुपर रिकवर (आंतरिक ट्रैश से बरामद)" else "Super Recover (Restored from Trash)",
-                sizeBytes = 2_400_000L,
-                timeAgo = if (isHindi) "45 मिनट पहले" else "45 mins ago",
-                type = TaskType.RECOVERED_MEDIA,
-                statusText = if (isHindi) "सफलतापूर्वक सुरक्षित सेव" else "Restored Successfully"
-            ),
-            RecentTaskItem(
-                id = "3",
-                title = "Office_Meeting_Notes.m4a",
-                subtitle = if (isHindi) "सुपर ट्रांसफर (प्राप्त किया गया)" else "Super Transfer (Received from Pixel)",
-                sizeBytes = 14_800_000L,
-                timeAgo = if (isHindi) "2 घंटे पहले" else "2 hours ago",
-                type = TaskType.TRANSFER_RECEIVED,
-                statusText = if (isHindi) "100% पूरा" else "100% Complete"
-            )
-        )
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -270,6 +239,36 @@ fun HomeScreen(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
+
+            if (recentTasks.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(CardDark.copy(alpha = 0.5f))
+                        .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+                        .padding(20.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.TaskAlt,
+                            contentDescription = null,
+                            tint = TextMuted,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = if (isHindi) "कोई हालिया कार्य रिकॉर्ड नहीं है" else "No Recent Tasks Yet",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = TextSecondary)
+                        )
+                        Text(
+                            text = if (isHindi) "फ़ाइल ट्रांसफर या रिकवरी शुरू करने पर यहां इतिहास दर्ज होगा।" else "Completed transfers or restored files will appear here automatically.",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
+                        )
+                    }
+                }
+            }
         }
 
         items(recentTasks) { task ->

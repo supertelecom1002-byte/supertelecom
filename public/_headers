@@ -45,3 +45,9 @@
   Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
   Cache-Control: public, max-age=3600
   X-Content-Type-Options: nosniff
+
+/download/android
+  Content-Type: application/vnd.android.package-archive
+  Content-Disposition: attachment; filename="SuperTelecom-Release.apk"
+  Cache-Control: public, max-age=3600
+  X-Content-Type-Options: nosniff

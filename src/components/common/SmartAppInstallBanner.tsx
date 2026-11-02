@@ -65,7 +65,7 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
 
   return (
     <aside
-      aria-label="Install Super Telecom App"
+      aria-label="Download Super Telecom Android App"
       className={`w-full bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border-b border-cyan-500/30 text-white px-3 py-2 flex items-center justify-between gap-2.5 z-40 relative shadow-md backdrop-blur-xl animate-in slide-in-from-top-2 duration-200 select-none ${className}`}
     >
       {/* Left: App Logo & Description */}
@@ -73,7 +73,7 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
         <div className="relative flex-none">
           <img
             src="/icon-192.png"
-            alt="Super Telecom App"
+            alt="Super Telecom Android App"
             className="w-8 h-8 rounded-xl object-contain border border-cyan-500/40 bg-slate-950 shadow-sm"
             onError={(e) => {
               e.currentTarget.src = "/favicon.png";
@@ -87,38 +87,35 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
         <div className="leading-tight min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-black text-white tracking-tight truncate">
-              Super Telecom Official App
+              Super Telecom Native Android App
             </span>
             <span className="hidden xs:inline-block text-[8px] font-mono px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-              FREE
+              v2.5.0 APK
             </span>
           </div>
           <p className="text-[10px] text-slate-300 font-mono truncate">
-            16+ Offline Lab Tools &bull; Live Tracker &bull; Zero Bloat
+            Super Transfer • Super Recover • Super Launcher • 100% Free
           </p>
         </div>
       </div>
 
       {/* Right: Install CTA & Dismiss */}
       <div className="flex items-center gap-1.5 flex-none">
-        {deferredPrompt ? (
-          <button
-            type="button"
-            onClick={handleInstallClick}
-            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs font-mono active:scale-95 transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1 whitespace-nowrap cursor-pointer"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Install</span>
-          </button>
-        ) : (
-          <Link
-            to="/app"
-            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs font-mono active:scale-95 transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1 whitespace-nowrap cursor-pointer"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Get App</span>
-          </Link>
-        )}
+        <a
+          href="/SuperTelecom.apk"
+          download="SuperTelecom-Release.apk"
+          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-slate-950 font-black text-xs font-mono active:scale-95 transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1 whitespace-nowrap cursor-pointer"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span>Download APK</span>
+        </a>
+
+        <Link
+          to="/app"
+          className="hidden sm:inline-flex px-2.5 py-1.5 rounded-xl border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-mono transition-colors"
+        >
+          Details
+        </Link>
 
         <button
           type="button"

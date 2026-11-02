@@ -34,7 +34,8 @@ data class TransferFileItem(
     val uri: Uri? = null,
     val sha256: String = "",
     val progress: Float = 0f,
-    val status: TransferStatus = TransferStatus.PENDING
+    val status: TransferStatus = TransferStatus.PENDING,
+    val errorMessage: String? = null
 )
 
 enum class TransferStatus {
@@ -52,52 +53,80 @@ enum class TransferDirection {
     SCAN_CONNECT
 }
 
+data class TransferManifest(
+    val senderDeviceName: String,
+    val pairingToken: String,
+    val fileCount: Int,
+    val totalSizeBytes: Long,
+    val files: List<TransferFileItem>
+)
+
 // ──────────────────────────────────────────────
-// SUPER RECOVER MODELS
+// SUPER RECOVER 7-CATEGORY HONEST CLASSIFICATION
 // ──────────────────────────────────────────────
 enum class RecoverCategory(val labelEn: String, val labelHi: String, val extensions: String) {
-    PHOTOS("Photos", "फोटो", "JPG, PNG, HEIC, WEBP"),
+    ALL_MEDIA("All Files", "सभी फाइलें", "All legitimately accessible media"),
+    PHOTOS("Photos", "तस्वीरें", "JPG, PNG, HEIC, WEBP"),
     VIDEOS("Videos", "वीडियो", "MP4, MKV, MOV"),
-    AUDIO_RECORDINGS("Recordings", "कॉल व वॉइस रिकॉर्डिंग", "M4A, AMR, WAV"),
-    MUSIC("Music", "म्यूजिक व गाने", "MP3, AAC, FLAC"),
-    DOCUMENTS("Documents", "दस्तावेज़", "PDF, DOCX, XLSX, ZIP"),
-    ALL_MEDIA("All Media", "सभी फाइलें", "All Recoverable")
+    AUDIO_RECORDINGS("Audio", "ऑडियो व रिकॉर्डिंग", "M4A, AMR, WAV, MP3"),
+    DOCUMENTS("Documents", "दस्तावेज़", "PDF, DOCX, XLSX, TXT, ZIP")
 }
 
 enum class RecoverTier(
-    val tierNumber: Int,
+    val code: String,
     val titleEn: String,
     val titleHi: String,
     val descriptionEn: String,
     val badgeColorHex: Long
 ) {
-    ORIGINAL_MEDIA(
-        1,
-        "1. Recoverable Originals",
-        "1. ओरिजिनल मीडिया",
-        "Found in MediaStore recycle bin & system trash blocks",
+    RESTORABLE_ORIGINAL(
+        "A",
+        "A. Restorable Original",
+        "A. ओरिजिनल मीडिया",
+        "Accessible original media in trash/pending/recycle directories",
         0xFF10B981 // Emerald
     ),
-    HIDDEN_COPIES(
-        2,
-        "2. Hidden Copies",
-        "2. छुपे हुए फोल्डर",
-        "Found in app cache folders and surviving subdirectories",
+    HIDDEN_MEDIA(
+        "B",
+        "B. Hidden Media",
+        "B. छुपी हुई मीडिया",
+        "Files inside accessible .nomedia or dot-prefixed user directories",
         0xFF06B6D4 // Cyan
     ),
-    THUMBNAIL_PREVIEWS(
-        3,
-        "3. Thumbnails & Previews",
-        "3. थंबनेल व प्रीव्यू",
-        "Reconstructed bitmap preview from system thumbnail databases",
+    DUPLICATE_OR_COPY(
+        "C",
+        "C. Duplicate / Copy",
+        "C. बची हुई सेकंडरी कॉपी",
+        "Surviving secondary copies in user-accessible storage folders",
+        0xFF3B82F6 // Blue
+    ),
+    THUMBNAIL_PREVIEW(
+        "D",
+        "D. Thumbnail Preview",
+        "D. थंबनेल व प्रीव्यू",
+        "Low-resolution cached previews from accessible cache directories",
         0xFFF59E0B // Amber
     ),
-    BACKUP_RESTORATION(
-        4,
-        "4. Backup Sources",
-        "4. बैकअप कॉपी",
-        "Physical lab recovery required (Station Road Giridih)",
-        0xFF8B5CF6 // Violet
+    SYSTEM_TRASH(
+        "E",
+        "E. System Trash",
+        "E. सिस्टम ट्रैश (Android 11+)",
+        "MediaStore items where MediaColumns.IS_TRASHED == 1",
+        0xFFEC4899 // Pink
+    ),
+    BACKUP_GUIDANCE(
+        "F",
+        "F. Backup Guidance",
+        "F. बैकअप गाइडेंस",
+        "Local backup archives or guidance for cloud/device backups",
+        0xFF8B5CF6 // Purple
+    ),
+    UNAVAILABLE_SOURCE(
+        "G",
+        "G. Unavailable Source",
+        "G. अनुपलब्ध फाइल",
+        "Unreadable or permanently purged entries that cannot be restored",
+        0xFF64748B // Slate
     )
 }
 
@@ -110,8 +139,9 @@ data class RecoverItem(
     val category: RecoverCategory,
     val tier: RecoverTier,
     val uri: Uri? = null,
-    val qualityTag: String = "High Original",
-    val isSelected: Boolean = false
+    val qualityTag: String = "Legitimate On-Device File",
+    val isSelected: Boolean = false,
+    val isRestorable: Boolean = true
 )
 
 // ──────────────────────────────────────────────

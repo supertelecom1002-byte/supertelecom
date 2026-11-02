@@ -1,6 +1,7 @@
 package com.supertelecom.feature.transfer
 
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,13 +25,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.supertelecom.model.TransferDirection
 import com.supertelecom.model.TransferFileItem
+import com.supertelecom.model.TransferManifest
 import com.supertelecom.model.TransferStatus
 import com.supertelecom.theme.*
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -39,41 +43,37 @@ fun SuperTransferScreen(
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val transferManager = remember { WifiDirectTransferManager(context) }
 
+    DisposableEffect(Unit) {
+        transferManager.registerLifecycle()
+        onDispose {
+            transferManager.unregisterLifecycle()
+        }
+    }
+
     var mode by remember { mutableStateOf(TransferDirection.SEND) }
-    val pairingCode by remember { mutableStateOf("582 914") }
-    val deviceName by remember { mutableStateOf("Pixel 8 Pro (Nearby)") }
     var showQrDialog by remember { mutableStateOf(false) }
-    var showSuccessDialog by remember { mutableStateOf(false) }
+    var transferMessageDialog by remember { mutableStateOf<String?>(null) }
+    var activeConsentCallback by remember { mutableStateOf<((Boolean) -> Unit)?>(null) }
 
     val isTransferring by transferManager.isTransferring.collectAsState()
     val isPaused by transferManager.isPaused.collectAsState()
     val transferSpeedMbps by transferManager.transferSpeedMbps.collectAsState()
     val totalProgress by transferManager.totalProgress.collectAsState()
+    val peers by transferManager.peers.collectAsState()
+    val connectionInfo by transferManager.connectionInfo.collectAsState()
+    val thisDevice by transferManager.thisDevice.collectAsState()
+    val incomingManifest by transferManager.incomingManifest.collectAsState()
 
-    // Real selected files queue
-    val selectedFiles = remember {
-        mutableStateListOf(
-            TransferFileItem(
-                id = "demo_1",
-                name = "Khandoli_4K_Video_Recording.mp4",
-                sizeBytes = 2_450_000_000L,
-                mimeType = "video/mp4",
-                sha256 = "3ebc895e5bb1d5080268bb61fa3454e9c3dfdabf9313307cb4a7aeab81287afc",
-                progress = 1.0f,
-                status = TransferStatus.COMPLETED
-            ),
-            TransferFileItem(
-                id = "demo_2",
-                name = "Motherboard_Circuit_Schematic.pdf",
-                sizeBytes = 14_800_000L,
-                mimeType = "application/pdf",
-                sha256 = "ca978112ca1bbdcafac231b39a23dc4da7860814961b17b2e88a09b30c149d94",
-                progress = 1.0f,
-                status = TransferStatus.COMPLETED
-            )
-        )
+    // Production Queue: Starts empty (zero fabricated mock records)
+    val selectedFiles = remember { mutableStateListOf<TransferFileItem>() }
+
+    // Dynamic pairing token generated for session
+    val pairingCode = remember {
+        val randomVal = (100000..999999).random()
+        "${randomVal / 1000} ${randomVal % 1000}"
     }
 
     // ── Real Android Pickers (PickVisualMedia & OpenMultipleDocuments) ──
@@ -82,16 +82,22 @@ fun SuperTransferScreen(
     ) { uris: List<Uri> ->
         for (uri in uris) {
             val (name, size) = transferManager.queryFileInfo(uri)
-            selectedFiles.add(
-                TransferFileItem(
-                    id = "photo_${System.currentTimeMillis()}_${name.hashCode()}",
-                    name = name,
-                    sizeBytes = size.coerceAtLeast(1024L),
-                    mimeType = "image/jpeg",
-                    uri = uri,
-                    status = TransferStatus.PENDING
-                )
+            val item = TransferFileItem(
+                id = "photo_${System.currentTimeMillis()}_${name.hashCode()}",
+                name = name,
+                sizeBytes = size,
+                mimeType = "image/jpeg",
+                uri = uri,
+                status = TransferStatus.PENDING
             )
+            selectedFiles.add(item)
+            coroutineScope.launch {
+                val hash = transferManager.computeFileSha256(uri)
+                val idx = selectedFiles.indexOfFirst { it.id == item.id }
+                if (idx != -1) {
+                    selectedFiles[idx] = selectedFiles[idx].copy(sha256 = hash)
+                }
+            }
         }
     }
 
@@ -100,16 +106,22 @@ fun SuperTransferScreen(
     ) { uris: List<Uri> ->
         for (uri in uris) {
             val (name, size) = transferManager.queryFileInfo(uri)
-            selectedFiles.add(
-                TransferFileItem(
-                    id = "video_${System.currentTimeMillis()}_${name.hashCode()}",
-                    name = name,
-                    sizeBytes = size.coerceAtLeast(1024L),
-                    mimeType = "video/mp4",
-                    uri = uri,
-                    status = TransferStatus.PENDING
-                )
+            val item = TransferFileItem(
+                id = "video_${System.currentTimeMillis()}_${name.hashCode()}",
+                name = name,
+                sizeBytes = size,
+                mimeType = "video/mp4",
+                uri = uri,
+                status = TransferStatus.PENDING
             )
+            selectedFiles.add(item)
+            coroutineScope.launch {
+                val hash = transferManager.computeFileSha256(uri)
+                val idx = selectedFiles.indexOfFirst { it.id == item.id }
+                if (idx != -1) {
+                    selectedFiles[idx] = selectedFiles[idx].copy(sha256 = hash)
+                }
+            }
         }
     }
 
@@ -118,16 +130,22 @@ fun SuperTransferScreen(
     ) { uris: List<Uri> ->
         for (uri in uris) {
             val (name, size) = transferManager.queryFileInfo(uri)
-            selectedFiles.add(
-                TransferFileItem(
-                    id = "audio_${System.currentTimeMillis()}_${name.hashCode()}",
-                    name = name,
-                    sizeBytes = size.coerceAtLeast(1024L),
-                    mimeType = "audio/mp4",
-                    uri = uri,
-                    status = TransferStatus.PENDING
-                )
+            val item = TransferFileItem(
+                id = "audio_${System.currentTimeMillis()}_${name.hashCode()}",
+                name = name,
+                sizeBytes = size,
+                mimeType = "audio/*",
+                uri = uri,
+                status = TransferStatus.PENDING
             )
+            selectedFiles.add(item)
+            coroutineScope.launch {
+                val hash = transferManager.computeFileSha256(uri)
+                val idx = selectedFiles.indexOfFirst { it.id == item.id }
+                if (idx != -1) {
+                    selectedFiles[idx] = selectedFiles[idx].copy(sha256 = hash)
+                }
+            }
         }
     }
 
@@ -136,16 +154,22 @@ fun SuperTransferScreen(
     ) { uris: List<Uri> ->
         for (uri in uris) {
             val (name, size) = transferManager.queryFileInfo(uri)
-            selectedFiles.add(
-                TransferFileItem(
-                    id = "doc_${System.currentTimeMillis()}_${name.hashCode()}",
-                    name = name,
-                    sizeBytes = size.coerceAtLeast(1024L),
-                    mimeType = "application/pdf",
-                    uri = uri,
-                    status = TransferStatus.PENDING
-                )
+            val item = TransferFileItem(
+                id = "doc_${System.currentTimeMillis()}_${name.hashCode()}",
+                name = name,
+                sizeBytes = size,
+                mimeType = "application/*",
+                uri = uri,
+                status = TransferStatus.PENDING
             )
+            selectedFiles.add(item)
+            coroutineScope.launch {
+                val hash = transferManager.computeFileSha256(uri)
+                val idx = selectedFiles.indexOfFirst { it.id == item.id }
+                if (idx != -1) {
+                    selectedFiles[idx] = selectedFiles[idx].copy(sha256 = hash)
+                }
+            }
         }
     }
 
@@ -173,7 +197,7 @@ fun SuperTransferScreen(
                         )
                     )
                     Text(
-                        text = if (isHindi) "शून्य इंटरनेट • Wi-Fi Direct • 64KB बफ़र्ड सॉकेट • 60 MB/s" else "Zero Internet • Wi-Fi Direct • 64KB Sockets • Up to 60 MB/s",
+                        text = if (isHindi) "शून्य इंटरनेट • Wi-Fi Direct • 64KB बफ़र • 100% सुरक्षित" else "Zero Internet • Wi-Fi Direct P2P • 64KB Sockets • Honest Speed",
                         style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
                     )
                 }
@@ -186,7 +210,7 @@ fun SuperTransferScreen(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = if (isHindi) "DPDP 2027 सुरक्षित" else "DPDP 2027 On-Device",
+                        text = if (isHindi) "DPDP 2027 ऑन-डिवाइस" else "DPDP 2027 On-Device",
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = CyanAccent,
                             fontWeight = FontWeight.Bold,
@@ -241,12 +265,16 @@ fun SuperTransferScreen(
                 Button(
                     onClick = {
                         mode = TransferDirection.RECEIVE
+                        transferManager.createP2pGroup()
                         transferManager.startReceiving(
+                            onConsentRequired = { manifest, callback ->
+                                activeConsentCallback = callback
+                            },
                             onFileReceived = { receivedItem ->
                                 selectedFiles.add(0, receivedItem)
                             },
-                            onComplete = {
-                                showSuccessDialog = true
+                            onComplete = { success, msg ->
+                                transferMessageDialog = msg
                             }
                         )
                     },
@@ -290,7 +318,7 @@ fun SuperTransferScreen(
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
             )
             Text(
-                text = if (isHindi) "PickVisualMedia और Scoped Storage द्वारा सीधे स्टोरेज से फाइलें चुनें" else "Pick real photos, full 4K videos, audio notes or documents from your storage",
+                text = if (isHindi) "PickVisualMedia और Scoped Storage द्वारा सीधे स्टोरेज से असली फाइलें चुनें" else "Pick genuine photos, 4K videos, audio notes, or documents from device storage",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 11.sp, color = TextMuted)
             )
 
@@ -385,13 +413,22 @@ fun SuperTransferScreen(
                             }
                             Spacer(modifier = Modifier.width(10.dp))
                             Column {
+                                val currentDeviceName = thisDevice?.deviceName ?: Build.MODEL ?: "This Device"
                                 Text(
-                                    text = deviceName,
+                                    text = currentDeviceName,
                                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                                 )
+                                val connStatus = if (connectionInfo?.groupFormed == true) {
+                                    if (isHindi) "Wi-Fi Direct कनेक्टेड (${connectionInfo?.groupOwnerAddress?.hostAddress})" else "Wi-Fi Direct Connected (${connectionInfo?.groupOwnerAddress?.hostAddress})"
+                                } else {
+                                    if (isHindi) "पेयरिंग पिन: $pairingCode" else "Pairing PIN: $pairingCode"
+                                }
                                 Text(
-                                    text = if (isHindi) "Wi-Fi Direct P2P सक्रिय • पिन: $pairingCode" else "Wi-Fi Direct P2P Ready • PIN: $pairingCode",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp, color = EmeraldAccent)
+                                    text = connStatus,
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        fontSize = 11.sp,
+                                        color = if (connectionInfo?.groupFormed == true) EmeraldAccent else CyanAccent
+                                    )
                                 )
                             }
                         }
@@ -450,6 +487,34 @@ fun SuperTransferScreen(
                             )
                         }
                     }
+
+                    // Peer List if found
+                    if (peers.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = if (isHindi) "आस-पास मिले फोन (${peers.size}):" else "Discovered Nearby Devices (${peers.size}):",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
+                        )
+                        peers.forEach { peer ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { transferManager.connectToPeer(peer) }
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = peer.deviceName.ifBlank { peer.deviceAddress },
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                                )
+                                Text(
+                                    text = if (isHindi) "कनेक्ट करें" else "Connect",
+                                    style = MaterialTheme.typography.labelSmall.copy(color = CyanAccent)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -477,6 +542,40 @@ fun SuperTransferScreen(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        // Empty state when zero real files are picked
+        if (selectedFiles.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(CardDark.copy(alpha = 0.5f))
+                        .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.CloudUpload,
+                            contentDescription = null,
+                            tint = TextMuted,
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = if (isHindi) "कोई फ़ाइल नहीं चुनी गई है" else "No Files Selected in Queue",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = TextSecondary)
+                        )
+                        Text(
+                            text = if (isHindi) "ऊपर दिए गए बटनों से असली फोटो, वीडियो या डॉक्यूमेंट चुनें।" else "Use the category picker buttons above to select real files from your storage.",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, textAlign = TextAlign.Center),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            }
         }
 
         // Selected files list
@@ -632,13 +731,14 @@ fun SuperTransferScreen(
                     if (selectedFiles.isEmpty()) return@Button
                     transferManager.sendFiles(
                         files = selectedFiles.toList(),
+                        pairingToken = pairingCode,
                         onFileUpdated = { idx, updated ->
                             if (idx < selectedFiles.size) {
                                 selectedFiles[idx] = updated
                             }
                         },
-                        onComplete = {
-                            showSuccessDialog = true
+                        onComplete = { success, msg ->
+                            transferMessageDialog = msg
                         }
                     )
                 },
@@ -670,6 +770,65 @@ fun SuperTransferScreen(
                 )
             }
         }
+    }
+
+    // ── RECEIVER CONSENT DIALOG ──
+    incomingManifest?.let { manifest ->
+        AlertDialog(
+            onDismissRequest = {
+                activeConsentCallback?.invoke(false)
+                activeConsentCallback = null
+            },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Security, contentDescription = null, tint = CyanAccent)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isHindi) "फ़ाइल ट्रांसफर अनुरोध" else "File Transfer Request",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
+            },
+            text = {
+                Column {
+                    Text(
+                        text = if (isHindi)
+                            "डिवाइस '${manifest.senderDeviceName}' आपको ${manifest.fileCount} फाइलें (%.1f MB) भेजना चाहता है। क्या आप स्वीकार करते हैं?".format(
+                                Locale.US,
+                                manifest.totalSizeBytes / 1_000_000f
+                            )
+                        else
+                            "Device '${manifest.senderDeviceName}' wants to send you ${manifest.fileCount} file(s) (%.1f MB). Do you accept?".format(
+                                Locale.US,
+                                manifest.totalSizeBytes / 1_000_000f
+                            ),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        activeConsentCallback?.invoke(true)
+                        activeConsentCallback = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark)
+                ) {
+                    Text(text = if (isHindi) "स्वीकार करें (Accept)" else "Accept")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        activeConsentCallback?.invoke(false)
+                        activeConsentCallback = null
+                    }
+                ) {
+                    Text(text = if (isHindi) "अस्वीकार करें (Decline)" else "Decline")
+                }
+            },
+            containerColor = CardDark
+        )
     }
 
     // ── QR PAIRING MODAL ──
@@ -707,7 +866,7 @@ fun SuperTransferScreen(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Text(
-                        text = if (isHindi) "6-अंकों का पेयरिंग पिन:" else "6-Digit Pairing PIN:",
+                        text = if (isHindi) "सत्र पेयरिंग पिन:" else "Session Pairing PIN:",
                         style = MaterialTheme.typography.bodySmall.copy(color = TextMuted)
                     )
                     Text(
@@ -734,38 +893,30 @@ fun SuperTransferScreen(
         )
     }
 
-    // ── TRANSFER SUCCESS DIALOG ──
-    if (showSuccessDialog) {
+    // ── STATUS / RESULT DIALOG ──
+    transferMessageDialog?.let { message ->
         AlertDialog(
-            onDismissRequest = { showSuccessDialog = false },
+            onDismissRequest = { transferMessageDialog = null },
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = EmeraldAccent)
+                    Icon(Icons.Default.Info, contentDescription = null, tint = CyanAccent)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isHindi) "ट्रांसफर 100% सफल!" else "Transfer 100% Complete!",
+                        text = if (isHindi) "ट्रांसफर सूचना" else "Transfer Status",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
             },
             text = {
-                Column {
-                    Text(
-                        text = if (isHindi)
-                            "सभी फाइलें सफलतापूर्वक 64KB बफ़र सॉकेट से स्थानांतरित हो चुकी हैं और SHA-256 हैश सत्यापित किया जा चुका है।"
-                        else
-                            "All files successfully transferred via 64KB chunked sockets and SHA-256 integrity verified.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                Text(text = message, style = MaterialTheme.typography.bodyMedium)
             },
             confirmButton = {
                 Button(
-                    onClick = { showSuccessDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
+                    onClick = { transferMessageDialog = null },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark),
                     modifier = Modifier.height(48.dp)
                 ) {
-                    Text(text = if (isHindi) "संपन्न (Done)" else "Done")
+                    Text(text = if (isHindi) "ठीक है" else "OK")
                 }
             },
             containerColor = CardDark
@@ -828,7 +979,8 @@ private fun SelectedFileItemCard(
     val sizeText = when {
         file.sizeBytes >= 1_000_000_000L -> "%.2f GB".format(Locale.US, file.sizeBytes / 1_000_000_000f)
         file.sizeBytes >= 1_000_000L -> "%.1f MB".format(Locale.US, file.sizeBytes / 1_000_000f)
-        else -> "${file.sizeBytes / 1024} KB"
+        file.sizeBytes > 0 -> "${file.sizeBytes / 1024} KB"
+        else -> "0 KB"
     }
 
     Box(
@@ -887,6 +1039,13 @@ private fun SelectedFileItemCard(
                                 Text(
                                     text = "• SHA-256 Verified",
                                     style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent, fontSize = 10.sp)
+                                )
+                            }
+                            if (file.status == TransferStatus.FAILED) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "• ${file.errorMessage ?: "Failed"}",
+                                    style = MaterialTheme.typography.labelSmall.copy(color = RoseAccent, fontSize = 10.sp)
                                 )
                             }
                         }

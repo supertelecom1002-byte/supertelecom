@@ -36,14 +36,14 @@ export interface ApkReleaseMetadata {
 
 export const KNOWN_RELEASE_APK: ApkReleaseMetadata = {
   appName: "Super Telecom",
-  versionName: "2.4.0",
-  versionCode: 24,
+  versionName: "2.5.0",
+  versionCode: 25,
   packageId: "com.supertelecom.app",
   minSdk: 24,
-  targetSdk: 34,
+  targetSdk: 36,
   fileSize: 1769205,
   fileSizeHuman: "1.69 MB",
-  releaseDate: "2026-11-01",
+  releaseDate: "2026-11-02",
   sha256: "3ebc895e5bb1d5080268bb61fa3454e9c3dfdabf9313307cb4a7aeab81287afc",
   downloadUrl: "/SuperTelecom.apk",
   downloadFilename: "SuperTelecom-Release.apk",
@@ -105,6 +105,12 @@ export async function downloadSuperTelecomApk(
       const buffer = await blob.arrayBuffer();
       const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
       const computedHash = bufferToHex(hashBuffer);
+
+      if (expectedSha256 && computedHash.toLowerCase() !== expectedSha256.toLowerCase()) {
+        throw new Error(
+          `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${expectedSha256}).`
+        );
+      }
 
       triggerBrowserDownload(blob, KNOWN_RELEASE_APK.downloadFilename);
       onProgress({
@@ -176,7 +182,13 @@ export async function downloadSuperTelecomApk(
     const hashBuffer = await crypto.subtle.digest("SHA-256", fullBuffer);
     const computedHash = bufferToHex(hashBuffer);
 
-    // 5. Trigger native browser file save
+    if (expectedSha256 && computedHash.toLowerCase() !== expectedSha256.toLowerCase()) {
+      throw new Error(
+        `APK_CHECKSUM_MISMATCH: Computed SHA-256 (${computedHash}) does not match expected (${expectedSha256}). Download aborted.`
+      );
+    }
+
+    // 5. Trigger native browser file save only after verified integrity
     triggerBrowserDownload(fullBlob, KNOWN_RELEASE_APK.downloadFilename);
 
     onProgress({

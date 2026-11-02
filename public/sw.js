@@ -1,7 +1,7 @@
-// Super Telecom Cyber-Lab Service Worker v3.4 (Strict Offline-First Engine)
-// 100% Client-Side Hardware Diagnostics • Immediate Hot-Fix Ingestion
+// Super Telecom Cyber-Lab Service Worker v4.0 (Strict Offline-First Engine)
+// 100% Client-Side Hardware Diagnostics • Immediate Hot-Fix Ingestion • Auto-Cache Invalidation
 
-const CACHE_NAME = "supertelecom-offline-v3.4";
+const CACHE_NAME = "supertelecom-offline-v4.0";
 
 // Core App Shell & Offline Hubs to Pre-Cache
 const PRECACHE_ASSETS = [
@@ -97,13 +97,16 @@ self.addEventListener("fetch", (event) => {
   // Skip non-http/https protocols (chrome-extension, blob, data, etc.)
   if (!url.protocol.startsWith("http")) return;
 
-  // CRITICAL: Bypass API routes, Server Functions, Auth calls, and external DB queries
+  // CRITICAL: Bypass API routes, Server Functions, Auth calls, external DB, and APK binaries
   if (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/_server") ||
     url.pathname.startsWith("/_serverFn") ||
     url.pathname.includes("/admin/") ||
-    url.hostname.includes("supabase.co")
+    url.hostname.includes("supabase.co") ||
+    url.pathname.endsWith(".apk") ||
+    url.pathname.startsWith("/download/android") ||
+    url.pathname.includes("SuperTelecom")
   ) {
     return; // Pass through directly to browser network pipeline
   }

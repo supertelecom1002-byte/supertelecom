@@ -5,18 +5,44 @@ plugins {
 
 android {
     namespace = "com.supertelecom"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.supertelecom.app"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 24
-        versionName = "2.4.0"
+        targetSdk = 36
+        versionCode = 25
+        versionName = "2.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            val keystorePropertiesFile = rootProject.file("keystore.properties")
+            if (keystorePropertiesFile.exists()) {
+                val properties = java.util.Properties().apply {
+                    keystorePropertiesFile.inputStream().use { load(it) }
+                }
+                storeFile = rootProject.file(properties.getProperty("storeFile") ?: "keystore/release.jks")
+                storePassword = properties.getProperty("storePassword")
+                keyAlias = properties.getProperty("keyAlias")
+                keyPassword = properties.getProperty("keyPassword")
+            } else {
+                val envStorePath = System.getenv("SUPERTELECOM_KEYSTORE_PATH")
+                if (envStorePath != null && file(envStorePath).exists()) {
+                    storeFile = file(envStorePath)
+                    storePassword = System.getenv("SUPERTELECOM_KEYSTORE_PASSWORD")
+                    keyAlias = System.getenv("SUPERTELECOM_KEY_ALIAS")
+                    keyPassword = System.getenv("SUPERTELECOM_KEY_PASSWORD")
+                } else {
+                    // Safe development fallback: inherits debug signature until production keystore is supplied by owner
+                    initWith(getByName("debug"))
+                }
+            }
         }
     }
 
@@ -28,7 +54,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"

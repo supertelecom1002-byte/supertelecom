@@ -92,6 +92,55 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error("TanStack Root Error Component:", error);
   const router = useRouter();
 
+  // Self-healing recovery for stale cached chunks (e.g. inView is not defined or chunk load mismatch)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const msg = (error?.message || String(error || "")).toLowerCase();
+    const isStaleCacheError =
+      msg.includes("inview") ||
+      msg.includes("is not defined") ||
+      msg.includes("dynamically imported module") ||
+      msg.includes("loading chunk") ||
+      msg.includes("undefined is not an object");
+
+    if (isStaleCacheError && !sessionStorage.getItem("st_auto_reload_attempted")) {
+      sessionStorage.setItem("st_auto_reload_attempted", "true");
+      if ("caches" in window) {
+        caches.keys().then((names) => {
+          Promise.all(names.map((name) => caches.delete(name))).finally(() => {
+            if ("serviceWorker" in navigator) {
+              navigator.serviceWorker.getRegistrations().then((regs) => {
+                regs.forEach((r) => r.update());
+              });
+            }
+            window.location.reload();
+          });
+        });
+      } else {
+        window.location.reload();
+      }
+    }
+  }, [error]);
+
+  const handleHardRefresh = () => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.clear();
+        if ("caches" in window) {
+          caches.keys().then((names) => {
+            Promise.all(names.map((name) => caches.delete(name))).finally(() => {
+              window.location.href = window.location.origin + window.location.pathname + "?_t=" + Date.now();
+            });
+          });
+          return;
+        }
+      } catch {
+        // Fallback
+      }
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -99,16 +148,24 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           This page didn't load
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          Something went wrong on our end. You can refresh to get the latest updated version or head back home.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-6 flex flex-wrap justify-center gap-2.5">
           <button
+            type="button"
+            onClick={handleHardRefresh}
+            className="inline-flex items-center justify-center rounded-lg bg-gradient-brand px-4 py-2 text-sm font-semibold text-primary-foreground shadow-brand hover:scale-[1.02] transition-transform"
+          >
+            Refresh & Update / नया वर्शन लोड करें
+          </button>
+          <button
+            type="button"
             onClick={() => { router.invalidate(); reset(); }}
-            className="inline-flex items-center justify-center rounded-md bg-gradient-brand px-4 py-2 text-sm font-medium text-primary-foreground"
+            className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
           >
             Try again
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
+          <a href="/" className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
             Go home
           </a>
         </div>
@@ -388,7 +445,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';var isD=t==='dark';document.documentElement.classList.toggle('dark',isD);var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.setAttribute('content',isD?'#020617':'#ffffff');}catch(e){}})();`;
-const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
+const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){if(reg){reg.update();}}).catch(function(){});});}`;
 const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;
 
 function RootShell({ children }: { children: ReactNode }) {

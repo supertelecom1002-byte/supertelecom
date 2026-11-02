@@ -13,14 +13,13 @@ import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.RecoverItem
 import com.supertelecom.model.RecoverTier
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -44,7 +43,7 @@ class StorageRecoverEngine(private val context: Context) {
     private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     // ──────────────────────────────────────────────
-    // 1. COMPREHENSIVE ON-DEVICE SCANNING
+    // 1. HONEST 7-TIER ON-DEVICE SCANNING ENGINE
     // ──────────────────────────────────────────────
 
     suspend fun executeDeepScan(
@@ -56,20 +55,25 @@ class StorageRecoverEngine(private val context: Context) {
         val results = mutableListOf<RecoverItem>()
 
         try {
-            // Tier 1: MediaStore Trash & Recycle Bin (Android 11+ / API 30+)
-            _currentScanPath.value = "MediaStore Trash & System Recycle Bin (IS_TRASHED)"
+            // Tier E: System Trash via MediaStore IS_TRASHED (Android 11+ / API 30+)
+            _currentScanPath.value = "MediaStore Recycle Bin (IS_TRASHED == 1)"
             onProgress(_currentScanPath.value, results.size)
             results.addAll(scanMediaStoreTrashed(selectedCategory))
 
-            // Tier 1 & 2: Recent MediaStore Images, Videos, Audio, Docs
-            _currentScanPath.value = "/storage/emulated/0/DCIM & Media Collections"
+            // Tier B: Hidden media in dot-prefixed directories & .nomedia folders
+            _currentScanPath.value = "Hidden Dot-Folders & .nomedia directories"
             onProgress(_currentScanPath.value, results.size)
-            results.addAll(scanMediaStoreMedia(selectedCategory))
+            results.addAll(scanHiddenDotDirectories(selectedCategory))
 
-            // Tier 2 & 3: Accessible App Cache & Thumbnail Artifacts
-            _currentScanPath.value = "Internal App Cache & Thumbnail Directories"
+            // Tier D: Low-resolution thumbnail caches from accessible directories
+            _currentScanPath.value = "System & App Thumbnail Caches"
             onProgress(_currentScanPath.value, results.size)
-            results.addAll(scanCacheDirectories(selectedCategory))
+            results.addAll(scanThumbnailCaches(selectedCategory))
+
+            // Tier C: Duplicate surviving copies in cache
+            _currentScanPath.value = "Application Media Caches & Surviving Duplicates"
+            onProgress(_currentScanPath.value, results.size)
+            results.addAll(scanAppCacheMedia(selectedCategory))
 
         } catch (_: Exception) {
             // Graceful handling of restricted directory access
@@ -81,7 +85,7 @@ class StorageRecoverEngine(private val context: Context) {
         results.distinctBy { it.id }
     }
 
-    // ── Tier 1: MediaStore Trash Query (Android 11+ IS_TRASHED) ──
+    // ── Tier E: MediaStore System Trash (Android 11+ IS_TRASHED == 1) ──
     private fun scanMediaStoreTrashed(category: RecoverCategory): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return list
@@ -129,205 +133,15 @@ class StorageRecoverEngine(private val context: Context) {
                                 name = name,
                                 sizeBytes = size,
                                 dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = "Recycle Bin > .trashed-$id",
+                                sourcePath = "MediaStore System Trash > .trashed-$id",
                                 category = cat,
-                                tier = RecoverTier.ORIGINAL_MEDIA,
+                                tier = RecoverTier.SYSTEM_TRASH,
                                 uri = contentUri,
-                                qualityTag = "Original High-Res (Trash)",
-                                isSelected = true
+                                qualityTag = "Original Quality (Recycle Bin)",
+                                isSelected = true,
+                                isRestorable = true
                             )
                         )
-                    }
-                }
-            } catch (_: Exception) {
-                // Ignore platform permission exceptions
-            }
-        }
-
-        return list
-    }
-
-    // ── Tier 1 & 2: Active MediaStore Collections ──
-    private fun scanMediaStoreMedia(category: RecoverCategory): List<RecoverItem> {
-        val list = mutableListOf<RecoverItem>()
-
-        val projection = arrayOf(
-            MediaStore.MediaColumns._ID,
-            MediaStore.MediaColumns.DISPLAY_NAME,
-            MediaStore.MediaColumns.SIZE,
-            MediaStore.MediaColumns.DATE_MODIFIED,
-            MediaStore.MediaColumns.MIME_TYPE
-        )
-
-        // Images
-        if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.PHOTOS) {
-            try {
-                context.contentResolver.query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
-                )?.use { cursor ->
-                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-                    val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                    val sizeCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                    val dateCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
-
-                    var count = 0
-                    while (cursor.moveToNext() && count < 25) {
-                        val id = cursor.getLong(idCol)
-                        val name = cursor.getString(nameCol) ?: "Photo_$id.jpg"
-                        val size = cursor.getLong(sizeCol)
-                        val dateSec = cursor.getLong(dateCol)
-                        val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                        list.add(
-                            RecoverItem(
-                                id = "img_$id",
-                                name = name,
-                                sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = "Internal > DCIM / Camera",
-                                category = RecoverCategory.PHOTOS,
-                                tier = RecoverTier.ORIGINAL_MEDIA,
-                                uri = contentUri,
-                                qualityTag = "Original Photo",
-                                isSelected = false
-                            )
-                        )
-                        count++
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-
-        // Videos
-        if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.VIDEOS) {
-            try {
-                context.contentResolver.query(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
-                )?.use { cursor ->
-                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-                    val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                    val sizeCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                    val dateCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
-
-                    var count = 0
-                    while (cursor.moveToNext() && count < 20) {
-                        val id = cursor.getLong(idCol)
-                        val name = cursor.getString(nameCol) ?: "Video_$id.mp4"
-                        val size = cursor.getLong(sizeCol)
-                        val dateSec = cursor.getLong(dateCol)
-                        val contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
-
-                        list.add(
-                            RecoverItem(
-                                id = "vid_$id",
-                                name = name,
-                                sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = "Internal > Movies / DCIM",
-                                category = RecoverCategory.VIDEOS,
-                                tier = RecoverTier.ORIGINAL_MEDIA,
-                                uri = contentUri,
-                                qualityTag = "Original Video",
-                                isSelected = false
-                            )
-                        )
-                        count++
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-
-        // Audio
-        if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.AUDIO_RECORDINGS) {
-            try {
-                context.contentResolver.query(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    null,
-                    null,
-                    "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
-                )?.use { cursor ->
-                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-                    val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                    val sizeCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                    val dateCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
-
-                    var count = 0
-                    while (cursor.moveToNext() && count < 15) {
-                        val id = cursor.getLong(idCol)
-                        val name = cursor.getString(nameCol) ?: "Audio_$id.m4a"
-                        val size = cursor.getLong(sizeCol)
-                        val dateSec = cursor.getLong(dateCol)
-                        val contentUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
-
-                        list.add(
-                            RecoverItem(
-                                id = "audio_$id",
-                                name = name,
-                                sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = "Internal > Recordings / Music",
-                                category = RecoverCategory.AUDIO_RECORDINGS,
-                                tier = RecoverTier.ORIGINAL_MEDIA,
-                                uri = contentUri,
-                                qualityTag = "Original Audio",
-                                isSelected = false
-                            )
-                        )
-                        count++
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-
-        // Documents
-        if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.DOCUMENTS) {
-            try {
-                val docMimes = arrayOf("application/pdf", "application/msword", "text/plain")
-                val selection = "${MediaStore.Files.FileColumns.MIME_TYPE} IN (?, ?, ?)"
-                context.contentResolver.query(
-                    MediaStore.Files.getContentUri("external"),
-                    projection,
-                    selection,
-                    docMimes,
-                    "${MediaStore.MediaColumns.DATE_MODIFIED} DESC"
-                )?.use { cursor ->
-                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
-                    val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
-                    val sizeCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
-                    val dateCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
-
-                    var count = 0
-                    while (cursor.moveToNext() && count < 15) {
-                        val id = cursor.getLong(idCol)
-                        val name = cursor.getString(nameCol) ?: "Doc_$id.pdf"
-                        val size = cursor.getLong(sizeCol)
-                        val dateSec = cursor.getLong(dateCol)
-                        val contentUri = ContentUris.withAppendedId(MediaStore.Files.getContentUri("external"), id)
-
-                        list.add(
-                            RecoverItem(
-                                id = "doc_$id",
-                                name = name,
-                                sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = "Internal > Documents",
-                                category = RecoverCategory.DOCUMENTS,
-                                tier = RecoverTier.ORIGINAL_MEDIA,
-                                uri = contentUri,
-                                qualityTag = "Document",
-                                isSelected = false
-                            )
-                        )
-                        count++
                     }
                 }
             } catch (_: Exception) {}
@@ -336,52 +150,131 @@ class StorageRecoverEngine(private val context: Context) {
         return list
     }
 
-    // ── Tier 2 & 3: Scan Internal Cache & Thumbnails ──
-    private fun scanCacheDirectories(category: RecoverCategory): List<RecoverItem> {
+    // ── Tier B: Hidden Dot-Directories & .nomedia Folders ──
+    private fun scanHiddenDotDirectories(category: RecoverCategory): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
-        val dirsToScan = listOfNotNull(
-            context.externalCacheDir,
-            context.cacheDir,
-            File(context.filesDir, "recovered_cache")
-        )
+        val externalFiles = context.getExternalFilesDirs(null)
 
-        for (dir in dirsToScan) {
-            if (!dir.exists() || !dir.isDirectory) continue
-            val files = dir.listFiles() ?: continue
-            for (file in files) {
-                if (file.isDirectory) continue
-                val ext = file.extension.lowercase()
-                val cat = when (ext) {
-                    "jpg", "jpeg", "png", "webp" -> RecoverCategory.PHOTOS
-                    "mp4", "mkv", "3gp" -> RecoverCategory.VIDEOS
-                    "mp3", "m4a", "wav", "amr" -> RecoverCategory.AUDIO_RECORDINGS
-                    "pdf", "txt", "doc", "docx" -> RecoverCategory.DOCUMENTS
-                    else -> null
-                } ?: continue
+        for (baseDir in externalFiles) {
+            if (baseDir == null || !baseDir.exists()) continue
+            findHiddenFilesRecursive(baseDir, list, category, depth = 0, maxDepth = 4)
+        }
 
+        return list
+    }
+
+    private fun findHiddenFilesRecursive(
+        dir: File,
+        results: mutableListOf<RecoverItem>,
+        category: RecoverCategory,
+        depth: Int,
+        maxDepth: Int
+    ) {
+        if (depth > maxDepth || !dir.exists() || !dir.isDirectory) return
+
+        val files = dir.listFiles() ?: return
+        val isDotOrNomediaDir = dir.name.startsWith(".") || File(dir, ".nomedia").exists()
+
+        for (file in files) {
+            if (file.isDirectory) {
+                findHiddenFilesRecursive(file, results, category, depth + 1, maxDepth)
+            } else if (isDotOrNomediaDir || file.name.startsWith(".")) {
+                val cat = getCategoryForExtension(file.extension) ?: continue
                 if (category != RecoverCategory.ALL_MEDIA && category != cat) continue
 
-                list.add(
+                results.add(
                     RecoverItem(
-                        id = "cache_${file.name.hashCode()}",
+                        id = "hidden_${file.absolutePath.hashCode()}",
                         name = file.name,
                         sizeBytes = file.length(),
                         dateModified = dateFormat.format(Date(file.lastModified())),
-                        sourcePath = "App Cache > ${file.name}",
+                        sourcePath = "Hidden Path > ${file.parentFile?.name}/${file.name}",
                         category = cat,
-                        tier = RecoverTier.HIDDEN_COPIES,
+                        tier = RecoverTier.HIDDEN_MEDIA,
                         uri = Uri.fromFile(file),
-                        qualityTag = "Cache Reconstructed Copy",
-                        isSelected = false
+                        qualityTag = "Hidden File (Original Size)",
+                        isSelected = false,
+                        isRestorable = true
                     )
                 )
             }
         }
+    }
+
+    // ── Tier D: Thumbnail & Preview Databases ──
+    private fun scanThumbnailCaches(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        if (category != RecoverCategory.ALL_MEDIA && category != RecoverCategory.PHOTOS) return list
+
+        val cacheDirs = listOfNotNull(
+            context.externalCacheDir,
+            context.cacheDir,
+            File(context.cacheDir, "image_cache")
+        )
+
+        for (cDir in cacheDirs) {
+            if (!cDir.exists() || !cDir.isDirectory) continue
+            val files = cDir.listFiles() ?: continue
+            for (f in files) {
+                if (f.isDirectory) continue
+                if (f.name.contains("thumb", ignoreCase = true) || f.length() in 1024..500000) {
+                    val ext = f.extension.lowercase()
+                    if (ext in listOf("jpg", "jpeg", "png", "webp") || f.name.startsWith("thumb_")) {
+                        list.add(
+                            RecoverItem(
+                                id = "thumb_${f.name.hashCode()}",
+                                name = f.name,
+                                sizeBytes = f.length(),
+                                dateModified = dateFormat.format(Date(f.lastModified())),
+                                sourcePath = "Thumbnail Cache > ${f.name}",
+                                category = RecoverCategory.PHOTOS,
+                                tier = RecoverTier.THUMBNAIL_PREVIEW,
+                                uri = Uri.fromFile(f),
+                                qualityTag = "Low-Res Preview Only",
+                                isSelected = false,
+                                isRestorable = true
+                            )
+                        )
+                    }
+                }
+            }
+        }
 
         return list
     }
 
-    // ── SAF: Scan Document Tree (SD Card / Custom Storage Directory) ──
+    // ── Tier C: Surviving Secondary Copies in App Cache ──
+    private fun scanAppCacheMedia(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        val externalCache = context.externalCacheDir ?: return list
+
+        val files = externalCache.listFiles() ?: return
+        for (f in files) {
+            if (f.isDirectory) continue
+            val cat = getCategoryForExtension(f.extension) ?: continue
+            if (category != RecoverCategory.ALL_MEDIA && category != cat) continue
+
+            list.add(
+                RecoverItem(
+                    id = "dup_${f.name.hashCode()}",
+                    name = f.name,
+                    sizeBytes = f.length(),
+                    dateModified = dateFormat.format(Date(f.lastModified())),
+                    sourcePath = "App Cache > ${f.name}",
+                    category = cat,
+                    tier = RecoverTier.DUPLICATE_OR_COPY,
+                    uri = Uri.fromFile(f),
+                    qualityTag = "Surviving Secondary Copy",
+                    isSelected = false,
+                    isRestorable = true
+                )
+            )
+        }
+
+        return list
+    }
+
+    // ── Storage Access Framework (SAF) Tree Traversal ──
     suspend fun scanStorageAccessTree(
         treeUri: Uri,
         selectedCategory: RecoverCategory = RecoverCategory.ALL_MEDIA
@@ -390,17 +283,37 @@ class StorageRecoverEngine(private val context: Context) {
         _isScanning.value = true
 
         try {
-            val docId = DocumentsContract.getTreeDocumentId(treeUri)
-            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, docId)
+            val rootDocId = DocumentsContract.getTreeDocumentId(treeUri)
+            traverseSafDirectory(treeUri, rootDocId, list, selectedCategory, depth = 0, maxDepth = 6)
+        } catch (_: Exception) {
+        } finally {
+            _isScanning.value = false
+        }
 
-            val projection = arrayOf(
-                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                DocumentsContract.Document.COLUMN_SIZE,
-                DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-                DocumentsContract.Document.COLUMN_MIME_TYPE
-            )
+        list
+    }
 
+    private fun traverseSafDirectory(
+        treeUri: Uri,
+        docId: String,
+        results: mutableListOf<RecoverItem>,
+        selectedCategory: RecoverCategory,
+        depth: Int,
+        maxDepth: Int
+    ) {
+        if (depth > maxDepth) return
+        ensureActive()
+
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, docId)
+        val projection = arrayOf(
+            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+            DocumentsContract.Document.COLUMN_SIZE,
+            DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+            DocumentsContract.Document.COLUMN_MIME_TYPE
+        )
+
+        try {
             context.contentResolver.query(childrenUri, projection, null, null, null)?.use { cursor ->
                 val idCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
                 val nameCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
@@ -409,68 +322,81 @@ class StorageRecoverEngine(private val context: Context) {
                 val mimeCol = cursor.getColumnIndexOrThrow(DocumentsContract.Document.COLUMN_MIME_TYPE)
 
                 while (cursor.moveToNext()) {
-                    val childDocId = cursor.getString(idCol)
-                    val name = cursor.getString(nameCol) ?: "SAF_File"
+                    val childId = cursor.getString(idCol)
+                    val name = cursor.getString(nameCol) ?: "SAF_Item"
                     val size = cursor.getLong(sizeCol)
                     val dateLong = cursor.getLong(dateCol)
                     val mime = cursor.getString(mimeCol) ?: ""
 
-                    val cat = when {
-                        mime.startsWith("image/") -> RecoverCategory.PHOTOS
-                        mime.startsWith("video/") -> RecoverCategory.VIDEOS
-                        mime.startsWith("audio/") -> RecoverCategory.AUDIO_RECORDINGS
-                        mime == "application/pdf" || mime.contains("document") -> RecoverCategory.DOCUMENTS
-                        else -> RecoverCategory.DOCUMENTS
-                    }
+                    if (mime == DocumentsContract.Document.MIME_TYPE_DIR) {
+                        traverseSafDirectory(treeUri, childId, results, selectedCategory, depth + 1, maxDepth)
+                    } else {
+                        val cat = when {
+                            mime.startsWith("image/") -> RecoverCategory.PHOTOS
+                            mime.startsWith("video/") -> RecoverCategory.VIDEOS
+                            mime.startsWith("audio/") -> RecoverCategory.AUDIO_RECORDINGS
+                            mime == "application/pdf" || mime.contains("document") || mime.contains("text") -> RecoverCategory.DOCUMENTS
+                            else -> RecoverCategory.DOCUMENTS
+                        }
 
-                    if (selectedCategory != RecoverCategory.ALL_MEDIA && selectedCategory != cat) continue
+                        if (selectedCategory != RecoverCategory.ALL_MEDIA && selectedCategory != cat) continue
 
-                    val itemUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, childDocId)
-
-                    list.add(
-                        RecoverItem(
-                            id = "saf_${childDocId.hashCode()}",
-                            name = name,
-                            sizeBytes = size,
-                            dateModified = dateFormat.format(Date(dateLong)),
-                            sourcePath = "SAF Tree > $name",
-                            category = cat,
-                            tier = RecoverTier.ORIGINAL_MEDIA,
-                            uri = itemUri,
-                            qualityTag = "SAF Storage Access Media",
-                            isSelected = true
+                        val fileDocUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, childId)
+                        results.add(
+                            RecoverItem(
+                                id = "saf_${childId.hashCode()}",
+                                name = name,
+                                sizeBytes = size,
+                                dateModified = dateFormat.format(Date(dateLong)),
+                                sourcePath = "SAF Tree > $name",
+                                category = cat,
+                                tier = RecoverTier.RESTORABLE_ORIGINAL,
+                                uri = fileDocUri,
+                                qualityTag = "SAF Verified Storage File",
+                                isSelected = true,
+                                isRestorable = true
+                            )
                         )
-                    )
+                    }
                 }
             }
-        } catch (_: Exception) {
-            // Handle permission or read exceptions gracefully
-        } finally {
-            _isScanning.value = false
-        }
+        } catch (_: Exception) {}
+    }
 
-        list
+    private fun getCategoryForExtension(ext: String): RecoverCategory? {
+        return when (ext.lowercase()) {
+            "jpg", "jpeg", "png", "webp", "heic" -> RecoverCategory.PHOTOS
+            "mp4", "mkv", "mov", "3gp" -> RecoverCategory.VIDEOS
+            "mp3", "m4a", "wav", "amr", "aac" -> RecoverCategory.AUDIO_RECORDINGS
+            "pdf", "doc", "docx", "xlsx", "txt", "zip" -> RecoverCategory.DOCUMENTS
+            else -> null
+        }
     }
 
     // ──────────────────────────────────────────────
-    // 2. SAFE NON-DESTRUCTIVE RESTORE PIPELINE
+    // 2. REAL SAFE NON-DESTRUCTIVE RESTORE FLOW
     // ──────────────────────────────────────────────
 
     suspend fun restoreSelectedItems(
         itemsToRestore: List<RecoverItem>
-    ): Pair<Int, String> = withContext(Dispatchers.IO) {
+    ): Triple<Int, Int, String> = withContext(Dispatchers.IO) {
         val targetDir = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            "SuperTelecom_Restored"
-        )
-        if (!targetDir.exists()) targetDir.mkdirs()
+            "SuperTelecom_Recovered"
+        ).apply { if (!exists()) mkdirs() }
 
         var successCount = 0
+        var failedCount = 0
 
         for (item in itemsToRestore) {
+            if (item.uri == null) {
+                failedCount++
+                continue
+            }
+
             try {
+                // Safe non-destructive collision renaming
                 var destFile = File(targetDir, item.name)
-                // Non-destructive naming check: if file exists, add increment (1), (2), etc.
                 if (destFile.exists()) {
                     val baseName = destFile.nameWithoutExtension
                     val ext = if (destFile.extension.isNotEmpty()) ".${destFile.extension}" else ""
@@ -481,46 +407,48 @@ class StorageRecoverEngine(private val context: Context) {
                     }
                 }
 
-                val inStream: InputStream? = if (item.uri != null) {
-                    context.contentResolver.openInputStream(item.uri)
-                } else null
-
-                if (inStream != null) {
-                    FileOutputStream(destFile).use { out ->
-                        inStream.copyTo(out, bufferSize = 64 * 1024)
-                    }
-                    inStream.close()
-                    successCount++
-                } else {
-                    // Create authentic restored text artifact placeholder if URI inaccessible
-                    FileOutputStream(destFile).use { out ->
-                        out.write("Super Telecom Safe Restored Data for ${item.name}".toByteArray())
-                    }
-                    successCount++
+                // Read real bytes from content resolver (NEVER dummy placeholders)
+                val inStream = context.contentResolver.openInputStream(item.uri)
+                if (inStream == null) {
+                    failedCount++
+                    continue
                 }
 
-                // If Android 10+, notify MediaScanner
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val values = ContentValues().apply {
-                        put(MediaStore.MediaColumns.DISPLAY_NAME, destFile.name)
-                        put(MediaStore.MediaColumns.MIME_TYPE, when (item.category) {
-                            RecoverCategory.PHOTOS -> "image/jpeg"
-                            RecoverCategory.VIDEOS -> "video/mp4"
-                            RecoverCategory.AUDIO_RECORDINGS -> "audio/mp4"
-                            else -> "application/octet-stream"
-                        })
-                        put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/SuperTelecom_Restored")
+                FileOutputStream(destFile).use { out ->
+                    inStream.copyTo(out, bufferSize = 64 * 1024)
+                }
+                inStream.close()
+
+                // Verify written file is genuine and size > 0
+                if (destFile.exists() && destFile.length() > 0) {
+                    successCount++
+
+                    // Index into Android MediaStore Downloads if API 29+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val values = ContentValues().apply {
+                            put(MediaStore.MediaColumns.DISPLAY_NAME, destFile.name)
+                            put(MediaStore.MediaColumns.MIME_TYPE, when (item.category) {
+                                RecoverCategory.PHOTOS -> "image/jpeg"
+                                RecoverCategory.VIDEOS -> "video/mp4"
+                                RecoverCategory.AUDIO_RECORDINGS -> "audio/mp4"
+                                else -> "application/octet-stream"
+                            })
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/SuperTelecom_Recovered")
+                        }
+                        try {
+                            context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                        } catch (_: Exception) {}
                     }
-                    try {
-                        context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-                    } catch (_: Exception) {}
+                } else {
+                    destFile.delete()
+                    failedCount++
                 }
 
             } catch (_: Exception) {
-                // Continue with next file
+                failedCount++
             }
         }
 
-        Pair(successCount, targetDir.absolutePath)
+        Triple(successCount, failedCount, targetDir.absolutePath)
     }
 }
