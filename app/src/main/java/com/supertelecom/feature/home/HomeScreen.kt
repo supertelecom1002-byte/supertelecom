@@ -1,5 +1,6 @@
 package com.supertelecom.feature.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,9 +19,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.supertelecom.R
 import com.supertelecom.model.NavTab
 import com.supertelecom.model.RecentTaskItem
 import com.supertelecom.model.TaskType
@@ -52,29 +56,20 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
+                    Image(
+                        painter = painterResource(id = R.drawable.super_telecom_icon),
+                        contentDescription = "Super Telecom Logo",
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(44.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                Brush.linearGradient(listOf(CyanAccent, Color(0xFF2563EB)))
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "ST",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Black,
-                                color = BgDark
-                            )
-                        )
-                    }
+                            .border(1.dp, CyanAccent.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                    )
 
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Column {
                         Text(
-                            text = "Super Telecom App",
+                            text = "Super Telecom",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Black,
                                 color = TextPrimary,
@@ -174,6 +169,109 @@ fun HomeScreen(
                         tint = EmeraldAccent,
                         modifier = Modifier.size(16.dp)
                     )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // ── BRAND HERO SHOWCASE (OFFICIAL LOGO & LAB PHOTO) ──
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(CardDark)
+                    .border(1.dp, CardBorder, RoundedCornerShape(18.dp))
+            ) {
+                Column {
+                    // Lab Photo
+                    Box(modifier = Modifier.fillMaxWidth().height(140.dp)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.hero_repair),
+                            contentDescription = "Super Telecom Lab",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(Color.Transparent, BgDark.copy(alpha = 0.7f), BgDark)
+                                    )
+                                )
+                        )
+                        // Verified Badge
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(BgDark.copy(alpha = 0.85f))
+                                .border(1.dp, CyanAccent.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = if (isHindi) "✓ प्रमाणित लैब (Est. 2016)" else "✓ Certified Lab (Est. 2016)",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = CyanAccent,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 10.sp
+                                )
+                            )
+                        }
+                    }
+
+                    // Logo & Store Title
+                    Column(modifier = Modifier.padding(14.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.super_telecom_logo),
+                                contentDescription = "Super Telecom Brand",
+                                modifier = Modifier
+                                    .height(38.dp)
+                                    .clip(RoundedCornerShape(6.dp))
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = "SUPER TELECOM",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Black,
+                                        color = TextPrimary,
+                                        letterSpacing = 1.sp
+                                    )
+                                )
+                                Text(
+                                    text = if (isHindi) "बरगंडा रोड, गिरिडीह • चिप-लेवल रिपेयर लैब" else "Barganda Road, Giridih • Flagship Lab",
+                                    style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 10.sp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Features Row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Verified, contentDescription = null, tint = EmeraldAccent, modifier = Modifier.size(13.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(text = "10+ Yrs in Giridih", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, color = TextSecondary))
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Build, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(13.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(text = "16+ Care Silos", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, color = TextSecondary))
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Lock, contentDescription = null, tint = EmeraldAccent, modifier = Modifier.size(13.dp))
+                                Spacer(modifier = Modifier.width(3.dp))
+                                Text(text = "DPDP 2027 Safe", style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, color = TextSecondary))
+                            }
+                        }
+                    }
                 }
             }
 

@@ -55,6 +55,9 @@ fun SuperTransferScreen(
 
     var mode by remember { mutableStateOf(TransferDirection.SEND) }
     var showQrDialog by remember { mutableStateOf(false) }
+    var showAppPickerDialog by remember { mutableStateOf(false) }
+    var showIpConnectDialog by remember { mutableStateOf(false) }
+    var manualTargetIp by remember { mutableStateOf("") }
     var transferMessageDialog by remember { mutableStateOf<String?>(null) }
     var activeConsentCallback by remember { mutableStateOf<((Boolean) -> Unit)?>(null) }
 
@@ -66,9 +69,11 @@ fun SuperTransferScreen(
     val connectionInfo by transferManager.connectionInfo.collectAsState()
     val thisDevice by transferManager.thisDevice.collectAsState()
     val incomingManifest by transferManager.incomingManifest.collectAsState()
+    val localIp by transferManager.localIpAddress.collectAsState()
 
     // Production Queue: Starts empty (zero fabricated mock records)
     val selectedFiles = remember { mutableStateListOf<TransferFileItem>() }
+    val userAppsList = remember { mutableStateListOf<TransferFileItem>() }
 
     // Dynamic pairing token generated for session
     val pairingCode = remember {
@@ -380,9 +385,38 @@ fun SuperTransferScreen(
                 )
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CategoryPickerCard(
+                    title = if (isHindi) "ऐप्स (APKs) भेजें" else "Send Apps (APKs)",
+                    sub = "Installed Applications",
+                    icon = Icons.Default.Apps,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        userAppsList.clear()
+                        userAppsList.addAll(transferManager.getInstalledUserApps())
+                        showAppPickerDialog = true
+                    }
+                )
+
+                CategoryPickerCard(
+                    title = if (isHindi) "IP द्वारा जोड़ें" else "Direct IP Connect",
+                    sub = "Hotspot / LAN Transfer",
+                    icon = Icons.Default.Language,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        showIpConnectDialog = true
+                    }
+                )
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ── STEP 3: PAIRING & NEARBY DEVICE PANEL (WI-FI DIRECT) ──
+            // ── STEP 3: PAIRING & NEARBY DEVICE PANEL (WI-FI DIRECT & LAN) ──
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -418,10 +452,11 @@ fun SuperTransferScreen(
                                     text = currentDeviceName,
                                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                                 )
+                                val ipPart = if (localIp != null) " • IP: $localIp" else ""
                                 val connStatus = if (connectionInfo?.groupFormed == true) {
                                     if (isHindi) "Wi-Fi Direct कनेक्टेड (${connectionInfo?.groupOwnerAddress?.hostAddress})" else "Wi-Fi Direct Connected (${connectionInfo?.groupOwnerAddress?.hostAddress})"
                                 } else {
-                                    if (isHindi) "पेयरिंग पिन: $pairingCode" else "Pairing PIN: $pairingCode"
+                                    if (isHindi) "पेयरिंग पिन: $pairingCode$ipPart" else "Pairing PIN: $pairingCode$ipPart"
                                 }
                                 Text(
                                     text = connStatus,
@@ -917,6 +952,153 @@ fun SuperTransferScreen(
                     modifier = Modifier.height(48.dp)
                 ) {
                     Text(text = if (isHindi) "ठीक है" else "OK")
+                }
+            },
+            containerColor = CardDark
+        )
+    }
+
+    // ── APP PICKER DIALOG ──
+    if (showAppPickerDialog) {
+        AlertDialog(
+            onDismissRequest = { showAppPickerDialog = false },
+            title = {
+                Text(
+                    text = if (isHindi) "इंस्टॉल ऐप्स चुनें (Select Apps)" else "Select Installed Apps to Send",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            },
+            text = {
+                if (userAppsList.isEmpty()) {
+                    Text(
+                        text = if (isHindi) "कोई ऐप नहीं मिली या लोड हो रही है..." else "Loading installed apps...",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 350.dp)
+                    ) {
+                        itemsIndexed(userAppsList) { _, appItem ->
+                            val isAlreadySelected = selectedFiles.any { it.id == appItem.id }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        if (isAlreadySelected) {
+                                            selectedFiles.removeAll { it.id == appItem.id }
+                                        } else {
+                                            selectedFiles.add(appItem)
+                                        }
+                                    }
+                                    .padding(vertical = 8.dp, horizontal = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = appItem.name,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Text(
+                                        text = "%.1f MB".format(Locale.US, appItem.sizeBytes / 1_000_000f),
+                                        style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
+                                    )
+                                }
+                                Checkbox(
+                                    checked = isAlreadySelected,
+                                    onCheckedChange = { checked ->
+                                        if (checked) {
+                                            selectedFiles.add(appItem)
+                                        } else {
+                                            selectedFiles.removeAll { it.id == appItem.id }
+                                        }
+                                    },
+                                    colors = CheckboxDefaults.colors(checkedColor = CyanAccent)
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showAppPickerDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                ) {
+                    Text(text = if (isHindi) "जोड़ें (${selectedFiles.size})" else "Done (${selectedFiles.size})")
+                }
+            },
+            containerColor = CardDark
+        )
+    }
+
+    // ── IP CONNECT DIALOG ──
+    if (showIpConnectDialog) {
+        AlertDialog(
+            onDismissRequest = { showIpConnectDialog = false },
+            title = {
+                Text(
+                    text = if (isHindi) "डायरेक्ट IP / हॉटस्पॉट कनेक्ट" else "Direct IP / Hotspot LAN Connect",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = if (isHindi)
+                            "रिसीवर फोन की स्क्रीन पर दिखने वाला IP पता दर्ज करें (उदा. 192.168.43.1):"
+                        else
+                            "Enter the IP address shown on the Receiver's screen (e.g. 192.168.43.1):",
+                        style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    OutlinedTextField(
+                        value = manualTargetIp,
+                        onValueChange = { manualTargetIp = it },
+                        placeholder = { Text("192.168.x.x") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = CyanAccent,
+                            unfocusedBorderColor = CardBorder
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showIpConnectDialog = false
+                        if (manualTargetIp.isNotBlank() && selectedFiles.isNotEmpty()) {
+                            transferManager.sendFiles(
+                                files = selectedFiles.toList(),
+                                pairingToken = pairingCode,
+                                targetHostOverride = manualTargetIp.trim(),
+                                onFileUpdated = { idx, updated ->
+                                    if (idx in selectedFiles.indices) {
+                                        selectedFiles[idx] = updated
+                                    }
+                                },
+                                onComplete = { _, msg ->
+                                    transferMessageDialog = msg
+                                }
+                            )
+                        } else if (selectedFiles.isEmpty()) {
+                            transferMessageDialog = if (isHindi) "कृपया पहले भेजने के लिए फाइलें चुनें!" else "Please pick files to send first!"
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                ) {
+                    Text(text = if (isHindi) "ट्रांसफर शुरू करें" else "Connect & Send")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showIpConnectDialog = false }) {
+                    Text(text = if (isHindi) "रद्द करें" else "Cancel", color = TextMuted)
                 }
             },
             containerColor = CardDark

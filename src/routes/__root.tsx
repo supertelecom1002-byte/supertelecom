@@ -103,8 +103,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       msg.includes("loading chunk") ||
       msg.includes("undefined is not an object");
 
-    if (isStaleCacheError && !sessionStorage.getItem("st_auto_reload_attempted")) {
-      sessionStorage.setItem("st_auto_reload_attempted", "true");
+    const lastAttempt = parseInt(sessionStorage.getItem("st_auto_reload_attempted") || "0", 10);
+    const now = Date.now();
+    if (isStaleCacheError && now - lastAttempt > 5000) {
+      sessionStorage.setItem("st_auto_reload_attempted", String(now));
       if ("caches" in window) {
         caches.keys().then((names) => {
           Promise.all(names.map((name) => caches.delete(name))).finally(() => {
@@ -113,11 +115,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
                 regs.forEach((r) => r.unregister());
               });
             }
-            window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + Date.now());
+            window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + now);
           });
         });
       } else {
-        window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + Date.now());
+        window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + now);
       }
     }
   }, [error]);

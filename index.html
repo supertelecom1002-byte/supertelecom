@@ -6,42 +6,54 @@
     <script>
       (function(){
         if (typeof window === 'undefined') return;
-        var VER = 'st_v5_0';
+        var VER = 'st_v5_2';
         try {
           if (localStorage.getItem('st_cache_gen') !== VER) {
             localStorage.setItem('st_cache_gen', VER);
             if ('caches' in window) {
               caches.keys().then(function(keys) {
                 keys.forEach(function(k) {
-                  if (k !== 'supertelecom-offline-v5.0') caches.delete(k);
+                  caches.delete(k);
                 });
               });
             }
           }
         } catch(e) {}
+        
+        function hardPurgeAndReload() {
+          var key = 'st_auto_wipe_ts';
+          var last = parseInt(sessionStorage.getItem(key) || '0', 10);
+          var now = Date.now();
+          if (now - last > 5000) {
+            sessionStorage.setItem(key, String(now));
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(regs) {
+                regs.forEach(function(r) { r.unregister(); });
+              });
+            }
+            if ('caches' in window) {
+              caches.keys().then(function(keys) {
+                Promise.all(keys.map(function(k) { return caches.delete(k); })).finally(function() {
+                  window.location.replace(window.location.origin + window.location.pathname + '?_fresh=' + now);
+                });
+              });
+            } else {
+              window.location.replace(window.location.origin + window.location.pathname + '?_fresh=' + now);
+            }
+          }
+        }
+
         window.addEventListener('error', function(e) {
           var msg = (e && (e.message || (e.error && e.error.message))) || '';
-          if (typeof msg === 'string' && (msg.indexOf('inView') !== -1 || msg.indexOf('routes-') !== -1 || msg.indexOf('Loading chunk') !== -1 || msg.indexOf('is not defined') !== -1)) {
-            var key = 'st_auto_wipe_ts';
-            var last = parseInt(sessionStorage.getItem(key) || '0', 10);
-            var now = Date.now();
-            if (now - last > 10000) {
-              sessionStorage.setItem(key, String(now));
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(regs) {
-                  regs.forEach(function(r) { r.unregister(); });
-                });
-              }
-              if ('caches' in window) {
-                caches.keys().then(function(keys) {
-                  Promise.all(keys.map(function(k) { return caches.delete(k); })).finally(function() {
-                    window.location.replace(window.location.origin + window.location.pathname + '?_fresh=' + now);
-                  });
-                });
-              } else {
-                window.location.replace(window.location.origin + window.location.pathname + '?_fresh=' + now);
-              }
-            }
+          if (typeof msg === 'string' && (msg.indexOf('inView') !== -1 || msg.indexOf('routes-') !== -1 || msg.indexOf('Loading chunk') !== -1 || msg.indexOf('is not defined') !== -1 || msg.indexOf('dynamically imported') !== -1)) {
+            hardPurgeAndReload();
+          }
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+          var reason = (e && e.reason && (e.reason.message || String(e.reason))) || '';
+          if (typeof reason === 'string' && (reason.indexOf('inView') !== -1 || reason.indexOf('routes-') !== -1 || reason.indexOf('Loading chunk') !== -1 || reason.indexOf('is not defined') !== -1 || reason.indexOf('dynamically imported') !== -1)) {
+            hardPurgeAndReload();
           }
         });
       })();

@@ -61,6 +61,16 @@ class StorageRecoverEngine(private val context: Context) {
             onProgress(_currentScanPath.value, results.size)
             results.addAll(scanMediaStoreTrashed(selectedCategory))
 
+            // Tier F: WhatsApp Media & Deleted Status Cache
+            _currentScanPath.value = "WhatsApp Media & Hidden Status Cache"
+            onProgress(_currentScanPath.value, results.size)
+            results.addAll(scanWhatsAppMedia(selectedCategory))
+
+            // Tier G: DCIM & Pictures Hidden Thumbnail Caches
+            _currentScanPath.value = "DCIM & Gallery Thumbnail Caches"
+            onProgress(_currentScanPath.value, results.size)
+            results.addAll(scanDcimThumbnails(selectedCategory))
+
             // Tier B: Hidden media in dot-prefixed directories & .nomedia folders
             _currentScanPath.value = "Hidden Dot-Folders & .nomedia directories"
             onProgress(_currentScanPath.value, results.size)
@@ -75,6 +85,11 @@ class StorageRecoverEngine(private val context: Context) {
             _currentScanPath.value = "Application Media Caches & Surviving Duplicates"
             onProgress(_currentScanPath.value, results.size)
             results.addAll(scanAppCacheMedia(selectedCategory))
+
+            // Tier H: APK & Package Backups
+            _currentScanPath.value = "Package Backups & Installer APKs"
+            onProgress(_currentScanPath.value, results.size)
+            results.addAll(scanApkBackups(selectedCategory))
 
         } catch (_: Exception) {
             // Graceful handling of restricted directory access
@@ -148,6 +163,139 @@ class StorageRecoverEngine(private val context: Context) {
             } catch (_: Exception) {}
         }
 
+        return list
+    }
+
+    // ── Tier F: WhatsApp Media & Deleted Status Cache ──
+    private fun scanWhatsAppMedia(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        val externalStorage = Environment.getExternalStorageDirectory() ?: return list
+
+        val waFolders = listOf(
+            File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media"),
+            File(externalStorage, "WhatsApp/Media")
+        )
+
+        for (waDir in waFolders) {
+            if (!waDir.exists() || !waDir.isDirectory) continue
+            val subFolders = waDir.listFiles() ?: continue
+            for (sub in subFolders) {
+                if (!sub.isDirectory) continue
+                scanDirectoryForRecoverableMedia(sub, list, category, "WhatsApp Media > ${sub.name}", maxDepth = 2)
+            }
+        }
+        return list
+    }
+
+    private fun scanDirectoryForRecoverableMedia(
+        dir: File,
+        results: MutableList<RecoverItem>,
+        category: RecoverCategory,
+        pathLabel: String,
+        depth: Int = 0,
+        maxDepth: Int = 2
+    ) {
+        if (depth > maxDepth || !dir.exists()) return
+        val files = dir.listFiles() ?: return
+        for (f in files) {
+            if (f.isDirectory) {
+                scanDirectoryForRecoverableMedia(f, results, category, "$pathLabel/${f.name}", depth + 1, maxDepth)
+            } else {
+                val cat = getCategoryForExtension(f.extension) ?: continue
+                if (category != RecoverCategory.ALL_MEDIA && category != cat) continue
+                results.add(
+                    RecoverItem(
+                        id = "wa_${f.absolutePath.hashCode()}",
+                        name = f.name,
+                        sizeBytes = f.length(),
+                        dateModified = dateFormat.format(Date(f.lastModified())),
+                        sourcePath = "$pathLabel > ${f.name}",
+                        category = cat,
+                        tier = RecoverTier.HIDDEN_MEDIA,
+                        uri = Uri.fromFile(f),
+                        qualityTag = "WhatsApp Media Cache",
+                        isSelected = false,
+                        isRestorable = true
+                    )
+                )
+            }
+        }
+    }
+
+    // ── Tier G: DCIM & Pictures Hidden Thumbnail Caches ──
+    private fun scanDcimThumbnails(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        if (category != RecoverCategory.ALL_MEDIA && category != RecoverCategory.PHOTOS) return list
+        val externalStorage = Environment.getExternalStorageDirectory() ?: return list
+
+        val thumbDirs = listOf(
+            File(externalStorage, "DCIM/.thumbnails"),
+            File(externalStorage, "Pictures/.thumbnails"),
+            File(externalStorage, ".thumbnails")
+        )
+        for (td in thumbDirs) {
+            if (!td.exists() || !td.isDirectory) continue
+            val files = td.listFiles() ?: continue
+            for (f in files) {
+                if (f.isDirectory || f.length() < 1024) continue
+                val ext = f.extension.lowercase()
+                if (ext in listOf("jpg", "jpeg", "png", "webp") || f.name.endsWith(".thumb") || f.length() in 2048..1500000) {
+                    list.add(
+                        RecoverItem(
+                            id = "dcim_thumb_${f.absolutePath.hashCode()}",
+                            name = f.name,
+                            sizeBytes = f.length(),
+                            dateModified = dateFormat.format(Date(f.lastModified())),
+                            sourcePath = "DCIM Hidden Thumbnail Cache > ${f.name}",
+                            category = RecoverCategory.PHOTOS,
+                            tier = RecoverTier.THUMBNAIL_PREVIEW,
+                            uri = Uri.fromFile(f),
+                            qualityTag = "Cached Thumbnail (Recoverable Photo)",
+                            isSelected = false,
+                            isRestorable = true
+                        )
+                    )
+                }
+            }
+        }
+        return list
+    }
+
+    // ── Tier H: APK & Package Backups ──
+    private fun scanApkBackups(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        if (category != RecoverCategory.ALL_MEDIA && category != RecoverCategory.DOCUMENTS) return list
+        val externalStorage = Environment.getExternalStorageDirectory() ?: return list
+
+        val searchDirs = listOf(
+            File(externalStorage, Environment.DIRECTORY_DOWNLOADS),
+            File(externalStorage, "Bluetooth"),
+            File(externalStorage, "Telegram/Telegram Documents")
+        )
+        for (dir in searchDirs) {
+            if (!dir.exists() || !dir.isDirectory) continue
+            val files = dir.listFiles() ?: continue
+            for (f in files) {
+                if (f.isDirectory) continue
+                if (f.extension.equals("apk", ignoreCase = true)) {
+                    list.add(
+                        RecoverItem(
+                            id = "apk_${f.absolutePath.hashCode()}",
+                            name = f.name,
+                            sizeBytes = f.length(),
+                            dateModified = dateFormat.format(Date(f.lastModified())),
+                            sourcePath = "Storage Directory > ${dir.name}/${f.name}",
+                            category = RecoverCategory.DOCUMENTS,
+                            tier = RecoverTier.RESTORABLE_ORIGINAL,
+                            uri = Uri.fromFile(f),
+                            qualityTag = "Android Package Backup (.apk)",
+                            isSelected = false,
+                            isRestorable = true
+                        )
+                    )
+                }
+            }
+        }
         return list
     }
 
@@ -439,6 +587,16 @@ class StorageRecoverEngine(private val context: Context) {
                             context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
                         } catch (_: Exception) {}
                     }
+
+                    // Direct MediaScanner notify so images immediately appear in Gallery app
+                    try {
+                        android.media.MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(destFile.absolutePath),
+                            null,
+                            null
+                        )
+                    } catch (_: Exception) {}
                 } else {
                     destFile.delete()
                     failedCount++

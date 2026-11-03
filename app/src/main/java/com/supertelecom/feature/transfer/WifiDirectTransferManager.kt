@@ -74,6 +74,9 @@ class WifiDirectTransferManager(private val context: Context) {
     private val _incomingManifest = MutableStateFlow<TransferManifest?>(null)
     val incomingManifest: StateFlow<TransferManifest?> = _incomingManifest.asStateFlow()
 
+    private val _localIpAddress = MutableStateFlow<String?>(null)
+    val localIpAddress: StateFlow<String?> = _localIpAddress.asStateFlow()
+
     private var activeJob: Job? = null
     private var serverSocket: ServerSocket? = null
     private var activeSocket: Socket? = null
@@ -148,6 +151,57 @@ class WifiDirectTransferManager(private val context: Context) {
             context.registerReceiver(p2pReceiver, intentFilter)
             isReceiverRegistered = true
         }
+        refreshLocalIp()
+    }
+
+    fun refreshLocalIp() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val interfaces = java.util.Collections.list(java.net.NetworkInterface.getNetworkInterfaces())
+                for (intf in interfaces) {
+                    if (intf.isLoopback || !intf.isUp) continue
+                    val addrs = java.util.Collections.list(intf.inetAddresses)
+                    for (addr in addrs) {
+                        if (!addr.isLoopbackAddress && addr is java.net.Inet4Address) {
+                            val ip = addr.hostAddress
+                            if (ip != null && !ip.startsWith("127.")) {
+                                _localIpAddress.value = ip
+                                return@launch
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    fun getInstalledUserApps(): List<TransferFileItem> {
+        val list = mutableListOf<TransferFileItem>()
+        try {
+            val pm = context.packageManager
+            val packages = pm.getInstalledApplications(0)
+            for (appInfo in packages) {
+                val isSystem = (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+                val isUpdatedSystem = (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
+                if (!isSystem || isUpdatedSystem) {
+                    val apkFile = File(appInfo.publicSourceDir)
+                    if (apkFile.exists() && apkFile.length() > 0) {
+                        val label = pm.getApplicationLabel(appInfo).toString()
+                        list.add(
+                            TransferFileItem(
+                                id = "apk_${appInfo.packageName}",
+                                name = "$label.apk",
+                                sizeBytes = apkFile.length(),
+                                mimeType = "application/vnd.android.package-archive",
+                                uri = Uri.fromFile(apkFile),
+                                status = TransferStatus.PENDING
+                            )
+                        )
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+        return list.sortedBy { it.name }
     }
 
     fun unregisterLifecycle() {
