@@ -38,8 +38,21 @@ fun HomeScreen(
     recentTasks: List<RecentTaskItem> = emptyList(),
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val activity = context as? android.app.Activity
+    val updateManager = remember { com.supertelecom.feature.update.AppUpdateManager(context) }
+    val updateMetadata by updateManager.updateMetadata.collectAsState()
+    val isDownloadingUpdate by updateManager.isDownloading.collectAsState()
+    val downloadProgress by updateManager.downloadProgress.collectAsState()
+    val updateStatusMsg by updateManager.statusMessage.collectAsState()
+    val isCheckingUpdate by updateManager.isChecking.collectAsState()
+
     var showDpdpDialog by remember { mutableStateOf(false) }
     var showContactDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        updateManager.checkForUpdates()
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -126,6 +139,140 @@ fun HomeScreen(
                             tint = TextSecondary,
                             modifier = Modifier.size(18.dp)
                         )
+                    }
+                }
+            }
+
+            // ── IN-APP AUTO-UPDATE BANNER (SHOWN WHEN NEW VERSION DETECTED) ──
+            updateMetadata?.let { meta ->
+                Spacer(modifier = Modifier.height(12.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            Brush.linearGradient(listOf(Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)))
+                        )
+                        .border(1.5.dp, CyanAccent, RoundedCornerShape(16.dp))
+                        .padding(14.dp)
+                ) {
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(CyanAccent.copy(alpha = 0.2f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.SystemUpdate,
+                                        contentDescription = null,
+                                        tint = CyanAccent,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = if (isHindi) "नया ऐप अपडेट उपलब्ध है!" else "New App Update Available!",
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = CyanAccent,
+                                            fontSize = 15.sp
+                                        )
+                                    )
+                                    Text(
+                                        text = "v${meta.versionName} (${meta.fileSizeHuman}) • In-Place Update",
+                                        style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(EmeraldAccent.copy(alpha = 0.2f))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = if (isHindi) "अपडेट" else "UPDATE",
+                                    style = MaterialTheme.typography.labelSmall.copy(
+                                        color = EmeraldAccent,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 10.sp
+                                    )
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = if (isHindi)
+                                "सुपर टेलीकॉम लोगो, WhatsApp मीडिया रिकवरी और डायरेक्ट हॉटस्पॉट ट्रांसफर। आपके मौजूदा ऐप में सीधा अपडेट होगा।"
+                            else
+                                "Includes brand logo, WhatsApp deep recovery & direct Hotspot transfer. Updates your existing app in place.",
+                            style = MaterialTheme.typography.bodySmall.copy(color = TextPrimary, fontSize = 11.sp)
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        if (isDownloadingUpdate) {
+                            Column {
+                                LinearProgressIndicator(
+                                    progress = { downloadProgress },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(6.dp)
+                                        .clip(RoundedCornerShape(3.dp)),
+                                    color = CyanAccent,
+                                    trackColor = CardDark
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = updateStatusMsg ?: "Downloading...",
+                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp, color = TextMuted)
+                                    )
+                                    Text(
+                                        text = "${(downloadProgress * 100).toInt()}%",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = CyanAccent
+                                        )
+                                    )
+                                }
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    if (activity != null) {
+                                        updateManager.downloadAndInstallUpdate(meta, activity)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(46.dp),
+                                shape = RoundedCornerShape(10.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                            ) {
+                                Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = if (isHindi) "अभी अपडेट इंस्टॉल करें (${meta.fileSizeHuman})" else "INSTALL UPDATE NOW (${meta.fileSizeHuman})",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
+                                )
+                            }
+                        }
                     }
                 }
             }

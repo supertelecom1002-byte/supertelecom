@@ -31,7 +31,7 @@ if __name__ == '__main__':
     print("Staging config, src, and script files...", flush=True)
     subprocess.run(['git', 'add', 'index.html', 'vercel.json', 'src/', 'public/apk-release.json', 'scripts/'], check=True)
 
-    print("Staging Android Kotlin code & resources...", flush=True)
-    subprocess.run(['git', 'add', 'app/src/main/res/', 'app/src/main/java/'], check=True)
+    print("Staging Android Kotlin code, build scripts & resources...", flush=True)
+    subprocess.run(['git', 'add', 'app/build.gradle.kts', 'app/src/main/AndroidManifest.xml', 'app/src/main/res/', 'app/src/main/java/'], check=True)
 
     print("Done! All files successfully staged.", flush=True)
