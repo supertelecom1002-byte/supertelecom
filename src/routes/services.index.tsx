@@ -205,7 +205,7 @@ function ServicesIndex() {
                   </p>
 
                   <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                    <span className="text-cyan-300 font-bold">{service.priceRangeInr}</span>
+                    <span className="text-cyan-300 font-bold">Consultation Required</span>
                     <span className="text-slate-400 flex items-center gap-1">
                       <Clock className="h-3 w-3 text-cyan-400" /> {service.turnaroundTime}
                     </span>
@@ -218,7 +218,7 @@ function ServicesIndex() {
                     params={{ slug: service.slug }}
                     className="inline-flex items-center gap-1 text-xs font-bold text-cyan-400 hover:text-cyan-300 hover:underline"
                   >
-                    <span>View Full Guide & Price</span>
+                    <span>View Full Service Guide</span>
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
 

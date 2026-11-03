@@ -45,7 +45,7 @@ export const Route = createFileRoute("/locations/barganda-road-mobile-repair")({
               url: PAGE_URL,
               telephone: PHONE,
               email: "supertelecom1002@gmail.com",
-              priceRange: "₹₹",
+              priceRange: "$$",
               image: `${SITE_URL}/favicon.png`,
               address: {
                 "@type": "PostalAddress",

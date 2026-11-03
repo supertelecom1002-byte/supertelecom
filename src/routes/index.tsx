@@ -423,7 +423,7 @@ function About() {
             {[
               ["10+ Yrs", "In Giridih (Established 2016)"],
               ["16+", "Dedicated Hardware Repair Silos"],
-              ["100%", "DPDP 2027 Privacy Compliant Lab"],
+              ["100%", "Data Privacy Privacy Compliant Lab"],
               ["90 Days", "Parts & Micro-Soldering Warranty"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">
@@ -730,7 +730,7 @@ function Contact() {
     e.preventDefault();
     if (submitting || sent) return;
     if (!dpdpConsent) {
-      setError("कृपया DPDP Act 2027 के तहत डेटा शेयरिंग सहमति चेकबॉक्स को चेक करें।");
+      setError("कृपया Data Privacy Protocol के तहत डेटा शेयरिंग सहमति चेकबॉक्स को चेक करें।");
       return;
     }
     setSubmitting(true);

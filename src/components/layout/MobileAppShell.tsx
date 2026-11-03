@@ -423,7 +423,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
           className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold flex items-center gap-1 whitespace-nowrap active:scale-95 transition-transform"
         >
           <Smartphone className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
-          <span>📱 Screen Price</span>
+          <span>📱 Screen Services</span>
         </Link>
 
         <Link
@@ -651,7 +651,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                     Same-day OCA glass lamination &amp; original display.
                   </p>
                   <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 block pt-1">
-                    Starts ₹899 &bull; 45 Mins
+                    Consultation Required &bull; 45 Mins
                   </span>
                 </Link>
 
@@ -973,37 +973,37 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 {
                   title: "Original OLED Display Combos",
                   desc: "Samsung / iPhone / OnePlus OEM panels",
-                  price: "From ₹1,299",
+                  price: "Consultation Required",
                   tag: "Displays",
                 },
                 {
                   title: "High-Capacity Authentic Batteries",
                   desc: "0-Cycle lithium cells with 6M warranty",
-                  price: "From ₹699",
+                  price: "Consultation Required",
                   tag: "Power",
                 },
                 {
                   title: "Fast Chargers (67W / 80W / 120W)",
                   desc: "Type-C GaN flash chargers with cable",
-                  price: "From ₹449",
+                  price: "Contact For Details",
                   tag: "Accessories",
                 },
                 {
                   title: "UV Privacy & 9D Tempered Glass",
                   desc: "Curved edge-to-edge bubble-free install",
-                  price: "From ₹149",
+                  price: "Contact For Details",
                   tag: "Protection",
                 },
                 {
                   title: "Original Charging Sub-Boards",
                   desc: "Microphone & fast-charge IC restored",
-                  price: "From ₹399",
+                  price: "Consultation Required",
                   tag: "Internal",
                 },
                 {
                   title: "Certified Refurbished Mobiles",
                   desc: "Tested 12-point verified second hand phones",
-                  price: "From ₹4,999",
+                  price: "Inquire Available Stock",
                   tag: "Phones",
                 },
               ].map((item, idx) => (

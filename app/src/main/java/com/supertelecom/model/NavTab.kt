@@ -2,9 +2,9 @@ package com.supertelecom.model
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Restore
-import androidx.compose.material.icons.filled.Smartphone
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class NavTab(
@@ -13,7 +13,7 @@ enum class NavTab(
     val icon: ImageVector
 ) {
     HOME("Home", "होम", Icons.Default.Home),
-    TRANSFER("Transfer", "डेटा ट्रांसफर", Icons.Default.Send),
-    RECOVER("Recover", "डेटा रिकवर", Icons.Default.Restore),
-    LAUNCHER("Launcher", "सुपर लॉन्चर", Icons.Default.Smartphone)
+    TRANSFER("Transfer", "ट्रांसफर", Icons.Default.Send),
+    RECOVER("Recover", "रिकवर", Icons.Default.Restore),
+    MORE("More", "अन्य", Icons.Default.MoreHoriz)
 }

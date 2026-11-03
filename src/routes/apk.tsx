@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Download, ArrowRight } from "lucide-react";
+import { Download, ArrowRight, ShieldCheck } from "lucide-react";
 import { safeVibrate } from "@/utils/safeVibrate";
+import { KNOWN_RELEASE_APK } from "@/utils/apkDownloadManager";
 
 export const Route = createFileRoute("/apk")({
   server: {
@@ -10,9 +11,9 @@ export const Route = createFileRoute("/apk")({
         return new Response(null, {
           status: 302,
           headers: {
-            Location: "/SuperTelecom.apk",
+            Location: KNOWN_RELEASE_APK.downloadUrl,
             "Content-Type": "application/vnd.android.package-archive",
-            "Content-Disposition": 'attachment; filename="SuperTelecom-v2.4.0.apk"',
+            "Content-Disposition": `attachment; filename="${KNOWN_RELEASE_APK.downloadFilename}"`,
             "Cache-Control": "public, max-age=31536000, immutable",
           },
         });
@@ -22,20 +23,18 @@ export const Route = createFileRoute("/apk")({
   component: ApkDirectDownloadPage,
 });
 
-function ApkDirectDownloadPage() {
+export function ApkDirectDownloadPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Invisible link click to force direct browser download
       const link = document.createElement("a");
-      link.href = "/SuperTelecom.apk";
-      link.download = "SuperTelecom-v2.4.0.apk";
+      link.href = KNOWN_RELEASE_APK.downloadUrl;
+      link.download = KNOWN_RELEASE_APK.downloadFilename;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Fallback location replace if link click was prevented
       const fallbackTimer = setTimeout(() => {
-        window.location.replace("/SuperTelecom.apk");
+        window.location.replace(KNOWN_RELEASE_APK.downloadUrl);
       }, 600);
 
       return () => clearTimeout(fallbackTimer);
@@ -51,20 +50,20 @@ function ApkDirectDownloadPage() {
 
         <div>
           <span className="text-[11px] font-mono uppercase tracking-wider font-extrabold text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/40">
-            Super Telecom Direct APK v2.4.0
+            Super Telecom Direct APK v{KNOWN_RELEASE_APK.versionName}
           </span>
           <h1 className="text-xl sm:text-2xl font-black text-white mt-3 leading-tight">
             Starting Instant Download...
           </h1>
           <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-            Your direct Android APK download is initializing automatically. If your device prompts you, tap <strong>"Download anyway"</strong>.
+            Your direct Android APK download is initializing automatically ({KNOWN_RELEASE_APK.fileSizeHuman}). If your device prompts you, tap <strong>"Download anyway"</strong>.
           </p>
         </div>
 
         <div className="pt-2">
           <a
-            href="/SuperTelecom.apk"
-            download="SuperTelecom-v2.4.0.apk"
+            href={KNOWN_RELEASE_APK.downloadUrl}
+            download={KNOWN_RELEASE_APK.downloadFilename}
             onClick={() => safeVibrate([30, 20, 40])}
             className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
           >

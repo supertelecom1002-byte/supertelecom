@@ -1,6 +1,6 @@
 # Super Telecom — Dedicated Mobile Phone Repair Shop & Chip-Level Hardware Lab in Giridih, Jharkhand
 
-> Super Telecom (supertelecom.shop) is the official smartphone repair and chip-level micro-soldering center on Barganda Road (Near Shivam Clinic), Giridih, Jharkhand 815301. Serving Giridih since 2016 with professional component-level repairs, transparent pricing, and DPDP Act 2027 privacy standards.
+> Super Telecom (supertelecom.shop) is the official smartphone repair and chip-level micro-soldering center on Barganda Road (Near Shivam Clinic), Giridih, Jharkhand 815301. Serving Giridih since 2016 with professional component-level repairs, transparent pricing, and rigorous privacy and on-device data protection standards.
 
 ## Official Entity Overview & Authority Grounding
 - **Primary Business Name:** Super Telecom
@@ -31,12 +31,12 @@ Super Telecom provides immediate walk-in, same-day repair service to customers f
 
 ## 16 Dedicated Single-Service Repair Catalog & Price Matrix in Giridih
 
-All repairs are performed on-site at our Barganda Road workshop with transparent pricing, quality tested parts, and written store warranty. DPDP Act 2027 compliant privacy standards with a zero-snooping workshop pledge. Device passcode is not required for hardware repairs.
+All repairs are performed on-site at our Barganda Road workshop with transparent pricing, quality tested parts, and written store warranty. Privacy-first data standards with a zero-snooping workshop pledge. Device passcode is not required for hardware repairs.
 
 ### 1. Screen & 120Hz AMOLED Display Replacement
 - **URL:** https://www.supertelecom.shop/services/screen-display-replacement
 - **Hindi:** मोबाइल स्क्रीन व 120Hz AMOLED डिस्प्ले रिप्लेसमेंट
-- **Price Range:** ₹899 – ₹13,999 (Starting @ ₹899)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 30–60 Minutes
 - **Warranty:** 90 Days Written Warranty
 - **Coverage:** iPhone, Samsung Galaxy (Curved / Ultra), OnePlus, Xiaomi / Redmi, Realme, Vivo, Oppo.
@@ -45,7 +45,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 2. Original Mobile Battery Replacement
 - **URL:** https://www.supertelecom.shop/services/battery-replacement
 - **Hindi:** ओरिजिनल मोबाइल बैटरी रिप्लेसमेंट
-- **Price Range:** ₹499 – ₹4,499 (Starting @ ₹499)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 20–40 Minutes
 - **Warranty:** 180 Days (6 Months) Replacement Warranty
 - **Coverage:** Zero-cycle high-density Li-ion cells for all Android and iPhone models.
@@ -54,7 +54,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 3. Mobile Charging Port & Fast-Charge Jack Repair
 - **URL:** https://www.supertelecom.shop/services/charging-port-repair
 - **Hindi:** चार्जिंग पोर्ट व टाइप-सी फास्ट-चार्ज जैक रिपेयर
-- **Price Range:** ₹299 – ₹1,899 (Starting @ ₹299)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 25–45 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** Type-C 24-pin connectors, Apple Lightning ports, micro-USB sub-boards.
@@ -63,7 +63,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 4. Chip-Level Motherboard, Dead Phone & CPU Reballing
 - **URL:** https://www.supertelecom.shop/services/motherboard-ic-repair
 - **Hindi:** मदरबोर्ड चिप-लेवल आईसी रिपेयर, डेड फोन व सीपीयू रीबॉलिंग
-- **Price Range:** ₹799 – ₹5,499 (Starting @ ₹799)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 2–6 Hours / Same Day
 - **Warranty:** 90 Days Written Warranty
 - **Coverage:** Poco X3 Pro / Redmi Note 10 CPU reballing, OnePlus 9/10/11 boards, iPhone double-decker logic boards.
@@ -72,7 +72,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 5. Water Damaged Phone Ultrasonic Cleaning & Revival
 - **URL:** https://www.supertelecom.shop/services/water-damage-revival
 - **Hindi:** पानी में गिरे फोन का अल्ट्रासोनिक केमिकल क्लीनिंग व रिवाइवल
-- **Price Range:** ₹499 – ₹2,999 (Starting @ ₹499)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 1–3 Hours
 - **Warranty:** 60 Days Service Warranty
 - **Coverage:** Phones dropped in water, tea, rain, or liquid spills.
@@ -81,7 +81,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 6. AMOLED Green Line & Pink Line Screen Fix
 - **URL:** https://www.supertelecom.shop/services/green-line-display-fix
 - **Hindi:** AMOLED स्क्रीन ग्रीन लाइन व पिंक लाइन रिपेयर
-- **Price Range:** ₹999 – ₹3,999 (Starting @ ₹999)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 45–90 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** OnePlus 8T/9/10/11, Samsung S20/S21/S22 Ultra, Vivo X-Series AMOLED panels.
@@ -90,7 +90,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 7. Front & Rear Camera Module & Sapphire Lens Repair
 - **URL:** https://www.supertelecom.shop/services/camera-lens-repair
 - **Hindi:** फ्रंट व रियर कैमरा मॉड्यूल और लेंस ग्लास रिपेयर
-- **Price Range:** ₹349 – ₹4,999 (Starting @ ₹349)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 30–60 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** Outer sapphire camera glass, 48MP/108MP/200MP sensor modules, OIS motor stabilization.
@@ -99,7 +99,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 8. Mobile Loudspeaker, Earpiece & Low Sound Fix
 - **URL:** https://www.supertelecom.shop/services/speaker-sound-repair
 - **Hindi:** मोबाइल लाउडस्पीकर, ईयरपीस और कम आवाज समाधान
-- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 20–40 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** In-call ear receiver, bottom stereo loudspeakers, acoustic mesh de-clogging.
@@ -108,7 +108,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 9. Mobile Mic & Call Voice Problem Repair
 - **URL:** https://www.supertelecom.shop/services/microphone-repair
 - **Hindi:** मोबाइल माइक व कॉल आवाज समस्या समाधान
-- **Price Range:** ₹299 – ₹1,299 (Starting @ ₹299)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 20–40 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** Primary call microphones, secondary noise-cancellation MEMS silicon mics.
@@ -117,7 +117,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 10. No Service, 5G/4G Network IC & Antenna Repair
 - **URL:** https://www.supertelecom.shop/services/network-5g-signal-repair
 - **Hindi:** नो सर्विस, 5G/4G नेटवर्क आईसी व एंटीना रिपेयर
-- **Price Range:** ₹499 – ₹3,499 (Starting @ ₹499)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 1–3 Hours
 - **Warranty:** 90 Days Warranty
 - **Coverage:** Jio & Airtel 5G/4G bands, RF transceiver WTR/SDR ICs, baseband modems, coaxial antenna cables.
@@ -126,7 +126,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 11. Mobile Software Flashing, Bootloop & OS Recovery
 - **URL:** https://www.supertelecom.shop/services/software-flashing-unlock
 - **Hindi:** मोबाइल सॉफ्टवेयर फ्लैशिंग, बूटलूप व ओएस रिकवरी
-- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 20–45 Minutes
 - **Warranty:** 30 Days Software Warranty
 - **Coverage:** Official stock ROMs for Xiaomi MIUI/HyperOS, Samsung OneUI, RealmeUI, ColorOS, iOS DFU.
@@ -135,7 +135,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 12. In-Display Fingerprint & iPhone Face ID Repair
 - **URL:** https://www.supertelecom.shop/services/fingerprint-face-id-repair
 - **Hindi:** इन-डिस्प्ले फिंगरप्रिंट व आईफोन फेस आईडी रिपेयर
-- **Price Range:** ₹599 – ₹4,999 (Starting @ ₹599)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 45–90 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** In-display optical/ultrasonic fingerprint recalibration, iPhone TrueDepth dot-projector prism alignment.
@@ -144,7 +144,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 13. Power Key, Volume Button & Side Flex Replacement
 - **URL:** https://www.supertelecom.shop/services/power-volume-button-repair
 - **Hindi:** पावर बटन, वॉल्यूम की और साइड फ्लेक्स रिप्लेसमेंट
-- **Price Range:** ₹249 – ₹1,299 (Starting @ ₹249)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 20–35 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** Tactile micro-dome switches, side ribbon cables, iPhone action buttons, OnePlus alert sliders.
@@ -153,7 +153,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 14. Dead Phone Photo, Contact & Storage Data Recovery
 - **URL:** https://www.supertelecom.shop/services/mobile-data-recovery
 - **Hindi:** डेड फोन फोटो, कॉन्टैक्ट व मेमोरी डाटा रिकवरी
-- **Price Range:** ₹799 – ₹4,999 (Starting @ ₹799)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 2–6 Hours / Same Day
 - **Warranty:** No Data = No Charge Policy
 - **Coverage:** Smashed, run-over, water-damaged, or unbootable Android and iPhone logic boards.
@@ -162,7 +162,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 15. Mobile Overheating, Lag & Thermal Optimization
 - **URL:** https://www.supertelecom.shop/services/phone-hanging-performance-fix
 - **Hindi:** फोन हैंगिंग, ओवरहीटिंग व स्पीड ऑप्टिमाइज़ेशन
-- **Price Range:** ₹299 – ₹1,499 (Starting @ ₹299)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 30–60 Minutes
 - **Warranty:** 60 Days Service Warranty
 - **Coverage:** Sluggish phones, frame drops in gaming, burning hot devices during calls or charging.
@@ -171,7 +171,7 @@ All repairs are performed on-site at our Barganda Road workshop with transparent
 ### 16. iPhone & Flagship Back Glass Laser Replacement
 - **URL:** https://www.supertelecom.shop/services/iphone-back-glass-repair
 - **Hindi:** आईफोन व फ्लैगशिप बैक ग्लास लेजर रिप्लेसमेंट
-- **Price Range:** ₹799 – ₹4,999 (Starting @ ₹799)
+- **Service Status:** Consultation Required (Free In-Shop Bench Check)
 - **Turnaround:** 45–90 Minutes
 - **Warranty:** 90 Days Warranty
 - **Coverage:** iPhone 11 through 16 Pro Max frosted matte glass, Samsung Galaxy S21–S24 Ultra rear glass.

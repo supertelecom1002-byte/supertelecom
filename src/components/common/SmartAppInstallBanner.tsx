@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { Download, X, Smartphone, Sparkles, CheckCircle2 } from "lucide-react";
 import { useIsStandalone } from "@/hooks/useIsStandalone";
+import { KNOWN_RELEASE_APK } from "@/utils/apkDownloadManager";
 
 interface SmartAppInstallBannerProps {
   className?: string;
@@ -90,7 +91,7 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
               Super Telecom Native Android App
             </span>
             <span className="hidden xs:inline-block text-[8px] font-mono px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold">
-              v2.5.0 APK
+              v{KNOWN_RELEASE_APK.versionName} APK
             </span>
           </div>
           <p className="text-[10px] text-slate-300 font-mono truncate">

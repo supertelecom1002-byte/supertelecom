@@ -124,12 +124,12 @@ export const Hero: React.FC = () => {
             </Link>
 
             <a
-              href="/download/android"
+              href="/SuperTelecom.apk"
               download="SuperTelecom-Release.apk"
               className="w-full py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-850 text-cyan-300 font-bold flex items-center justify-center gap-2 text-xs active:scale-95 transition-all"
             >
               <Download className="h-3.5 w-3.5 text-cyan-400" />
-              <span>📲 Download True Native Android APK (v2.5.0)</span>
+              <span>📲 Download Native Android APK</span>
             </a>
 
             {/* Old App vs New Native App Notice */}
@@ -152,7 +152,7 @@ export const Hero: React.FC = () => {
               className="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all text-xs"
             >
               <Wrench className="h-3.5 w-3.5" />
-              <span>Cost Calculator</span>
+              <span>Consultation Finder</span>
             </a>
 
             <a
@@ -248,12 +248,12 @@ export const Hero: React.FC = () => {
               </Link>
 
               <a
-                href="/download/android"
+                href="/SuperTelecom.apk"
                 download="SuperTelecom-Release.apk"
                 className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 text-cyan-300 px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-400 active:scale-95 min-h-[52px]"
               >
                 <Download className="h-4 w-4 text-cyan-400" />
-                <span>📲 Download True Native Android APK (v2.5.0)</span>
+                <span>📲 Download Native Android APK</span>
               </a>
             </div>
 
@@ -276,7 +276,7 @@ export const Hero: React.FC = () => {
                 className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-6 py-4 text-sm font-bold shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all hover:scale-[1.02] active:scale-95 min-h-[48px]"
               >
                 <Wrench className="h-4 w-4" />
-                <span>Calculate Repair Cost</span>
+                <span>Repair Consultation Finder</span>
                 <ChevronRight className="h-4 w-4 ml-0.5" />
               </a>
 

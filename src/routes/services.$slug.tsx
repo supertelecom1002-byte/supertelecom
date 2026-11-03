@@ -288,13 +288,13 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 space-y-1">
                   <span className="text-[11px] font-mono text-slate-400 block uppercase">
-                    अनुमानित खर्च (Starting Price)
+                    सेवा परामर्श (Service Consultation)
                   </span>
-                  <div className="text-lg sm:text-2xl font-bold text-cyan-300 font-display">
-                    {service.priceRangeInr}
+                  <div className="text-base sm:text-xl font-bold text-cyan-300 font-display">
+                    Consultation Required
                   </div>
                   <span className="text-[10px] text-slate-400 block">
-                    Starting at ₹{service.startingPrice}
+                    Free In-Store Bench Check
                   </span>
                 </div>
 
@@ -347,7 +347,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                   className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-4 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/25 hover:scale-[1.02] active:scale-95 transition-all text-center"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  <span>WhatsApp पर तुरंत खर्च पूछें (Get Instant Quote)</span>
+                  <span>WhatsApp पर तुरंत परामर्श लें (Get Consultation)</span>
                 </a>
                 <a
                   href={`tel:${PHONE}`}
@@ -452,13 +452,13 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
         <section className="space-y-6">
           <div className="space-y-2">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">
-              Clear & Transparent Estimates • पारदर्शी शुल्क
+              Clear & Transparent Services • पारदर्शी सेवा परामर्श
             </span>
             <h2 className="text-xl sm:text-3xl font-extrabold font-display text-white">
-              ब्रांड-वार अनुमानित खर्च व समय तालिका
+              ब्रांड-वार सेवा व परामर्श विवरण
             </h2>
             <p className="text-xs sm:text-sm text-slate-400">
-              सुपर टेलीकॉम गिरिडीह में सभी ब्रांड्स के लिए वास्तविक व पारदर्शी मूल्य सूची:
+              सुपर टेलीकॉम गिरिडीह में सभी ब्रांड्स के लिए वास्तविक व पारदर्शी सेवा तालिका:
             </p>
           </div>
 
@@ -479,11 +479,11 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="text-2xl sm:text-3xl font-extrabold text-white font-display">
-                      {item.priceRange}
+                    <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 font-display">
+                      Consultation Required
                     </div>
                     <span className="text-[11px] text-slate-400 block font-mono">
-                      Starting @ ₹{item.startingPrice}
+                      Bench Check &amp; Written Estimate
                     </span>
                   </div>
 
@@ -507,7 +507,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                     rel="noopener noreferrer"
                     className="text-cyan-400 hover:underline font-semibold"
                   >
-                    Quote →
+                    Enquiry →
                   </a>
                 </div>
               </div>
@@ -720,7 +720,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
           className="flex-[1.5] flex items-center justify-center gap-1.5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/25"
         >
           <MessageCircle className="h-3.5 w-3.5" />
-          <span>WhatsApp Quote</span>
+          <span>WhatsApp Enquiry</span>
         </a>
       </div>
 

@@ -20,11 +20,11 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
         name: "Super Telecom",
         legalName: "Super Telecom Mobile Sales & Repair Laboratory",
         description:
-          "Giridih's premier smartphone and iPhone repair laboratory with 10+ years experience, 45X optical stereo soldering workstations, zero-snooping DPDP 2027 compliance, and same-day service.",
+          "Giridih's premier smartphone and iPhone repair laboratory with 10+ years experience, 45X optical stereo soldering workstations, strict customer data privacy protection, and same-day service.",
         url: SITE_URL,
         telephone: BUSINESS_MASTER.phoneRaw,
         image: `${SITE_URL}/super-telecom-logo.png`,
-        priceRange: "₹₹",
+        priceRange: "$$",
         hasMap: BUSINESS_MASTER.mapsUrl,
         address: {
           "@type": "PostalAddress",
@@ -78,11 +78,8 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
             itemOffered: {
               "@type": "Service",
               name: `${item.category} — ${service.title}`,
-              description: `Models: ${item.modelsExample}. Estimated time: ${item.turnaroundTime}. ${item.warranty}.`,
+              description: `Models: ${item.modelsExample}. Estimated time: ${item.turnaroundTime}. ${item.warranty}. Service consultation required.`,
             },
-            price: item.startingPrice,
-            priceCurrency: "INR",
-            priceRange: item.priceRange,
             availability: "https://schema.org/InStock",
             url: canonicalUrl,
             position: idx + 1,
@@ -90,9 +87,6 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
         },
         offers: {
           "@type": "Offer",
-          priceCurrency: "INR",
-          price: service.startingPrice,
-          priceRange: service.priceRangeInr,
           availability: "https://schema.org/InStock",
           url: canonicalUrl,
         },

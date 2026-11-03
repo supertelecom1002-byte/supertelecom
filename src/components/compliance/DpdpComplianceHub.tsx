@@ -51,10 +51,10 @@ export const DpdpConsentCheckbox: React.FC<DpdpConsentCheckboxProps> = ({
         />
         <div className="space-y-1 text-xs">
           <p className="font-medium text-slate-200 leading-snug">
-            मैं <strong className="text-cyan-400">DPDP Act 2027</strong> के तहत रिपेयर अनुमान और सर्विस अपडेट के लिए अपना नाम, फ़ोन नंबर और डिवाइस मॉडल साझा करने की सहमति देता/देती हूँ। मैं कभी भी अपनी सहमति वापस ले सकता/सकती हूँ।
+            मैं रिपेयर परामर्श और सर्विस अपडेट के लिए अपना नाम, फ़ोन नंबर और डिवाइस मॉडल साझा करने की सहमति देता/देती हूँ। मैं कभी भी अपनी सहमति वापस ले सकता/सकती हूँ।
           </p>
           <p className="text-[11px] text-slate-400 leading-normal">
-            I consent under the Digital Personal Data Protection (DPDP) Act 2027 to share my contact details solely for repair quote calculation and service updates. I understand I can withdraw consent or request complete erasure anytime.
+            I consent to share my contact details solely for repair consultation and service updates. I understand I can withdraw consent or request complete erasure anytime.
           </p>
         </div>
       </label>
@@ -131,13 +131,13 @@ export const DpdpDataRightsModal: React.FC<DpdpDataRightsModalProps> = ({
         <div className="space-y-2 border-b border-slate-800 pb-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-400 text-xs font-mono font-bold tracking-wider uppercase">
             <Lock className="h-3 w-3" />
-            <span>DPDP ACT 2027 COMPLIANCE HUB</span>
+            <span>PRIVACY &amp; YOUR DATA CONTROLS</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-extrabold font-display tracking-tight text-white">
-            ग्राहक डेटा सुरक्षा व शिकायत निवारण केंद्र
+            ग्राहक डेटा सुरक्षा व गोपनीयता केंद्र
           </h3>
           <p className="text-xs sm:text-sm text-slate-300">
-            डिजिटल व्यक्तिगत डेटा संरक्षण अधिनियम (DPDP Act 2027) के तहत आपके समस्त अधिकार और सुपर टेलीकॉम की डेटा गोपनीयता गारंटी।
+            आपकी व्यक्तिगत गोपनीयता, डेटा सुरक्षा और सुपर टेलीकॉम की जीरो-स्नूपिंग प्रतिबद्धता।
           </p>
         </div>
 

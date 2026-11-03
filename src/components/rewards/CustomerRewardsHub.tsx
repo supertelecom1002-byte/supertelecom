@@ -120,7 +120,7 @@ export const CustomerRewardsHub: React.FC<CustomerRewardsHubProps> = ({
           </div>
         )}
 
-        {/* Perk 2: ₹150 Repair Voucher */}
+        {/* Perk 2: VIP Priority Repair Pass */}
         {PROMOTIONS_CONFIG.voucher150.isActive && (
           <div className="p-3 rounded-2xl bg-amber-50/60 dark:bg-gradient-to-r dark:from-amber-950/40 dark:to-orange-950/20 border border-amber-200 dark:border-amber-500/40 transition-colors">
             <div className="flex items-start gap-3">
@@ -130,14 +130,14 @@ export const CustomerRewardsHub: React.FC<CustomerRewardsHubProps> = ({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                    ₹150 Lab Repair Voucher
+                    VIP Priority Repair Pass
                   </h4>
                   <span className="text-[9px] font-mono font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/90 px-1.5 py-0.5 rounded-full border border-amber-300 dark:border-amber-500/40">
                     ACTIVE
                   </span>
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
-                  Flat ₹150 off on display replacement, IC micro-soldering, or original battery swap.
+                  Priority bench consultation on display replacement, IC micro-soldering, or original battery swap.
                 </p>
 
                 {/* Coupon Bar */}

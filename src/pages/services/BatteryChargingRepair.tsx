@@ -65,35 +65,35 @@ export const BatteryChargingRepairPage: React.FC = () => {
     {
       service: "Android High-Capacity Battery",
       turnaround: "20 Mins",
-      price: "From ₹899",
+      price: "Consultation Required",
       specs: "OEM High-density cells, 90-day warranty, full safety test",
       popular: true,
     },
     {
       service: "iPhone Premium Battery Replacement",
       turnaround: "30 Mins",
-      price: "From ₹1,499",
+      price: "Consultation Required",
       specs: "Original grade cells, 0 cycle count, 90-day warranty",
       popular: false,
     },
     {
       service: "Type-C / Lightning Port Replacement",
       turnaround: "25 Mins",
-      price: "From ₹350",
+      price: "Consultation Required",
       specs: "Original fast-charge compatible sub-board with mic & OTG",
       popular: true,
     },
     {
       service: "Port Ultrasonic Clean & Pin Alignment",
       turnaround: "15 Mins",
-      price: "From ₹199",
+      price: "Consultation Required",
       specs: "Lint removal, corrosion de-oxidation, micro-pin straightening",
       popular: false,
     },
     {
       service: "Motherboard Charging IC / PMIC Repair",
       turnaround: "Same Day",
-      price: "From ₹999",
+      price: "Consultation Required",
       specs: "BGA micro-soldering for fake charge, short circuit, 0% stuck",
       popular: false,
     },
@@ -263,10 +263,10 @@ export const BatteryChargingRepairPage: React.FC = () => {
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-3">
-                Transparent Battery &amp; Port Repair Pricing in Giridih
+                Battery &amp; Port Repair Services in Giridih
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                Fair prices with genuine high-density cells, precision soldering, and zero hidden charges.
+                Direct consultation with genuine high-density cells, precision soldering, and zero hidden charges.
               </p>
             </div>
 
@@ -276,7 +276,7 @@ export const BatteryChargingRepairPage: React.FC = () => {
                   <tr>
                     <th scope="col" className="px-5 py-4">Repair Service</th>
                     <th scope="col" className="px-5 py-4">Turnaround</th>
-                    <th scope="col" className="px-5 py-4">Starting Price</th>
+                    <th scope="col" className="px-5 py-4">Service Status</th>
                     <th scope="col" className="px-5 py-4 hidden md:table-cell">Details &amp; Warranty</th>
                     <th scope="col" className="px-5 py-4 text-right">Action</th>
                   </tr>

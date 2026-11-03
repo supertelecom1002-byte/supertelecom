@@ -11,8 +11,8 @@ import {
   MessageCircle,
   Wrench,
   ChevronRight,
-  Sparkles,
-  AlertCircle,
+  Phone,
+  HelpCircle,
   Tag,
 } from "lucide-react";
 import {
@@ -24,11 +24,8 @@ import {
   VivoLogo,
 } from "@/components/icons/BrandVectors";
 import { SmartAuthDrawer } from "@/components/auth/SmartAuthDrawer";
-import {
-  BUSINESS_MASTER,
-  REPAIR_PRICE_DISCLAIMER,
-  buildWhatsAppQuoteUrl,
-} from "@/config/superTelecomConfig";
+import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
+import { buildConsultationWhatsAppUrl } from "@/components/consultation/RepairConsultationAction";
 
 interface BrandOption {
   id: string;
@@ -107,52 +104,42 @@ export const RepairEstimator: React.FC = () => {
   const brandObj = BRANDS.find((b) => b.id === selectedBrand) || BRANDS[0];
   const faultObj = FAULTS.find((f) => f.id === selectedFault) || FAULTS[0];
 
-  // Dynamic pricing matrix based on brand and part grade rules
-  let calculatedPrice = "₹899 – ₹2,999";
   let componentGrade = "OEM-Grade";
   let gradeBadge = "OEM-Grade";
 
   if (selectedFault === "display") {
     if (brandObj.isApple) {
-      calculatedPrice = "₹3,500 – ₹15,000";
       componentGrade = "Original Service Pack / Retina OLED";
       gradeBadge = "Original Service Pack";
     } else {
       if (selectedPartGrade === "aftermarket") {
-        calculatedPrice = "₹899 – ₹2,999";
         componentGrade = "Compatible Aftermarket (IPS LCD)";
         gradeBadge = "Compatible Aftermarket";
       } else {
-        calculatedPrice = "₹2,499 – ₹9,999";
         componentGrade = "OEM-Grade (AMOLED / High-Gamut)";
         gradeBadge = "OEM-Grade";
       }
     }
   } else if (selectedFault === "battery") {
     if (brandObj.isApple) {
-      calculatedPrice = "₹1,999 – ₹5,499";
       componentGrade = "Original Service Pack (BMS Reprogrammed)";
       gradeBadge = "Original Service Pack";
     } else {
-      calculatedPrice = "₹699 – ₹2,499";
       componentGrade = "OEM-Grade (High-Density Cell)";
       gradeBadge = "OEM-Grade";
     }
   } else if (selectedFault === "motherboard") {
-    calculatedPrice = brandObj.isApple ? "₹1,800 – ₹6,500" : "₹899 – ₹4,500";
     componentGrade = "Laboratory Level BGA Micro-Soldering";
     gradeBadge = "Original Service Pack";
   } else if (selectedFault === "amoled-line") {
-    calculatedPrice = "₹1,499 – ₹3,999";
     componentGrade = "Laser Trace Jumper Bypass";
     gradeBadge = "OEM-Grade";
   } else if (selectedFault === "water") {
-    calculatedPrice = "₹499 – ₹2,999";
     componentGrade = "Ultrasonic De-Oxidation & Chemical Wash";
     gradeBadge = "OEM-Grade";
   }
 
-  const whatsappUrl = buildWhatsAppQuoteUrl({
+  const whatsappUrl = buildConsultationWhatsAppUrl({
     brand: brandObj.name,
     serviceName: `${faultObj.label} (${gradeBadge})`,
     issue: faultObj.sub,
@@ -161,7 +148,7 @@ export const RepairEstimator: React.FC = () => {
   return (
     <section
       id="repair-calculator"
-      aria-label="Smartphone Repair Cost Calculator"
+      aria-label="Smartphone Repair Consultation Finder"
       className="py-8 sm:py-16 md:py-28 bg-[#020617] text-slate-100 relative overflow-hidden border-t border-slate-800/80"
     >
       {/* Background ambient lighting */}
@@ -172,13 +159,13 @@ export const RepairEstimator: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold uppercase mb-4 shadow-sm">
             <Wrench className="h-3.5 w-3.5 text-cyan-400" />
-            Interactive Hardware Estimator
+            Repair Consultation Finder
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Instant Repair Estimation Matrix
+            Smartphone Repair Consultation Finder
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-400 leading-relaxed">
-            Select your smartphone manufacturer and hardware symptom below for an instant lab specification breakdown.
+            Select your smartphone manufacturer and hardware symptom below for an instant consultation and service recommendation.
           </p>
         </div>
 
@@ -273,7 +260,7 @@ export const RepairEstimator: React.FC = () => {
                     : "bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
                 }`}
               >
-                Compatible Aftermarket (₹899–₹2,999)
+                Compatible Aftermarket (IPS LCD)
               </button>
               <button
                 type="button"
@@ -284,7 +271,7 @@ export const RepairEstimator: React.FC = () => {
                     : "bg-slate-900 border border-slate-800 text-slate-300 hover:text-white"
                 }`}
               >
-                OEM-Grade AMOLED (₹2,499–₹9,999)
+                OEM-Grade AMOLED
               </button>
             </div>
           </div>
@@ -296,7 +283,7 @@ export const RepairEstimator: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-xs font-mono font-bold tracking-wider text-cyan-400 uppercase">
-                  Hardware Specification Sheet
+                  Service Recommendation
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-bold">
                   {gradeBadge}
@@ -311,9 +298,9 @@ export const RepairEstimator: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 bg-slate-950/80 px-5 py-3 rounded-2xl border border-slate-800">
-              <span className="text-xs font-mono text-slate-400 uppercase">Estimated Lab Range:</span>
-              <span className="text-2xl font-extrabold font-mono text-emerald-400">
-                {calculatedPrice}
+              <span className="text-xs font-mono text-slate-400 uppercase">Service Status:</span>
+              <span className="text-xl sm:text-2xl font-extrabold font-mono text-cyan-400">
+                Consultation Required
               </span>
             </div>
           </div>
@@ -350,12 +337,12 @@ export const RepairEstimator: React.FC = () => {
             </div>
           </div>
 
-          {/* Mandatory Transparent Written Price Disclaimer */}
+          {/* Consultation Note */}
           <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-xs text-slate-300 mb-6">
-            <AlertCircle className="h-4 w-4 text-cyan-400 flex-none mt-0.5" />
+            <HelpCircle className="h-4 w-4 text-cyan-400 flex-none mt-0.5" />
             <div>
-              <strong className="text-cyan-300 block mb-0.5">Written Quote Policy:</strong>
-              {REPAIR_PRICE_DISCLAIMER} Free physical bench inspection provided at Barganda Road before proceeding.
+              <strong className="text-cyan-300 block mb-0.5">Bench Consultation &amp; Physical Inspection:</strong>
+              Final service requirements are confirmed after physical device bench check at our Barganda Road lab before repair work begins.
             </div>
           </div>
 
@@ -365,8 +352,7 @@ export const RepairEstimator: React.FC = () => {
               onClick={() => setAuthDrawerOpen(true)}
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 px-6 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-all hover:scale-[1.02] active:scale-95 min-h-[46px] w-full sm:w-auto cursor-pointer"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Lock Price &amp; Book Priority Slot</span>
+              <span>GET CONSULTATION</span>
             </button>
 
             <a
@@ -376,8 +362,16 @@ export const RepairEstimator: React.FC = () => {
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:scale-[1.02] active:scale-95 min-h-[46px] w-full sm:w-auto cursor-pointer"
             >
               <MessageCircle className="h-4 w-4" />
-              <span>WhatsApp Quote</span>
+              <span>WHATSAPP ENQUIRY</span>
               <ChevronRight className="h-4 w-4" />
+            </a>
+
+            <a
+              href={BUSINESS_MASTER.phoneCallHref}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 px-6 py-3.5 text-xs sm:text-sm font-bold transition-all hover:scale-[1.02] active:scale-95 min-h-[46px] w-full sm:w-auto cursor-pointer"
+            >
+              <Phone className="h-4 w-4 text-cyan-400" />
+              <span>CALL NOW</span>
             </a>
           </div>
         </div>
@@ -386,7 +380,7 @@ export const RepairEstimator: React.FC = () => {
       <SmartAuthDrawer
         isOpen={authDrawerOpen}
         onClose={() => setAuthDrawerOpen(false)}
-        actionTitle={`Priority Booking for ${brandObj.name} (${faultObj.label})`}
+        actionTitle={`Repair Consultation for ${brandObj.name} (${faultObj.label})`}
         onSuccess={() => {
           window.open(whatsappUrl, "_blank", "noopener,noreferrer");
         }}

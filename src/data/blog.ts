@@ -43,24 +43,17 @@ export const POSTS: BlogPost[] = [
     date: "2026-02-14",
     excerpt: "Real 2026 Giridih price ranges for iPhone and Android — screen, battery, charging port, motherboard and water-damage repairs, side by side.",
     html: `
-      <p>Repair prices vary depending on device tier, brand, and part grade. Below are the standard 2026 reference ranges at <strong>Super Telecom, Barganda Road, Giridih</strong>:</p>
-      <h2>Screen Replacement Reference Ranges</h2>
-      <ul>
-        <li><strong>Android Compatible LCD:</strong> ₹899 – ₹2,999</li>
-        <li><strong>Android AMOLED / Curved OLED:</strong> ₹2,499 – ₹9,999</li>
-        <li><strong>iPhone Display & OLED (iPhone 8 to 15 Pro Max):</strong> ₹3,500 – ₹15,000</li>
-      </ul>
-      <h2>Battery Replacement</h2>
-      <ul>
-        <li><strong>Android High-Capacity Battery:</strong> ₹699 – ₹2,499</li>
-        <li><strong>iPhone OEM-Grade Battery:</strong> ₹1,499 – ₹4,500</li>
-      </ul>
+      <p>Repair requirements vary depending on device tier, brand, and hardware fault. Below are the consultation categories at <strong>Super Telecom, Barganda Road, Giridih</strong>:</p>
+      <h2>Screen Replacement Services</h2>
+      <p>Screen replacement options depend on technology: Compatible IPS LCD for budget handsets, OEM-grade AMOLED for curved and high-refresh-rate devices, and Original Service Pack OLED assemblies for Apple iPhone. Full TrueTone transfer and touch calibration included.</p>
+      <h2>Battery Replacement Services</h2>
+      <p>Zero-cycle high-density battery cells with built-in thermal protection (NTC) and store warranty for all Android and iPhone models.</p>
       <h2>Charging Port & Sub-Board Repair</h2>
-      <p>₹349 – ₹1,299 for Android Type-C / Micro-USB; ₹799 – ₹2,499 for iPhone Lightning / Type-C flex assemblies.</p>
+      <p>Sub-board replacement and micro-soldered Type-C, Lightning, and fast-charge sockets with ESD surge protection.</p>
       <h2>Motherboard / Chip-Level Soldering</h2>
-      <p>₹799 – ₹4,999 depending on fault complexity (Power IC, Charging IC, Audio Codec, Network baseband).</p>
+      <p>Trinocular microscope diagnostics for Power IC (PMIC), Charging IC, Audio Codec, network baseband, and CPU reballing.</p>
       <h2>Water Damage Chemical Recovery</h2>
-      <p>₹499 – ₹1,999 for ultrasonic chemical de-oxidation and rail short clearing.</p>
+      <p>Ultrasonic chemical de-oxidation bath, corrosion removal, and rail short clearing.</p>
       <p><em>${REPAIR_PRICE_DISCLAIMER}</em></p>
       <p>Get a free microscope inspection and exact quote at Super Telecom in Giridih. Call <a href="${BUSINESS_MASTER.phoneCallHref}">${BUSINESS_MASTER.phoneDisplay}</a>.</p>
     `,

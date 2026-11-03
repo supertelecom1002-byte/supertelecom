@@ -51,10 +51,10 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
     category: "Motherboard / Dead Phones",
   },
   {
-    question: "What is the phone display replacement cost in Giridih?",
+    question: "How do I get a consultation for phone display replacement in Giridih?",
     answer:
-      "Mobile display replacements at Super Telecom Giridih range from Android LCD (₹899–₹2,999) and Android AMOLED (₹2,499–₹9,999) to iPhone Display & OLED (₹3,500–₹15,000), backed by up to 90 days warranty. Final price is confirmed in writing after physical bench inspection.",
-    category: "Pricing & Quotes",
+      "Mobile display replacement depends on the panel technology (IPS LCD, AMOLED, or Original Service Pack) and the phone model. We perform a free on-the-spot physical bench inspection at our Barganda Road shop and provide a clear consultation before repair work begins. All replacements are backed by up to 90 days warranty.",
+    category: "Consultation & Services",
   },
   {
     question: "Is customer personal data safe during phone repair at Super Telecom?",
@@ -71,8 +71,8 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
   {
     question: "Is diagnosis and inspection free at Super Telecom Giridih?",
     answer:
-      "Yes. We offer free on-the-spot physical and electrical diagnosis. We identify the exact problem and provide a transparent, upfront written price quote before starting any work.",
-    category: "Pricing & Warranty",
+      "Yes. We offer free on-the-spot physical and electrical diagnosis. We identify the exact problem and provide a transparent, upfront consultation estimate before starting any work.",
+    category: "Consultation & Warranty",
   },
   {
     question: "Do you provide warranty on repaired phones and replaced parts?",

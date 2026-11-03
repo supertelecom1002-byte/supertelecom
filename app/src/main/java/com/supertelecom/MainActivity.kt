@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import com.supertelecom.feature.home.HomeScreen
 import com.supertelecom.feature.launcher.AppRepository
-import com.supertelecom.feature.launcher.SuperLauncherScreen
+import com.supertelecom.feature.more.MoreFeaturesScreen
 import com.supertelecom.feature.recover.SuperRecoverScreen
 import com.supertelecom.feature.transfer.SuperTransferScreen
 import com.supertelecom.model.AppItem
@@ -78,7 +78,8 @@ class MainActivity : ComponentActivity() {
                                         Text(
                                             text = if (isHindi) tab.titleHi else tab.titleEn,
                                             style = MaterialTheme.typography.labelSmall.copy(
-                                                fontSize = 10.sp
+                                                fontSize = 11.sp,
+                                                fontWeight = if (isSelected) androidx.compose.ui.text.font.FontWeight.Bold else androidx.compose.ui.text.font.FontWeight.Normal
                                             )
                                         )
                                     },
@@ -122,12 +123,14 @@ class MainActivity : ComponentActivity() {
                                 isHindi = isHindi,
                                 contentPadding = screenContentPadding
                             )
-                            NavTab.LAUNCHER -> SuperLauncherScreen(
+                            NavTab.MORE -> MoreFeaturesScreen(
                                 isHindi = isHindi,
+                                onToggleLanguage = { isHindi = !isHindi },
                                 allApps = allAppsState,
                                 isDefaultLauncher = isDefaultLauncherState,
                                 appRepository = appRepository,
-                                bottomPadding = bottomInset.coerceAtLeast(110.dp)
+                                onNavigateTab = { currentTab = it },
+                                contentPadding = screenContentPadding
                             )
                         }
                     }

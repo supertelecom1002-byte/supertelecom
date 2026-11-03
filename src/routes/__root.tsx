@@ -249,7 +249,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           telephone: "+918002903643",
           email: "supertelecom1002@gmail.com",
           description: SITE_DESC,
-          priceRange: "₹₹",
+          priceRange: "$$",
           currenciesAccepted: "INR",
           paymentAccepted: "Cash, UPI (GPay/PhonePe/Paytm), Debit Card, Credit Card, Net Banking",
           address: {

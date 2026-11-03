@@ -27,7 +27,7 @@ import java.util.*
 /**
  * Super Recover Engine (Scoped Storage & MediaStore Compliant)
  * Strictly adheres to Android Scoped Storage, MediaStore Trash APIs (API 30+),
- * Storage Access Framework (SAF), and DPDP Act 2027 privacy principles.
+ * Storage Access Framework (SAF), and local on-device privacy principles.
  * Zero root exploits. 100% on-device processing.
  */
 class StorageRecoverEngine(private val context: Context) {

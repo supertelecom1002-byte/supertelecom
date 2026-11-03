@@ -216,9 +216,9 @@ export const IphoneRepairPage: React.FC = () => {
               </div>
 
               <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Are repair prices cheaper than official Apple service in Ranchi/Dhanbad?</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How does Super Telecom iPhone service compare to traveling to Ranchi/Dhanbad?</h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                  Yes, up to 60–70% more economical with same-day turnaround right here on Barganda Road, Giridih, backed by warranty.
+                  We provide convenient, same-day local chip-level and display turnaround right here on Barganda Road, Giridih, backed by warranty with direct consultation.
                 </p>
               </div>
             </div>

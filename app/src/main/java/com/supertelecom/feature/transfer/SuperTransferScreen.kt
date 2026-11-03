@@ -215,7 +215,7 @@ fun SuperTransferScreen(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = if (isHindi) "DPDP 2027 ऑन-डिवाइस" else "DPDP 2027 On-Device",
+                        text = if (isHindi) "100% ऑन-डिवाइस" else "100% On-Device",
                         style = MaterialTheme.typography.labelSmall.copy(
                             color = CyanAccent,
                             fontWeight = FontWeight.Bold,

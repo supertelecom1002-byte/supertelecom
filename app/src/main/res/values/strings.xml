@@ -10,6 +10,8 @@
     <string name="tab_transfer_hi">ट्रांसफर</string>
     <string name="tab_recover">Recover</string>
     <string name="tab_recover_hi">रिकवर</string>
+    <string name="tab_more">More</string>
+    <string name="tab_more_hi">अन्य</string>
     <string name="tab_launcher">Launcher</string>
     <string name="tab_launcher_hi">लॉन्चर</string>
 
@@ -42,7 +44,7 @@
     <string name="theme_pixel">Super Pixel-Inspired</string>
     <string name="theme_classic">Super Classic</string>
 
-    <!-- DPDP 2027 -->
-    <string name="dpdp_title">DPDP Act 2027 Privacy Guarantee</string>
-    <string name="dpdp_desc">100% on-device operation. Zero remote telemetry, zero analytics tracking, and zero cloud uploads. Your data never leaves your smartphone.</string>
+    <!-- Privacy & Data Controls -->
+    <string name="privacy_title">Privacy &amp; Your Data</string>
+    <string name="privacy_desc">100% on-device operation. Zero remote telemetry, zero analytics tracking, and zero cloud uploads. Your data never leaves your smartphone.</string>
 </resources>

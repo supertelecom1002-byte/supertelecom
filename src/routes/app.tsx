@@ -98,11 +98,6 @@ export const Route = createFileRoute("/app")({
           fileSize: KNOWN_RELEASE_APK.fileSizeHuman,
           softwareVersion: KNOWN_RELEASE_APK.versionName,
           description: SEO_DESC,
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "1280",
-          },
         }),
       },
     ],

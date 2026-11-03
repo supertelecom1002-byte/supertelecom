@@ -242,9 +242,9 @@ export const MotherboardRepairPage: React.FC = () => {
               </div>
 
               <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm">What is the cost of motherboard repair in Giridih?</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How is motherboard repair consultation handled in Giridih?</h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                  Basic power IC and charging IC repairs range from ₹799 to ₹1,500. Advanced double-decker CPU reballing and water damage recovery range from ₹1,800 to ₹3,500. Upfront quote is always given first.
+                  Power IC, charging IC, and CPU reballing requirements depend on the micro-short circuit diagnosis under our trinocular microscope. A clear bench consultation and written estimate are always provided before repair begins.
                 </p>
               </div>
 

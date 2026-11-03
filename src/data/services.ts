@@ -49,11 +49,11 @@ export const SERVICES: ServiceInfo[] = [
     ],
     brands: ["iPhone", "Samsung", "Xiaomi / Redmi", "Realme", "OPPO", "Vivo", "OnePlus", "Motorola", "Nokia"],
     faqs: [
-      ["How much does screen replacement cost in Giridih?", "Prices depend on brand and model — entry-level Android displays start around ₹800, and premium iPhone/Samsung AMOLED displays cost more. Visit our Barganda Road store for an exact quote."],
+      ["How much does screen replacement cost in Giridih?", "Cost depends on brand, model, and display technology (IPS LCD, AMOLED, or Original Service Pack). Contact Super Telecom or visit our Barganda Road shop for an exact bench consultation."],
       ["How long does a screen replacement take?", "Most screen replacements at Super Telecom Giridih are completed within 30 to 60 minutes."],
       ["Do you offer warranty on the new screen?", "Yes — every replacement screen comes with a 30-day to 6-month warranty depending on the part."],
     ],
-    priceRange: "₹800 - ₹15,000",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -92,7 +92,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you use genuine batteries?", "Yes. We only fit genuine or brand-tested batteries with warranty. No cheap local cells."],
       ["Will battery replacement erase my data?", "Standard battery replacement does not touch your user storage. However, as an industry best practice, we always advise maintaining a current personal backup before any hardware service."],
     ],
-    priceRange: "₹500 - ₹8,000",
+    priceRange: "Consultation Required",
     duration: "20-45 minutes",
   },
   {
@@ -131,7 +131,7 @@ export const SERVICES: ServiceInfo[] = [
       ["How long does motherboard repair take?", "24 to 48 hours depending on the fault and part availability."],
       ["Do you charge for diagnosis?", "Diagnosis is free. You pay only if you approve the repair quote."],
     ],
-    priceRange: "₹800 - ₹12,000",
+    priceRange: "Consultation Required",
     duration: "24-48 hours",
   },
   {
@@ -170,7 +170,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Will I lose my data?", "We try to recover your data first. Success depends on the extent of damage."],
       ["What should I do immediately after water damage?", "Power off the phone, do NOT charge it, do NOT put it in rice, and bring it to Super Telecom Giridih as soon as possible."],
     ],
-    priceRange: "₹500 - ₹6,000",
+    priceRange: "Consultation Required",
     duration: "24-72 hours",
   },
   {
@@ -203,7 +203,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Will Face ID keep working after screen replacement?", "In most cases yes. We use displays that preserve Face ID and True Tone whenever possible."],
       ["Are your iPhone parts genuine?", "We use genuine and OEM-grade parts. Ask for options and pricing at the store."],
     ],
-    priceRange: "₹1,500 - ₹25,000",
+    priceRange: "Consultation Required",
     duration: "30 mins - 48 hours",
   },
   {
@@ -236,7 +236,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you fix software / boot loop issues?", "Yes. We flash stock firmware and fix boot loops, hangs and update failures."],
       ["Do you unlock network-locked phones?", "We help with legitimate network unlocks; bring your bill and ID."],
     ],
-    priceRange: "₹500 - ₹15,000",
+    priceRange: "Consultation Required",
     duration: "30 mins - 48 hours",
   },
   {
@@ -269,7 +269,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you repair Type-C ports?", "Yes — Type-C, micro-USB and Lightning."],
       ["How much does charging port repair cost in Giridih?", "Typically between ₹300 and ₹1,500 depending on the phone."],
     ],
-    priceRange: "₹300 - ₹2,500",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -302,7 +302,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you accept old phones in exchange?", "Yes — bring your old phone for a free evaluation and instant exchange offer."],
       ["Do second hand iPhones come with warranty?", "Yes, every refurbished iPhone from Super Telecom Giridih carries a warranty."],
     ],
-    priceRange: "₹2,000 - ₹80,000",
+    priceRange: "Consultation Required",
     duration: "Same day",
   },
   {
@@ -335,7 +335,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you fit tempered glass and covers for free?", "Yes, fitting is complimentary with every purchase."],
       ["Do you sell smartwatches?", "Yes, we stock a wide range of smartwatches from top brands."],
     ],
-    priceRange: "₹50 - ₹10,000",
+    priceRange: "Consultation Required",
     duration: "In-store",
   },
   {
@@ -368,7 +368,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Will flashing erase my data?", "Flashing usually wipes data. We back up whatever is possible before starting."],
       ["How long does software repair take?", "Typically 30 minutes to 2 hours depending on the phone and firmware size."],
     ],
-    priceRange: "₹300 - ₹2,000",
+    priceRange: "Consultation Required",
     duration: "30 mins - 2 hours",
   },
   {
@@ -401,7 +401,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Can you unlock iPhone iCloud?", "iCloud unlock is not offered. Only Android FRP and Android screen-lock removal."],
       ["Will my data survive?", "In most cases, no — the phone is reset. Backup is recommended if the phone is accessible."],
     ],
-    priceRange: "₹500 - ₹2,500",
+    priceRange: "Consultation Required",
     duration: "1-4 hours",
   },
   {
@@ -434,7 +434,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Can WhatsApp chats be recovered?", "If a Google Drive/iCloud backup exists, yes. Without a backup, success depends on device state."],
       ["Do you charge if recovery fails?", "For difficult jobs we offer a reduced fee on failure — confirm with our team before starting."],
     ],
-    priceRange: "₹1,000 - ₹15,000",
+    priceRange: "Consultation Required",
     duration: "1-5 days",
   },
   {
@@ -467,7 +467,7 @@ export const SERVICES: ServiceInfo[] = [
       ["How much is display replacement in Giridih?", "Android displays start near ₹800; AMOLED and iPhone panels cost more. Free quote at our Barganda Road shop."],
       ["Will my phone stay water resistant?", "We re-seal the frame with fresh adhesive, which restores most of the original splash resistance."],
     ],
-    priceRange: "₹800 - ₹15,000",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -500,7 +500,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Is glass-only replacement risky?", "There is a small risk on older panels. Our Giridih technicians check the panel first and tell you honestly."],
       ["How long does it take?", "Typically 3 to 6 hours because the adhesive needs proper curing time."],
     ],
-    priceRange: "₹600 - ₹6,000",
+    priceRange: "Consultation Required",
     duration: "3-6 hours",
   },
   {
@@ -533,7 +533,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Callers cannot hear me — is it the mic?", "Often yes, but it can also be a software or network issue. We diagnose it free at Super Telecom Giridih."],
       ["How much does speaker repair cost?", "Cleaning is very low cost; a replacement module typically starts around ₹400 depending on the model."],
     ],
-    priceRange: "₹300 - ₹3,000",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -566,7 +566,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Black camera screen — can it be repaired?", "Yes. It is usually a faulty module or connector; both are repairable at our Giridih lab."],
       ["Do you replace camera glass separately?", "Yes, camera lens glass can be replaced on its own without changing the whole module."],
     ],
-    priceRange: "₹400 - ₹9,000",
+    priceRange: "Consultation Required",
     duration: "45-90 minutes",
   },
   {
@@ -599,7 +599,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Will my data survive?", "In most successful repairs the data stays intact. We always try data-safe methods first."],
       ["What if the phone cannot be revived?", "Diagnosis is free, and you pay nothing if we cannot bring the phone back to life."],
     ],
-    priceRange: "₹800 - ₹12,000",
+    priceRange: "Consultation Required",
     duration: "24-48 hours",
   },
   {
@@ -632,7 +632,7 @@ export const SERVICES: ServiceInfo[] = [
       ["How long does chip-level IC micro-soldering take?", "Most IC repairs take between 24 and 48 hours to ensure thorough heat dissipation, trace verification, and bench testing."],
       ["Is chip-level repair reliable?", "Yes, when performed with controlled thermal equipment and quality replacement components, board-level repairs provide stable, long-lasting performance."],
     ],
-    priceRange: "₹800 - ₹4,500",
+    priceRange: "Consultation Required",
     duration: "24-48 hours",
   },
   {
@@ -662,10 +662,10 @@ export const SERVICES: ServiceInfo[] = [
     brands: ["iPhone", "Samsung", "Realme", "Xiaomi / Redmi", "Vivo", "OPPO", "OnePlus", "Motorola"],
     faqs: [
       ["Why is call volume so low on my phone?", "In over 60% of cases, the tiny ear speaker mesh gets clogged with pocket lint and ear oils. A professional microscopic cleaning often restores 100% volume without replacing the speaker."],
-      ["How much does loudspeaker replacement cost in Giridih?", "Acoustic cleaning starts around ₹150–₹250, while module replacements range from ₹350 to ₹1,800 depending on device brand."],
+      ["How much does loudspeaker replacement cost in Giridih?", "Acoustic cleaning starts around मॉडल अनुसार while module replacements range from ₹350 to ₹1,800 depending on device brand."],
       ["How long will the repair take?", "Most speaker repairs are completed in 30 to 45 minutes while you wait at our Barganda Road shop."],
     ],
-    priceRange: "₹300 - ₹1,800",
+    priceRange: "Consultation Required",
     duration: "30-45 minutes",
   },
   {
@@ -698,7 +698,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Does water damage cause microphone failure?", "Yes, liquid exposure rapidly corrodes MEMS diaphragms. Prompt cleaning or module replacement resolves the issue."],
       ["Is the repair done the same day?", "Yes, most microphone repairs are finished within 30 to 60 minutes."],
     ],
-    priceRange: "₹350 - ₹1,500",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -731,7 +731,7 @@ export const SERVICES: ServiceInfo[] = [
       ["How long does button repair take?", "Typically 30 to 60 minutes depending on device chassis design."],
       ["Will this fix my fingerprint sensor if it's integrated with the power key?", "If the flex ribbon is replaced, fingerprint functionality depends on model cryptographic pairing. Our technicians verify sensor status before quoting."],
     ],
-    priceRange: "₹250 - ₹1,200",
+    priceRange: "Consultation Required",
     duration: "30-60 minutes",
   },
   {
@@ -764,7 +764,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Can a broken SIM card slot be repaired without changing the whole motherboard?", "Yes. Our technicians micro-solder a replacement SIM reader tray directly onto the logic board."],
       ["How long does network diagnosis take?", "Physical antenna and SIM slot issues take under an hour; baseband IC rework typically takes 24 hours."],
     ],
-    priceRange: "₹400 - ₹3,500",
+    priceRange: "Consultation Required",
     duration: "1-24 hours",
   },
   {
@@ -797,7 +797,7 @@ export const SERVICES: ServiceInfo[] = [
       ["How long does mobile flashing take?", "Most flashing procedures take between 30 and 90 minutes depending on device firmware file size."],
       ["Do you install custom ROMs or unofficial software?", "We prioritize official manufacturer firmware to ensure device security, banking app compatibility, and stability."],
     ],
-    priceRange: "₹300 - ₹1,500",
+    priceRange: "Consultation Required",
     duration: "30-90 minutes",
   },
   {
@@ -830,7 +830,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Do you offer warranty on used smartphones?", "Yes, every pre-owned phone purchased at Super Telecom comes with a written warranty."],
       ["Can I exchange my old broken phone for an upgrade?", "Yes, we evaluate working and repairable trade-ins to offer fair exchange credit toward your next phone."],
     ],
-    priceRange: "₹2,500 - ₹75,000",
+    priceRange: "Consultation Required",
     duration: "Instant walk-in",
   },
   {
@@ -863,7 +863,7 @@ export const SERVICES: ServiceInfo[] = [
       ["Will my in-display fingerprint sensor work after tempered glass installation?", "Yes, we use fingerprint-optimized tempered glass and assist you in recalibrating your biometric settings immediately after application."],
       ["Do you charge for installation?", "No, professional installation is completely free when you purchase tempered glass at our Giridih shop."],
     ],
-    priceRange: "₹99 - ₹699",
+    priceRange: "Consultation Required",
     duration: "5-10 minutes",
   },
 ];

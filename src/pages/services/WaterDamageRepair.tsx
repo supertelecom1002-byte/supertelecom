@@ -250,9 +250,9 @@ export const WaterDamageRepairPage: React.FC = () => {
               </div>
 
               <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How much does water damage repair cost in Giridih?</h3>
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">How is water damage repair handled at Super Telecom?</h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
-                  Inspection and ultrasonic de-oxidation starts at ₹499. If specific ICs or power components require micro-soldering, we provide a transparent quote before proceeding.
+                  We conduct ultrasonic chemical bath de-oxidation and thermal camera inspection. If specific ICs or power components require micro-soldering, we provide a transparent consultation and written estimate before proceeding.
                 </p>
               </div>
             </div>

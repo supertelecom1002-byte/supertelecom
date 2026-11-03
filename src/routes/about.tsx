@@ -72,7 +72,7 @@ export const Route = createFileRoute("/about")({
           name: "Super Telecom",
           image: `${SITE_URL}/icon-512.png`,
           telephone: PHONE,
-          priceRange: "₹₹",
+          priceRange: "$$",
           address: {
             "@type": "PostalAddress",
             streetAddress: STORE_STREET_ADDRESS,

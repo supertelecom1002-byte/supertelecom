@@ -105,7 +105,7 @@ export function getCombinedLocalSeoSchema() {
         email: "supertelecom1002@gmail.com",
         image: `${SITE_URL}/favicon.png`,
         logo: `${SITE_URL}/favicon.png`,
-        priceRange: "₹₹ (₹299 - ₹14,999)",
+        priceRange: "$$",
         currenciesAccepted: "INR",
         paymentAccepted: "Cash, UPI (PhonePe/GPay/Paytm), Debit Card, Credit Card, Net Banking",
         address: {

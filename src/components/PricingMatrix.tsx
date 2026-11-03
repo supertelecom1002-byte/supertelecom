@@ -10,32 +10,32 @@ import {
   Cpu,
   ArrowRight,
   HelpCircle,
+  Phone,
 } from "lucide-react";
 
 import {
   BUSINESS_MASTER,
   REPAIR_PRICE_DISCLAIMER,
-  buildWhatsAppQuoteUrl,
 } from "@/config/superTelecomConfig";
+import { buildConsultationWhatsAppUrl } from "@/components/consultation/RepairConsultationAction";
 
-interface PriceRow {
+interface ConsultationRow {
   service: string;
   deviceType: string;
   partGrade: string;
-  priceRange: string;
   turnaround: string;
   warranty: string;
 }
 
-interface PriceCategory {
+interface ConsultationCategory {
   id: string;
   name: string;
   icon: React.ReactNode;
   description: string;
-  rows: PriceRow[];
+  rows: ConsultationRow[];
 }
 
-const PRICING_CATEGORIES: PriceCategory[] = [
+const CONSULTATION_CATEGORIES: ConsultationCategory[] = [
   {
     id: "screen",
     name: "Display & Screen Replacement",
@@ -46,7 +46,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "iPhone Display & Retina OLED",
         deviceType: "iPhone (11 / 12 / 13 / 14 / 15 Series)",
         partGrade: "Original Service Pack",
-        priceRange: "₹3,500 – ₹15,000",
         turnaround: "30–60 Mins",
         warranty: "Up to 90 Days",
       },
@@ -54,7 +53,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "Android Curved & Flat AMOLED",
         deviceType: "Samsung, OnePlus, Xiaomi, Vivo, Realme",
         partGrade: "OEM-Grade",
-        priceRange: "₹2,499 – ₹9,999",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
       },
@@ -62,7 +60,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "Android IPS LCD Display & Touch Glass",
         deviceType: "Budget & Mid-Range Android Phones",
         partGrade: "Compatible Aftermarket",
-        priceRange: "₹899 – ₹2,999",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
       },
@@ -76,9 +73,8 @@ const PRICING_CATEGORIES: PriceCategory[] = [
     rows: [
       {
         service: "High-Capacity Battery Replacement",
-        deviceType: "Android (₹699–₹2,499) / iPhone (₹1,999–₹5,499)",
+        deviceType: "Android & iPhone Devices",
         partGrade: "OEM-Grade / Service Pack",
-        priceRange: "₹699 – ₹3,499",
         turnaround: "20–45 Mins",
         warranty: "90 Days Warranty",
       },
@@ -86,7 +82,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "Type-C & Lightning Port Replacement",
         deviceType: "All Brands (Fast Charging & OTG Verified)",
         partGrade: "OEM-Grade",
-        priceRange: "₹349 – ₹1,999",
         turnaround: "20–40 Mins",
         warranty: "30 Days Warranty",
       },
@@ -102,7 +97,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "Dead Phone & Motherboard IC Micro-Soldering",
         deviceType: "All Smartphones (Short Circuit / PMIC / CPU)",
         partGrade: "Original Service Pack",
-        priceRange: "₹899 – ₹6,500",
         turnaround: "Same Day / 24–48h",
         warranty: "60 Days Warranty",
       },
@@ -110,7 +104,6 @@ const PRICING_CATEGORIES: PriceCategory[] = [
         service: "Water Damage & Liquid Ultrasonic Revival",
         deviceType: "Ultrasonic Chemical Bath & IC De-Oxidation",
         partGrade: "OEM-Grade",
-        priceRange: "₹499 – ₹2,999",
         turnaround: "2–5 Hours / 24h",
         warranty: "Tested & Bench Verified",
       },
@@ -123,21 +116,20 @@ export const PricingMatrix: React.FC = () => {
 
   const displayedCategories =
     activeCategory === "all"
-      ? PRICING_CATEGORIES
-      : PRICING_CATEGORIES.filter((c) => c.id === activeCategory);
+      ? CONSULTATION_CATEGORIES
+      : CONSULTATION_CATEGORIES.filter((c) => c.id === activeCategory);
 
-  const buildQuoteUrl = (service: string, device: string) => {
-    return buildWhatsAppQuoteUrl({
+  const getWhatsAppUrl = (service: string, device: string) => {
+    return buildConsultationWhatsAppUrl({
       serviceName: service,
       model: device,
     });
   };
 
-
   return (
     <section
       id="pricing-matrix"
-      aria-label="Super Telecom Repair Pricing Matrix Giridih"
+      aria-label="Super Telecom Repair Consultation Directory Giridih"
       className="py-8 sm:py-16 md:py-28 bg-slate-950 text-slate-100 relative overflow-hidden border-y border-slate-800/80"
     >
       {/* Background Ambience Glow */}
@@ -148,15 +140,15 @@ export const PricingMatrix: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-[11px] sm:text-xs font-mono font-bold uppercase mb-3 sm:mb-4 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-            Transparent Giridih Price Index · No Hidden Fees
+            Official Giridih Service Directory · Free Bench Check
           </div>
 
           <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            Smartphone Repair Pricing Matrix
+            Smartphone Repair Service Directory
           </h2>
 
           <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-300 leading-relaxed">
-            Direct, honest repair charges with zero diagnosis fees on Barganda Road, Giridih.
+            Direct consultation and hardware inspection on Barganda Road, Giridih.
             Verified OEM parts, backed by formal service warranty.
           </p>
 
@@ -178,7 +170,7 @@ export const PricingMatrix: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveCategory("all")}
-              className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
+              className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 cursor-pointer ${
                 activeCategory === "all"
                   ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -186,12 +178,12 @@ export const PricingMatrix: React.FC = () => {
             >
               All Repairs
             </button>
-            {PRICING_CATEGORIES.map((c) => (
+            {CONSULTATION_CATEGORIES.map((c) => (
               <button
                 key={c.id}
                 type="button"
                 onClick={() => setActiveCategory(c.id)}
-                className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 ${
+                className={`flex-none snap-start min-h-[38px] px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-all active:scale-95 cursor-pointer ${
                   activeCategory === c.id
                     ? "bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.35)]"
                     : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
@@ -201,7 +193,6 @@ export const PricingMatrix: React.FC = () => {
               </button>
             ))}
           </div>
-
         </div>
 
         {/* Structured Data Table for LLMs & AI Answer Engines */}
@@ -224,24 +215,24 @@ export const PricingMatrix: React.FC = () => {
                 </div>
 
                 <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-500/30 self-start sm:self-auto">
-                  Instant Walk-In Service
+                  Walk-In Bench Inspection
                 </span>
               </div>
 
-              {/* Desktop Semantic Table (Optimized for AI Scrapers & GEO) */}
+              {/* Desktop Semantic Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <caption className="sr-only">
-                    {category.name} Pricing for Smartphone Repairs at Super Telecom Giridih
+                    {category.name} Consultation &amp; Specifications for Smartphone Repairs at Super Telecom Giridih
                   </caption>
                   <thead>
                     <tr className="border-b border-slate-800/80 bg-slate-950/40 text-slate-400 font-mono uppercase tracking-wider text-[11px]">
                       <th scope="col" className="py-3.5 px-6">Service Name</th>
                       <th scope="col" className="py-3.5 px-6">Supported Models</th>
-                      <th scope="col" className="py-3.5 px-6">Estimated Cost</th>
+                      <th scope="col" className="py-3.5 px-6">Service Status</th>
                       <th scope="col" className="py-3.5 px-6">Turnaround</th>
                       <th scope="col" className="py-3.5 px-6">Warranty</th>
-                      <th scope="col" className="py-3.5 px-6 text-right">Instant Booking</th>
+                      <th scope="col" className="py-3.5 px-6 text-right">Consultation</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/60">
@@ -261,10 +252,10 @@ export const PricingMatrix: React.FC = () => {
                         <td className="py-4 px-6 text-slate-400">
                           {row.deviceType}
                         </td>
-                        <td className="py-4 px-6 font-mono font-bold text-emerald-400 text-sm">
-                          {row.priceRange}
+                        <td className="py-4 px-6 font-mono font-bold text-cyan-400 text-xs">
+                          Consultation Required
                         </td>
-                        <td className="py-4 px-6 font-mono text-cyan-300">
+                        <td className="py-4 px-6 font-mono text-slate-300">
                           {row.turnaround}
                         </td>
                         <td className="py-4 px-6 text-slate-300">
@@ -273,15 +264,24 @@ export const PricingMatrix: React.FC = () => {
                           </span>
                         </td>
                         <td className="py-4 px-6 text-right">
-                          <a
-                            href={buildQuoteUrl(row.service, row.deviceType)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500 text-cyan-300 hover:text-slate-950 border border-cyan-500/30 hover:border-cyan-400 font-bold text-xs transition-all"
-                          >
-                            <span>WhatsApp Quote</span>
-                            <ArrowRight className="h-3 w-3" />
-                          </a>
+                          <div className="flex items-center justify-end gap-2">
+                            <a
+                              href={getWhatsAppUrl(row.service, row.deviceType)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 font-bold text-xs transition-all"
+                            >
+                              <MessageCircle className="h-3.5 w-3.5" />
+                              <span>WhatsApp</span>
+                            </a>
+                            <a
+                              href={BUSINESS_MASTER.phoneCallHref}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs transition-all"
+                            >
+                              <Phone className="h-3 w-3 text-cyan-400" />
+                              <span>Call</span>
+                            </a>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -289,7 +289,7 @@ export const PricingMatrix: React.FC = () => {
                 </table>
               </div>
 
-              {/* Mobile Compact 2-Column Grid (E-Commerce Ready) */}
+              {/* Mobile Compact 2-Column Grid */}
               <div className="md:hidden grid grid-cols-2 gap-2.5 p-3">
                 {category.rows.map((row, idx) => (
                   <div
@@ -308,13 +308,13 @@ export const PricingMatrix: React.FC = () => {
                       <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">
                         {row.deviceType}
                       </p>
-                      <div className="mt-2 flex items-baseline justify-between">
-                        <span className="font-mono font-bold text-emerald-400 text-xs tracking-tight">
-                          {row.priceRange}
+                      <div className="mt-2">
+                        <span className="font-mono font-bold text-cyan-400 text-[11px] tracking-tight">
+                          Consultation Required
                         </span>
                       </div>
                       <div className="mt-1.5 flex flex-wrap items-center gap-1 text-[10px] text-slate-400 font-mono">
-                        <span className="flex items-center gap-0.5 text-cyan-400">
+                        <span className="flex items-center gap-0.5 text-slate-300">
                           <Clock className="h-2.5 w-2.5" /> {row.turnaround}
                         </span>
                         <span>•</span>
@@ -322,15 +322,24 @@ export const PricingMatrix: React.FC = () => {
                       </div>
                     </div>
 
-                    <a
-                      href={buildQuoteUrl(row.service, row.deviceType)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full mt-2 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-[11px] shadow-sm transition-transform active:scale-95"
-                    >
-                      <MessageCircle className="h-3 w-3 shrink-0" />
-                      <span>Quote</span>
-                    </a>
+                    <div className="mt-2 flex flex-col gap-1.5">
+                      <a
+                        href={getWhatsAppUrl(row.service, row.deviceType)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-sm transition-transform active:scale-95"
+                      >
+                        <MessageCircle className="h-3 w-3 shrink-0" />
+                        <span>Enquiry</span>
+                      </a>
+                      <a
+                        href={BUSINESS_MASTER.phoneCallHref}
+                        className="w-full inline-flex items-center justify-center gap-1 py-1 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[10px] transition-transform active:scale-95"
+                      >
+                        <Phone className="h-2.5 w-2.5 text-cyan-400 shrink-0" />
+                        <span>Call</span>
+                      </a>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -338,11 +347,11 @@ export const PricingMatrix: React.FC = () => {
           ))}
         </div>
 
-        {/* Footnote on Pricing & Diagnosis */}
+        {/* Footnote on Diagnostics */}
         <div className="mt-8 p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 text-xs text-slate-300 flex items-start gap-3">
           <HelpCircle className="h-5 w-5 text-cyan-400 flex-none mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-white">Estimates &amp; Physical Diagnostics Policy:</strong> {REPAIR_PRICE_DISCLAIMER}
+            <strong className="text-white">Bench Consultation &amp; Physical Diagnostics:</strong> {REPAIR_PRICE_DISCLAIMER}
           </p>
         </div>
       </div>

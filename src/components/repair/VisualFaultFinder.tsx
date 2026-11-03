@@ -48,7 +48,7 @@ const FAULTS: FaultItem[] = [
       "स्क्रीन का शीशा टूट जाना लेकिन डिस्प्ले दिखना",
     ],
     solution: "Grade-A AMOLED / Original Service Pack डिस्प्ले रिप्लेसमेंट विथ जीरो-टच OCA लैमिनेशन।",
-    startingPrice: "₹899 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "30–60 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-cyan-500/20 to-blue-500/10 border-cyan-500/40 text-cyan-400",
@@ -67,7 +67,7 @@ const FAULTS: FaultItem[] = [
       "फोन का अत्यधिक गर्म होना",
     ],
     solution: "45X ट्राइनोकुलर माइक्रोस्कोप से शार्ट-सर्किट डिटेक्शन और पावर IC / CPU माइक्रो-सोल्डरिंग।",
-    startingPrice: "₹799 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "2–4 घंटे",
     warranty: "90 Days Warranty",
     accentColor: "from-amber-500/20 to-orange-500/10 border-amber-500/40 text-amber-400",
@@ -86,7 +86,7 @@ const FAULTS: FaultItem[] = [
       "सामान्य उपयोग में भी फोन का गर्म होना",
     ],
     solution: "100% Brand-New 0-Cycle लिथियम-आयन पॉलीमर बैटरी विथ ओरिजिनल NTC थर्मल सेंसर।",
-    startingPrice: "₹499 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "20–40 मिनट",
     warranty: "6 Months Warranty",
     accentColor: "from-emerald-500/20 to-teal-500/10 border-emerald-500/40 text-emerald-400",
@@ -105,7 +105,7 @@ const FAULTS: FaultItem[] = [
       "फास्ट चार्जिंग सपोर्ट न करना",
     ],
     solution: "24-Pin Gold-Plated Type-C / Lightning सॉकेट रिप्लेसमेंट विथ ESD सर्ज प्रोटेक्शन।",
-    startingPrice: "₹299 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "25–45 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-sky-500/20 to-indigo-500/10 border-sky-500/40 text-sky-400",
@@ -124,7 +124,7 @@ const FAULTS: FaultItem[] = [
       "पानी में गिरने के बाद फोन का बंद हो जाना",
     ],
     solution: "अल्ट्रासोनिक केमिकल डी-ऑक्सीडेशन क्लीनिंग और थर्मल कैमरा इंस्पेक्शन।",
-    startingPrice: "₹499 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "1–3 घंटे",
     warranty: "60 Days Warranty",
     accentColor: "from-blue-500/20 to-cyan-500/10 border-blue-500/40 text-blue-400",
@@ -143,7 +143,7 @@ const FAULTS: FaultItem[] = [
       "कैमरा ऐप खोलने पर ब्लैक स्क्रीन दिखना",
     ],
     solution: "सैफायर लेंस ग्लास रिप्लेसमेंट और क्लीनरूम डस्ट-फ्री कैमरा मॉड्यूल अलाइनमेंट।",
-    startingPrice: "₹349 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "30–60 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-purple-500/20 to-pink-500/10 border-purple-500/40 text-purple-400",
@@ -162,7 +162,7 @@ const FAULTS: FaultItem[] = [
       "हेडफोन जैक में ईयरफोन काम न करना",
     ],
     solution: "हाई-फिडेलिटी स्टीरियो स्पीकर / नॉइज़-कैंसलिंग MEMS माइक रिप्लेसमेंट।",
-    startingPrice: "₹299 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "20–40 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-rose-500/20 to-red-500/10 border-rose-500/40 text-rose-400",
@@ -181,7 +181,7 @@ const FAULTS: FaultItem[] = [
       "सिम ट्रे (SIM Tray) का अंदर फंस जाना",
     ],
     solution: "लेज़र कट बैक पैनल रिप्लेसमेंट और टाइटेनियम/एल्युमिनियम फ्रेम अलाइनमेंट।",
-    startingPrice: "₹499 से शुरू",
+    startingPrice: "परामर्श आवश्यक",
     duration: "45–90 मिनट",
     warranty: "90 Days Warranty",
     accentColor: "from-slate-500/20 to-zinc-500/10 border-slate-500/40 text-slate-300",
@@ -280,7 +280,7 @@ const VisualFaultFinder: React.FC = () => {
                       onClick={(e) => e.stopPropagation()}
                       className="font-bold text-cyan-400 hover:underline flex items-center gap-0.5"
                     >
-                      <span>Guide & Price</span> <ArrowRight className="h-2.5 w-2.5" />
+                      <span>Service Guide</span> <ArrowRight className="h-2.5 w-2.5" />
                     </Link>
                     <a
                       href={`https://wa.me/${BUSINESS_MASTER.whatsappNumber}?text=${encodeURIComponent(
@@ -370,7 +370,7 @@ const VisualFaultFinder: React.FC = () => {
                   params={{ slug: activeFault.serviceSlug }}
                   className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 hover:scale-[1.02] active:scale-95 transition-all text-center"
                 >
-                  <span>View Full Guide & Price</span>
+                  <span>View Full Service Guide</span>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
 

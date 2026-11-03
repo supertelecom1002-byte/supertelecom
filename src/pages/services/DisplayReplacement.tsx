@@ -103,7 +103,7 @@ export const DisplayReplacementPage: React.FC = () => {
                 className="inline-flex items-center gap-2 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-6 py-3.5 text-sm shadow-[0_0_20px_rgba(6,182,212,0.35)] transition-transform hover:scale-[1.03]"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>Get Instant Price Quote on WhatsApp</span>
+                <span>Get Consultation on WhatsApp</span>
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
@@ -122,10 +122,10 @@ export const DisplayReplacementPage: React.FC = () => {
           <div className="mx-auto max-w-5xl px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-10">
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
-                Display Replacement Price Guide (Giridih)
+                Display Replacement Service Guide (Giridih)
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2">
-                Transparent rates with zero hidden labour charges. Exact price quote provided upfront before service.
+                Direct consultation with zero hidden charges. Clear estimate provided upfront after physical bench check.
               </p>
             </div>
 
@@ -136,7 +136,7 @@ export const DisplayReplacementPage: React.FC = () => {
                     <tr>
                       <th className="py-4 px-6">Display Tier</th>
                       <th className="py-4 px-6">Compatible Devices</th>
-                      <th className="py-4 px-6">Price Range</th>
+                      <th className="py-4 px-6">Service Status</th>
                       <th className="py-4 px-6">Warranty</th>
                       <th className="py-4 px-6 text-right">Action</th>
                     </tr>
@@ -145,28 +145,28 @@ export const DisplayReplacementPage: React.FC = () => {
                     <tr className="hover:bg-cyan-500/10 dark:hover:bg-cyan-950/20">
                       <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">iPhone Super Retina OLED</td>
                       <td className="py-4 px-6 text-slate-600 dark:text-slate-400">iPhone X, 11 Pro, 12, 13, 14, 15 Series</td>
-                      <td className="py-4 px-6 font-mono font-bold text-emerald-600 dark:text-emerald-400">₹2,499 – ₹9,999</td>
+                      <td className="py-4 px-6 font-mono font-bold text-cyan-600 dark:text-cyan-400 text-xs">Consultation Required</td>
                       <td className="py-4 px-6 text-cyan-600 dark:text-cyan-400">90 Days</td>
                       <td className="py-4 px-6 text-right">
-                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Book &rarr;</a>
+                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Enquire &rarr;</a>
                       </td>
                     </tr>
                     <tr className="hover:bg-cyan-500/10 dark:hover:bg-cyan-950/20">
                       <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">Android Curved &amp; AMOLED</td>
                       <td className="py-4 px-6 text-slate-600 dark:text-slate-400">Samsung S/A Series, OnePlus, Vivo, Realme</td>
-                      <td className="py-4 px-6 font-mono font-bold text-emerald-600 dark:text-emerald-400">₹1,899 – ₹5,499</td>
+                      <td className="py-4 px-6 font-mono font-bold text-cyan-600 dark:text-cyan-400 text-xs">Consultation Required</td>
                       <td className="py-4 px-6 text-cyan-600 dark:text-cyan-400">90 Days</td>
                       <td className="py-4 px-6 text-right">
-                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Book &rarr;</a>
+                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Enquire &rarr;</a>
                       </td>
                     </tr>
                     <tr className="hover:bg-cyan-500/10 dark:hover:bg-cyan-950/20">
                       <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">Standard IPS LCD Display</td>
                       <td className="py-4 px-6 text-slate-600 dark:text-slate-400">Redmi, Realme, POCO, Moto, Samsung M Series</td>
-                      <td className="py-4 px-6 font-mono font-bold text-emerald-600 dark:text-emerald-400">₹999 – ₹2,499</td>
+                      <td className="py-4 px-6 font-mono font-bold text-cyan-600 dark:text-cyan-400 text-xs">Consultation Required</td>
                       <td className="py-4 px-6 text-cyan-600 dark:text-cyan-400">60 Days</td>
                       <td className="py-4 px-6 text-right">
-                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Book &rarr;</a>
+                        <a href={WHATSAPP_URL} className="text-cyan-600 dark:text-cyan-400 hover:underline font-semibold">Enquire &rarr;</a>
                       </td>
                     </tr>
                   </tbody>
