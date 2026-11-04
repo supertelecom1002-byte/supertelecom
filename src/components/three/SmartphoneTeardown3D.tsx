@@ -24,6 +24,10 @@ import {
   X,
 } from "lucide-react";
 import { Smartphone3DFallback } from "./Smartphone3DFallback";
+import {
+  createSmartphoneScreenTexture,
+  createSmartphoneBackTexture,
+} from "@/utils/smartphoneScreenTexture";
 
 // Ensure GSAP ScrollTrigger plugin is registered in browser
 if (typeof window !== "undefined") {
@@ -254,6 +258,10 @@ function SmartphoneGLBRig({
   // Clone scene so materials/transforms can be manipulated cleanly
   const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
 
+  // Generate realistic high-res OLED screen and frosted back panel textures
+  const screenTexture = useMemo(() => createSmartphoneScreenTexture(), []);
+  const backTexture = useMemo(() => createSmartphoneBackTexture(), []);
+
   // Map nodes by name for fast lookup in useFrame
   const nodeMap = useMemo(() => {
     const map = new Map<string, THREE.Object3D>();
@@ -263,7 +271,7 @@ function SmartphoneGLBRig({
       }
     });
     return map;
-  }, [scene]);
+  }, [scene, screenTexture, backTexture]);
 
   // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
@@ -272,38 +280,50 @@ function SmartphoneGLBRig({
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat) {
-          mat.envMapIntensity = 1.2;
+          mat.envMapIntensity = 1.4;
           const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
 
           if (name.includes("frontglass")) {
-            mat.roughness = 0.05;
-            mat.metalness = 0.08;
+            mat.roughness = 0.03;
+            mat.metalness = 0.05;
             mat.transparent = true;
-            mat.opacity = 0.22;
+            mat.opacity = 0.05; // Crystal clear protective ceramic shield glass
             mat.depthWrite = false;
-            mat.color = new THREE.Color("#e0f2fe");
+            mat.color = new THREE.Color("#ffffff");
           } else if (name.includes("touchdigitizer")) {
             mat.transparent = true;
-            mat.opacity = 0.15;
+            mat.opacity = 0.05;
             mat.depthWrite = false;
           } else if (name.includes("oleddisplay")) {
-            mat.color = new THREE.Color("#030712");
-            mat.roughness = 0.2;
-            mat.metalness = 0.3;
-            mat.emissive = new THREE.Color("#0284c7");
-            mat.emissiveIntensity = 0.28;
+            if (screenTexture) {
+              mat.map = screenTexture;
+              mat.emissiveMap = screenTexture;
+              mat.emissive = new THREE.Color("#ffffff");
+              mat.emissiveIntensity = 0.95; // Ultra-crisp glowing AMOLED flagship display
+            } else {
+              mat.color = new THREE.Color("#030712");
+              mat.roughness = 0.2;
+              mat.metalness = 0.3;
+              mat.emissive = new THREE.Color("#0284c7");
+              mat.emissiveIntensity = 0.28;
+            }
+            mat.roughness = 0.15;
+            mat.metalness = 0.2;
           } else if (name.includes("chassisframe")) {
-            mat.metalness = 0.92;
-            mat.roughness = 0.25;
+            mat.metalness = 0.94;
+            mat.roughness = 0.22;
             mat.color = new THREE.Color("#cbd5e1");
           } else if (name.includes("rearcover")) {
-            mat.metalness = 0.35;
-            mat.roughness = 0.25;
+            if (backTexture) {
+              mat.map = backTexture;
+            }
+            mat.metalness = 0.38;
+            mat.roughness = 0.28;
             mat.color = new THREE.Color("#0f172a");
           } else if (name.includes("processorsoc") || name.includes("pmic")) {
             mat.color = new THREE.Color("#064e3b");
             mat.emissive = new THREE.Color("#10b981");
-            mat.emissiveIntensity = 0.75;
+            mat.emissiveIntensity = 0.85;
           } else if (name.includes("motherboard")) {
             mat.color = new THREE.Color("#065f46");
             mat.metalness = 0.25;
@@ -324,7 +344,7 @@ function SmartphoneGLBRig({
         }
       }
     });
-  }, [scene]);
+  }, [scene, screenTexture, backTexture]);
 
   useFrame((_, delta) => {
     if (!rigGroupRef.current) return;
@@ -372,10 +392,10 @@ function SmartphoneGLBRig({
     let targetRotX = userRotation.x;
 
     if (p < 0.12) {
-      // Scene A: Assembled Smartphone (Pristine sealed showcase)
+      // Scene A: Assembled Smartphone (Pristine sealed showcase at 3/4 hero angle)
       const t = p / 0.12;
-      targetRotY += THREE.MathUtils.lerp(0, 0.35, t);
-      targetRotX += THREE.MathUtils.lerp(0, 0.1, t);
+      targetRotY += THREE.MathUtils.lerp(0.28, 0.45, t);
+      targetRotX += THREE.MathUtils.lerp(0.08, 0.12, t);
     } else if (p < 0.28) {
       // Scene B: Front Glass & Display Layer Separation
       const t = (p - 0.12) / (0.28 - 0.12);
@@ -522,7 +542,7 @@ function SmartphoneGLBRig({
   });
 
   return (
-    <group ref={rigGroupRef}>
+    <group ref={rigGroupRef} scale={[0.70, 0.70, 0.70]} position={[0, -0.15, 0]}>
       <primitive object={scene} />
 
       {/* Guided 3D Diagnostic Inspection Pins (100% Native WebGL - Zero DOM removeChild collisions!) */}
@@ -770,7 +790,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
       {/* ───────────────────────────────────────────────────────────── */}
       <div
         ref={stickyRef}
-        className="sticky top-0 left-0 w-full h-screen overflow-hidden flex flex-col justify-between"
+        className="sticky top-[68px] md:top-[98px] left-0 w-full h-[calc(100vh-68px)] md:h-[calc(100vh-98px)] overflow-hidden flex flex-col justify-between"
       >
         {/* Background Ambient Radial Glow */}
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_35%,rgba(14,165,233,0.18),transparent_70%)]" />
@@ -956,8 +976,8 @@ export const SmartphoneTeardown3D: React.FC = () => {
                 <TeardownFpsMonitor onFallback={() => setIsLowPerformance(true)} />
                 <PerspectiveCamera
                   makeDefault
-                  position={[0, 0, isMobile ? 9.2 : 7.6]}
-                  fov={isMobile ? 48 : 42}
+                  position={[0, 0, isMobile ? 10.2 : 9.0]}
+                  fov={isMobile ? 42 : 36}
                 />
 
                 {/* 3-Point Studio Lighting */}

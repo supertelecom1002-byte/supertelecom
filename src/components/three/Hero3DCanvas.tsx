@@ -14,6 +14,10 @@ import {
   Wrench,
   ShieldCheck,
 } from "lucide-react";
+import {
+  createSmartphoneScreenTexture,
+  createSmartphoneBackTexture,
+} from "@/utils/smartphoneScreenTexture";
 
 // Preload the GLB asset
 if (typeof window !== "undefined") {
@@ -154,6 +158,10 @@ function HeroModelRig({
   const groupRef = useRef<THREE.Group>(null);
   const clonedScene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
 
+  // Generate realistic high-res OLED screen and frosted back panel textures
+  const screenTexture = useMemo(() => createSmartphoneScreenTexture(), []);
+  const backTexture = useMemo(() => createSmartphoneBackTexture(), []);
+
   // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
     clonedScene.traverse((child) => {
@@ -161,38 +169,48 @@ function HeroModelRig({
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat) {
-          mat.envMapIntensity = 1.2;
+          mat.envMapIntensity = 1.4;
           const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
 
           if (name.includes("frontglass")) {
-            mat.roughness = 0.05;
+            mat.roughness = 0.03;
             mat.metalness = 0.08;
             mat.transparent = true;
-            mat.opacity = 0.22; // Clear glass so display and internals show cleanly
+            mat.opacity = 0.10; // Crystal clear protective ceramic shield glass
             mat.depthWrite = false;
-            mat.color = new THREE.Color("#e0f2fe");
+            mat.color = new THREE.Color("#ffffff");
           } else if (name.includes("touchdigitizer")) {
             mat.transparent = true;
-            mat.opacity = 0.15;
+            mat.opacity = 0.08;
             mat.depthWrite = false;
           } else if (name.includes("oleddisplay")) {
-            mat.color = new THREE.Color("#030712"); // Deep OLED midnight black
-            mat.roughness = 0.2;
-            mat.metalness = 0.3;
-            mat.emissive = new THREE.Color("#0284c7");
-            mat.emissiveIntensity = 0.28;
+            if (screenTexture) {
+              mat.map = screenTexture;
+              mat.emissiveMap = screenTexture;
+              mat.emissive = new THREE.Color("#ffffff");
+              mat.emissiveIntensity = 0.90; // Ultra-crisp glowing AMOLED flagship display
+            } else {
+              mat.color = new THREE.Color("#020617");
+              mat.emissive = new THREE.Color("#0284c7");
+              mat.emissiveIntensity = 0.35;
+            }
+            mat.roughness = 0.15;
+            mat.metalness = 0.2;
           } else if (name.includes("chassisframe")) {
-            mat.metalness = 0.92;
-            mat.roughness = 0.25;
-            mat.color = new THREE.Color("#cbd5e1"); // Silver-titanium chassis
+            mat.metalness = 0.94;
+            mat.roughness = 0.22;
+            mat.color = new THREE.Color("#cbd5e1"); // Aerospace titanium-silver chassis
           } else if (name.includes("rearcover")) {
+            if (backTexture) {
+              mat.map = backTexture;
+            }
             mat.metalness = 0.35;
-            mat.roughness = 0.25;
-            mat.color = new THREE.Color("#0f172a"); // Deep matte slate
+            mat.roughness = 0.28;
+            mat.color = new THREE.Color("#0f172a"); // Deep cosmic slate
           } else if (name.includes("processorsoc") || name.includes("pmic")) {
             mat.color = new THREE.Color("#064e3b");
             mat.emissive = new THREE.Color("#10b981");
-            mat.emissiveIntensity = 0.75;
+            mat.emissiveIntensity = 0.85;
           } else if (name.includes("motherboard")) {
             mat.color = new THREE.Color("#065f46"); // Green PCB substrate
             mat.metalness = 0.25;
@@ -203,17 +221,17 @@ function HeroModelRig({
             mat.roughness = 0.35;
           } else if (name.includes("wirelesscoil") || name.includes("chargingflex")) {
             mat.color = new THREE.Color("#d97706"); // Copper coil
-            mat.metalness = 0.85;
-            mat.roughness = 0.25;
+            mat.metalness = 0.88;
+            mat.roughness = 0.22;
           } else if (name.includes("shieldcover") || name.includes("screws")) {
-            mat.metalness = 0.95;
-            mat.roughness = 0.2;
+            mat.metalness = 0.96;
+            mat.roughness = 0.18;
             mat.color = new THREE.Color("#e2e8f0");
           }
         }
       }
     });
-  }, [clonedScene]);
+  }, [clonedScene, screenTexture, backTexture]);
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
