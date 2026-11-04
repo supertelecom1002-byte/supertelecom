@@ -1,18 +1,9 @@
-import React, { Suspense, useState, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { PerspectiveCamera, useGLTF, Float, BakeShadows } from "@react-three/drei";
-import * as THREE from "three";
+import React, { useState } from "react";
 import {
   Layers,
-  Sparkles,
   RotateCw,
   Cpu,
-  Zap,
-  Eye,
-  Activity,
-  CheckCircle2,
   ChevronRight,
-  Maximize2,
 } from "lucide-react";
 import { Floating3DIcon } from "./Floating3DIcon";
 
@@ -70,7 +61,6 @@ const MOBILE_HOTSPOTS: MobileHotspot[] = [
 
 export const Mobile3DLabCard: React.FC = () => {
   const [selectedHotspot, setSelectedHotspot] = useState<MobileHotspot>(MOBILE_HOTSPOTS[1]);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="w-full rounded-2xl border border-cyan-500/30 bg-slate-900/90 p-3.5 backdrop-blur-xl shadow-[0_4px_25px_rgba(6,182,212,0.12)] space-y-3 select-none">
@@ -147,8 +137,9 @@ export const Mobile3DLabCard: React.FC = () => {
           return (
             <button
               key={spot.id}
+              type="button"
               onClick={() => setSelectedHotspot(spot)}
-              className={`py-1.5 px-1 rounded-xl text-center flex flex-col items-center justify-center gap-1 transition-all text-[9px] font-mono border ${
+              className={`py-1.5 px-1 rounded-xl text-center flex flex-col items-center justify-center gap-1 transition-all text-[9px] font-mono border cursor-pointer ${
                 isSelected
                   ? "bg-cyan-500 text-slate-950 border-cyan-400 font-bold shadow-md shadow-cyan-500/20 scale-102"
                   : "bg-slate-900 text-slate-400 border-slate-800 hover:text-white"
@@ -163,7 +154,7 @@ export const Mobile3DLabCard: React.FC = () => {
       {/* Full Exploration CTA */}
       <a
         href="#teardown-3d"
-        className="w-full py-2 px-3 rounded-xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/90 via-slate-900 to-blue-950/90 text-cyan-300 font-bold flex items-center justify-between text-xs active:scale-98 transition-all"
+        className="w-full py-2 px-3 rounded-xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/90 via-slate-900 to-blue-950/90 text-cyan-300 font-bold flex items-center justify-between text-xs active:scale-98 transition-all cursor-pointer"
       >
         <span className="flex items-center gap-1.5">
           <RotateCw className="h-3.5 w-3.5 text-cyan-400 animate-spin" style={{ animationDuration: "10s" }} />

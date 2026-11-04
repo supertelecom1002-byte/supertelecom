@@ -555,7 +555,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
   const [isLowPerformance, setIsLowPerformance] = useState(false);
   const [activeCallout, setActiveCallout] = useState<string | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
-  const [isInView, setIsInView] = useState(true);
+  const [isInView, setIsInView] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [userRotation, setUserRotation] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
@@ -813,7 +813,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         >
-          {isMounted && webglSupported && isInView && !isLowPerformance ? (
+          {isMounted && webglSupported && isInView ? (
             <Suspense fallback={<Smartphone3DFallback />}>
               <Canvas
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -823,12 +823,16 @@ export const SmartphoneTeardown3D: React.FC = () => {
                   const canvasEl = gl.domElement;
                   const handleLost = (e: Event) => {
                     e.preventDefault();
-                    console.warn("3D Teardown WebGL context lost. Recovering gracefully...");
-                    setIsLowPerformance(true);
+                    console.warn("3D Teardown WebGL context lost. Preserving state for restore...");
+                  };
+                  const handleRestored = () => {
+                    console.log("3D Teardown WebGL context restored.");
                   };
                   canvasEl.addEventListener("webglcontextlost", handleLost);
+                  canvasEl.addEventListener("webglcontextrestored", handleRestored);
                   return () => {
                     canvasEl.removeEventListener("webglcontextlost", handleLost);
+                    canvasEl.removeEventListener("webglcontextrestored", handleRestored);
                   };
                 }}
               >
