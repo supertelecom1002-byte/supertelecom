@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.IntentSender
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -109,7 +110,8 @@ class StorageRecoverEngine(private val context: Context) {
         val collections = listOf(
             Pair(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, RecoverCategory.PHOTOS),
             Pair(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, RecoverCategory.VIDEOS),
-            Pair(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, RecoverCategory.AUDIO_RECORDINGS)
+            Pair(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, RecoverCategory.AUDIO_RECORDINGS),
+            Pair(MediaStore.Files.getContentUri("external"), RecoverCategory.DOCUMENTS)
         )
 
         for ((uri, cat) in collections) {
@@ -127,7 +129,7 @@ class StorageRecoverEngine(private val context: Context) {
                 val bundle = Bundle().apply {
                     putInt(MediaStore.QUERY_ARG_MATCH_TRASHED, MediaStore.MATCH_ONLY)
                     putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, "${MediaStore.MediaColumns.DATE_MODIFIED} DESC")
-                    putInt(ContentResolver.QUERY_ARG_LIMIT, 50)
+                    putInt(ContentResolver.QUERY_ARG_LIMIT, 500)
                 }
 
                 context.contentResolver.query(uri, projection, bundle, null)?.use { cursor ->
@@ -164,6 +166,21 @@ class StorageRecoverEngine(private val context: Context) {
         }
 
         return list
+    }
+
+    /**
+     * Android 11+ (API 30+) Native MediaStore Untrash Request
+     * Prompts the user via Android system UI to restore trashed items to original gallery locations.
+     */
+    fun createUntrashIntentSender(uris: List<Uri>): IntentSender? {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && uris.isNotEmpty()) {
+            return try {
+                MediaStore.createTrashRequest(context.contentResolver, uris, false).intentSender
+            } catch (_: Exception) {
+                null
+            }
+        }
+        return null
     }
 
     // ── Tier F: WhatsApp Media & Deleted Status Cache ──
