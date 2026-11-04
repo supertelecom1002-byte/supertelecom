@@ -1,3 +1,4 @@
+import { Immersive3DLoader } from "@/components/three/Immersive3DLoader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { submitBooking } from "@/lib/booking.functions";
@@ -232,6 +233,7 @@ function HomePage() {
 
   return (
     <>
+      <Immersive3DLoader />
       <LocalSeoSchema />
       {/* 100% Native Mobile App Experience (md:hidden) */}
       <div className="md:hidden">

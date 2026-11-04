@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, PerspectiveCamera, Html, useGLTF } from "@react-three/drei";
+import { Float, PerspectiveCamera, Html, useGLTF, BakeShadows } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -517,6 +517,34 @@ function SmartphoneGLBRig({
 // MAIN SCROLL-DRIVEN 3D TEARDOWN CONTROLLER (DECOUPLED SCROLL & TOUCH OPTIMIZED)
 // ─────────────────────────────────────────────────────────────────────────────
 
+
+// Active FPS Monitor that flags performance drops and triggers graceful fallback
+function TeardownFpsMonitor({ onFallback }: { onFallback: () => void }) {
+  const frameCount = useRef(0);
+  const lastTime = useRef(performance.now());
+  const lowFpsCount = useRef(0);
+
+  useFrame(() => {
+    frameCount.current++;
+    const now = performance.now();
+    if (now - lastTime.current >= 1000) {
+      const fps = (frameCount.current * 1000) / (now - lastTime.current);
+      frameCount.current = 0;
+      lastTime.current = now;
+      if (fps < 24) {
+        lowFpsCount.current++;
+        if (lowFpsCount.current >= 4) {
+          onFallback();
+        }
+      } else {
+        lowFpsCount.current = Math.max(0, lowFpsCount.current - 1);
+      }
+    }
+  });
+
+  return null;
+}
+
 export const SmartphoneTeardown3D: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -524,6 +552,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
   const [activeStage, setActiveStage] = useState<StepperStage>(STEPPER_STAGES[0]);
   const [scrubBarPercent, setScrubBarPercent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isLowPerformance, setIsLowPerformance] = useState(false);
   const [activeCallout, setActiveCallout] = useState<string | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
   const [isInView, setIsInView] = useState(true);
@@ -709,6 +738,46 @@ export const SmartphoneTeardown3D: React.FC = () => {
             <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
               {activeStage.subtext}
             </p>
+
+            {/* Quick Component Inspector Selector Pills */}
+            <div className="flex items-center gap-1.5 pt-1 overflow-x-auto no-scrollbar">
+              <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase shrink-0">INSPECT:</span>
+              <button
+                type="button"
+                onClick={() => { handleJumpToStep(0.20); handleSelectCallout("display"); }}
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 shrink-0"
+              >
+                📱 Display (AMOLED)
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleJumpToStep(0.36); handleSelectCallout("motherboard"); }}
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 shrink-0"
+              >
+                ⚡ Motherboard (BGA)
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleJumpToStep(0.53); handleSelectCallout("battery"); }}
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 shrink-0"
+              >
+                🔋 5000mAh Battery
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleJumpToStep(0.70); handleSelectCallout("camera"); }}
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-purple-400 hover:border-purple-500/40 shrink-0"
+              >
+                📸 Triple OIS Cameras
+              </button>
+              <button
+                type="button"
+                onClick={() => { handleJumpToStep(0.70); handleSelectCallout("subboard"); }}
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-sky-400 hover:border-sky-500/40 shrink-0"
+              >
+                🔌 Type-C Sub-Board
+              </button>
+            </div>
           </div>
 
           {/* Interactive Controls Bar */}
@@ -744,13 +813,27 @@ export const SmartphoneTeardown3D: React.FC = () => {
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         >
-          {isMounted && webglSupported && isInView ? (
+          {isMounted && webglSupported && isInView && !isLowPerformance ? (
             <Suspense fallback={<Smartphone3DFallback />}>
               <Canvas
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-                dpr={[1, 2]}
+                dpr={[1, isMobile ? 1.2 : 1.75]}
                 className="w-full h-full"
+                onCreated={({ gl }) => {
+                  const canvasEl = gl.domElement;
+                  const handleLost = (e: Event) => {
+                    e.preventDefault();
+                    console.warn("3D Teardown WebGL context lost. Recovering gracefully...");
+                    setIsLowPerformance(true);
+                  };
+                  canvasEl.addEventListener("webglcontextlost", handleLost);
+                  return () => {
+                    canvasEl.removeEventListener("webglcontextlost", handleLost);
+                  };
+                }}
               >
+                <BakeShadows />
+                <TeardownFpsMonitor onFallback={() => setIsLowPerformance(true)} />
                 <PerspectiveCamera
                   makeDefault
                   position={[0, 0, isMobile ? 9.2 : 7.6]}

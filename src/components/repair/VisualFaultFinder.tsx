@@ -1,3 +1,4 @@
+import { Floating3DIcon } from "@/components/three/Floating3DIcon";
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
@@ -235,13 +236,17 @@ const VisualFaultFinder: React.FC = () => {
                 {/* Badge */}
                 <div className="flex items-center justify-between w-full mb-3">
                   <div
-                    className={`h-11 w-11 rounded-2xl flex items-center justify-center border ${
+                    className={`h-11 w-11 rounded-2xl flex items-center justify-center border overflow-hidden transition-all duration-300 ${
                       isSelected
-                        ? "bg-cyan-500 text-slate-950 border-cyan-400 shadow-md"
-                        : "bg-slate-800/80 text-cyan-400 border-slate-700/60"
+                        ? "bg-cyan-950/80 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                        : "bg-slate-900/90 border-slate-800/80 group-hover:border-cyan-500/30"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Floating3DIcon
+                      type={fault.id}
+                      isSelected={isSelected}
+                      className="h-full w-full"
+                    />
                   </div>
                   <span
                     className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${

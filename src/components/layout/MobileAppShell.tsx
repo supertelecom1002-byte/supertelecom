@@ -1,3 +1,4 @@
+import { Mobile3DLabCard } from "@/components/three/Mobile3DLabCard";
 import React, { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -503,6 +504,9 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
             {/* 360° Hardware Shield Master Scanner Hero Card */}
             <MasterScanHeroCard onOpenScanner={() => setScannerOpen(true)} />
+
+            {/* 3D Hardware Lab Bench Interactive Showcase */}
+            <Mobile3DLabCard />
 
             {/* Live Lab Status Banner */}
             <div className="flex items-center justify-between p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-xl dark:shadow-black/40">

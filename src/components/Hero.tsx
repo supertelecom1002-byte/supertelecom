@@ -1,4 +1,6 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
+
+const Hero3DCanvas = lazy(() => import("@/components/three/Hero3DCanvas"));
 import { Link } from "@tanstack/react-router";
 import {
   Wrench,
@@ -112,6 +114,18 @@ export const Hero: React.FC = () => {
               <span className="text-emerald-400 font-semibold">16+ Services</span>
             </div>
           </div>
+
+          {/* Mobile Interactive 3D Teardown Lab Pill */}
+          <a
+            href="#teardown-3d"
+            className="w-full py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/90 via-slate-900 to-blue-950/90 text-cyan-300 font-bold flex items-center justify-between text-xs active:scale-98 transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+          >
+            <div className="flex items-center gap-2">
+              <span className="flex h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="font-mono">🔬 3D Teardown Lab: 19 Disassembled Parts</span>
+            </div>
+            <ChevronRight className="h-3.5 w-3.5 text-cyan-400" />
+          </a>
 
           {/* Primary App Suite & Native APK Action Strip */}
           <div className="space-y-2 pt-1 w-full">
@@ -306,63 +320,18 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Floating 3D Frosted-Glass Lab Inspection Card */}
+          {/* Right Column: Interactive 3D Smartphone Showcase */}
           <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-            <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border border-cyan-500/30 bg-slate-900/70 p-3 shadow-[0_0_50px_rgba(6,182,212,0.15)] backdrop-blur-xl">
-              {/* Lab Photo Viewport */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
-                <img
-                  src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80"
-                  alt="Super Telecom precision smartphone micro-soldering and double-decker reballing workstation under stereo microscope"
-                  className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
-
-                {/* Overlaid Telemetry Badges */}
-                <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-cyan-500/40 text-cyan-300 text-[10px] font-mono font-bold shadow-md">
-                    <Sparkles className="h-3 w-3 text-cyan-400" />
-                    4K Stereo Microscope Diagnostic
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold shadow-md">
-                    <Cpu className="h-3 w-3 text-emerald-400" />
-                    Double-Decker Reballing Station
-                  </span>
+            <Suspense
+              fallback={
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_35px_rgba(6,182,212,0.15)]">
+                  <div className="h-10 w-10 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mb-3" />
+                  <span className="text-xs font-mono text-cyan-300 font-bold tracking-wider">CALIBRATING 3D LAB BENCH...</span>
                 </div>
-
-                {/* Live Inspection HUD at bottom of photo */}
-                <div className="absolute bottom-3 left-3 right-3 rounded-xl bg-slate-950/90 border border-slate-800/80 p-3 backdrop-blur-md">
-                  <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-slate-400 flex items-center gap-1">
-                      <Cpu className="h-3.5 w-3.5 text-cyan-400" />
-                      BGA Rework Station
-                    </span>
-                    <span className="text-emerald-400 font-bold">BGA Calibrated 350°C</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 w-3/4 rounded-full" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Lab Highlights Footer */}
-              <div className="mt-3 grid grid-cols-3 gap-2 px-1 text-center">
-                <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-2.5">
-                  <div className="text-base font-bold font-mono text-cyan-400">0.02mm</div>
-                  <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Jumper Wire</div>
-                </div>
-                <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-2.5">
-                  <div className="text-base font-bold font-mono text-emerald-400">30 Min</div>
-                  <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Screen Swap</div>
-                </div>
-                <div className="rounded-xl bg-slate-950/60 border border-slate-800/60 p-2.5">
-                  <div className="text-base font-bold font-mono text-amber-400">No Wipe</div>
-                  <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Data Safe</div>
-                </div>
-              </div>
-            </div>
+              }
+            >
+              <Hero3DCanvas />
+            </Suspense>
           </div>
         </div>
       </div>
