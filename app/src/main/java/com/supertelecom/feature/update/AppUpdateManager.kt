@@ -59,6 +59,15 @@ class AppUpdateManager(private val context: Context) {
         const val UPDATE_METADATA_URL = "https://www.supertelecom.shop/apk-release.json"
         const val BASE_URL = "https://www.supertelecom.shop"
         const val FILE_PROVIDER_AUTHORITY = "com.supertelecom.app.fileprovider"
+
+        @Volatile
+        private var instance: AppUpdateManager? = null
+
+        fun getInstance(context: Context): AppUpdateManager {
+            return instance ?: synchronized(this) {
+                instance ?: AppUpdateManager(context.applicationContext).also { instance = it }
+            }
+        }
     }
 
     /**

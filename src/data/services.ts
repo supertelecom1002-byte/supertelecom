@@ -88,7 +88,7 @@ export const SERVICES: ServiceInfo[] = [
     ],
     brands: ["iPhone", "Samsung", "Xiaomi / Redmi", "Realme", "OPPO", "Vivo", "OnePlus", "Motorola", "Nokia"],
     faqs: [
-      ["How much does a phone battery cost in Giridih?", "Android batteries typically start around ₹500, iPhone batteries are higher. Visit Super Telecom Giridih for the exact rate."],
+      ["How much does a phone battery cost in Giridih?", "Battery replacement cost depends on device brand, phone model, and cell capacity. Visit our Barganda Road lab or WhatsApp us for a free inspection and precise quote."],
       ["Do you use genuine batteries?", "Yes. We only fit genuine or brand-tested batteries with warranty. No cheap local cells."],
       ["Will battery replacement erase my data?", "Standard battery replacement does not touch your user storage. However, as an industry best practice, we always advise maintaining a current personal backup before any hardware service."],
     ],
@@ -267,7 +267,7 @@ export const SERVICES: ServiceInfo[] = [
     faqs: [
       ["Why is my phone not charging?", "Usually a dirty port, damaged cable or a broken charging IC / port. Free diagnosis at our store tells you exactly which."],
       ["Do you repair Type-C ports?", "Yes — Type-C, micro-USB and Lightning."],
-      ["How much does charging port repair cost in Giridih?", "Typically between ₹300 and ₹1,500 depending on the phone."],
+      ["How much does charging port repair cost in Giridih?", "Cost depends on port type (Type-C, micro-USB, or Lightning) and whether sub-board micro-soldering is required. Visit Super Telecom Giridih for a free bench diagnosis and exact estimate."],
     ],
     priceRange: "Consultation Required",
     duration: "30-60 minutes",
@@ -464,7 +464,7 @@ export const SERVICES: ServiceInfo[] = [
     brands: ["iPhone", "Samsung", "Xiaomi / Redmi", "Realme", "OPPO", "Vivo", "OnePlus", "Motorola", "Nokia"],
     faqs: [
       ["What is the difference between display and combo?", "A combo (folder) includes the display and touch glass as one unit. Most modern phones need a combo replacement."],
-      ["How much is display replacement in Giridih?", "Android displays start near ₹800; AMOLED and iPhone panels cost more. Free quote at our Barganda Road shop."],
+      ["How much is display replacement in Giridih?", "Display replacement cost depends on screen technology (IPS LCD, AMOLED, or OEM Service Pack) and model. Visit our Barganda Road shop or WhatsApp us for a free estimate."],
       ["Will my phone stay water resistant?", "We re-seal the frame with fresh adhesive, which restores most of the original splash resistance."],
     ],
     priceRange: "Consultation Required",
@@ -531,7 +531,7 @@ export const SERVICES: ServiceInfo[] = [
     faqs: [
       ["Why is my phone speaker so low?", "Usually dust in the mesh or a partially damaged speaker coil. A cleaning often restores full volume."],
       ["Callers cannot hear me — is it the mic?", "Often yes, but it can also be a software or network issue. We diagnose it free at Super Telecom Giridih."],
-      ["How much does speaker repair cost?", "Cleaning is very low cost; a replacement module typically starts around ₹400 depending on the model."],
+      ["How much does speaker repair cost?", "Ultrasonic cleaning is available at nominal cost; component replacement depends on model and part type. Free bench test at Super Telecom Giridih."],
     ],
     priceRange: "Consultation Required",
     duration: "30-60 minutes",
@@ -662,7 +662,7 @@ export const SERVICES: ServiceInfo[] = [
     brands: ["iPhone", "Samsung", "Realme", "Xiaomi / Redmi", "Vivo", "OPPO", "OnePlus", "Motorola"],
     faqs: [
       ["Why is call volume so low on my phone?", "In over 60% of cases, the tiny ear speaker mesh gets clogged with pocket lint and ear oils. A professional microscopic cleaning often restores 100% volume without replacing the speaker."],
-      ["How much does loudspeaker replacement cost in Giridih?", "Acoustic cleaning starts around मॉडल अनुसार while module replacements range from ₹350 to ₹1,800 depending on device brand."],
+      ["How much does loudspeaker replacement cost in Giridih?", "Acoustic cleaning and module replacement rates depend on phone model and acoustic channel design. Visit our Barganda Road lab for a quick free inspection."],
       ["How long will the repair take?", "Most speaker repairs are completed in 30 to 45 minutes while you wait at our Barganda Road shop."],
     ],
     priceRange: "Consultation Required",

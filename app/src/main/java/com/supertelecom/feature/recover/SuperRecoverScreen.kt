@@ -35,13 +35,14 @@ import java.util.Locale
 @Composable
 fun SuperRecoverScreen(
     isHindi: Boolean,
+    initialCategory: RecoverCategory? = null,
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val recoverEngine = remember { StorageRecoverEngine(context) }
 
-    var selectedCategory by remember { mutableStateOf(RecoverCategory.ALL_MEDIA) }
+    var selectedCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.ALL_MEDIA) }
     var selectedTierFilter by remember { mutableStateOf<RecoverTier?>(null) }
     var showPreviewItem by remember { mutableStateOf<RecoverItem?>(null) }
     var restoreResult by remember { mutableStateOf<Triple<Int, Int, String>?>(null) }
@@ -52,6 +53,14 @@ fun SuperRecoverScreen(
 
     // Production Discovered Items: Starts EMPTY (zero hardcoded sample records)
     val discoveredItems = remember { mutableStateListOf<RecoverItem>() }
+
+    LaunchedEffect(initialCategory) {
+        if (initialCategory != null) {
+            val results = recoverEngine.executeDeepScan(initialCategory)
+            discoveredItems.clear()
+            discoveredItems.addAll(results)
+        }
+    }
 
     // Storage Access Framework (SAF) Folder Picker
     val safFolderPicker = rememberLauncherForActivityResult(

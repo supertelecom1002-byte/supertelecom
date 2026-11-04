@@ -53,7 +53,7 @@ fun MoreFeaturesScreen(
     val context = LocalContext.current
     val activity = context as? Activity
 
-    val updateManager = remember { AppUpdateManager(context) }
+    val updateManager = remember { AppUpdateManager.getInstance(context) }
     val updateMetadata by updateManager.updateMetadata.collectAsState()
     val isDownloadingUpdate by updateManager.isDownloading.collectAsState()
     val downloadProgress by updateManager.downloadProgress.collectAsState()

@@ -317,10 +317,14 @@ class WifiDirectTransferManager(private val context: Context) {
         _isTransferring.value = true
         _isPaused.value = false
 
-        // Determine destination IP: extract dynamically from WifiP2pInfo, fallback to override
+        // Determine destination IP: extract dynamically from WifiP2pInfo or manual override
         val targetHost = targetHostOverride
             ?: _connectionInfo.value?.groupOwnerAddress?.hostAddress
-            ?: "192.168.49.1"
+        if (targetHost.isNullOrBlank()) {
+            _isTransferring.value = false
+            onComplete(false, "Cannot determine receiver IP. Please pair devices via Wi-Fi Direct or enter receiver IP.")
+            return
+        }
 
         activeJob = CoroutineScope(Dispatchers.IO).launch {
             var socket: Socket? = null
@@ -618,7 +622,10 @@ class WifiDirectTransferManager(private val context: Context) {
                     }
 
                     val meta = manifestFiles[i]
-                    val tempFile = File(targetDir, ".temp_${System.currentTimeMillis()}_${meta.name}")
+                    val rawName = File(meta.name).name
+                    val safeFileName = rawName.replace(Regex("[^a-zA-Z0-9._-]"), "_").ifEmpty { "transferred_${System.currentTimeMillis()}" }
+                    val tempFile = File(targetDir, ".temp_${System.currentTimeMillis()}_${safeFileName}").canonicalFile
+                    require(tempFile.parentFile?.canonicalFile == targetDir.canonicalFile) { "Path traversal attempt detected" }
                     val fos = FileOutputStream(tempFile)
                     val digest = MessageDigest.getInstance("SHA-256")
                     val buffer = ByteArray(BUFFER_SIZE)
@@ -652,24 +659,39 @@ class WifiDirectTransferManager(private val context: Context) {
 
                     val computedSha256 = digest.digest().joinToString("") { "%02x".format(it) }
 
-                    // Verify against sender SHA-256
-                    val isValid = if (meta.sha256.isNotEmpty()) {
+                    // Enforce complete byte count and non-empty cryptographic hash match
+                    val sizeValid = (fileBytesRead == meta.sizeBytes)
+                    val hashValid = if (meta.sha256.isNotBlank()) {
                         computedSha256.equals(meta.sha256, ignoreCase = true)
-                    } else true
+                    } else {
+                        computedSha256.isNotBlank() && fileBytesRead > 0
+                    }
+                    val isValid = sizeValid && hashValid
 
                     if (isValid) {
                         // Rename safely without overwriting existing files
-                        var finalFile = File(targetDir, meta.name)
+                        var finalFile = File(targetDir, safeFileName).canonicalFile
+                        require(finalFile.parentFile?.canonicalFile == targetDir.canonicalFile) { "Invalid target destination" }
                         if (finalFile.exists()) {
                             val baseName = finalFile.nameWithoutExtension
                             val ext = if (finalFile.extension.isNotEmpty()) ".${finalFile.extension}" else ""
                             var counter = 1
                             while (finalFile.exists()) {
-                                finalFile = File(targetDir, "$baseName ($counter)$ext")
+                                finalFile = File(targetDir, "$baseName ($counter)$ext").canonicalFile
                                 counter++
                             }
                         }
                         tempFile.renameTo(finalFile)
+
+                        // Trigger MediaScanner so file is indexed into Android MediaStore immediately
+                        try {
+                            android.media.MediaScannerConnection.scanFile(
+                                context,
+                                arrayOf(finalFile.absolutePath),
+                                null,
+                                null
+                            )
+                        } catch (_: Exception) {}
 
                         // Send VERIFIED_ACK
                         outStream.writeByte(STATUS_VERIFIED_ACK.toInt())

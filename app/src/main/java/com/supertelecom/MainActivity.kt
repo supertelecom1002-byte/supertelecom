@@ -1,6 +1,7 @@
 package com.supertelecom
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -21,32 +22,50 @@ import com.supertelecom.feature.launcher.AppRepository
 import com.supertelecom.feature.more.MoreFeaturesScreen
 import com.supertelecom.feature.recover.SuperRecoverScreen
 import com.supertelecom.feature.transfer.SuperTransferScreen
+import com.supertelecom.feature.update.AppUpdateManager
 import com.supertelecom.model.AppItem
 import com.supertelecom.model.NavTab
+import com.supertelecom.model.RecoverCategory
+import com.supertelecom.model.TransferDirection
 import com.supertelecom.theme.*
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var appRepository: AppRepository
+    private lateinit var updateManager: AppUpdateManager
 
     private var allAppsState by mutableStateOf<List<AppItem>>(emptyList())
     private var isDefaultLauncherState by mutableStateOf(false)
     private var currentTab by mutableStateOf(NavTab.HOME)
     private var isHindi by mutableStateOf(false)
 
+    private var initialTransferDirection by mutableStateOf<TransferDirection?>(null)
+    private var initialRecoverCategory by mutableStateOf<RecoverCategory?>(null)
+
+    private var lastBackPressTime = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         appRepository = AppRepository(this)
+        updateManager = AppUpdateManager.getInstance(this)
 
-        // Custom back dispatcher
+        // Custom back dispatcher: double-back-to-exit on HOME, back to HOME from other tabs
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (currentTab != NavTab.HOME) {
                     currentTab = NavTab.HOME
+                } else {
+                    val now = System.currentTimeMillis()
+                    if (now - lastBackPressTime < 2000L) {
+                        finish()
+                    } else {
+                        lastBackPressTime = now
+                        val msg = if (isHindi) "बाहर निकलने के लिए फिर से बैक दबाएं" else "Press back again to exit"
+                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
                 }
-                // If already on HOME, do nothing so home launcher stays active
             }
         })
 
@@ -113,14 +132,24 @@ class MainActivity : ComponentActivity() {
                                 isHindi = isHindi,
                                 onToggleLanguage = { isHindi = !isHindi },
                                 onNavigateTab = { currentTab = it },
+                                onNavigateTransfer = { dir ->
+                                    initialTransferDirection = dir
+                                    currentTab = NavTab.TRANSFER
+                                },
+                                onNavigateRecover = { cat ->
+                                    initialRecoverCategory = cat
+                                    currentTab = NavTab.RECOVER
+                                },
                                 contentPadding = screenContentPadding
                             )
                             NavTab.TRANSFER -> SuperTransferScreen(
                                 isHindi = isHindi,
+                                initialDirection = initialTransferDirection,
                                 contentPadding = screenContentPadding
                             )
                             NavTab.RECOVER -> SuperRecoverScreen(
                                 isHindi = isHindi,
+                                initialCategory = initialRecoverCategory,
                                 contentPadding = screenContentPadding
                             )
                             NavTab.MORE -> MoreFeaturesScreen(

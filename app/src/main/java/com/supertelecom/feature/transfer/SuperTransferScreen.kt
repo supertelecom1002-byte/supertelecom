@@ -40,6 +40,7 @@ import java.util.Locale
 @Composable
 fun SuperTransferScreen(
     isHindi: Boolean,
+    initialDirection: TransferDirection? = null,
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     val context = LocalContext.current
@@ -53,7 +54,7 @@ fun SuperTransferScreen(
         }
     }
 
-    var mode by remember { mutableStateOf(TransferDirection.SEND) }
+    var mode by remember(initialDirection) { mutableStateOf(initialDirection ?: TransferDirection.SEND) }
     var showQrDialog by remember { mutableStateOf(false) }
     var showAppPickerDialog by remember { mutableStateOf(false) }
     var showIpConnectDialog by remember { mutableStateOf(false) }

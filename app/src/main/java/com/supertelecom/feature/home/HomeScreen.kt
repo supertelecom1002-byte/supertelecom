@@ -32,7 +32,9 @@ import com.supertelecom.R
 import com.supertelecom.feature.update.AppUpdateManager
 import com.supertelecom.model.NavTab
 import com.supertelecom.model.RecentTaskItem
+import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.TaskType
+import com.supertelecom.model.TransferDirection
 import com.supertelecom.theme.*
 
 @Composable
@@ -40,12 +42,14 @@ fun HomeScreen(
     isHindi: Boolean,
     onToggleLanguage: () -> Unit,
     onNavigateTab: (NavTab) -> Unit,
+    onNavigateTransfer: (TransferDirection) -> Unit = { onNavigateTab(NavTab.TRANSFER) },
+    onNavigateRecover: (RecoverCategory) -> Unit = { onNavigateTab(NavTab.RECOVER) },
     recentTasks: List<RecentTaskItem> = emptyList(),
     contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 120.dp)
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-    val updateManager = remember { AppUpdateManager(context) }
+    val updateManager = remember { AppUpdateManager.getInstance(context) }
     val updateMetadata by updateManager.updateMetadata.collectAsState()
     val isDownloadingUpdate by updateManager.isDownloading.collectAsState()
     val downloadProgress by updateManager.downloadProgress.collectAsState()
@@ -406,7 +410,7 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Button(
-                            onClick = { onNavigateTab(NavTab.TRANSFER) },
+                            onClick = { onNavigateTransfer(TransferDirection.SEND) },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(52.dp),
@@ -425,7 +429,7 @@ fun HomeScreen(
                         }
 
                         Button(
-                            onClick = { onNavigateTab(NavTab.TRANSFER) },
+                            onClick = { onNavigateTransfer(TransferDirection.RECEIVE) },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(52.dp),
@@ -533,25 +537,25 @@ fun HomeScreen(
                             label = if (isHindi) "फोटो" else "Photos",
                             icon = Icons.Default.Image,
                             modifier = Modifier.weight(1f),
-                            onClick = { onNavigateTab(NavTab.RECOVER) }
+                            onClick = { onNavigateRecover(RecoverCategory.PHOTOS) }
                         )
                         ScanShortcutButton(
                             label = if (isHindi) "वीडियो" else "Videos",
                             icon = Icons.Default.Videocam,
                             modifier = Modifier.weight(1f),
-                            onClick = { onNavigateTab(NavTab.RECOVER) }
+                            onClick = { onNavigateRecover(RecoverCategory.VIDEOS) }
                         )
                         ScanShortcutButton(
                             label = if (isHindi) "ऑडियो" else "Audio",
                             icon = Icons.Default.Audiotrack,
                             modifier = Modifier.weight(1f),
-                            onClick = { onNavigateTab(NavTab.RECOVER) }
+                            onClick = { onNavigateRecover(RecoverCategory.AUDIO_RECORDINGS) }
                         )
                         ScanShortcutButton(
                             label = if (isHindi) "दस्तावेज़" else "Docs",
                             icon = Icons.Default.Description,
                             modifier = Modifier.weight(1f),
-                            onClick = { onNavigateTab(NavTab.RECOVER) }
+                            onClick = { onNavigateRecover(RecoverCategory.DOCUMENTS) }
                         )
                     }
                 }

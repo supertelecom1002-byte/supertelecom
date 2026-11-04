@@ -59,7 +59,7 @@ const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
 const SEO_TITLE = "Super Telecom Native Android App — Super Transfer, Super Recover & Super Launcher | 100% Free APK";
 const SEO_DESC =
-  "Official Super Telecom Native Android App (v2.5.0, 1.69 MB, SDK 36). 100% Free, zero ads, DPDP Act 2027 compliant. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
+  "Official Super Telecom Native Android App (v2.8.0, Target SDK 34). 100% Free, zero ads, Privacy & Your Data focused. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
 const CANONICAL_URL = `${SITE_URL}/app`;
 
 export const Route = createFileRoute("/app")({
@@ -87,7 +87,7 @@ export const Route = createFileRoute("/app")({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: "Super Telecom Android App",
-          operatingSystem: "Android 7.0 and up (SDK 36)",
+          operatingSystem: "Android 7.0 and up (SDK 34)",
           applicationCategory: "UtilitiesApplication",
           offers: {
             "@type": "Offer",

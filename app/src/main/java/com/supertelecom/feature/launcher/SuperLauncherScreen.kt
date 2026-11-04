@@ -1,6 +1,10 @@
 package com.supertelecom.feature.launcher
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -40,16 +44,43 @@ fun SuperLauncherScreen(
     bottomPadding: androidx.compose.ui.unit.Dp = 110.dp
 ) {
     val context = LocalContext.current
-    var currentTheme by remember { mutableStateOf(LauncherTheme.MINIMAL) }
+    val launcherPrefs = remember {
+        context.getSharedPreferences("supertelecom_launcher_prefs", Context.MODE_PRIVATE)
+    }
+    val savedThemeName = launcherPrefs.getString("launcher_theme", LauncherTheme.MINIMAL.name)
+    val initialTheme = try {
+        LauncherTheme.valueOf(savedThemeName ?: LauncherTheme.MINIMAL.name)
+    } catch (_: Exception) {
+        LauncherTheme.MINIMAL
+    }
+    var currentTheme by remember { mutableStateOf(initialTheme) }
     var searchQuery by remember { mutableStateOf("") }
 
-    val currentTime = remember {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        sdf.format(Date())
+    var currentTime by remember {
+        mutableStateOf(SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date()))
     }
-    val currentDate = remember {
-        val sdf = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault())
-        sdf.format(Date())
+    var currentDate by remember {
+        mutableStateOf(SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date()))
+    }
+
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                currentDate = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+            }
+        }
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_TIME_TICK)
+            addAction(Intent.ACTION_TIME_CHANGED)
+            addAction(Intent.ACTION_TIMEZONE_CHANGED)
+        }
+        context.registerReceiver(receiver, filter)
+        onDispose {
+            try {
+                context.unregisterReceiver(receiver)
+            } catch (_: Exception) {}
+        }
     }
 
     val filteredApps = remember(searchQuery, allApps) {
@@ -148,25 +179,37 @@ fun SuperLauncherScreen(
                 title = if (isHindi) "1. मिनिमल" else "1. Minimal",
                 isSelected = currentTheme == LauncherTheme.MINIMAL,
                 modifier = Modifier.weight(1f),
-                onClick = { currentTheme = LauncherTheme.MINIMAL }
+                onClick = {
+                    currentTheme = LauncherTheme.MINIMAL
+                    launcherPrefs.edit().putString("launcher_theme", LauncherTheme.MINIMAL.name).apply()
+                }
             )
             ThemeSelectButton(
                 title = if (isHindi) "2. iOS स्टाइल" else "2. iOS",
                 isSelected = currentTheme == LauncherTheme.IOS_INSPIRED,
                 modifier = Modifier.weight(1f),
-                onClick = { currentTheme = LauncherTheme.IOS_INSPIRED }
+                onClick = {
+                    currentTheme = LauncherTheme.IOS_INSPIRED
+                    launcherPrefs.edit().putString("launcher_theme", LauncherTheme.IOS_INSPIRED.name).apply()
+                }
             )
             ThemeSelectButton(
                 title = if (isHindi) "3. पिक्सल" else "3. Pixel",
                 isSelected = currentTheme == LauncherTheme.PIXEL_INSPIRED,
                 modifier = Modifier.weight(1f),
-                onClick = { currentTheme = LauncherTheme.PIXEL_INSPIRED }
+                onClick = {
+                    currentTheme = LauncherTheme.PIXEL_INSPIRED
+                    launcherPrefs.edit().putString("launcher_theme", LauncherTheme.PIXEL_INSPIRED.name).apply()
+                }
             )
             ThemeSelectButton(
                 title = if (isHindi) "4. क्लासिक" else "4. Classic",
                 isSelected = currentTheme == LauncherTheme.CLASSIC,
                 modifier = Modifier.weight(1f),
-                onClick = { currentTheme = LauncherTheme.CLASSIC }
+                onClick = {
+                    currentTheme = LauncherTheme.CLASSIC
+                    launcherPrefs.edit().putString("launcher_theme", LauncherTheme.CLASSIC.name).apply()
+                }
             )
         }
 
