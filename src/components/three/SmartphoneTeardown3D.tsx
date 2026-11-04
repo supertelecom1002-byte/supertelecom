@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, PerspectiveCamera, Html, useGLTF, BakeShadows } from "@react-three/drei";
+import { Float, PerspectiveCamera, useGLTF, BakeShadows } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,12 +21,42 @@ import {
   Eye,
   Activity,
   CheckCircle2,
+  X,
 } from "lucide-react";
 import { Smartphone3DFallback } from "./Smartphone3DFallback";
 
 // Ensure GSAP ScrollTrigger plugin is registered in browser
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CRASH-PROOF ERROR BOUNDARY FOR 3D TEARDOWN
+// ─────────────────────────────────────────────────────────────────────────────
+interface Safe3DProps {
+  children: React.ReactNode;
+  fallback: React.ReactNode;
+}
+interface Safe3DState {
+  hasError: boolean;
+}
+class Safe3DErrorBoundary extends React.Component<Safe3DProps, Safe3DState> {
+  constructor(props: Safe3DProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: Error) {
+    console.warn("SmartphoneTeardown3D caught error:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -235,6 +265,67 @@ function SmartphoneGLBRig({
     return map;
   }, [scene]);
 
+  // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
+  useEffect(() => {
+    scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        if (mat) {
+          mat.envMapIntensity = 1.2;
+          const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
+
+          if (name.includes("frontglass")) {
+            mat.roughness = 0.05;
+            mat.metalness = 0.08;
+            mat.transparent = true;
+            mat.opacity = 0.22;
+            mat.depthWrite = false;
+            mat.color = new THREE.Color("#e0f2fe");
+          } else if (name.includes("touchdigitizer")) {
+            mat.transparent = true;
+            mat.opacity = 0.15;
+            mat.depthWrite = false;
+          } else if (name.includes("oleddisplay")) {
+            mat.color = new THREE.Color("#030712");
+            mat.roughness = 0.2;
+            mat.metalness = 0.3;
+            mat.emissive = new THREE.Color("#0284c7");
+            mat.emissiveIntensity = 0.28;
+          } else if (name.includes("chassisframe")) {
+            mat.metalness = 0.92;
+            mat.roughness = 0.25;
+            mat.color = new THREE.Color("#cbd5e1");
+          } else if (name.includes("rearcover")) {
+            mat.metalness = 0.35;
+            mat.roughness = 0.25;
+            mat.color = new THREE.Color("#0f172a");
+          } else if (name.includes("processorsoc") || name.includes("pmic")) {
+            mat.color = new THREE.Color("#064e3b");
+            mat.emissive = new THREE.Color("#10b981");
+            mat.emissiveIntensity = 0.75;
+          } else if (name.includes("motherboard")) {
+            mat.color = new THREE.Color("#065f46");
+            mat.metalness = 0.25;
+            mat.roughness = 0.45;
+          } else if (name.includes("battery")) {
+            mat.color = new THREE.Color("#1e293b");
+            mat.metalness = 0.4;
+            mat.roughness = 0.35;
+          } else if (name.includes("wirelesscoil") || name.includes("chargingflex")) {
+            mat.color = new THREE.Color("#d97706");
+            mat.metalness = 0.85;
+            mat.roughness = 0.25;
+          } else if (name.includes("shieldcover") || name.includes("screws")) {
+            mat.metalness = 0.95;
+            mat.roughness = 0.2;
+            mat.color = new THREE.Color("#e2e8f0");
+          }
+        }
+      }
+    });
+  }, [scene]);
+
   useFrame((_, delta) => {
     if (!rigGroupRef.current) return;
 
@@ -434,78 +525,42 @@ function SmartphoneGLBRig({
     <group ref={rigGroupRef}>
       <primitive object={scene} />
 
-      {/* Guided 3D Diagnostic Inspection Pins */}
+      {/* Guided 3D Diagnostic Inspection Pins (100% Native WebGL - Zero DOM removeChild collisions!) */}
       {GUIDED_CALLOUTS.map((callout) => {
         const isCurrentActive = activeCallout === callout.id;
         return (
           <group key={callout.id} position={callout.position3D}>
-            <Html center distanceFactor={7.5}>
-              <div className="relative group/pin">
-                <button
-                  type="button"
-                  onClick={() => onSelectCallout(callout.id)}
-                  aria-label={`Inspect ${callout.englishTitle}`}
-                  className={`relative flex items-center justify-center rounded-full p-2 backdrop-blur-md transition-all duration-300 shadow-xl cursor-pointer ${
-                    isCurrentActive
-                      ? "bg-cyan-500 text-slate-950 scale-125 ring-4 ring-cyan-400/50"
-                      : "bg-slate-950/90 text-cyan-300 border border-cyan-400/60 hover:scale-115 hover:bg-cyan-950"
-                  }`}
-                >
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-80" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-400" />
-                  </span>
-                </button>
-
-                {/* Rich 3D Guidance Card */}
-                <div
-                  className={`absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-72 rounded-2xl bg-slate-950/95 border border-cyan-500/60 p-4 shadow-2xl backdrop-blur-xl transition-all duration-300 ${
-                    isCurrentActive
-                      ? "opacity-100 scale-100 pointer-events-auto"
-                      : "opacity-0 scale-95 pointer-events-none group-hover/pin:opacity-100 group-hover/pin:scale-100 group-hover/pin:pointer-events-auto"
-                  }`}
-                >
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
-                    <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono text-[10px] font-bold uppercase">
-                      {callout.badgeText}
-                    </span>
-                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
-                      {callout.warranty}
-                    </span>
-                  </div>
-
-                  <h4 className="font-bold text-xs sm:text-sm text-white leading-tight">
-                    {callout.hindiTitle}
-                  </h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
-                    {callout.englishTitle}
-                  </p>
-
-                  <div className="mt-2 rounded-xl bg-slate-900/90 p-2 border border-slate-800 text-[11px]">
-                    <span className="font-bold text-amber-400">खराबी के लक्षण: </span>
-                    <span className="text-slate-300">{callout.symptoms}</span>
-                  </div>
-
-                  <div className="mt-2 flex items-center justify-between text-[11px] font-semibold text-cyan-300">
-                    <span className="text-white font-bold">{callout.startingPrice}</span>
-                    <span className="flex items-center gap-1 text-slate-400 text-[10px]">
-                      <Clock className="h-3 w-3 text-cyan-400" /> {callout.timeEstimate}
-                    </span>
-                  </div>
-
-                  <a
-                    href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || "918002903643"}?text=${encodeURIComponent(
-                      `नमस्ते सुपर टेलीकॉम गिरिडीह, मैंने आपका 3D स्मार्टफोन टियरडाउन देखा और मुझे इस पुर्जे की रिपेयर करवानी है: ${callout.englishTitle} (${callout.hindiTitle})। कृपया मुफ्त डायग्नोस्टिक व समय बताएं।`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp पर बुक करें
-                  </a>
-                </div>
-              </div>
-            </Html>
+            {/* Outer Interactive Glow Ring */}
+            <mesh
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectCallout(callout.id);
+              }}
+            >
+              <ringGeometry args={[0.08, 0.13, 24]} />
+              <meshBasicMaterial
+                color={isCurrentActive ? "#06b6d4" : "#38bdf8"}
+                side={THREE.DoubleSide}
+                transparent
+                opacity={isCurrentActive ? 1.0 : 0.65}
+              />
+            </mesh>
+            {/* Center Core Dot */}
+            <mesh
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectCallout(callout.id);
+              }}
+            >
+              <circleGeometry args={[0.05, 16]} />
+              <meshBasicMaterial
+                color={isCurrentActive ? "#ffffff" : "#67e8f9"}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+            {isCurrentActive && (
+              <pointLight color="#06b6d4" intensity={2.0} distance={1.2} />
+            )}
           </group>
         );
       })}
@@ -813,9 +868,70 @@ export const SmartphoneTeardown3D: React.FC = () => {
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
         >
+          {/* Active 3D Diagnostic Guidance Card Overlay (Pure React DOM - 100% crash proof) */}
+          {activeCallout && (
+            <div className="absolute top-4 right-4 sm:right-8 z-30 max-w-sm w-full animate-in fade-in slide-in-from-top-4 duration-300">
+              {(() => {
+                const callout = GUIDED_CALLOUTS.find((c) => c.id === activeCallout);
+                if (!callout) return null;
+                return (
+                  <div className="relative rounded-2xl bg-slate-950/95 border border-cyan-500/60 p-4 shadow-2xl backdrop-blur-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setActiveCallout(null)}
+                      className="absolute top-3 right-3 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-900 cursor-pointer"
+                      aria-label="Close callout"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                    <div className="flex items-center gap-2 border-b border-slate-800 pb-2 mb-2 pr-6">
+                      <span className="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-400 font-mono text-[10px] font-bold uppercase">
+                        {callout.badgeText}
+                      </span>
+                      <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                        {callout.warranty}
+                      </span>
+                    </div>
+
+                    <h4 className="font-bold text-sm text-white leading-tight">
+                      {callout.hindiTitle}
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5 font-medium">
+                      {callout.englishTitle}
+                    </p>
+
+                    <div className="mt-2 rounded-xl bg-slate-900/90 p-2 border border-slate-800 text-[11px]">
+                      <span className="font-bold text-amber-400">खराबी के लक्षण: </span>
+                      <span className="text-slate-300">{callout.symptoms}</span>
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-between text-xs font-semibold text-cyan-300">
+                      <span className="text-white font-bold">{callout.startingPrice}</span>
+                      <span className="flex items-center gap-1 text-slate-400 text-[11px]">
+                        <Clock className="h-3.5 w-3.5 text-cyan-400" /> {callout.timeEstimate}
+                      </span>
+                    </div>
+
+                    <a
+                      href={`https://wa.me/${BUSINESS_MASTER?.whatsappRaw || BUSINESS_MASTER?.whatsappNumber || "918002903643"}?text=${encodeURIComponent(
+                        `नमस्ते सुपर टेलीकॉम गिरिडीह, मैंने आपका 3D स्मार्टफोन टियरडाउन देखा और मुझे इस पुर्जे की रिपेयर करवानी है: ${callout.englishTitle} (${callout.hindiTitle})। कृपया मुफ्त डायग्नोस्टिक व समय बताएं।`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-lg hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" /> WhatsApp पर बुक करें
+                    </a>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           {isMounted && webglSupported && isInView ? (
-            <Suspense fallback={<Smartphone3DFallback />}>
-              <Canvas
+            <Safe3DErrorBoundary fallback={<Smartphone3DFallback />}>
+              <Suspense fallback={<Smartphone3DFallback />}>
+                <Canvas
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
                 dpr={[1, isMobile ? 1.2 : 1.75]}
                 className="w-full h-full"
@@ -867,6 +983,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
                 </Float>
               </Canvas>
             </Suspense>
+            </Safe3DErrorBoundary>
           ) : (
             <Smartphone3DFallback />
           )}

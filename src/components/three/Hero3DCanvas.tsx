@@ -11,11 +11,42 @@ import {
   Activity,
   RotateCw,
   ChevronDown,
+  Wrench,
+  ShieldCheck,
 } from "lucide-react";
 
 // Preload the GLB asset
 if (typeof window !== "undefined") {
   useGLTF.preload("/models/smartphone_teardown.glb");
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SAFE ERROR BOUNDARY FOR 3D ENGINE
+// ─────────────────────────────────────────────────────────────────────────────
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback: React.ReactNode;
+}
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+class Safe3DErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: Error) {
+    console.warn("Hero3DCanvas caught error:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -39,8 +70,8 @@ const HERO_HOTSPOTS: Hotspot[] = [
     sublabel: "Screen Glass & Digitizer",
     techSpec: "OCA Vacuum Restoration",
     color: "#06b6d4",
-    position: [0, 0.5, 0.22],
-    targetRotation: [0.05, 0.0],
+    position: [0, 0.45, 0.22],
+    targetRotation: [0.08, 0.05],
   },
   {
     id: "cpu",
@@ -49,7 +80,7 @@ const HERO_HOTSPOTS: Hotspot[] = [
     techSpec: "0.02mm Jumper / 350°C BGA",
     color: "#10b981",
     position: [-0.4, 0.9, 0.18],
-    targetRotation: [0.1, 0.35],
+    targetRotation: [0.12, 0.42],
   },
   {
     id: "battery",
@@ -58,7 +89,7 @@ const HERO_HOTSPOTS: Hotspot[] = [
     techSpec: "Thermal Guard Protection",
     color: "#f59e0b",
     position: [0.35, -0.4, 0.18],
-    targetRotation: [0.05, -0.3],
+    targetRotation: [0.08, -0.35],
   },
   {
     id: "camera",
@@ -67,7 +98,7 @@ const HERO_HOTSPOTS: Hotspot[] = [
     techSpec: "Cleanroom Alignment",
     color: "#a855f7",
     position: [-0.45, 1.4, -0.22],
-    targetRotation: [0.15, 2.9], // View back of phone
+    targetRotation: [0.12, 2.95], // View back of phone
   },
   {
     id: "port",
@@ -76,9 +107,31 @@ const HERO_HOTSPOTS: Hotspot[] = [
     techSpec: "24-Pin Gold-Plated Dock",
     color: "#38bdf8",
     position: [0, -2.0, 0.15],
-    targetRotation: [-0.25, 0.0],
+    targetRotation: [-0.22, 0.05],
   },
 ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3D HOLOGRAPHIC WIREFRAME LOADING PLACEHOLDER
+// ─────────────────────────────────────────────────────────────────────────────
+
+function HeroLoadingHologram() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame(({ clock }) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = clock.getElapsedTime() * 1.2;
+    }
+  });
+
+  return (
+    <group position={[0, 0, 0]}>
+      <mesh ref={meshRef}>
+        <boxGeometry args={[1.8, 3.8, 0.22]} />
+        <meshBasicMaterial color="#06b6d4" wireframe transparent opacity={0.35} />
+      </mesh>
+    </group>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3D HERO SMARTPHONE MODEL RIG WITH MOUSE PARALLAX & TACTILE ROTATION
@@ -101,33 +154,61 @@ function HeroModelRig({
   const groupRef = useRef<THREE.Group>(null);
   const clonedScene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
 
-  // Enhance materials on mount for high-end PBR shine and glowing logic lines
+  // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
     clonedScene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat) {
-          mat.envMapIntensity = 1.4;
-          if (mesh.name === "FrontGlass") {
+          mat.envMapIntensity = 1.2;
+          const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
+
+          if (name.includes("frontglass")) {
             mat.roughness = 0.05;
-            mat.metalness = 0.1;
+            mat.metalness = 0.08;
             mat.transparent = true;
-            mat.opacity = 0.65;
-          } else if (mesh.name === "OLEDDisplay") {
-            mat.emissive = new THREE.Color("#0369a1");
-            mat.emissiveIntensity = 0.45;
-            mat.roughness = 0.1;
-          } else if (mesh.name === "ChassisFrame") {
-            mat.metalness = 0.95;
+            mat.opacity = 0.22; // Clear glass so display and internals show cleanly
+            mat.depthWrite = false;
+            mat.color = new THREE.Color("#e0f2fe");
+          } else if (name.includes("touchdigitizer")) {
+            mat.transparent = true;
+            mat.opacity = 0.15;
+            mat.depthWrite = false;
+          } else if (name.includes("oleddisplay")) {
+            mat.color = new THREE.Color("#030712"); // Deep OLED midnight black
             mat.roughness = 0.2;
-            mat.color = new THREE.Color("#cbd5e1");
-          } else if (mesh.name === "ProcessorSoC" || mesh.name === "Motherboard") {
+            mat.metalness = 0.3;
+            mat.emissive = new THREE.Color("#0284c7");
+            mat.emissiveIntensity = 0.28;
+          } else if (name.includes("chassisframe")) {
+            mat.metalness = 0.92;
+            mat.roughness = 0.25;
+            mat.color = new THREE.Color("#cbd5e1"); // Silver-titanium chassis
+          } else if (name.includes("rearcover")) {
+            mat.metalness = 0.35;
+            mat.roughness = 0.25;
+            mat.color = new THREE.Color("#0f172a"); // Deep matte slate
+          } else if (name.includes("processorsoc") || name.includes("pmic")) {
+            mat.color = new THREE.Color("#064e3b");
             mat.emissive = new THREE.Color("#10b981");
-            mat.emissiveIntensity = 0.55;
-          } else if (mesh.name === "Battery") {
+            mat.emissiveIntensity = 0.75;
+          } else if (name.includes("motherboard")) {
+            mat.color = new THREE.Color("#065f46"); // Green PCB substrate
+            mat.metalness = 0.25;
+            mat.roughness = 0.45;
+          } else if (name.includes("battery")) {
+            mat.color = new THREE.Color("#1e293b");
             mat.metalness = 0.4;
             mat.roughness = 0.35;
+          } else if (name.includes("wirelesscoil") || name.includes("chargingflex")) {
+            mat.color = new THREE.Color("#d97706"); // Copper coil
+            mat.metalness = 0.85;
+            mat.roughness = 0.25;
+          } else if (name.includes("shieldcover") || name.includes("screws")) {
+            mat.metalness = 0.95;
+            mat.roughness = 0.2;
+            mat.color = new THREE.Color("#e2e8f0");
           }
         }
       }
@@ -138,19 +219,19 @@ function HeroModelRig({
     if (!groupRef.current) return;
     const t = clock.getElapsedTime();
 
-    // Idle floating bob
-    groupRef.current.position.y = Math.sin(t * 1.4) * 0.08;
+    // Idle subtle floating bob
+    groupRef.current.position.y = Math.sin(t * 1.3) * 0.06;
 
     // Determine target rotation (either user drag or hotspot target + mouse parallax)
-    const baseRotX = isDragging ? dragRotation.x : activeHotspot.targetRotation[0] + mousePos.y * 0.25;
-    const baseRotY = isDragging ? dragRotation.y : activeHotspot.targetRotation[1] + mousePos.x * 0.45;
+    const baseRotX = isDragging ? dragRotation.x : activeHotspot.targetRotation[0] + mousePos.y * 0.22;
+    const baseRotY = isDragging ? dragRotation.y : activeHotspot.targetRotation[1] + mousePos.x * 0.40;
 
     groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, baseRotX, 0.08);
     groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, baseRotY, 0.08);
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} scale={[0.76, 0.76, 0.76]}>
+    <group ref={groupRef} position={[0, 0, 0]} scale={[0.72, 0.72, 0.72]}>
       {/* 3D Model Instance */}
       <primitive object={clonedScene} />
 
@@ -166,7 +247,7 @@ function HeroModelRig({
                 onSelectHotspot(spot);
               }}
             >
-              <ringGeometry args={[0.09, 0.14, 24]} />
+              <ringGeometry args={[0.08, 0.13, 24]} />
               <meshBasicMaterial
                 color={spot.color}
                 side={THREE.DoubleSide}
@@ -181,12 +262,12 @@ function HeroModelRig({
                 onSelectHotspot(spot);
               }}
             >
-              <circleGeometry args={[0.06, 16]} />
+              <circleGeometry args={[0.05, 16]} />
               <meshBasicMaterial color="#ffffff" side={THREE.DoubleSide} />
             </mesh>
-            {/* Point Light for selected hotspot */}
+            {/* Subtle Point Light for selected hotspot */}
             {isSelected && (
-              <pointLight color={spot.color} intensity={2.5} distance={1.2} />
+              <pointLight color={spot.color} intensity={1.8} distance={1.2} />
             )}
           </group>
         );
@@ -297,33 +378,49 @@ export const Hero3DCanvas: React.FC = () => {
           }}
         />
 
-        {/* Real-time 3D Canvas with corrected camera position and framing */}
-        <Canvas
-          dpr={[1, 1.5]}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: "high-performance",
-          }}
+        {/* Real-time 3D Canvas with balanced studio lighting & crash-proof ErrorBoundary */}
+        <Safe3DErrorBoundary
+          fallback={
+            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-950">
+              <div className="relative mb-3 flex items-center justify-center">
+                <div className="h-16 w-16 rounded-2xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center animate-pulse">
+                  <Cpu className="h-8 w-8 text-cyan-400" />
+                </div>
+              </div>
+              <h4 className="text-sm font-bold text-white font-display">Super Telecom 3D Lab Bench</h4>
+              <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
+                गिरिडीह की प्रीमियर चिप-लेवल BGA माइक्रो-सोल्डरिंग व AMOLED डिस्प्ले रिस्टोरेशन लैब
+              </p>
+            </div>
+          }
         >
-          <PerspectiveCamera makeDefault position={[0, 0, 7.2]} fov={40} />
-          <ambientLight intensity={1.1} />
-          <directionalLight position={[4, 5, 4]} intensity={2.2} color="#ffffff" />
-          <directionalLight position={[-4, -3, -3]} intensity={2.8} color="#06b6d4" />
-          <directionalLight position={[3, -2, 2]} intensity={1.5} color="#38bdf8" />
-          <spotLight position={[0, 6, 4]} intensity={2.0} angle={0.5} penumbra={0.7} color="#e0f2fe" />
-          <BakeShadows />
+          <Canvas
+            dpr={[1, 1.5]}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: "high-performance",
+            }}
+          >
+            <PerspectiveCamera makeDefault position={[0, 0, 7.5]} fov={38} />
+            <ambientLight intensity={0.95} />
+            <directionalLight position={[5, 7, 5]} intensity={2.2} color="#ffffff" />
+            <directionalLight position={[-4, -2, -3]} intensity={1.2} color="#38bdf8" />
+            <directionalLight position={[-2, 3, 2]} intensity={0.9} color="#10b981" />
+            <spotLight position={[0, 6, 4]} intensity={1.5} angle={0.55} penumbra={0.8} color="#e0f2fe" />
+            <BakeShadows />
 
-          <Suspense fallback={null}>
-            <HeroModelRig
-              activeHotspot={activeHotspot}
-              onSelectHotspot={setActiveHotspot}
-              mousePos={mousePos}
-              isDragging={isDragging}
-              dragRotation={dragRotation}
-            />
-          </Suspense>
-        </Canvas>
+            <Suspense fallback={<HeroLoadingHologram />}>
+              <HeroModelRig
+                activeHotspot={activeHotspot}
+                onSelectHotspot={setActiveHotspot}
+                mousePos={mousePos}
+                isDragging={isDragging}
+                dragRotation={dragRotation}
+              />
+            </Suspense>
+          </Canvas>
+        </Safe3DErrorBoundary>
 
         {/* Overlaid Top-Left Status Telemetry */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none">
