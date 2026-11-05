@@ -10,6 +10,7 @@ import {
   Check,
   QrCode,
   ArrowLeftRight,
+  ArrowLeft,
   RotateCcw,
   LayoutGrid,
   Zap,
@@ -246,15 +247,21 @@ function AppShowcasePage() {
   const docInputRef = useRef<HTMLInputElement>(null);
 
   // ── Tab 3: Super Recover State ──
+  const [recoverViewMode, setRecoverViewMode] = useState<"dashboard" | "scanning" | "gallery" | "vault">("dashboard");
   const [recoverCategory, setRecoverCategory] = useState<
-    "photos" | "videos" | "recordings" | "music" | "docs" | "all"
+    "photos" | "videos" | "recordings" | "music" | "docs" | "trash" | "vault" | "all"
   >("photos");
-  const [recoverTierFilter, setRecoverTierFilter] = useState<RecoverTierType | "ALL">("ALL");
+  const [galleryFilter, setGalleryFilter] = useState<string>("ALL");
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [scanPath, setScanPath] = useState("/storage/emulated/0/DCIM");
+  const [filesFoundCount, setFilesFoundCount] = useState(0);
   const [scannedFiles, setScannedFiles] = useState<RecoverItemModel[]>([]);
+  const [vaultFiles, setVaultFiles] = useState<RecoverItemModel[]>([]);
   const [previewModalItem, setPreviewModalItem] = useState<RecoverItemModel | null>(null);
+  const [recoverySuccessMessage, setRecoverySuccessMessage] = useState<string | null>(null);
   const directoryInputRef = useRef<HTMLInputElement>(null);
+  const scanIntervalRef = useRef<any>(null);
 
   // ── Tab 4: Super Launcher State ──
   const [launcherTheme, setLauncherTheme] = useState<"minimal" | "ios" | "pixel" | "classic">("minimal");
@@ -397,90 +404,327 @@ function AppShowcasePage() {
 
   // ── RECOVERY ACTIONS ──
 
-  const handleDeepScan = () => {
-    safeVibrate([30]);
+  const generateRecoveryItemsForCategory = (cat: string): RecoverItemModel[] => {
+    if (cat === "photos") {
+      return [
+        {
+          id: "photo_1",
+          name: "IMG_20261014_Giridih_Market.jpg",
+          sizeBytes: 4250000,
+          date: "14 Oct 2026",
+          sourcePath: "/storage/emulated/0/DCIM/Camera/.thumbnails/IMG_01.jpg",
+          category: "photos",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Thumbnail Cache",
+          tierNameHi: "थंबनेल कैश",
+          qualityTag: "1080p Restored",
+          isSelected: true,
+        },
+        {
+          id: "photo_2",
+          name: "Family_Diwali_Portrait_Barganda.jpg",
+          sizeBytes: 3820000,
+          date: "01 Nov 2026",
+          sourcePath: "/storage/emulated/0/Pictures/.trash/Family_Portrait.jpg",
+          category: "photos",
+          tier: "E_SYSTEM_TRASH",
+          tierNameEn: "System Trash",
+          tierNameHi: "सिस्टम रीसायकल बिन",
+          qualityTag: "Original EXIF Intact",
+          isSelected: true,
+        },
+        {
+          id: "photo_3",
+          name: "WhatsApp_Document_Photo_ID.png",
+          sizeBytes: 2150000,
+          date: "25 Oct 2026",
+          sourcePath: "/storage/emulated/0/Android/media/com.whatsapp/Media/.nomedia/Doc_01.png",
+          category: "photos",
+          tier: "B_HIDDEN",
+          tierNameEn: "Hidden .nomedia",
+          tierNameHi: "छुपा हुआ मीडिया",
+          qualityTag: "Intact PNG 24-bit",
+          isSelected: false,
+        },
+        {
+          id: "photo_4",
+          name: "Shop_Motherboard_Reballing_Lab.jpg",
+          sizeBytes: 5120000,
+          date: "20 Oct 2026",
+          sourcePath: "/storage/emulated/0/DCIM/Camera/Lab_01.jpg",
+          category: "photos",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Restorable Original",
+          tierNameHi: "मूल पुनर्प्राप्य फ़ोटो",
+          qualityTag: "Full Resolution",
+          isSelected: true,
+        },
+        {
+          id: "photo_5",
+          name: "Bill_Invoice_Receipt_SuperTelecom.jpg",
+          sizeBytes: 1450000,
+          date: "02 Nov 2026",
+          sourcePath: "/storage/emulated/0/Pictures/.trash/Bill_Receipt.jpg",
+          category: "photos",
+          tier: "E_SYSTEM_TRASH",
+          tierNameEn: "System Trash",
+          tierNameHi: "सिस्टम रीसायकल बिन",
+          qualityTag: "Legible High-Res",
+          isSelected: false,
+        },
+        {
+          id: "photo_6",
+          name: "Screen_Replacement_Before_After.jpg",
+          sizeBytes: 3100000,
+          date: "29 Oct 2026",
+          sourcePath: "/storage/emulated/0/DCIM/.thumbnails/Screen_Swap.jpg",
+          category: "photos",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Thumbnail Recovery",
+          tierNameHi: "कैश रिकवरी",
+          qualityTag: "Restored Image",
+          isSelected: false,
+        },
+      ];
+    } else if (cat === "videos") {
+      return [
+        {
+          id: "vid_1",
+          name: "VID_20261012_Teardown_Lab_Benchmark.mp4",
+          sizeBytes: 48500000,
+          date: "12 Oct 2026",
+          sourcePath: "/storage/emulated/0/DCIM/Camera/.trash/Teardown.mp4",
+          category: "videos",
+          tier: "E_SYSTEM_TRASH",
+          tierNameEn: "System Trash",
+          tierNameHi: "सिस्टम ट्रैश",
+          qualityTag: "1080p 60FPS Video",
+          isSelected: true,
+        },
+        {
+          id: "vid_2",
+          name: "WhatsApp_Video_Customer_Repair.mp4",
+          sizeBytes: 16200000,
+          date: "22 Oct 2026",
+          sourcePath: "/storage/emulated/0/Android/media/com.whatsapp/Media/.nomedia/Repair.mp4",
+          category: "videos",
+          tier: "B_HIDDEN",
+          tierNameEn: "Hidden .nomedia Video",
+          tierNameHi: "छुपा हुआ वीडियो",
+          qualityTag: "720p H.264 Intact",
+          isSelected: true,
+        },
+        {
+          id: "vid_3",
+          name: "Screen_Flicker_Inspection_Clip.mp4",
+          sizeBytes: 24000000,
+          date: "03 Nov 2026",
+          sourcePath: "/storage/emulated/0/Movies/.thumbnails/Flicker.mp4",
+          category: "videos",
+          tier: "D_THUMBNAILS",
+          tierNameEn: "Cache Recovery",
+          tierNameHi: "वीडियो पूर्वावलोकन",
+          qualityTag: "Preview Stream",
+          isSelected: false,
+        },
+      ];
+    } else if (cat === "recordings" || cat === "music") {
+      return [
+        {
+          id: "aud_1",
+          name: "Call_Recording_Technician_BGA_Quote.m4a",
+          sizeBytes: 8400000,
+          date: "28 Oct 2026",
+          sourcePath: "/storage/emulated/0/Recordings/Calls/BGA_Quote.m4a",
+          category: "recordings",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Restorable Audio",
+          tierNameHi: "कॉल रिकॉर्डिंग",
+          qualityTag: "AAC 192kbps Audio",
+          isSelected: true,
+        },
+        {
+          id: "aud_2",
+          name: "WhatsApp_Voice_Note_Order_Details.opus",
+          sizeBytes: 2100000,
+          date: "04 Nov 2026",
+          sourcePath: "/storage/emulated/0/Android/media/com.whatsapp/Media/.nomedia/Voice_01.opus",
+          category: "recordings",
+          tier: "B_HIDDEN",
+          tierNameEn: "Hidden Voice Note",
+          tierNameHi: "छुपा हुआ वॉयस नोट",
+          qualityTag: "Opus Speech Intact",
+          isSelected: true,
+        },
+      ];
+    } else if (cat === "docs") {
+      return [
+        {
+          id: "doc_1",
+          name: "Aadhaar_Card_Identity_Proof_Scan.pdf",
+          sizeBytes: 1950000,
+          date: "05 Nov 2026",
+          sourcePath: "/storage/emulated/0/Download/.unlinked/Aadhaar.pdf",
+          category: "docs",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Unlinked File",
+          tierNameHi: "अनलिंक्ड स्टोरेज रिकवरी",
+          qualityTag: "PDF 1.7 Struct",
+          isSelected: true,
+        },
+        {
+          id: "doc_2",
+          name: "Super_Telecom_Official_Invoice_GST.pdf",
+          sizeBytes: 840000,
+          date: "01 Nov 2026",
+          sourcePath: "/storage/emulated/0/Documents/.trash/Invoice_GST.pdf",
+          category: "docs",
+          tier: "E_SYSTEM_TRASH",
+          tierNameEn: "System Trash",
+          tierNameHi: "सिस्टम रीसायकल बिन",
+          qualityTag: "Verified PDF",
+          isSelected: true,
+        },
+        {
+          id: "doc_3",
+          name: "Service_JobSheet_Warranty_Contract.docx",
+          sizeBytes: 620000,
+          date: "18 Oct 2026",
+          sourcePath: "/storage/emulated/0/Documents/JobSheet.docx",
+          category: "docs",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Restorable Doc",
+          tierNameHi: "मूल वर्ड दस्तावेज़",
+          qualityTag: "DOCX Valid",
+          isSelected: false,
+        },
+      ];
+    } else {
+      return [
+        {
+          id: "rec_1",
+          name: "DCIM_Camera_Family_Giridih_01.jpg",
+          sizeBytes: 4250000,
+          date: "14 Oct 2026",
+          sourcePath: "/storage/emulated/0/DCIM/.trash/Camera_01.jpg",
+          category: "photos",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Restorable Original",
+          tierNameHi: "मूल पुनर्प्राप्य फ़ोटो",
+          qualityTag: "100% Original EXIF",
+          isSelected: true,
+        },
+        {
+          id: "rec_2",
+          name: "WhatsApp_Hidden_Recording_Meeting.m4a",
+          sizeBytes: 18200000,
+          date: "28 Sep 2026",
+          sourcePath: "/storage/emulated/0/Android/media/com.whatsapp/.nomedia/Meeting.m4a",
+          category: "recordings",
+          tier: "B_HIDDEN",
+          tierNameEn: "Hidden Media (.nomedia)",
+          tierNameHi: "छुपा हुआ मीडिया",
+          qualityTag: "Intact Audio (AAC 192k)",
+          isSelected: true,
+        },
+        {
+          id: "rec_3",
+          name: "Download_Aadhaar_Pan_Backup.pdf",
+          sizeBytes: 1950000,
+          date: "05 Nov 2026",
+          sourcePath: "/storage/emulated/0/Download/.unlinked/Aadhaar.pdf",
+          category: "docs",
+          tier: "A_RESTORABLE",
+          tierNameEn: "Restorable Original",
+          tierNameHi: "मूल पुनर्प्राप्य फ़ाइल",
+          qualityTag: "PDF 1.7 Struct",
+          isSelected: true,
+        },
+        {
+          id: "rec_4",
+          name: "Market_Shop_Front_Teardown.mp4",
+          sizeBytes: 64000000,
+          date: "12 Aug 2026",
+          sourcePath: "/storage/emulated/0/DCIM/.thumbnails/Teardown.mp4",
+          category: "videos",
+          tier: "D_THUMBNAILS",
+          tierNameEn: "Thumbnail/Preview Cache",
+          tierNameHi: "थंबनेल व पूर्वावलोकन",
+          qualityTag: "720p Cache Stream",
+          isSelected: false,
+        },
+        {
+          id: "rec_5",
+          name: "System_Trash_Invoice_2026.docx",
+          sizeBytes: 640000,
+          date: "01 Sep 2026",
+          sourcePath: "/storage/emulated/0/.trash/Invoice_2026.docx",
+          category: "docs",
+          tier: "E_SYSTEM_TRASH",
+          tierNameEn: "System Trash (30-day)",
+          tierNameHi: "सिस्टम ट्रैश",
+          qualityTag: "Recoverable XML",
+          isSelected: false,
+        },
+      ];
+    }
+  };
+
+  const handleStartCategoryScan = (cat: "photos" | "videos" | "recordings" | "music" | "docs" | "trash" | "vault" | "all") => {
+    safeVibrate([25]);
+    setRecoverCategory(cat);
+
+    if (cat === "vault") {
+      setRecoverViewMode("vault");
+      return;
+    }
+
+    setRecoverViewMode("scanning");
     setIsScanning(true);
     setScanProgress(0);
+    setFilesFoundCount(0);
+
+    const paths = [
+      "/storage/emulated/0/DCIM/Camera",
+      "/storage/emulated/0/DCIM/.thumbnails",
+      "/storage/emulated/0/Pictures/.trash",
+      "/storage/emulated/0/Android/media/com.whatsapp/WhatsApp/Media/.nomedia",
+      "/storage/emulated/0/Download/.unlinked",
+      "/storage/emulated/0/.trash",
+      "/storage/emulated/0/Documents/Backups",
+      "/storage/emulated/0/Recordings/Calls",
+    ];
 
     let p = 0;
-    const interval = setInterval(() => {
-      p += 12;
-      setScanProgress(Math.min(100, p));
-      if (p >= 100) {
-        clearInterval(interval);
-        setIsScanning(false);
+    if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
 
-        // Populate verified recovery records
-        const results: RecoverItemModel[] = [
-          {
-            id: "rec_1",
-            name: "DCIM_Camera_Family_Giridih_01.jpg",
-            sizeBytes: 4250000,
-            date: "14 Oct 2026",
-            sourcePath: "/storage/emulated/0/DCIM/.trash/Camera_01.jpg",
-            category: "photos",
-            tier: "A_RESTORABLE",
-            tierNameEn: "Restorable Original",
-            tierNameHi: "मूल पुनर्प्राप्य फ़ाइल",
-            qualityTag: "100% Original EXIF",
-            isSelected: true,
-          },
-          {
-            id: "rec_2",
-            name: "WhatsApp_Hidden_Recording_Meeting.m4a",
-            sizeBytes: 18200000,
-            date: "28 Sep 2026",
-            sourcePath: "/storage/emulated/0/Android/media/com.whatsapp/.nomedia/Meeting.m4a",
-            category: "recordings",
-            tier: "B_HIDDEN",
-            tierNameEn: "Hidden Media (.nomedia)",
-            tierNameHi: "छुपा हुआ मीडिया",
-            qualityTag: "Intact Audio (AAC 192k)",
-            isSelected: true,
-          },
-          {
-            id: "rec_3",
-            name: "Download_Aadhaar_Pan_Backup.pdf",
-            sizeBytes: 1950000,
-            date: "05 Nov 2026",
-            sourcePath: "/storage/emulated/0/Download/.unlinked/Aadhaar.pdf",
-            category: "docs",
-            tier: "A_RESTORABLE",
-            tierNameEn: "Restorable Original",
-            tierNameHi: "मूल पुनर्प्राप्य फ़ाइल",
-            qualityTag: "PDF 1.7 Struct",
-            isSelected: true,
-          },
-          {
-            id: "rec_4",
-            name: "Market_Shop_Front_Teardown.mp4",
-            sizeBytes: 64000000,
-            date: "12 Aug 2026",
-            sourcePath: "/storage/emulated/0/DCIM/.thumbnails/Teardown.mp4",
-            category: "videos",
-            tier: "D_THUMBNAILS",
-            tierNameEn: "Thumbnail/Preview Cache",
-            tierNameHi: "थंबनेल व पूर्वावलोकन",
-            qualityTag: "720p Cache Stream",
-            isSelected: false,
-          },
-          {
-            id: "rec_5",
-            name: "System_Trash_Invoice_2026.docx",
-            sizeBytes: 640000,
-            date: "01 Sep 2026",
-            sourcePath: "/storage/emulated/0/.trash/Invoice_2026.docx",
-            category: "docs",
-            tier: "E_SYSTEM_TRASH",
-            tierNameEn: "System Trash (30-day)",
-            tierNameHi: "सिस्टम ट्रैश",
-            qualityTag: "Recoverable XML",
-            isSelected: false,
-          },
-        ];
+    scanIntervalRef.current = setInterval(() => {
+      p += 8;
+      const pathIdx = Math.min(paths.length - 1, Math.floor((p / 100) * paths.length));
+      setScanPath(paths[pathIdx]);
+      setScanProgress(Math.min(100, p));
+      setFilesFoundCount((prev) => prev + Math.floor(Math.random() * 2 + 1));
+
+      if (p >= 100) {
+        clearInterval(scanIntervalRef.current);
+        setIsScanning(false);
+        setRecoverViewMode("gallery");
+        const results = generateRecoveryItemsForCategory(cat);
         setScannedFiles(results);
       }
-    }, 200);
+    }, 120);
+  };
+
+  const handleStopScan = () => {
+    if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
+    setIsScanning(false);
+    setRecoverViewMode("gallery");
+    const results = generateRecoveryItemsForCategory(recoverCategory);
+    setScannedFiles(results);
+  };
+
+  const handleDeepScan = () => {
+    handleStartCategoryScan(recoverCategory);
   };
 
   // Real Directory Picker using File System Access API
@@ -603,6 +847,13 @@ function AppShowcasePage() {
         statusText: isHindi ? "सुरक्षित रूप से सेव किया गया" : "Restored to Downloads",
       });
     });
+
+    setVaultFiles((prev) => [...selected, ...prev]);
+    setRecoverySuccessMessage(
+      isHindi
+        ? `${selected.length} फ़ाइलें सफलतापूर्वक Downloads/SuperTelecom_Recovered में सुरक्षित रूप से रीस्टोर की गईं!`
+        : `Successfully recovered ${selected.length} file(s) to Downloads/SuperTelecom_Recovered!`
+    );
   };
 
   // ── APK DOWNLOAD HANDLER ──
@@ -1274,187 +1525,542 @@ function AppShowcasePage() {
         )}
 
         {/* ═════════════════════════════════════════════════════════════════ */}
-        {/* TAB 3: SUPER RECOVER                                              */}
+        {/* TAB 3: SUPER RECOVER (ALL-RECOVERY VISUAL DASHBOARD & GALLERY)     */}
         {/* ═════════════════════════════════════════════════════════════════ */}
         {activeTab === "recover" && (
           <div className="space-y-6 animate-in fade-in-50 duration-200">
-            {/* 6 Category Selection Cards */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
-                {isHindi ? "रिकवरी श्रेणी चुनें (6 Categories)" : "Select Media Category"}
-              </h3>
+            {/* Success Alert Banner if restored */}
+            {recoverySuccessMessage && (
+              <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/40 p-4 flex items-center justify-between gap-3 text-xs text-emerald-300 shadow-lg shadow-emerald-500/10">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                  <span className="font-semibold truncate">{recoverySuccessMessage}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setRecoverViewMode("vault");
+                    setRecoverySuccessMessage(null);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shrink-0 cursor-pointer hover:bg-emerald-400 transition-all active:scale-95"
+                >
+                  {isHindi ? "वॉल्ट देखें" : "View Vault"}
+                </button>
+              </div>
+            )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                {[
-                  { key: "photos", labelHi: "🖼️ फ़ोटो (Photos)", labelEn: "Photos", icon: ImageIcon, color: "text-cyan-400" },
-                  { key: "videos", labelHi: "🎬 वीडियो (Videos)", labelEn: "Videos", icon: VideoIcon, color: "text-blue-400" },
-                  { key: "recordings", labelHi: "🎙️ कॉल रिकॉर्डिंग", labelEn: "Call Recordings", icon: Mic, color: "text-emerald-400" },
-                  { key: "music", labelHi: "🎵 संगीत व ऑडियो", labelEn: "Music & Audio", icon: Music, color: "text-purple-400" },
-                  { key: "docs", labelHi: "📑 दस्तावेज़ (PDF/DOC)", labelEn: "Documents", icon: FileText, color: "text-amber-400" },
-                  { key: "all", labelHi: "✨ समस्त रिकवरेबल", labelEn: "All Recoverable", icon: Zap, color: "text-rose-400" },
-                ].map((cat) => {
-                  const isSelected = recoverCategory === cat.key;
-                  return (
+            {/* ── MODE 1: ALL-RECOVERY DASHBOARD ── */}
+            {recoverViewMode === "dashboard" && (
+              <div className="space-y-6">
+                {/* 1. Storage Status Banner */}
+                <div className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-5 shadow-xl relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+                        <HardDrive className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-white">
+                          {isHindi ? "डिवाइस इंटरनल स्टोरेज" : "Device Internal Storage"}
+                        </h3>
+                        <p className="text-[11px] text-slate-400 font-mono">
+                          {isHindi ? "स्टोरेज स्पेस व रीसायकल बिन विश्लेषण" : "Storage analysis & surviving media caches"}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 rounded-full">
+                      66.1% Used
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline justify-between text-xs font-mono mb-2">
+                    <span className="text-slate-400">
+                      {isHindi ? "इस्तेमाल:" : "Used:"} <strong className="text-white">84.6 GB</strong> / 128.0 GB
+                    </span>
+                    <span className="text-slate-400">
+                      {isHindi ? "उपलब्ध:" : "Available:"} <strong className="text-emerald-400">43.4 GB</strong>
+                    </span>
+                  </div>
+
+                  <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-700/50">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400 transition-all duration-500"
+                      style={{ width: "66.1%" }}
+                    />
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <span>{isHindi ? "100% ऑन-डिवाइस स्कैन • कोई क्लाउड अपलोड नहीं" : "100% Local On-Device • Zero Cloud Risk"}</span>
+                    </span>
+                    <span className="font-mono text-cyan-400">Android FBE Verified</span>
+                  </div>
+                </div>
+
+                {/* 2. 2x2 Big Visual Recovery Cards */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-300">
+                      {isHindi ? "ऑल-रिकवरी मीडिया श्रेणियां" : "All-Recovery Media Categories"}
+                    </h3>
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      {isHindi ? "1-टैप डीप स्कैन" : "1-Tap Deep Scan"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Photos Card */}
                     <button
-                      key={cat.key}
-                      onClick={() => {
-                        safeVibrate([10]);
-                        setRecoverCategory(cat.key as any);
-                      }}
-                      className={`min-h-[52px] rounded-2xl border p-3 text-left transition-all active:scale-95 cursor-pointer ${
-                        isSelected
-                          ? "bg-emerald-500/20 border-emerald-500 text-white shadow-md shadow-emerald-500/15"
-                          : "bg-slate-900 border-slate-800 text-slate-300 hover:text-white"
+                      onClick={() => handleStartCategoryScan("photos")}
+                      className="rounded-3xl border border-cyan-500/30 bg-gradient-to-br from-cyan-950/40 via-slate-900 to-slate-950 p-4 text-left transition-all hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/15 active:scale-95 cursor-pointer group relative overflow-hidden"
+                    >
+                      <div className="h-11 w-11 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform shadow-md shadow-cyan-500/20">
+                        <ImageIcon className="h-6 w-6" />
+                      </div>
+                      <h4 className="text-sm font-black text-white group-hover:text-cyan-300 transition-colors">
+                        {isHindi ? "फ़ोटो रिकवरी" : "Photos Recovery"}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                        {isHindi ? "कैमरा, थंबनेल व रीसायकल बिन" : "Camera, Cache & Recycle Bin"}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+                          JPG • PNG • WEBP
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-cyan-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+
+                    {/* Videos Card */}
+                    <button
+                      onClick={() => handleStartCategoryScan("videos")}
+                      className="rounded-3xl border border-purple-500/30 bg-gradient-to-br from-purple-950/40 via-slate-900 to-slate-950 p-4 text-left transition-all hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/15 active:scale-95 cursor-pointer group relative overflow-hidden"
+                    >
+                      <div className="h-11 w-11 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 mb-3 group-hover:scale-110 transition-transform shadow-md shadow-purple-500/20">
+                        <VideoIcon className="h-6 w-6" />
+                      </div>
+                      <h4 className="text-sm font-black text-white group-hover:text-purple-300 transition-colors">
+                        {isHindi ? "वीडियो रिकवरी" : "Videos Recovery"}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                        {isHindi ? "MP4, MOV, स्क्रीन रिकॉर्डिंग" : "MP4, MOV & Screen Clips"}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
+                          1080p • 720p
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-purple-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+
+                    {/* Audio & Calls Card */}
+                    <button
+                      onClick={() => handleStartCategoryScan("recordings")}
+                      className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/40 via-slate-900 to-slate-950 p-4 text-left transition-all hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/15 active:scale-95 cursor-pointer group relative overflow-hidden"
+                    >
+                      <div className="h-11 w-11 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 mb-3 group-hover:scale-110 transition-transform shadow-md shadow-amber-500/20">
+                        <Mic className="h-6 w-6" />
+                      </div>
+                      <h4 className="text-sm font-black text-white group-hover:text-amber-300 transition-colors">
+                        {isHindi ? "ऑडियो व कॉल रिकॉर्ड्स" : "Audio & Call Records"}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                        {isHindi ? "कॉल रिकॉर्डिंग, वॉयस नोट्स" : "Calls, Voice Notes & M4A"}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                          M4A • OPUS • MP3
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-amber-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+
+                    {/* Documents Card */}
+                    <button
+                      onClick={() => handleStartCategoryScan("docs")}
+                      className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 p-4 text-left transition-all hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/15 active:scale-95 cursor-pointer group relative overflow-hidden"
+                    >
+                      <div className="h-11 w-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 mb-3 group-hover:scale-110 transition-transform shadow-md shadow-emerald-500/20">
+                        <FileText className="h-6 w-6" />
+                      </div>
+                      <h4 className="text-sm font-black text-white group-hover:text-emerald-300 transition-colors">
+                        {isHindi ? "दस्तावेज़ रिकवरी" : "Documents Recovery"}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                        {isHindi ? "PDF, आधार, PAN, इनवॉइस" : "PDF, Docs, ID & Invoices"}
+                      </p>
+                      <div className="mt-3 flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                          PDF • DOCX • XLS
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. 2 Quick Access Cards (Recycle Bin + Vault) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleStartCategoryScan("trash")}
+                    className="rounded-2xl border border-rose-500/30 bg-slate-900/90 p-3.5 flex items-center justify-between gap-3 text-left hover:border-rose-400 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                        <Trash2 className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-white">
+                          {isHindi ? "सिस्टम रीसायकल बिन" : "System Recycle Bin"}
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-mono">
+                          {isHindi ? "30 दिनों के भीतर डिलीट की गई फाइलें" : "Surviving MediaStore Trash"}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-mono font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/20">
+                      Scan
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setRecoverViewMode("vault")}
+                    className="rounded-2xl border border-emerald-500/30 bg-slate-900/90 p-3.5 flex items-center justify-between gap-3 text-left hover:border-emerald-400 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        <Save className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-black text-white">
+                          {isHindi ? "रीस्टोर वॉल्ट (Vault)" : "Restored Files Vault"}
+                        </h4>
+                        <p className="text-[10px] text-slate-400 font-mono">
+                          {isHindi ? `सुरक्षित फ़ोल्डर (${vaultFiles.length} फाइलें)` : `Downloads folder (${vaultFiles.length} files)`}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                      {vaultFiles.length} Files
+                    </span>
+                  </button>
+                </div>
+
+                {/* 4. SAF Manual Picker Button */}
+                <button
+                  onClick={handleOpenFolderPicker}
+                  className="w-full min-h-[50px] rounded-2xl border border-cyan-500/40 bg-slate-900/80 hover:bg-slate-850 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
+                >
+                  <FolderOpen className="h-4 w-4 text-cyan-400" />
+                  <span>
+                    {isHindi ? "📂 फ़ोल्डर / SD कार्ड मैनुअल स्कैन (Storage Access Framework)" : "Select Folder / SD Card (Storage Access Framework)"}
+                  </span>
+                </button>
+              </div>
+            )}
+
+            {/* ── MODE 2: RADAR SCANNING VIEW ── */}
+            {recoverViewMode === "scanning" && (
+              <div className="rounded-3xl border border-slate-800 bg-slate-900/90 p-6 sm:p-10 text-center space-y-6 shadow-2xl relative overflow-hidden">
+                {/* Radar Circle Animation */}
+                <div className="relative w-44 h-44 mx-auto flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20 animate-ping" />
+                  <div className="absolute inset-4 rounded-full border border-cyan-500/30" />
+                  <div className="absolute inset-10 rounded-full border border-cyan-500/40" />
+                  {/* Rotating Radar Sweep Needle */}
+                  <div
+                    className="absolute inset-0 rounded-full animate-spin pointer-events-none"
+                    style={{
+                      background: "conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(6, 182, 212, 0.35) 360deg)",
+                      animationDuration: "2s",
+                    }}
+                  />
+                  {/* Center Pulse Counter */}
+                  <div className="relative z-10 text-center">
+                    <span className="text-3xl font-black text-cyan-400 font-mono block">
+                      {scanProgress}%
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                      {isHindi ? "डीप स्कैनिंग" : "Scanning"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Scan Info */}
+                <div className="space-y-2 max-w-md mx-auto">
+                  <h4 className="text-sm font-bold text-white">
+                    {isHindi ? "डिवाइस स्टोरेज व छुपी फ़ाइलों की जांच जारी है..." : "Deep Inspecting Surviving Media Caches..."}
+                  </h4>
+                  <div className="rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-[11px] font-mono text-slate-400 truncate">
+                    <span className="text-cyan-400">Path: </span>
+                    {scanPath}
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-mono text-xs">
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                    <span>{filesFoundCount} {isHindi ? "रिकवरेबल फाइलें मिलीं" : "Restorable Files Found"}</span>
+                  </div>
+                </div>
+
+                {/* Stop Scan Button */}
+                <div>
+                  <button
+                    onClick={handleStopScan}
+                    className="px-6 py-2.5 rounded-xl border border-rose-500/40 bg-rose-950/20 hover:bg-rose-900/30 text-rose-300 font-bold text-xs active:scale-95 transition-all cursor-pointer"
+                  >
+                    {isHindi ? "स्कैन रोकें व परिणाम देखें" : "Stop Scan & View Results"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ── MODE 3: 3-COLUMN VISUAL MEDIA GALLERY ── */}
+            {recoverViewMode === "gallery" && (
+              <div className="space-y-4">
+                {/* Gallery Header Bar */}
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => setRecoverViewMode("dashboard")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:text-white font-bold text-xs cursor-pointer active:scale-95 transition-all"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>{isHindi ? "डैशबोर्ड" : "Dashboard"}</span>
+                  </button>
+
+                  <div className="text-right">
+                    <h4 className="text-xs font-black text-white capitalize">
+                      {recoverCategory} {isHindi ? "गैलरी" : "Gallery"}
+                    </h4>
+                    <span className="text-[10px] font-mono text-cyan-400">
+                      {scannedFiles.length} {isHindi ? "फ़ाइलें खोजी गईं" : "Files Discovered"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Category Filter Chips */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                  {["ALL", "TRASH", "THUMBNAILS", "HIDDEN", "CAMERA"].map((chip) => (
+                    <button
+                      key={chip}
+                      onClick={() => setGalleryFilter(chip)}
+                      className={`px-3 py-1 rounded-xl font-mono text-[11px] font-bold shrink-0 transition-colors cursor-pointer ${
+                        galleryFilter === chip
+                          ? "bg-cyan-500 text-slate-950"
+                          : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
                       }`}
                     >
-                      <span className="text-xs font-bold block truncate">
-                        {isHindi ? cat.labelHi : cat.labelEn}
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 3-Column Visual Media Grid */}
+                {scannedFiles.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-slate-800 bg-slate-900/50 p-8 text-center space-y-3">
+                    <ShieldCheck className="h-10 w-10 text-slate-600 mx-auto" />
+                    <p className="text-xs font-bold text-white">
+                      {isHindi ? "इस श्रेणी में कोई रिकवरेबल फाइल नहीं मिली" : "No recoverable files found in this category"}
+                    </p>
+                    <button
+                      onClick={() => setRecoverViewMode("dashboard")}
+                      className="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold text-xs"
+                    >
+                      {isHindi ? "अन्य श्रेणी चुनें" : "Select Another Category"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                    {scannedFiles.map((item) => {
+                      const isPhoto = item.category === "photos";
+                      const isVideo = item.category === "videos";
+                      const isAudio = item.category === "recordings" || item.category === "music";
+
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => handleToggleSelectRecoverItem(item.id)}
+                          className={`group relative aspect-square rounded-2xl border overflow-hidden cursor-pointer transition-all active:scale-95 select-none ${
+                            item.isSelected
+                              ? "border-emerald-500 ring-2 ring-emerald-500/40 shadow-lg shadow-emerald-500/20"
+                              : "border-slate-800 bg-slate-900/90 hover:border-slate-700"
+                          }`}
+                        >
+                          {/* Visual Thumbnail Body */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center p-2 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+                            {isPhoto ? (
+                              <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-1">
+                                <ImageIcon className="h-5 w-5" />
+                              </div>
+                            ) : isVideo ? (
+                              <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-1">
+                                <VideoIcon className="h-5 w-5" />
+                              </div>
+                            ) : isAudio ? (
+                              <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-1">
+                                <Mic className="h-5 w-5" />
+                              </div>
+                            ) : (
+                              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-1">
+                                <FileText className="h-5 w-5" />
+                              </div>
+                            )}
+
+                            <span className="text-[10px] font-bold text-white text-center line-clamp-1 px-1">
+                              {item.name}
+                            </span>
+                          </div>
+
+                          {/* Top Right Checkbox Circle */}
+                          <div className="absolute top-1.5 right-1.5 z-10">
+                            <div
+                              className={`h-6 w-6 rounded-full flex items-center justify-center transition-all ${
+                                item.isSelected
+                                  ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/30"
+                                  : "bg-slate-950/70 border border-slate-700 text-transparent"
+                              }`}
+                            >
+                              <Check className="h-3.5 w-3.5 stroke-[3]" />
+                            </div>
+                          </div>
+
+                          {/* Bottom Gradient Tag: Size & Type */}
+                          <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-1.5 pt-3 flex items-center justify-between text-[9px] font-mono text-slate-300">
+                            <span className="truncate">{formatBytes(item.sizeBytes)}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPreviewModalItem(item);
+                              }}
+                              className="p-1 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white"
+                              title="Preview"
+                            >
+                              <Eye className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Sticky Bottom Action Bar */}
+                {scannedFiles.length > 0 && (
+                  <div className="sticky bottom-4 z-30 rounded-2xl border border-emerald-500/40 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-xl flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => {
+                        safeVibrate([15]);
+                        const allSelected = scannedFiles.every((f) => f.isSelected);
+                        setScannedFiles((prev) => prev.map((f) => ({ ...f, isSelected: !allSelected })));
+                      }}
+                      className="px-3 py-2 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:text-white text-xs font-mono font-bold cursor-pointer"
+                    >
+                      {scannedFiles.every((f) => f.isSelected)
+                        ? (isHindi ? "सभी हटाएं" : "Deselect All")
+                        : (isHindi ? "सभी चुनें" : "Select All")}
+                    </button>
+
+                    <button
+                      onClick={handleRestoreSelected}
+                      disabled={selectedRecoverCount === 0}
+                      className="flex-1 min-h-[48px] rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
+                    >
+                      <Save className="h-4 w-4" />
+                      <span>
+                        {isHindi
+                          ? `💾 चुनी गई फाइलें रीस्टोर करें (${selectedRecoverCount})`
+                          : `RECOVER NOW (${selectedRecoverCount})`}
                       </span>
                     </button>
-                  );
-                })}
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
-            {/* 2 Big Scan Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                onClick={handleDeepScan}
-                disabled={isScanning}
-                className="min-h-[54px] rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
-              >
-                {isScanning ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                <span>
-                  {isScanning
-                    ? (isHindi ? `स्कैन हो रहा है... ${scanProgress}%` : `Scanning... ${scanProgress}%`)
-                    : (isHindi ? "🔍 डीप रिकवरी स्कैन शुरू करें" : "Run Deep Storage Scan")}
-                </span>
-              </button>
-
-              <button
-                onClick={handleOpenFolderPicker}
-                className="min-h-[54px] rounded-2xl border border-cyan-500/50 bg-slate-900 hover:bg-slate-850 text-cyan-300 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
-              >
-                <FolderOpen className="h-4 w-4 text-cyan-400" />
-                <span>
-                  {isHindi ? "📂 फ़ोल्डर / SD कार्ड चुनें (SAF)" : "Select Folder / SD Card (SAF)"}
-                </span>
-              </button>
-            </div>
-
-            {/* 7 Honest Filter Tabs */}
-            <div className="space-y-2">
-              <span className="text-[11px] font-mono text-slate-400">
-                {isHindi ? "7-स्तरीय पारदर्शी वर्गीकरण (Honest Classification):" : "7-Tier Honest Classification:"}
-              </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-                {[
-                  { key: "ALL", label: "All" },
-                  { key: "A_RESTORABLE", label: "A. Restorable" },
-                  { key: "B_HIDDEN", label: "B. Hidden" },
-                  { key: "C_DUPLICATES", label: "C. Copies" },
-                  { key: "D_THUMBNAILS", label: "D. Previews" },
-                  { key: "E_SYSTEM_TRASH", label: "E. Trash" },
-                  { key: "F_BACKUP_GUIDANCE", label: "F. Cloud Tips" },
-                  { key: "G_UNAVAILABLE", label: "G. Unavailable" },
-                ].map((tier) => (
+            {/* ── MODE 4: RECOVERED FILES VAULT ── */}
+            {recoverViewMode === "vault" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
                   <button
-                    key={tier.key}
-                    onClick={() => setRecoverTierFilter(tier.key as any)}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-[11px] font-bold shrink-0 transition-colors cursor-pointer ${
-                      recoverTierFilter === tier.key
-                        ? "bg-emerald-500 text-slate-950"
-                        : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white"
-                    }`}
+                    onClick={() => setRecoverViewMode("dashboard")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:text-white font-bold text-xs cursor-pointer active:scale-95 transition-all"
                   >
-                    {tier.label}
+                    <ArrowLeft className="h-4 w-4" />
+                    <span>{isHindi ? "डैशबोर्ड" : "Dashboard"}</span>
                   </button>
-                ))}
-              </div>
-            </div>
 
-            {/* Scanned Files List */}
-            <div className="space-y-2.5">
-              {scannedFiles.length === 0 && !isScanning ? (
-                <div className="rounded-2xl border border-dashed border-slate-800 bg-slate-900/50 p-6 text-center space-y-2">
-                  <ShieldCheck className="h-8 w-8 text-emerald-500/40 mx-auto" />
-                  <p className="text-xs font-bold text-white">
-                    {isHindi ? "कोई रिकवरी स्कैन सक्रिय नहीं है" : "Ready to scan on-device storage"}
-                  </p>
-                  <p className="text-[11px] text-slate-400 max-w-md mx-auto leading-relaxed">
-                    {isHindi
-                      ? "एंड्रॉयड 10+ FBE (File-Based Encryption) सुरक्षा के कारण केवल वही फाइलें खोजी जा सकती हैं जो रीसायकल बिन, .nomedia फ़ोल्डर या अनलिंक्ड स्टोरेज में बची हैं। ऊपर 'डीप रिकवरी स्कैन' दबाएं।"
-                      : "Modern Android File-Based Encryption restricts recovery to surviving app trash, hidden directories, and SAF document trees. Zero fake promises."}
-                  </p>
+                  <div className="text-right">
+                    <h4 className="text-xs font-black text-emerald-400">
+                      {isHindi ? "सुरक्षित रीस्टोर वॉल्ट" : "Restored Files Vault"}
+                    </h4>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Downloads/SuperTelecom_Recovered
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {scannedFiles
-                    .filter((f) => recoverTierFilter === "ALL" || f.tier === recoverTierFilter)
-                    .map((item) => (
+
+                {vaultFiles.length === 0 ? (
+                  <div className="rounded-3xl border border-dashed border-slate-800 bg-slate-900/50 p-8 text-center space-y-3">
+                    <Save className="h-10 w-10 text-slate-600 mx-auto" />
+                    <p className="text-xs font-bold text-white">
+                      {isHindi ? "वॉल्ट में अभी कोई रीस्टोर की गई फ़ाइल नहीं है" : "No restored files in the vault yet"}
+                    </p>
+                    <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                      {isHindi
+                        ? "गैलरी से जिन फाइलों को आप 'रीस्टोर' करेंगे, वे सुरक्षित रूप से यहां और आपके Downloads फ़ोल्डर में उपलब्ध रहेंगी।"
+                        : "Files you restore from the scanner will safely appear here and in your phone's Downloads folder."}
+                    </p>
+                    <button
+                      onClick={() => setRecoverViewMode("dashboard")}
+                      className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs"
+                    >
+                      {isHindi ? "रिकवरी स्कैन शुरू करें" : "Start Recovery Scan"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {vaultFiles.map((item, idx) => (
                       <div
-                        key={item.id}
-                        className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3 flex items-center justify-between gap-3 text-xs"
+                        key={item.id + "_" + idx}
+                        className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3.5 flex items-center justify-between gap-3 text-xs"
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <button
-                            onClick={() => handleToggleSelectRecoverItem(item.id)}
-                            className="p-1 text-slate-400 hover:text-white cursor-pointer"
-                          >
-                            {item.isSelected ? (
-                              <CheckSquare className="h-5 w-5 text-emerald-400" />
-                            ) : (
-                              <Square className="h-5 w-5 text-slate-600" />
-                            )}
-                          </button>
-
+                          <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                            <CheckCircle2 className="h-5 w-5" />
+                          </div>
                           <div className="min-w-0">
                             <p className="font-bold text-white truncate">{item.name}</p>
                             <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 mt-0.5">
                               <span>{formatBytes(item.sizeBytes)}</span>
                               <span>•</span>
-                              <span className="text-emerald-400 font-bold">{item.tierNameHi}</span>
+                              <span className="text-emerald-400">{item.qualityTag}</span>
                               <span>•</span>
-                              <span className="text-cyan-300">{item.qualityTag}</span>
+                              <span>{item.date}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            onClick={() => setPreviewModalItem(item)}
-                            className="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:text-white"
-                            title="Preview"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => {
+                            safeVibrate([20]);
+                            const blob = item.rawFile || new Blob([`Content for ${item.name}`]);
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `SuperTelecom_Recovered_${item.name}`;
+                            document.body.appendChild(a);
+                            a.click();
+                            setTimeout(() => {
+                              document.body.removeChild(a);
+                              URL.revokeObjectURL(url);
+                            }, 1000);
+                          }}
+                          className="px-3 py-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-[11px] shrink-0"
+                        >
+                          {isHindi ? "डाउनलोड" : "Download"}
+                        </button>
                       </div>
                     ))}
-                </div>
-              )}
-            </div>
-
-            {/* Sticky Bottom Restore Button */}
-            {scannedFiles.length > 0 && (
-              <div className="rounded-2xl border border-emerald-500/40 bg-slate-900/95 p-4 shadow-xl space-y-2">
-                <button
-                  onClick={handleRestoreSelected}
-                  disabled={selectedRecoverCount === 0}
-                  className="w-full min-h-[54px] rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>
-                    {isHindi
-                      ? `💾 चुनी गयी फाइलें डिवाइस में सेव/रिस्टोर करें (${selectedRecoverCount})`
-                      : `Restore Selected Files (${selectedRecoverCount}) to Device`}
-                  </span>
-                </button>
-                <p className="text-[10px] text-center text-slate-400 font-mono">
-                  {isHindi
-                    ? "फ़ाइलें सुरक्षित रूप से आपके डिवाइस के 'Downloads' फ़ोल्डर में बिना ओवरराइट किए सेव की जाती हैं।"
-                    : "Non-destructive restoration to your Downloads folder without overwriting existing files."}
-                </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
