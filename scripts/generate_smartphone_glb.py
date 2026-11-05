@@ -355,7 +355,68 @@ def build_gltf_binary(node_definitions, output_path):
     nodes = []
     materials = []
     mat_map = {}
-    
+    images = []
+    textures = []
+    samplers = [{
+        "magFilter": 9729,
+        "minFilter": 9987,
+        "wrapS": 10497,
+        "wrapT": 10497
+    }]
+
+    screen_tex_idx = None
+    back_tex_idx = None
+
+    screen_path = "public/textures/smartphone_screen_display.png"
+    if os.path.exists(screen_path):
+        with open(screen_path, "rb") as f:
+            s_bytes = f.read()
+        s_off = len(binary_data)
+        binary_data.extend(s_bytes)
+        while len(binary_data) % 4 != 0:
+            binary_data.append(0)
+        s_bv = len(buffer_views)
+        buffer_views.append({
+            "buffer": 0,
+            "byteOffset": s_off,
+            "byteLength": len(s_bytes)
+        })
+        s_img = len(images)
+        images.append({
+            "bufferView": s_bv,
+            "mimeType": "image/png"
+        })
+        screen_tex_idx = len(textures)
+        textures.append({
+            "sampler": 0,
+            "source": s_img
+        })
+
+    back_path = "public/textures/smartphone_back_cover.png"
+    if os.path.exists(back_path):
+        with open(back_path, "rb") as f:
+            b_bytes = f.read()
+        b_off = len(binary_data)
+        binary_data.extend(b_bytes)
+        while len(binary_data) % 4 != 0:
+            binary_data.append(0)
+        b_bv = len(buffer_views)
+        buffer_views.append({
+            "buffer": 0,
+            "byteOffset": b_off,
+            "byteLength": len(b_bytes)
+        })
+        b_img = len(images)
+        images.append({
+            "bufferView": b_bv,
+            "mimeType": "image/png"
+        })
+        back_tex_idx = len(textures)
+        textures.append({
+            "sampler": 0,
+            "source": b_img
+        })
+
     for item in node_definitions:
         name = item["name"]
         color = item["color"]
@@ -365,7 +426,7 @@ def build_gltf_binary(node_definitions, output_path):
         emissive = item.get("emissive", [0.0, 0.0, 0.0])
         alpha_mode = "BLEND" if opacity < 0.99 else "OPAQUE"
         
-        mat_key = (tuple(color), metallic, roughness, opacity, tuple(emissive), alpha_mode)
+        mat_key = (name, tuple(color), metallic, roughness, opacity, tuple(emissive), alpha_mode)
         if mat_key not in mat_map:
             mat_idx = len(materials)
             pbr = {
@@ -381,6 +442,12 @@ def build_gltf_binary(node_definitions, output_path):
             }
             if emissive[0] > 0 or emissive[1] > 0 or emissive[2] > 0:
                 mat_entry["emissiveFactor"] = emissive
+            if name == "OLEDDisplay" and screen_tex_idx is not None:
+                pbr["baseColorTexture"] = {"index": screen_tex_idx}
+                mat_entry["emissiveTexture"] = {"index": screen_tex_idx}
+                mat_entry["emissiveFactor"] = [1.0, 1.0, 1.0]
+            elif name == "RearCover" and back_tex_idx is not None:
+                pbr["baseColorTexture"] = {"index": back_tex_idx}
             materials.append(mat_entry)
             mat_map[mat_key] = mat_idx
         material_index = mat_map[mat_key]
@@ -541,6 +608,10 @@ def build_gltf_binary(node_definitions, output_path):
             "byteLength": len(binary_data)
         }]
     }
+    if textures:
+        gltf_json["textures"] = textures
+        gltf_json["images"] = images
+        gltf_json["samplers"] = samplers
     
     json_bytes = json.dumps(gltf_json, separators=(',', ':')).encode('utf-8')
     while len(json_bytes) % 4 != 0:
@@ -575,7 +646,7 @@ def main():
     nodes.append({
         "name": "FrontGlass",
         "positions": fg_g[0], "normals": fg_g[1], "uvs": fg_g[2], "indices": fg_g[3],
-        "color": [0.95, 0.98, 1.0], "metallic": 0.05, "roughness": 0.02, "opacity": 0.08
+        "color": [1.0, 1.0, 1.0], "metallic": 0.05, "roughness": 0.02, "opacity": 0.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────

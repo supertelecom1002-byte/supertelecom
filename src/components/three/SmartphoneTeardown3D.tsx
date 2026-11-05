@@ -304,27 +304,25 @@ function SmartphoneGLBRig({
             mat.roughness = 0.02;
             mat.metalness = 0.05;
             mat.transparent = true;
-            mat.opacity = 0.12; // Crystal clear protective ceramic shield glass
+            mat.opacity = 0.04; // Crystal clear protective ceramic shield glass
             mat.depthWrite = false;
             mat.color = new THREE.Color("#ffffff");
+            mat.needsUpdate = true;
           } else if (name.includes("touchdigitizer")) {
             mat.transparent = true;
-            mat.opacity = 0.08;
+            mat.opacity = 0.12;
             mat.depthWrite = false;
+            mat.needsUpdate = true;
           } else if (name.includes("oleddisplay")) {
-            if (screenTexture) {
-              mat.map = screenTexture;
-              mat.emissiveMap = screenTexture;
+            const displayTex = screenTexture || mat.map;
+            if (displayTex) {
+              mat.map = displayTex;
+              mat.emissiveMap = displayTex;
               mat.emissive = new THREE.Color("#ffffff");
               mat.emissiveIntensity = 0.95; // Ultra-crisp glowing AMOLED flagship display
               mat.color = new THREE.Color("#ffffff"); // Full-spectrum texture multiplier
               mat.roughness = 0.10;
               mat.metalness = 0.05;
-              mat.needsUpdate = true;
-            } else {
-              mat.color = new THREE.Color("#020617");
-              mat.emissive = new THREE.Color("#0284c7");
-              mat.emissiveIntensity = 0.40;
               mat.needsUpdate = true;
             }
           } else if (name.includes("chassisframe")) {
@@ -333,8 +331,9 @@ function SmartphoneGLBRig({
             mat.color = new THREE.Color("#cbd5e1");
             mat.needsUpdate = true;
           } else if (name.includes("rearcover")) {
-            if (backTexture) {
-              mat.map = backTexture;
+            const coverTex = backTexture || mat.map;
+            if (coverTex) {
+              mat.map = coverTex;
               mat.color = new THREE.Color("#ffffff");
               mat.needsUpdate = true;
             }
