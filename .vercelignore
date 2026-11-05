@@ -1,20 +1,20 @@
-# Android native project files (not needed for web deployment)
-app/
-.gradle/
-gradle/
-build/
+# Android native project files (rooted to avoid ignoring src/components/app)
+/app/
+/.gradle/
+/gradle/
+/build/
 *.gradle*
 local.properties
 
 # Dev scripts and tools
-scripts/
-.github/
-.vscode/
-.idea/
+/scripts/
+/.github/
+/.vscode/
+/.idea/
 
 # Node & Build caches
-node_modules/
-.nitro/
-.output/
-.tanstack/
-.vinxi/
+/node_modules/
+/.nitro/
+/.output/
+/.tanstack/
+/.vinxi/
