@@ -14,8 +14,8 @@ android {
         applicationId = "com.supertelecom.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 31
-        versionName = "3.1.0"
+        versionCode = 32
+        versionName = "3.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -30,7 +30,7 @@ android {
                 val properties = Properties().apply {
                     keystorePropertiesFile.inputStream().use { stream -> this.load(stream) }
                 }
-                storeFile = rootProject.file(properties.getProperty("storeFile") ?: "keystore/release.jks")
+                storeFile = rootProject.file(properties.getProperty("storeFile") ?: "keystore/debug.keystore")
                 storePassword = properties.getProperty("storePassword")
                 keyAlias = properties.getProperty("keyAlias")
                 keyPassword = properties.getProperty("keyPassword")

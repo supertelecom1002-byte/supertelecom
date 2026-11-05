@@ -33,6 +33,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- In-App Self-Update Engine: Seamless OTA update over existing installed APK -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher -->
     <queries>
         <intent>
