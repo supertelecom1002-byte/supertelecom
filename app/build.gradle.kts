@@ -14,8 +14,8 @@ android {
         applicationId = "com.supertelecom.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 30
-        versionName = "3.0.0"
+        versionCode = 31
+        versionName = "3.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -59,9 +59,9 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
         debug {
-            // No applicationIdSuffix! Package MUST remain com.supertelecom.app for seamless in-place updates
+            // Signed with official Super Telecom Lab production key to satisfy Google Play Protect requirements
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

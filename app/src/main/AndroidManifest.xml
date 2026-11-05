@@ -33,9 +33,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- In-App Self-Update Engine: Seamless OTA update over existing installed APK -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
     <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher -->
     <queries>
         <intent>
@@ -65,22 +62,14 @@
             </intent-filter>
         </activity>
 
-        <!-- 2. DEDICATED NATIVE HOME LAUNCHER ACTIVITY (Activated via RoleManager / Settings) -->
+        <!-- 2. IN-APP LAUNCHER ACTIVITY (Internal only, not a system home screen replacement) -->
         <activity
             android:name=".HomeLauncherActivity"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleTask"
-            android:clearTaskOnLaunch="true"
-            android:stateNotNeeded="true"
-            android:theme="@style/Theme.SuperTelecom.Fullscreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.SuperTelecom.Fullscreen" />
 
-        <!-- 3. FILE PROVIDER FOR SEAMLESS IN-PLACE IN-APP UPDATES -->
+        <!-- 3. FILE PROVIDER FOR SECURE MEDIA & DOCUMENT SHARING -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.supertelecom.app.fileprovider"

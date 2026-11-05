@@ -60,7 +60,7 @@ const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
 const SEO_TITLE = "Super Telecom Native Android App — Super Transfer, Super Recover & Super Launcher | 100% Free APK";
 const SEO_DESC =
-  "Official Super Telecom Native Android App (v3.0.0, Target SDK 34). 100% Free, zero ads, Privacy & Your Data focused. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
+  "Official Super Telecom Native Android App (v3.1.0, Target SDK 34). 100% Free, zero ads, Privacy & Your Data focused. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
 const CANONICAL_URL = `${SITE_URL}/app`;
 
 export const Route = createFileRoute("/app")({
@@ -922,7 +922,7 @@ function AppShowcasePage() {
                   Super Telecom
                 </span>
                 <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300">
-                  v3.0.0 Native
+                  v3.1.0 Native
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono block">
@@ -977,7 +977,7 @@ function AppShowcasePage() {
                         {isHindi ? "सुपर टेलीकॉम नेटिव एंड्रॉयड ऐप" : "Super Telecom Native Android App"}
                       </h2>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/30 text-cyan-300 font-bold">
-                        v3.0.0 APK (1.69 MB)
+                        v3.1.0 APK (1.69 MB)
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 font-mono">

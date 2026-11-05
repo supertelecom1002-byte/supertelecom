@@ -353,22 +353,25 @@ class StorageRecoverEngine(private val context: Context) {
         return null
     }
 
-    // ── Tier F: WhatsApp Media & Deleted Status Cache ──
+    // ── Tier F: Shared Public Media & Backup Cache ──
     private fun scanWhatsAppMedia(category: RecoverCategory): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         val externalStorage = Environment.getExternalStorageDirectory() ?: return list
 
-        val waFolders = listOf(
-            File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media"),
-            File(externalStorage, "WhatsApp/Media")
+        val mediaFolders = listOf(
+            File(externalStorage, Environment.DIRECTORY_PICTURES),
+            File(externalStorage, Environment.DIRECTORY_DCIM),
+            File(externalStorage, Environment.DIRECTORY_MOVIES),
+            File(externalStorage, Environment.DIRECTORY_DOWNLOADS),
+            File(externalStorage, Environment.DIRECTORY_DOCUMENTS)
         )
 
-        for (waDir in waFolders) {
-            if (!waDir.exists() || !waDir.isDirectory) continue
-            val subFolders = waDir.listFiles() ?: continue
+        for (dir in mediaFolders) {
+            if (!dir.exists() || !dir.isDirectory) continue
+            val subFolders = dir.listFiles() ?: continue
             for (sub in subFolders) {
                 if (!sub.isDirectory) continue
-                scanDirectoryForRecoverableMedia(sub, list, category, "WhatsApp Media > ${sub.name}", maxDepth = 2)
+                scanDirectoryForRecoverableMedia(sub, list, category, "Public Storage > ${sub.name}", maxDepth = 2)
             }
         }
         return list
