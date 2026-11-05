@@ -39,6 +39,3 @@ local.properties
 *.apk
 *.aab
 !public/SuperTelecom.apk
-
-.vercel
-.env*
