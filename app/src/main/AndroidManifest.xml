@@ -15,12 +15,15 @@
     <uses-permission
         android:name="android.permission.ACCESS_FINE_LOCATION"
         android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <!-- Super Recover: Scoped Storage & MediaStore (Strict DPDP Act 2027 Compliance) -->
+    <!-- Super Recover: Safe Standard Scoped Storage & MediaStore (Strict DPDP Act 2027 Compliance) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:targetApi="tiramisu" />
@@ -33,10 +36,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- In-App Self-Update Engine: Seamless OTA update over existing installed APK -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher -->
+    <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher (Malware-Free Queries Block) -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />

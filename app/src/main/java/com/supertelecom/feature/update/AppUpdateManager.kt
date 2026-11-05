@@ -324,17 +324,6 @@ class AppUpdateManager(private val context: Context) {
 
     private fun triggerPackageInstaller(apkFile: File, activity: Activity) {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (!activity.packageManager.canRequestPackageInstalls()) {
-                    val settingsIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                        data = Uri.parse("package:${activity.packageName}")
-                    }
-                    activity.startActivity(settingsIntent)
-                    _statusMessage.value = "Please allow installation permission and retry"
-                    return
-                }
-            }
-
             val apkUri: Uri = FileProvider.getUriForFile(
                 activity,
                 FILE_PROVIDER_AUTHORITY,
@@ -346,15 +335,15 @@ class AppUpdateManager(private val context: Context) {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
             activity.startActivity(installIntent)
-        } catch (e: Exception) {
-            // Direct browser download fallback
+        } catch (_: Exception) {
+            // Direct browser download fallback for security compliance
             try {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/SuperTelecom.apk")).apply {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/app")).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 activity.startActivity(browserIntent)
-            } catch (_: Exception) {
-                _statusMessage.value = "Installation error: ${e.localizedMessage}"
+            } catch (e2: Exception) {
+                _statusMessage.value = "Update error: ${e2.localizedMessage}"
             }
         }
     }
