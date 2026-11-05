@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, PerspectiveCamera, useGLTF, BakeShadows } from "@react-three/drei";
+import { Float, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -93,7 +93,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     sceneRange: [0.10, 0.32],
     badgeText: "AMOLED Display",
     icon: "layers",
-    position3D: [0, 0.4, 0.85],
+    position3D: [0, 0.4, 0.55],
   },
   {
     id: "motherboard",
@@ -106,7 +106,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     sceneRange: [0.26, 0.50],
     badgeText: "Logic Board & IC",
     icon: "cpu",
-    position3D: [-0.4, 1.1, 0.7],
+    position3D: [-0.4, 1.1, 0.45],
   },
   {
     id: "battery",
@@ -119,7 +119,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     sceneRange: [0.44, 0.68],
     badgeText: "Battery Pack",
     icon: "zap",
-    position3D: [0.35, -0.6, 0.7],
+    position3D: [0.35, -0.6, 0.45],
   },
   {
     id: "camera",
@@ -132,7 +132,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     sceneRange: [0.60, 0.82],
     badgeText: "Triple Camera",
     icon: "eye",
-    position3D: [-0.6, 1.4, -0.7],
+    position3D: [-0.6, 1.4, -0.45],
   },
   {
     id: "subboard",
@@ -145,7 +145,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     sceneRange: [0.62, 0.88],
     badgeText: "Charging Port",
     icon: "activity",
-    position3D: [0, -2.1, -0.5],
+    position3D: [0, -2.1, -0.35],
   },
 ];
 
@@ -255,8 +255,21 @@ function SmartphoneGLBRig({
   const rigGroupRef = useRef<THREE.Group>(null);
   const currentStageIndexRef = useRef(1);
 
-  // Clone scene so materials/transforms can be manipulated cleanly
-  const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
+  // Deep clone scene and materials to prevent cross-contamination
+  const scene = useMemo(() => {
+    const c = gltf.scene.clone(true);
+    c.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        if (Array.isArray(mesh.material)) {
+          mesh.material = mesh.material.map((m) => m.clone());
+        } else if (mesh.material) {
+          mesh.material = mesh.material.clone();
+        }
+      }
+    });
+    return c;
+  }, [gltf.scene]);
 
   // Generate realistic high-res OLED screen and frosted back panel textures
   const screenTexture = useMemo(() => createSmartphoneScreenTexture(), []);
@@ -271,7 +284,7 @@ function SmartphoneGLBRig({
       }
     });
     return map;
-  }, [scene, screenTexture, backTexture]);
+  }, [scene]);
 
   // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
@@ -280,35 +293,33 @@ function SmartphoneGLBRig({
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat) {
-          mat.envMapIntensity = 1.4;
+          mat.envMapIntensity = 1.2;
           const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
 
           if (name.includes("frontglass")) {
-            mat.roughness = 0.03;
+            mat.roughness = 0.02;
             mat.metalness = 0.05;
             mat.transparent = true;
-            mat.opacity = 0.05; // Crystal clear protective ceramic shield glass
+            mat.opacity = 0.12; // Crystal clear protective ceramic shield glass
             mat.depthWrite = false;
             mat.color = new THREE.Color("#ffffff");
           } else if (name.includes("touchdigitizer")) {
             mat.transparent = true;
-            mat.opacity = 0.05;
+            mat.opacity = 0.08;
             mat.depthWrite = false;
           } else if (name.includes("oleddisplay")) {
             if (screenTexture) {
               mat.map = screenTexture;
               mat.emissiveMap = screenTexture;
               mat.emissive = new THREE.Color("#ffffff");
-              mat.emissiveIntensity = 0.95; // Ultra-crisp glowing AMOLED flagship display
+              mat.emissiveIntensity = 1.05; // Ultra-crisp glowing AMOLED flagship display
             } else {
-              mat.color = new THREE.Color("#030712");
-              mat.roughness = 0.2;
-              mat.metalness = 0.3;
+              mat.color = new THREE.Color("#020617");
               mat.emissive = new THREE.Color("#0284c7");
-              mat.emissiveIntensity = 0.28;
+              mat.emissiveIntensity = 0.40;
             }
-            mat.roughness = 0.15;
-            mat.metalness = 0.2;
+            mat.roughness = 0.12;
+            mat.metalness = 0.20;
           } else if (name.includes("chassisframe")) {
             mat.metalness = 0.94;
             mat.roughness = 0.22;
@@ -330,15 +341,15 @@ function SmartphoneGLBRig({
             mat.roughness = 0.45;
           } else if (name.includes("battery")) {
             mat.color = new THREE.Color("#1e293b");
-            mat.metalness = 0.4;
+            mat.metalness = 0.40;
             mat.roughness = 0.35;
           } else if (name.includes("wirelesscoil") || name.includes("chargingflex")) {
             mat.color = new THREE.Color("#d97706");
-            mat.metalness = 0.85;
-            mat.roughness = 0.25;
+            mat.metalness = 0.88;
+            mat.roughness = 0.22;
           } else if (name.includes("shieldcover") || name.includes("screws")) {
-            mat.metalness = 0.95;
-            mat.roughness = 0.2;
+            mat.metalness = 0.96;
+            mat.roughness = 0.18;
             mat.color = new THREE.Color("#e2e8f0");
           }
         }
@@ -367,6 +378,7 @@ function SmartphoneGLBRig({
 
     // ─────────────────────────────────────────────────────────────────────────
     // DYNAMIC TRANSFORMS ACROSS 7 SCENES (A through G)
+    // Balanced, cinematic translations that stay comfortably in frame!
     // ─────────────────────────────────────────────────────────────────────────
     let targetFrontGlassZ = 0;
     let targetTouchDigitizerZ = 0;
@@ -394,106 +406,106 @@ function SmartphoneGLBRig({
     if (p < 0.12) {
       // Scene A: Assembled Smartphone (Pristine sealed showcase at 3/4 hero angle)
       const t = p / 0.12;
-      targetRotY += THREE.MathUtils.lerp(0.28, 0.45, t);
-      targetRotX += THREE.MathUtils.lerp(0.08, 0.12, t);
+      targetRotY += THREE.MathUtils.lerp(0.25, 0.38, t);
+      targetRotX += THREE.MathUtils.lerp(0.06, 0.10, t);
     } else if (p < 0.28) {
       // Scene B: Front Glass & Display Layer Separation
       const t = (p - 0.12) / (0.28 - 0.12);
-      targetFrontGlassZ = THREE.MathUtils.lerp(0, 1.10, t);
-      targetTouchDigitizerZ = THREE.MathUtils.lerp(0, 0.75, t);
-      targetOLEDDisplayZ = THREE.MathUtils.lerp(0, 0.45, t);
-      targetEarpieceZ = THREE.MathUtils.lerp(0, 0.30, t);
-      targetRotY += 0.35 + t * 0.25;
-      targetRotX += 0.10 - t * 0.05;
+      targetFrontGlassZ = THREE.MathUtils.lerp(0, 0.75, t);
+      targetTouchDigitizerZ = THREE.MathUtils.lerp(0, 0.50, t);
+      targetOLEDDisplayZ = THREE.MathUtils.lerp(0, 0.28, t);
+      targetEarpieceZ = THREE.MathUtils.lerp(0, 0.20, t);
+      targetRotY += 0.32 + t * 0.20;
+      targetRotX += 0.08 - t * 0.04;
     } else if (p < 0.45) {
       // Scene C: Chassis & Battery Extraction
       const t = (p - 0.28) / (0.45 - 0.28);
-      targetFrontGlassZ = 1.10 + t * 0.2;
-      targetTouchDigitizerZ = 0.75 + t * 0.15;
-      targetOLEDDisplayZ = 0.45 + t * 0.1;
-      targetRearCoverZ = THREE.MathUtils.lerp(0, -0.90, t);
-      targetBatteryZ = THREE.MathUtils.lerp(0, 0.60, t);
-      targetWirelessCoilZ = THREE.MathUtils.lerp(0, -0.65, t);
-      targetRotY += 0.60 + t * 0.45;
-      targetRotX += 0.05 + t * 0.15;
+      targetFrontGlassZ = 0.75 + t * 0.15;
+      targetTouchDigitizerZ = 0.50 + t * 0.10;
+      targetOLEDDisplayZ = 0.28 + t * 0.08;
+      targetRearCoverZ = THREE.MathUtils.lerp(0, -0.65, t);
+      targetBatteryZ = THREE.MathUtils.lerp(0, 0.45, t);
+      targetWirelessCoilZ = THREE.MathUtils.lerp(0, -0.45, t);
+      targetRotY += 0.52 + t * 0.35;
+      targetRotX += 0.04 + t * 0.10;
     } else if (p < 0.62) {
       // Scene D: Motherboard & Silicon Deep Dive
       const t = (p - 0.45) / (0.62 - 0.45);
-      targetFrontGlassZ = 1.30;
-      targetTouchDigitizerZ = 0.90;
-      targetOLEDDisplayZ = 0.55;
-      targetBatteryZ = 0.60;
-      targetRearCoverZ = -0.90 - t * 0.2;
-      targetMotherboardZ = THREE.MathUtils.lerp(0, -0.45, t);
-      targetShieldCoverZ = THREE.MathUtils.lerp(0, -0.85, t);
-      targetProcessorSoCZ = THREE.MathUtils.lerp(0, -0.35, t);
-      targetPMICZ = THREE.MathUtils.lerp(0, -0.35, t);
-      targetRotY += 1.05 + t * 0.60;
-      targetRotX += 0.20 - t * 0.10;
+      targetFrontGlassZ = 0.90;
+      targetTouchDigitizerZ = 0.60;
+      targetOLEDDisplayZ = 0.36;
+      targetBatteryZ = 0.45;
+      targetRearCoverZ = -0.65 - t * 0.15;
+      targetMotherboardZ = THREE.MathUtils.lerp(0, -0.32, t);
+      targetShieldCoverZ = THREE.MathUtils.lerp(0, -0.60, t);
+      targetProcessorSoCZ = THREE.MathUtils.lerp(0, -0.22, t);
+      targetPMICZ = THREE.MathUtils.lerp(0, -0.22, t);
+      targetRotY += 0.87 + t * 0.45;
+      targetRotX += 0.14 - t * 0.08;
     } else if (p < 0.78) {
       // Scene E: Triple Periscope Camera & Audio Sub-assembly
       const t = (p - 0.62) / (0.78 - 0.62);
-      targetFrontGlassZ = 1.30;
-      targetTouchDigitizerZ = 0.90;
-      targetOLEDDisplayZ = 0.55;
-      targetBatteryZ = 0.60;
-      targetRearCoverZ = -1.10;
-      targetMotherboardZ = -0.45;
-      targetShieldCoverZ = -0.85;
-      targetCameraModuleZ = THREE.MathUtils.lerp(0, -0.80, t);
-      targetChargingPortZ = THREE.MathUtils.lerp(0, -0.45, t);
-      targetUSBPortZ = THREE.MathUtils.lerp(0, -0.35, t);
-      targetChargingFlexZ = THREE.MathUtils.lerp(0, 0.25, t);
-      targetLoudspeakerZ = THREE.MathUtils.lerp(0, -0.40, t);
-      targetVibrationMotorZ = THREE.MathUtils.lerp(0, -0.35, t);
-      targetRotY += 1.65 + t * 0.75;
-      targetRotX += 0.10;
+      targetFrontGlassZ = 0.90;
+      targetTouchDigitizerZ = 0.60;
+      targetOLEDDisplayZ = 0.36;
+      targetBatteryZ = 0.45;
+      targetRearCoverZ = -0.80;
+      targetMotherboardZ = -0.32;
+      targetShieldCoverZ = -0.60;
+      targetCameraModuleZ = THREE.MathUtils.lerp(0, -0.55, t);
+      targetChargingPortZ = THREE.MathUtils.lerp(0, -0.32, t);
+      targetUSBPortZ = THREE.MathUtils.lerp(0, -0.24, t);
+      targetChargingFlexZ = THREE.MathUtils.lerp(0, 0.18, t);
+      targetLoudspeakerZ = THREE.MathUtils.lerp(0, -0.28, t);
+      targetVibrationMotorZ = THREE.MathUtils.lerp(0, -0.24, t);
+      targetRotY += 1.32 + t * 0.55;
+      targetRotX += 0.06;
     } else if (p < 0.90) {
       // Scene F: Full Exploded Engineering View (All 19 components floating simultaneously)
       const t = (p - 0.78) / (0.90 - 0.78);
-      targetFrontGlassZ = THREE.MathUtils.lerp(1.30, 1.85, t);
-      targetTouchDigitizerZ = THREE.MathUtils.lerp(0.90, 1.45, t);
-      targetOLEDDisplayZ = THREE.MathUtils.lerp(0.55, 1.05, t);
-      targetEarpieceZ = THREE.MathUtils.lerp(0.30, 0.70, t);
-      targetBatteryZ = THREE.MathUtils.lerp(0.60, 0.65, t);
-      targetChargingFlexZ = THREE.MathUtils.lerp(0.25, 0.40, t);
+      targetFrontGlassZ = THREE.MathUtils.lerp(0.90, 1.25, t);
+      targetTouchDigitizerZ = THREE.MathUtils.lerp(0.60, 0.95, t);
+      targetOLEDDisplayZ = THREE.MathUtils.lerp(0.36, 0.68, t);
+      targetEarpieceZ = THREE.MathUtils.lerp(0.20, 0.45, t);
+      targetBatteryZ = THREE.MathUtils.lerp(0.45, 0.48, t);
+      targetChargingFlexZ = THREE.MathUtils.lerp(0.18, 0.28, t);
       targetChassisZ = 0.0;
-      targetScrewsZ = THREE.MathUtils.lerp(0, 0.30, t);
-      targetMotherboardZ = -0.45;
-      targetProcessorSoCZ = -0.35;
-      targetPMICZ = -0.35;
-      targetLoudspeakerZ = THREE.MathUtils.lerp(-0.40, -0.50, t);
-      targetChargingPortZ = THREE.MathUtils.lerp(-0.45, -0.55, t);
-      targetUSBPortZ = THREE.MathUtils.lerp(-0.35, -0.45, t);
-      targetVibrationMotorZ = THREE.MathUtils.lerp(-0.35, -0.45, t);
-      targetShieldCoverZ = THREE.MathUtils.lerp(-0.85, -0.95, t);
-      targetCameraModuleZ = THREE.MathUtils.lerp(-0.80, -1.10, t);
-      targetWirelessCoilZ = THREE.MathUtils.lerp(-0.65, -1.30, t);
-      targetRearCoverZ = THREE.MathUtils.lerp(-1.10, -1.65, t);
-      targetRotY += 2.40 + t * (Math.PI * 2);
-      targetRotX += 0.10 + Math.sin(t * Math.PI) * 0.15;
+      targetScrewsZ = THREE.MathUtils.lerp(0, 0.20, t);
+      targetMotherboardZ = -0.32;
+      targetProcessorSoCZ = -0.22;
+      targetPMICZ = -0.22;
+      targetLoudspeakerZ = THREE.MathUtils.lerp(-0.28, -0.36, t);
+      targetChargingPortZ = THREE.MathUtils.lerp(-0.32, -0.40, t);
+      targetUSBPortZ = THREE.MathUtils.lerp(-0.24, -0.32, t);
+      targetVibrationMotorZ = THREE.MathUtils.lerp(-0.24, -0.32, t);
+      targetShieldCoverZ = THREE.MathUtils.lerp(-0.60, -0.70, t);
+      targetCameraModuleZ = THREE.MathUtils.lerp(-0.55, -0.78, t);
+      targetWirelessCoilZ = THREE.MathUtils.lerp(-0.45, -0.92, t);
+      targetRearCoverZ = THREE.MathUtils.lerp(-0.80, -1.18, t);
+      targetRotY += 1.87 + t * (Math.PI * 2);
+      targetRotX += 0.06 + Math.sin(t * Math.PI) * 0.10;
     } else {
       // Scene G: Complete Seamless Reassembly (Magnetic snap back to 0.0)
       const t = (p - 0.90) / (1.0 - 0.90);
-      targetFrontGlassZ = THREE.MathUtils.lerp(1.85, 0.0, t);
-      targetTouchDigitizerZ = THREE.MathUtils.lerp(1.45, 0.0, t);
-      targetOLEDDisplayZ = THREE.MathUtils.lerp(1.05, 0.0, t);
-      targetEarpieceZ = THREE.MathUtils.lerp(0.70, 0.0, t);
-      targetBatteryZ = THREE.MathUtils.lerp(0.65, 0.0, t);
-      targetChargingFlexZ = THREE.MathUtils.lerp(0.40, 0.0, t);
+      targetFrontGlassZ = THREE.MathUtils.lerp(1.25, 0.0, t);
+      targetTouchDigitizerZ = THREE.MathUtils.lerp(0.95, 0.0, t);
+      targetOLEDDisplayZ = THREE.MathUtils.lerp(0.68, 0.0, t);
+      targetEarpieceZ = THREE.MathUtils.lerp(0.45, 0.0, t);
+      targetBatteryZ = THREE.MathUtils.lerp(0.48, 0.0, t);
+      targetChargingFlexZ = THREE.MathUtils.lerp(0.28, 0.0, t);
       targetChassisZ = 0.0;
-      targetScrewsZ = THREE.MathUtils.lerp(0.30, 0.0, t);
-      targetMotherboardZ = THREE.MathUtils.lerp(-0.45, 0.0, t);
-      targetProcessorSoCZ = THREE.MathUtils.lerp(-0.35, 0.0, t);
-      targetPMICZ = THREE.MathUtils.lerp(-0.35, 0.0, t);
-      targetLoudspeakerZ = THREE.MathUtils.lerp(-0.50, 0.0, t);
-      targetChargingPortZ = THREE.MathUtils.lerp(-0.55, 0.0, t);
-      targetUSBPortZ = THREE.MathUtils.lerp(-0.45, 0.0, t);
-      targetVibrationMotorZ = THREE.MathUtils.lerp(-0.45, 0.0, t);
-      targetShieldCoverZ = THREE.MathUtils.lerp(-0.95, 0.0, t);
-      targetCameraModuleZ = THREE.MathUtils.lerp(-1.10, 0.0, t);
-      targetWirelessCoilZ = THREE.MathUtils.lerp(-1.30, 0.0, t);
-      targetRearCoverZ = THREE.MathUtils.lerp(-1.65, 0.0, t);
+      targetScrewsZ = THREE.MathUtils.lerp(0.20, 0.0, t);
+      targetMotherboardZ = THREE.MathUtils.lerp(-0.32, 0.0, t);
+      targetProcessorSoCZ = THREE.MathUtils.lerp(-0.22, 0.0, t);
+      targetPMICZ = THREE.MathUtils.lerp(-0.22, 0.0, t);
+      targetLoudspeakerZ = THREE.MathUtils.lerp(-0.36, 0.0, t);
+      targetChargingPortZ = THREE.MathUtils.lerp(-0.40, 0.0, t);
+      targetUSBPortZ = THREE.MathUtils.lerp(-0.32, 0.0, t);
+      targetVibrationMotorZ = THREE.MathUtils.lerp(-0.32, 0.0, t);
+      targetShieldCoverZ = THREE.MathUtils.lerp(-0.70, 0.0, t);
+      targetCameraModuleZ = THREE.MathUtils.lerp(-0.78, 0.0, t);
+      targetWirelessCoilZ = THREE.MathUtils.lerp(-0.92, 0.0, t);
+      targetRearCoverZ = THREE.MathUtils.lerp(-1.18, 0.0, t);
       targetRotY = THREE.MathUtils.lerp(targetRotY, userRotation.y, t);
       targetRotX = THREE.MathUtils.lerp(targetRotX, userRotation.x, t);
     }
@@ -542,7 +554,7 @@ function SmartphoneGLBRig({
   });
 
   return (
-    <group ref={rigGroupRef} scale={[0.70, 0.70, 0.70]} position={[0, -0.15, 0]}>
+    <group ref={rigGroupRef} scale={[0.72, 0.72, 0.72]} position={[0, -0.15, 0]}>
       <primitive object={scene} />
 
       {/* Guided 3D Diagnostic Inspection Pins (100% Native WebGL - Zero DOM removeChild collisions!) */}
@@ -592,34 +604,6 @@ function SmartphoneGLBRig({
 // MAIN SCROLL-DRIVEN 3D TEARDOWN CONTROLLER (DECOUPLED SCROLL & TOUCH OPTIMIZED)
 // ─────────────────────────────────────────────────────────────────────────────
 
-
-// Active FPS Monitor that flags performance drops and triggers graceful fallback
-function TeardownFpsMonitor({ onFallback }: { onFallback: () => void }) {
-  const frameCount = useRef(0);
-  const lastTime = useRef(performance.now());
-  const lowFpsCount = useRef(0);
-
-  useFrame(() => {
-    frameCount.current++;
-    const now = performance.now();
-    if (now - lastTime.current >= 1000) {
-      const fps = (frameCount.current * 1000) / (now - lastTime.current);
-      frameCount.current = 0;
-      lastTime.current = now;
-      if (fps < 24) {
-        lowFpsCount.current++;
-        if (lowFpsCount.current >= 4) {
-          onFallback();
-        }
-      } else {
-        lowFpsCount.current = Math.max(0, lowFpsCount.current - 1);
-      }
-    }
-  });
-
-  return null;
-}
-
 export const SmartphoneTeardown3D: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
@@ -627,7 +611,6 @@ export const SmartphoneTeardown3D: React.FC = () => {
   const [activeStage, setActiveStage] = useState<StepperStage>(STEPPER_STAGES[0]);
   const [scrubBarPercent, setScrubBarPercent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [isLowPerformance, setIsLowPerformance] = useState(false);
   const [activeCallout, setActiveCallout] = useState<string | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
   const [isInView, setIsInView] = useState(false);
@@ -820,35 +803,35 @@ export const SmartphoneTeardown3D: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { handleJumpToStep(0.20); handleSelectCallout("display"); }}
-                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 shrink-0"
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/40 shrink-0 cursor-pointer"
               >
                 📱 Display (AMOLED)
               </button>
               <button
                 type="button"
                 onClick={() => { handleJumpToStep(0.36); handleSelectCallout("motherboard"); }}
-                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 shrink-0"
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 shrink-0 cursor-pointer"
               >
                 ⚡ Motherboard (BGA)
               </button>
               <button
                 type="button"
                 onClick={() => { handleJumpToStep(0.53); handleSelectCallout("battery"); }}
-                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 shrink-0"
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-amber-400 hover:border-amber-500/40 shrink-0 cursor-pointer"
               >
                 🔋 5000mAh Battery
               </button>
               <button
                 type="button"
                 onClick={() => { handleJumpToStep(0.70); handleSelectCallout("camera"); }}
-                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-purple-400 hover:border-purple-500/40 shrink-0"
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-purple-400 hover:border-purple-500/40 shrink-0 cursor-pointer"
               >
                 📸 Triple OIS Cameras
               </button>
               <button
                 type="button"
                 onClick={() => { handleJumpToStep(0.70); handleSelectCallout("subboard"); }}
-                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-sky-400 hover:border-sky-500/40 shrink-0"
+                className="px-2 py-0.5 rounded-lg text-[10px] font-mono bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-sky-400 hover:border-sky-500/40 shrink-0 cursor-pointer"
               >
                 🔌 Type-C Sub-Board
               </button>
@@ -948,61 +931,50 @@ export const SmartphoneTeardown3D: React.FC = () => {
             </div>
           )}
 
-          {isMounted && webglSupported && isInView ? (
+          {/* CRITICAL: Keep Canvas mounted so WebGL context is NEVER destroyed!
+              Use frameloop={isInView ? "always" : "never"} to pause 100% GPU when offscreen */}
+          {isMounted && webglSupported ? (
             <Safe3DErrorBoundary fallback={<Smartphone3DFallback />}>
               <Suspense fallback={<Smartphone3DFallback />}>
                 <Canvas
-                gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-                dpr={[1, isMobile ? 1.2 : 1.75]}
-                className="w-full h-full"
-                onCreated={({ gl }) => {
-                  const canvasEl = gl.domElement;
-                  const handleLost = (e: Event) => {
-                    e.preventDefault();
-                    console.warn("3D Teardown WebGL context lost. Preserving state for restore...");
-                  };
-                  const handleRestored = () => {
-                    console.log("3D Teardown WebGL context restored.");
-                  };
-                  canvasEl.addEventListener("webglcontextlost", handleLost);
-                  canvasEl.addEventListener("webglcontextrestored", handleRestored);
-                  return () => {
-                    canvasEl.removeEventListener("webglcontextlost", handleLost);
-                    canvasEl.removeEventListener("webglcontextrestored", handleRestored);
-                  };
-                }}
-              >
-                <BakeShadows />
-                <TeardownFpsMonitor onFallback={() => setIsLowPerformance(true)} />
-                <PerspectiveCamera
-                  makeDefault
-                  position={[0, 0, isMobile ? 10.2 : 9.0]}
-                  fov={isMobile ? 42 : 36}
-                />
-
-                {/* 3-Point Studio Lighting */}
-                <ambientLight intensity={1.2} />
-                <directionalLight position={[5, 8, 8]} intensity={3.0} color="#ffffff" />
-                <directionalLight position={[-6, -3, -5]} intensity={3.2} color="#00f0ff" />
-                <directionalLight position={[-4, 5, 4]} intensity={1.6} color="#f59e0b" />
-                <spotLight position={[0, 8, 3]} intensity={2.5} angle={0.6} penumbra={0.8} color="#e0f2fe" />
-
-                <Float
-                  speed={isPaused ? 0 : 1.2}
-                  rotationIntensity={isPaused ? 0 : 0.12}
-                  floatIntensity={isPaused ? 0 : 0.20}
+                  frameloop={isInView ? "always" : "never"}
+                  gl={{
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: "high-performance",
+                  }}
+                  dpr={[1, isMobile ? 1.2 : 1.5]}
+                  className="w-full h-full"
                 >
-                  <SmartphoneGLBRig
-                    scrollProgressRef={scrollProgressRef}
-                    isPaused={isPaused}
-                    activeCallout={activeCallout}
-                    onSelectCallout={handleSelectCallout}
-                    userRotation={userRotation}
-                    onStageChange={handleStageChange}
+                  <PerspectiveCamera
+                    makeDefault
+                    position={[0, 0, isMobile ? 9.8 : 8.8]}
+                    fov={isMobile ? 40 : 35}
                   />
-                </Float>
-              </Canvas>
-            </Suspense>
+
+                  {/* Balanced 3-Point Studio Lighting */}
+                  <ambientLight intensity={0.45} />
+                  <directionalLight position={[4, 6, 6]} intensity={2.2} color="#ffffff" />
+                  <directionalLight position={[-5, 3, -4]} intensity={1.1} color="#38bdf8" />
+                  <directionalLight position={[0, -4, -5]} intensity={0.8} color="#10b981" />
+                  <spotLight position={[0, 7, 3]} intensity={1.4} angle={0.6} penumbra={0.8} color="#f8fafc" />
+
+                  <Float
+                    speed={isPaused ? 0 : 1.2}
+                    rotationIntensity={isPaused ? 0 : 0.12}
+                    floatIntensity={isPaused ? 0 : 0.18}
+                  >
+                    <SmartphoneGLBRig
+                      scrollProgressRef={scrollProgressRef}
+                      isPaused={isPaused}
+                      activeCallout={activeCallout}
+                      onSelectCallout={handleSelectCallout}
+                      userRotation={userRotation}
+                      onStageChange={handleStageChange}
+                    />
+                  </Float>
+                </Canvas>
+              </Suspense>
             </Safe3DErrorBoundary>
           ) : (
             <Smartphone3DFallback />

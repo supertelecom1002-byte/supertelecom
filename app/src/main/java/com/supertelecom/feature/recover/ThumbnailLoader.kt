@@ -1,0 +1,139 @@
+package com.supertelecom.feature.recover
+
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
+import android.os.Build
+import android.util.LruCache
+import android.util.Size
+import com.supertelecom.model.RecoverCategory
+import com.supertelecom.model.RecoverItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+
+/**
+ * High-performance, in-memory LRU thumbnail caching engine.
+ * Decodes real images and video frames safely without OutOfMemoryError.
+ */
+object ThumbnailLoader {
+
+    // Cache up to 1/8th of available runtime memory for bitmaps
+    private val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+    private val cacheSize = maxMemory / 8
+
+    private val memoryCache = object : LruCache<String, Bitmap>(cacheSize.coerceAtLeast(1024 * 32)) {
+        override fun sizeOf(key: String, bitmap: Bitmap): Int {
+            return bitmap.byteCount / 1024
+        }
+    }
+
+    suspend fun loadThumbnail(
+        context: Context,
+        item: RecoverItem,
+        reqWidth: Int = 300,
+        reqHeight: Int = 300
+    ): Bitmap? = withContext(Dispatchers.IO) {
+        val cacheKey = item.id
+        memoryCache.get(cacheKey)?.let { return@withContext it }
+
+        var bitmap: Bitmap? = null
+
+        try {
+            // Method 1: Android 10+ (API 29+) ContentResolver.loadThumbnail for Images and Videos
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && item.uri != null) {
+                try {
+                    bitmap = context.contentResolver.loadThumbnail(item.uri, Size(reqWidth, reqHeight), null)
+                } catch (_: Exception) {}
+            }
+
+            // Method 2: MediaMetadataRetriever for Video if loadThumbnail did not succeed
+            if (bitmap == null && item.category == RecoverCategory.VIDEOS) {
+                try {
+                    if (item.uri != null) {
+                        val retriever = MediaMetadataRetriever()
+                        retriever.setDataSource(context, item.uri)
+                        bitmap = retriever.getFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                        retriever.release()
+                    }
+                } catch (_: Exception) {}
+            }
+
+            // Method 3: ContentResolver openInputStream with downsampling for Images
+            if (bitmap == null && item.uri != null) {
+                try {
+                    context.contentResolver.openInputStream(item.uri)?.use { stream ->
+                        val options = BitmapFactory.Options().apply {
+                            inJustDecodeBounds = true
+                        }
+                        BitmapFactory.decodeStream(stream, null, options)
+                        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+                        options.inJustDecodeBounds = false
+                        options.inPreferredConfig = Bitmap.Config.RGB_565
+
+                        context.contentResolver.openInputStream(item.uri)?.use { s2 ->
+                            bitmap = BitmapFactory.decodeStream(s2, null, options)
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            // Method 4: Direct file path decoding if file is directly readable
+            if (bitmap == null) {
+                val directPath = extractDirectFilePath(item.sourcePath)
+                if (directPath != null && directPath.exists() && directPath.isFile) {
+                    try {
+                        val options = BitmapFactory.Options().apply {
+                            inJustDecodeBounds = true
+                        }
+                        BitmapFactory.decodeFile(directPath.absolutePath, options)
+                        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
+                        options.inJustDecodeBounds = false
+                        options.inPreferredConfig = Bitmap.Config.RGB_565
+                        bitmap = BitmapFactory.decodeFile(directPath.absolutePath, options)
+                    } catch (_: Exception) {}
+                }
+            }
+
+            if (bitmap != null) {
+                memoryCache.put(cacheKey, bitmap)
+            }
+        } catch (_: Exception) {}
+
+        bitmap
+    }
+
+    private fun extractDirectFilePath(sourcePath: String): File? {
+        val path = if (sourcePath.contains(">")) {
+            sourcePath.substringAfterLast(">").trim()
+        } else {
+            sourcePath.trim()
+        }
+        val file = File(path)
+        return if (file.exists()) file else null
+    }
+
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
+        val (height: Int, width: Int) = options.outHeight to options.outWidth
+        var inSampleSize = 1
+
+        if (height > reqHeight || width > reqWidth) {
+            val halfHeight: Int = height / 2
+            val halfWidth: Int = width / 2
+
+            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize.coerceAtLeast(1)
+    }
+
+    fun clearCache() {
+        memoryCache.evictAll()
+    }
+}

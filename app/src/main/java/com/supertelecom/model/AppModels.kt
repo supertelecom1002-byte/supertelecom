@@ -69,8 +69,20 @@ enum class RecoverCategory(val labelEn: String, val labelHi: String, val extensi
     PHOTOS("Photos", "तस्वीरें", "JPG, PNG, HEIC, WEBP"),
     VIDEOS("Videos", "वीडियो", "MP4, MKV, MOV"),
     AUDIO_RECORDINGS("Audio", "ऑडियो व रिकॉर्डिंग", "M4A, AMR, WAV, MP3"),
-    DOCUMENTS("Documents", "दस्तावेज़", "PDF, DOCX, XLSX, TXT, ZIP")
+    DOCUMENTS("Documents", "दस्तावेज़", "PDF, DOCX, XLSX, TXT, ZIP"),
+    TRASH("Recycle Bin", "रीसायकल बिन", "Deleted & Trashed Files"),
+    VAULT("Recovered Vault", "रिकवर की गई फाइलें", "Safely Restored Media")
 }
+
+data class StorageStats(
+    val totalBytes: Long,
+    val freeBytes: Long,
+    val usedBytes: Long,
+    val usedPercent: Float,
+    val totalGbFormatted: String,
+    val usedGbFormatted: String,
+    val freeGbFormatted: String
+)
 
 enum class RecoverTier(
     val code: String,

@@ -181,10 +181,12 @@ export function getCombinedLocalSeoSchema() {
 export const LocalSeoSchema: React.FC = () => {
   const schemaData = getCombinedLocalSeoSchema();
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-    />
+    <div style={{ display: "none" }} aria-hidden="true">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+      />
+    </div>
   );
 };
 

@@ -1,14 +1,16 @@
 import * as THREE from "three";
 
 /**
- * Generates an ultra-high-resolution (1024x2048) photorealistic smartphone display texture.
- * Featuring:
+ * Generates an ultra-high-definition (1024x2048) photorealistic flagship smartphone display texture.
+ * Features:
  * - Dynamic Island with front camera lens and face-scanner sensors
  * - Sleek iOS/Android flagship status bar (09:41, 5G, Wi-Fi, 100% battery)
  * - Super Telecom Laboratory wallpaper with glowing cyan/emerald circuit traces
  * - Live lab diagnostic telemetry card
- * - Frosted glass application dock with real repair utility icons
+ * - High-tech holographic precision visualizer ring
+ * - 4 Flagship App icons (Super Transfer, Super Recover, Super Launcher, Diagnostics)
  * - Home swipe indicator bar
+ * - Strictly flipY = false for glTF 2.0 texture alignment
  */
 export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   if (typeof document === "undefined") return null;
@@ -21,11 +23,12 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
 
-  // 1. Deep OLED Midnight Black Base
+  // 1. Deep Midnight Cosmic Black Base
   const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
   bgGrad.addColorStop(0, "#020617");
-  bgGrad.addColorStop(0.3, "#040d21");
-  bgGrad.addColorStop(0.6, "#03142e");
+  bgGrad.addColorStop(0.25, "#040d21");
+  bgGrad.addColorStop(0.55, "#03142e");
+  bgGrad.addColorStop(0.85, "#06132b");
   bgGrad.addColorStop(1, "#020617");
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
@@ -34,29 +37,29 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   ctx.save();
   ctx.lineWidth = 2.5;
   ctx.strokeStyle = "rgba(6, 182, 212, 0.22)";
-  for (let i = 0; i < 18; i++) {
-    const y = 300 + i * 85;
+  for (let i = 0; i < 20; i++) {
+    const y = 280 + i * 80;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.bezierCurveTo(
       width * 0.35,
-      y + Math.sin(i * 0.5) * 80,
+      y + Math.sin(i * 0.45) * 75,
       width * 0.65,
-      y - Math.cos(i * 0.5) * 90,
+      y - Math.cos(i * 0.45) * 85,
       width,
-      y + 30
+      y + 35
     );
     ctx.stroke();
   }
   ctx.restore();
 
-  // Subtle glowing circuit grid dots
+  // Glowing circuit grid dots
   ctx.fillStyle = "rgba(16, 185, 129, 0.35)";
   for (let x = 60; x < width; x += 90) {
     for (let y = 350; y < height - 350; y += 90) {
       if ((x + y) % 180 === 0) {
         ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -65,10 +68,10 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   // 3. Central Ambient Glowing Hologram (Super Telecom Lab Crest)
   const crestGrad = ctx.createRadialGradient(
     width / 2,
-    height * 0.44,
-    40,
+    height * 0.45,
+    30,
     width / 2,
-    height * 0.44,
+    height * 0.45,
     420
   );
   crestGrad.addColorStop(0, "rgba(6, 182, 212, 0.35)");
@@ -81,32 +84,32 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 56px -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText("09:41", 90, 130);
+  ctx.fillText("09:41", 85, 125);
 
   // Status Bar Right: 5G, Wi-Fi, 100% Battery
   ctx.textAlign = "right";
   ctx.font = "bold 44px -apple-system, BlinkMacSystemFont, 'Inter', monospace";
-  ctx.fillText("5G", width - 260, 128);
+  ctx.fillText("5G", width - 250, 123);
 
   // Wi-Fi 3-bar arcs
   ctx.save();
   ctx.strokeStyle = "#ffffff";
   ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.arc(width - 220, 132, 20, Math.PI * 1.2, Math.PI * 1.8);
+  ctx.arc(width - 210, 127, 20, Math.PI * 1.2, Math.PI * 1.8);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(width - 220, 132, 12, Math.PI * 1.2, Math.PI * 1.8);
+  ctx.arc(width - 210, 127, 12, Math.PI * 1.2, Math.PI * 1.8);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(width - 220, 132, 4, 0, Math.PI * 2);
+  ctx.arc(width - 210, 127, 4, 0, Math.PI * 2);
   ctx.fillStyle = "#ffffff";
   ctx.fill();
   ctx.restore();
 
   // Battery Outline + 100% Green Fill + Bolt
-  const batX = width - 150;
-  const batY = 92;
+  const batX = width - 145;
+  const batY = 88;
   ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
   ctx.lineWidth = 4;
   ctx.strokeRect(batX, batY, 68, 36);
@@ -118,7 +121,7 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   const pillW = 240;
   const pillH = 68;
   const pillX = (width - pillW) / 2;
-  const pillY = 82;
+  const pillY = 80;
   ctx.fillStyle = "#000000";
   ctx.beginPath();
   ctx.roundRect(pillX, pillY, pillW, pillH, 34);
@@ -143,38 +146,38 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
   ctx.fill();
 
   // 6. Super Telecom Lab Diagnostic Telemetry Widget Card (Upper Mid-Screen)
-  const cardW = 860;
-  const cardH = 480;
+  const cardW = 870;
+  const cardH = 490;
   const cardX = (width - cardW) / 2;
-  const cardY = 240;
+  const cardY = 220;
 
   ctx.save();
-  ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+  ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
   ctx.beginPath();
   ctx.roundRect(cardX, cardY, cardW, cardH, 44);
   ctx.fill();
-  ctx.strokeStyle = "rgba(6, 182, 212, 0.4)";
+  ctx.strokeStyle = "rgba(6, 182, 212, 0.45)";
   ctx.lineWidth = 3;
   ctx.stroke();
 
   // Card Header Tag
-  ctx.fillStyle = "rgba(6, 182, 212, 0.2)";
+  ctx.fillStyle = "rgba(6, 182, 212, 0.22)";
   ctx.beginPath();
-  ctx.roundRect(cardX + 40, cardY + 40, 320, 52, 26);
+  ctx.roundRect(cardX + 40, cardY + 38, 330, 52, 26);
   ctx.fill();
   ctx.fillStyle = "#38bdf8";
   ctx.font = "bold 26px monospace";
   ctx.textAlign = "left";
-  ctx.fillText("● LAB BENCH ACTIVE", cardX + 65, cardY + 75);
+  ctx.fillText("● LAB BENCH ACTIVE", cardX + 65, cardY + 73);
 
   // Branding Title
   ctx.fillStyle = "#ffffff";
   ctx.font = "900 64px -apple-system, BlinkMacSystemFont, 'Inter', sans-serif";
-  ctx.fillText("SUPER TELECOM", cardX + 40, cardY + 175);
+  ctx.fillText("SUPER TELECOM", cardX + 40, cardY + 170);
 
   ctx.fillStyle = "#06b6d4";
   ctx.font = "bold 34px -apple-system, BlinkMacSystemFont, 'Inter', sans-serif";
-  ctx.fillText("BARGANDA ROAD CHIP-LEVEL LAB", cardX + 40, cardY + 225);
+  ctx.fillText("BARGANDA ROAD CHIP-LEVEL LAB", cardX + 40, cardY + 220);
 
   // Divider Line
   ctx.strokeStyle = "rgba(51, 65, 85, 0.8)";
@@ -191,8 +194,8 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
     { label: "DISPLAY MATRIX", val: "OCA VACUUM", col: "#f59e0b" },
   ];
   metrics.forEach((m, idx) => {
-    const mx = cardX + 40 + idx * 265;
-    const my = cardY + 320;
+    const mx = cardX + 40 + idx * 270;
+    const my = cardY + 325;
     ctx.fillStyle = "#94a3b8";
     ctx.font = "bold 22px monospace";
     ctx.fillText(m.label, mx, my);
@@ -204,60 +207,59 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
 
   // 7. Middle Screen Diagnostic Holographic Visualizer Ring
   const ringX = width / 2;
-  const ringY = height * 0.58;
+  const ringY = height * 0.53;
   ctx.save();
   ctx.strokeStyle = "rgba(6, 182, 212, 0.4)";
   ctx.lineWidth = 4;
   ctx.setLineDash([16, 12]);
   ctx.beginPath();
-  ctx.arc(ringX, ringY, 180, 0, Math.PI * 2);
+  ctx.arc(ringX, ringY, 170, 0, Math.PI * 2);
   ctx.stroke();
 
   ctx.strokeStyle = "rgba(16, 185, 129, 0.6)";
   ctx.lineWidth = 6;
   ctx.setLineDash([32, 24]);
   ctx.beginPath();
-  ctx.arc(ringX, ringY, 130, 0, Math.PI * 2);
+  ctx.arc(ringX, ringY, 120, 0, Math.PI * 2);
   ctx.stroke();
   ctx.setLineDash([]);
 
   // Center Chip Icon
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
-  ctx.font = "bold 32px monospace";
-  ctx.fillText("0.02mm JUMPER", ringX, ringY - 15);
+  ctx.font = "bold 30px monospace";
+  ctx.fillText("0.02mm JUMPER", ringX, ringY - 12);
   ctx.fillStyle = "#10b981";
-  ctx.font = "900 40px monospace";
+  ctx.font = "900 38px monospace";
   ctx.fillText("READY", ringX, ringY + 35);
   ctx.restore();
 
-  // 8. Bottom App Dock (4 Beautiful Frosted Squircle Apps)
+  // 8. Bottom App Grid (4 Flagship Super Telecom Suite Apps)
   const dockW = 880;
-  const dockH = 190;
+  const dockH = 200;
   const dockX = (width - dockW) / 2;
-  const dockY = height - 310;
+  const dockY = height - 370;
 
   ctx.save();
-  ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+  ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
   ctx.beginPath();
   ctx.roundRect(dockX, dockY, dockW, dockH, 54);
   ctx.fill();
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.16)";
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  // 4 Apps: Phone, WhatsApp, Super Recover, Lab Tools
   const apps = [
-    { label: "Call Lab", bg: "#10b981", icon: "📞" },
-    { label: "WhatsApp", bg: "#06b6d4", icon: "💬" },
-    { label: "Recover", bg: "#8b5cf6", icon: "⚡" },
-    { label: "Diagnostics", bg: "#f59e0b", icon: "🛠️" },
+    { label: "Transfer", bg: "#0284c7", icon: "⚡" },
+    { label: "Recover", bg: "#7c3aed", icon: "🛡️" },
+    { label: "Launcher", bg: "#059669", icon: "🚀" },
+    { label: "Consult", bg: "#d97706", icon: "🔧" },
   ];
 
   apps.forEach((app, idx) => {
-    const ax = dockX + 60 + idx * 205;
-    const ay = dockY + 36;
-    const aSize = 118;
+    const ax = dockX + 50 + idx * 205;
+    const ay = dockY + 28;
+    const aSize = 110;
 
     // App Icon Squircle
     ctx.fillStyle = app.bg;
@@ -266,19 +268,25 @@ export function createSmartphoneScreenTexture(): THREE.CanvasTexture | null {
     ctx.fill();
 
     // Icon emoji/symbol
-    ctx.font = "54px sans-serif";
+    ctx.font = "52px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(app.icon, ax + aSize / 2, ay + 78);
+    ctx.fillText(app.icon, ax + aSize / 2, ay + 72);
+
+    // Label below
+    ctx.fillStyle = "#cbd5e1";
+    ctx.font = "bold 20px -apple-system, sans-serif";
+    ctx.fillText(app.label, ax + aSize / 2, ay + 135);
   });
   ctx.restore();
 
   // 9. Home Swipe Indicator Bar (Bottom Center)
-  ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.80)";
   ctx.beginPath();
-  ctx.roundRect((width - 340) / 2, height - 55, 340, 10, 5);
+  ctx.roundRect((width - 320) / 2, height - 70, 320, 10, 5);
   ctx.fill();
 
   const texture = new THREE.CanvasTexture(canvas);
+  texture.flipY = false; // MUST be false for correct GLTF 2.0 UV alignment!
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
@@ -352,6 +360,7 @@ export function createSmartphoneBackTexture(): THREE.CanvasTexture | null {
   ctx.fillText("BARGANDA ROAD, GIRIDIH, JHARKHAND • MODEL ST-PRO", midX, height - 180);
 
   const texture = new THREE.CanvasTexture(canvas);
+  texture.flipY = false; // MUST be false for correct GLTF 2.0 UV alignment!
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;

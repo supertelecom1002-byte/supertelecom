@@ -1,14 +1,24 @@
 package com.supertelecom.feature.recover
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -17,7 +27,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -25,12 +40,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.RecoverItem
 import com.supertelecom.model.RecoverTier
+import com.supertelecom.model.StorageStats
 import com.supertelecom.theme.*
 import kotlinx.coroutines.launch
 import java.util.Locale
+
+enum class RecoverScreenMode {
+    DASHBOARD,
+    SCANNING,
+    GALLERY,
+    VAULT
+}
 
 @Composable
 fun SuperRecoverScreen(
@@ -42,23 +66,39 @@ fun SuperRecoverScreen(
     val coroutineScope = rememberCoroutineScope()
     val recoverEngine = remember { StorageRecoverEngine(context) }
 
-    var selectedCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.ALL_MEDIA) }
-    var selectedTierFilter by remember { mutableStateOf<RecoverTier?>(null) }
-    var showPreviewItem by remember { mutableStateOf<RecoverItem?>(null) }
+    var screenMode by remember { mutableStateOf(RecoverScreenMode.DASHBOARD) }
+    var activeCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.PHOTOS) }
+    var activeFilterTag by remember { mutableStateOf("ALL") }
+
+    var storageStats by remember { mutableStateOf(recoverEngine.getDeviceStorageStats()) }
+    val isScanningEngine by recoverEngine.isScanning.collectAsState()
+    val currentScanPath by recoverEngine.currentScanPath.collectAsState()
+    val scannedCount by recoverEngine.scannedCount.collectAsState()
+    val scanProgress by recoverEngine.scanProgress.collectAsState()
+
+    val discoveredItems = remember { mutableStateListOf<RecoverItem>() }
+    val vaultItems = remember { mutableStateListOf<RecoverItem>() }
+
+    var previewItem by remember { mutableStateOf<RecoverItem?>(null) }
     var restoreResult by remember { mutableStateOf<Triple<Int, Int, String>?>(null) }
     var isRestoring by remember { mutableStateOf(false) }
 
-    val isScanning by recoverEngine.isScanning.collectAsState()
-    val currentScanPath by recoverEngine.currentScanPath.collectAsState()
+    // Refresh storage stats on launch
+    LaunchedEffect(Unit) {
+        storageStats = recoverEngine.getDeviceStorageStats()
+    }
 
-    // Production Discovered Items: Starts EMPTY (zero hardcoded sample records)
-    val discoveredItems = remember { mutableStateListOf<RecoverItem>() }
-
-    LaunchedEffect(initialCategory) {
-        if (initialCategory != null) {
-            val results = recoverEngine.executeDeepScan(initialCategory)
+    // Permission Launcher
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { _ ->
+        // Start scanning regardless of partial/full permissions
+        coroutineScope.launch {
+            screenMode = RecoverScreenMode.SCANNING
+            val results = recoverEngine.executeDeepScan(activeCategory)
             discoveredItems.clear()
             discoveredItems.addAll(results)
+            screenMode = RecoverScreenMode.GALLERY
         }
     }
 
@@ -68,70 +108,356 @@ fun SuperRecoverScreen(
     ) { treeUri: Uri? ->
         if (treeUri != null) {
             coroutineScope.launch {
-                val results = recoverEngine.scanStorageAccessTree(treeUri, selectedCategory)
-                discoveredItems.addAll(0, results)
+                screenMode = RecoverScreenMode.SCANNING
+                val results = recoverEngine.scanStorageAccessTree(treeUri, activeCategory)
+                discoveredItems.clear()
+                discoveredItems.addAll(results)
+                screenMode = RecoverScreenMode.GALLERY
             }
         }
     }
 
-    val filteredItems = remember(selectedCategory, selectedTierFilter, discoveredItems.size) {
-        discoveredItems.filter {
-            val matchCat = (selectedCategory == RecoverCategory.ALL_MEDIA || it.category == selectedCategory)
-            val matchTier = (selectedTierFilter == null || it.tier == selectedTierFilter)
-            matchCat && matchTier
+    fun startCategoryScan(cat: RecoverCategory) {
+        activeCategory = cat
+        if (cat == RecoverCategory.VAULT) {
+            coroutineScope.launch {
+                vaultItems.clear()
+                vaultItems.addAll(recoverEngine.scanRecoveredVault())
+                screenMode = RecoverScreenMode.VAULT
+            }
+            return
+        }
+
+        // Check required permissions
+        val neededPermissions = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when (cat) {
+                RecoverCategory.PHOTOS -> neededPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+                RecoverCategory.VIDEOS -> neededPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+                RecoverCategory.AUDIO_RECORDINGS -> neededPermissions.add(Manifest.permission.READ_MEDIA_AUDIO)
+                else -> {
+                    neededPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+                    neededPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+                    neededPermissions.add(Manifest.permission.READ_MEDIA_AUDIO)
+                }
+            }
+        } else {
+            neededPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+        val hasAll = neededPermissions.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+
+        if (hasAll) {
+            coroutineScope.launch {
+                screenMode = RecoverScreenMode.SCANNING
+                val results = recoverEngine.executeDeepScan(cat)
+                discoveredItems.clear()
+                discoveredItems.addAll(results)
+                screenMode = RecoverScreenMode.GALLERY
+            }
+        } else {
+            permissionLauncher.launch(neededPermissions.toTypedArray())
         }
     }
-
-    val selectedCount = discoveredItems.count { it.isSelected }
-    val selectedTotalBytes = discoveredItems.filter { it.isSelected }.sumOf { it.sizeBytes }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BgDark)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            contentPadding = PaddingValues(
+        when (screenMode) {
+            RecoverScreenMode.DASHBOARD -> {
+                RecoverDashboardView(
+                    isHindi = isHindi,
+                    stats = storageStats,
+                    onSelectCategory = { cat -> startCategoryScan(cat) },
+                    onOpenSaf = { safFolderPicker.launch(null) },
+                    contentPadding = contentPadding
+                )
+            }
+
+            RecoverScreenMode.SCANNING -> {
+                RadarScanningScreen(
+                    isHindi = isHindi,
+                    category = activeCategory,
+                    progress = scanProgress,
+                    currentPath = currentScanPath,
+                    foundCount = scannedCount,
+                    onStopScan = {
+                        recoverEngine.stopScan()
+                        screenMode = RecoverScreenMode.GALLERY
+                    }
+                )
+            }
+
+            RecoverScreenMode.GALLERY -> {
+                RecoverGalleryGridView(
+                    isHindi = isHindi,
+                    category = activeCategory,
+                    items = discoveredItems,
+                    activeFilterTag = activeFilterTag,
+                    onFilterTagSelected = { activeFilterTag = it },
+                    onToggleSelect = { item ->
+                        val idx = discoveredItems.indexOfFirst { it.id == item.id }
+                        if (idx != -1) {
+                            discoveredItems[idx] = discoveredItems[idx].copy(isSelected = !discoveredItems[idx].isSelected)
+                        }
+                    },
+                    onToggleSelectAll = { selectAll ->
+                        for (i in 0 until discoveredItems.size) {
+                            discoveredItems[i] = discoveredItems[i].copy(isSelected = selectAll)
+                        }
+                    },
+                    onPreviewItem = { previewItem = it },
+                    onBackToDashboard = { screenMode = RecoverScreenMode.DASHBOARD },
+                    onRestoreSelected = {
+                        val selectedList = discoveredItems.filter { it.isSelected }
+                        if (selectedList.isNotEmpty() && !isRestoring) {
+                            isRestoring = true
+                            coroutineScope.launch {
+                                val res = recoverEngine.restoreSelectedItems(selectedList)
+                                isRestoring = false
+                                restoreResult = res
+                            }
+                        }
+                    },
+                    contentPadding = contentPadding
+                )
+            }
+
+            RecoverScreenMode.VAULT -> {
+                RecoveredVaultView(
+                    isHindi = isHindi,
+                    items = vaultItems,
+                    onBackToDashboard = { screenMode = RecoverScreenMode.DASHBOARD },
+                    onPreviewItem = { previewItem = it },
+                    contentPadding = contentPadding
+                )
+            }
+        }
+
+        // Full Screen Preview Dialog
+        previewItem?.let { item ->
+            FullScreenMediaPreviewDialog(
+                context = context,
+                item = item,
+                isHindi = isHindi,
+                onDismiss = { previewItem = null },
+                onRecoverSingle = {
+                    coroutineScope.launch {
+                        val res = recoverEngine.restoreSelectedItems(listOf(item))
+                        previewItem = null
+                        restoreResult = res
+                    }
+                }
+            )
+        }
+
+        // Restore Result Success Dialog
+        restoreResult?.let { (success, failed, path) ->
+            AlertDialog(
+                onDismissRequest = { restoreResult = null },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = if (success > 0) Icons.Default.CheckCircle else Icons.Default.Error,
+                            contentDescription = null,
+                            tint = if (success > 0) EmeraldAccent else RoseAccent,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isHindi) "🎉 रिकवरी सफल!" else "🎉 Recovery Completed!",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
+                        )
+                    }
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = if (isHindi)
+                                "$success फाइलें बिना किसी ओवरराइट के सुरक्षित रूप से फोन गैलरी में रीस्टोर कर दी गई हैं।"
+                            else
+                                "$success file(s) safely restored to phone gallery without overwriting existing data.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        if (failed > 0) {
+                            Text(
+                                text = if (isHindi)
+                                    "$failed फाइलें स्रोत उपलब्ध न होने के कारण नहीं पढ़ी जा सकीं।"
+                                else
+                                    "$failed file(s) could not be retrieved from source.",
+                                style = MaterialTheme.typography.bodySmall.copy(color = RoseAccent)
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(CardDark)
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "Saved: $path",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontFamily = FontFamily.Monospace,
+                                    color = CyanAccent,
+                                    fontSize = 10.sp
+                                )
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            restoreResult = null
+                            startCategoryScan(RecoverCategory.VAULT)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text(text = if (isHindi) "वॉल्ट देखें (Open Vault)" else "Open Vault", fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { restoreResult = null }) {
+                        Text(text = if (isHindi) "बंद करें" else "Close", color = TextSecondary)
+                    }
+                },
+                containerColor = Color(0xFF0F172A),
+                shape = RoundedCornerShape(16.dp)
+            )
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. ALL-RECOVERY STYLE DASHBOARD VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun RecoverDashboardView(
+    isHindi: Boolean,
+    stats: StorageStats,
+    onSelectCategory: (RecoverCategory) -> Unit,
+    onOpenSaf: () -> Unit,
+    contentPadding: PaddingValues
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(
                 start = 16.dp,
                 end = 16.dp,
-                top = 12.dp,
-                bottom = contentPadding.calculateBottomPadding() + 80.dp // Extra space for sticky restore bar
+                top = 10.dp,
+                bottom = contentPadding.calculateBottomPadding()
             )
+    ) {
+        // Top App Bar
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            item {
-                // ── HEADER ──
+            Column {
+                Text(
+                    text = if (isHindi) "सुपर रिकवर (Super Recover)" else "Super Recover",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
+                )
+                Text(
+                    text = if (isHindi) "ऑल-रिकवरी विज़ुअल मीडिया व फाइल स्कैनर" else "All-Recovery Visual On-Device Scanner",
+                    style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(EmeraldAccent.copy(alpha = 0.15f))
+                    .border(1.dp, EmeraldAccent.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = if (isHindi) "100% फ्री व सुरक्षित" else "100% Free & Safe",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = EmeraldAccent,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp
+                    )
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // ── STORAGE STATUS METER BANNER ──
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(18.dp))
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0B192C))
+                    )
+                )
+                .border(1.dp, CyanAccent.copy(alpha = 0.35f), RoundedCornerShape(18.dp))
+                .padding(14.dp)
+        ) {
+            Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Text(
-                            text = if (isHindi) "सुपर रिकवर (Super Recover)" else "Super Recover",
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Black,
-                                color = EmeraldAccent,
-                                fontSize = 20.sp
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .background(CyanAccent.copy(alpha = 0.2f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Storage,
+                                contentDescription = null,
+                                tint = CyanAccent,
+                                modifier = Modifier.size(18.dp)
                             )
-                        )
-                        Text(
-                            text = if (isHindi) "सच्चा ऑन-डिवाइस मीडिया रिकवरी इंजन • शून्य रूट खतरा" else "Honest On-Device Media Recovery • Zero Root Exploit",
-                            style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
-                        )
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = if (isHindi) "डिवाइस स्टोरेज स्थिति" else "Device Storage Status",
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            )
+                            Text(
+                                text = "Used ${stats.usedGbFormatted} / ${stats.totalGbFormatted}",
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    color = CyanAccent,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+                        }
                     }
 
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(EmeraldAccent.copy(alpha = 0.15f))
-                            .border(1.dp, EmeraldAccent.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(EmeraldAccent.copy(alpha = 0.2f))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
                     ) {
                         Text(
-                            text = if (isHindi) "100% ऑन-डिवाइस" else "100% On-Device",
+                            text = "${stats.freeGbFormatted} Free",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 color = EmeraldAccent,
                                 fontWeight = FontWeight.Bold,
@@ -141,274 +467,672 @@ fun SuperRecoverScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // ── STEP 1: 5 DISTINCT CATEGORY BUTTONS ──
-                Text(
-                    text = if (isHindi) "स्टेप 1 — क्या रिकवर करना है? (5 कैटेगरी)" else "Step 1 — What to Recover? (5 Categories)",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    CategoryFilterChip(
-                        label = if (isHindi) "सभी" else "All",
-                        isSelected = selectedCategory == RecoverCategory.ALL_MEDIA,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedCategory = RecoverCategory.ALL_MEDIA }
-                    )
-                    CategoryFilterChip(
-                        label = if (isHindi) "तस्वीरें" else "Photos",
-                        isSelected = selectedCategory == RecoverCategory.PHOTOS,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedCategory = RecoverCategory.PHOTOS }
-                    )
-                    CategoryFilterChip(
-                        label = if (isHindi) "वीडियो" else "Videos",
-                        isSelected = selectedCategory == RecoverCategory.VIDEOS,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedCategory = RecoverCategory.VIDEOS }
-                    )
-                    CategoryFilterChip(
-                        label = if (isHindi) "ऑडियो" else "Audio",
-                        isSelected = selectedCategory == RecoverCategory.AUDIO_RECORDINGS,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedCategory = RecoverCategory.AUDIO_RECORDINGS }
-                    )
-                    CategoryFilterChip(
-                        label = if (isHindi) "दस्तावेज़" else "Docs",
-                        isSelected = selectedCategory == RecoverCategory.DOCUMENTS,
-                        modifier = Modifier.weight(1f),
-                        onClick = { selectedCategory = RecoverCategory.DOCUMENTS }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // ── STEP 2: SCAN ACTION BUTTONS (MIN 52DP HEIGHT) ──
-                Text(
-                    text = if (isHindi) "स्टेप 2 — रिकवरी स्कैन चलाएं" else "Step 2 — Execute Recovery Scan",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-
                 Spacer(modifier = Modifier.height(10.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                // Progress Bar
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(Color(0xFF334155))
                 ) {
-                    // Deep Scan Button
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val results = recoverEngine.executeDeepScan(selectedCategory)
-                                discoveredItems.clear()
-                                discoveredItems.addAll(results)
-                            }
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(54.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isScanning) RoseAccent else EmeraldAccent,
-                            contentColor = if (isScanning) Color.White else BgDark
-                        ),
-                        enabled = !isScanning
-                    ) {
-                        Icon(
-                            imageVector = if (isScanning) Icons.Default.HourglassEmpty else Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = if (isScanning)
-                                (if (isHindi) "स्कैनिंग जारी..." else "SCANNING...")
-                            else
-                                (if (isHindi) "डीप स्कैन शुरू करें" else "START DEEP SCAN"),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Black)
-                        )
-                    }
-
-                    // SAF Folder Picker Button
-                    OutlinedButton(
-                        onClick = {
-                            safFolderPicker.launch(null)
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(54.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder),
-                        enabled = !isScanning
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FolderOpen,
-                            contentDescription = null,
-                            tint = CyanAccent,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = if (isHindi) "SD कार्ड / SAF चुनें" else "SELECT FOLDER (SAF)",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
-                        )
-                    }
-                }
-
-                // Live Scan Indicator
-                if (isScanning) {
-                    Spacer(modifier = Modifier.height(10.dp))
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(CardDark)
-                            .border(1.dp, EmeraldAccent.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
-                            .padding(10.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(18.dp),
-                                color = EmeraldAccent,
-                                strokeWidth = 2.dp
+                            .fillMaxWidth(stats.usedPercent)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(EmeraldAccent, CyanAccent, Color(0xFF38BDF8))
+                                )
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                Text(
-                                    text = if (isHindi) "लाइव मीडिया स्कैन प्रगति पर है..." else "Live MediaScan in progress...",
-                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
-                                )
-                                Text(
-                                    text = currentScanPath,
-                                    style = MaterialTheme.typography.labelSmall.copy(
-                                        fontSize = 10.sp,
-                                        color = TextSecondary,
-                                        fontFamily = FontFamily.Monospace
-                                    ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // ── STEP 3: DISCOVERED ITEMS LIST HEADER ──
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = if (isHindi) "बरामद करने योग्य फाइलें (${filteredItems.size})" else "Recoverable Media (${filteredItems.size})",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
-
-                    if (discoveredItems.isNotEmpty()) {
-                        Row {
-                            TextButton(onClick = {
-                                for (i in discoveredItems.indices) {
-                                    discoveredItems[i] = discoveredItems[i].copy(isSelected = true)
-                                }
-                            }) {
-                                Text(
-                                    text = if (isHindi) "सब चुनें" else "Select All",
-                                    style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent, fontWeight = FontWeight.Bold)
-                                )
-                            }
-
-                            TextButton(onClick = {
-                                for (i in discoveredItems.indices) {
-                                    discoveredItems[i] = discoveredItems[i].copy(isSelected = false)
-                                }
-                            }) {
-                                Text(
-                                    text = if (isHindi) "अनचेक" else "Deselect",
-                                    style = MaterialTheme.typography.labelSmall.copy(color = TextMuted)
-                                )
-                            }
-                        }
-                    }
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-            }
-
-            // Genuine Empty State when 0 files found
-            if (discoveredItems.isEmpty() && !isScanning) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(CardDark.copy(alpha = 0.5f))
-                            .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
-                            .padding(24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.SearchOff,
-                                contentDescription = null,
-                                tint = TextMuted,
-                                modifier = Modifier.size(36.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = if (isHindi) "कोई बरामदगी योग्य फ़ाइल नहीं मिली" else "No Recoverable Media Discovered",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = TextSecondary)
-                            )
-                            Text(
-                                text = if (isHindi)
-                                    "आधुनिक एंड्रॉइड (Android 10+) में फ़ाइल-आधारित एन्क्रिप्शन (FBE) और स्कोप्ड स्टोरेज लागू होता है। स्थायी रूप से मिटाई गई फ़ाइलें जिनका डिस्क ब्लॉक ट्रिम या ओवरराइट हो चुका है, बिना बैकअप के रिकवर नहीं हो सकती हैं।"
-                                else
-                                    "Modern Android (10+) utilizes hardware File-Based Encryption (FBE) and Scoped Storage. Permanently trimmed flash NAND blocks cannot be reconstructed without existing backups or surviving cache copies.",
-                                style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, textAlign = TextAlign.Center),
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Items List
-            itemsIndexed(filteredItems) { _, item ->
-                RecoverItemCard(
-                    item = item,
-                    isHindi = isHindi,
-                    onToggleSelect = {
-                        val realIndex = discoveredItems.indexOfFirst { it.id == item.id }
-                        if (realIndex != -1) {
-                            discoveredItems[realIndex] = discoveredItems[realIndex].copy(
-                                isSelected = !discoveredItems[realIndex].isSelected
-                            )
-                        }
-                    },
-                    onPreview = { showPreviewItem = item }
-                )
-                Spacer(modifier = Modifier.height(6.dp))
             }
         }
 
-        // ── STICKY BOTTOM BAR: RESTORE SELECTED FILES (MIN 52DP HEIGHT) ──
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = if (isHindi) "रिकवरी श्रेणी चुनें (Select Recovery Category)" else "Select Recovery Category",
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                fontSize = 14.sp
+            )
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // ── 2x2 BIG COLORFUL RECOVERY CATEGORY CARDS ──
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            VisualCategoryCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "फ़ोटो रिकवरी" else "Photo Recovery",
+                subtitle = "JPG, PNG, WEBP, HEIC",
+                icon = Icons.Default.PhotoLibrary,
+                gradient = listOf(Color(0xFF1E3A8A), Color(0xFF0284C7)),
+                iconTint = Color(0xFF38BDF8),
+                badgeText = "DEEP SCAN",
+                onClick = { onSelectCategory(RecoverCategory.PHOTOS) }
+            )
+
+            VisualCategoryCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "वीडियो रिकवरी" else "Video Recovery",
+                subtitle = "MP4, MKV, MOV, WA",
+                icon = Icons.Default.VideoLibrary,
+                gradient = listOf(Color(0xFF581C87), Color(0xFF9333EA)),
+                iconTint = Color(0xFFC084FC),
+                badgeText = "HD VIDEO",
+                onClick = { onSelectCategory(RecoverCategory.VIDEOS) }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            VisualCategoryCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "ऑडियो व कॉल" else "Audio & Calls",
+                subtitle = "MP3, M4A, WAV, AMR",
+                icon = Icons.Default.Mic,
+                gradient = listOf(Color(0xFF7C2D12), Color(0xFFEA580C)),
+                iconTint = Color(0xFFFB923C),
+                badgeText = "VOICE",
+                onClick = { onSelectCategory(RecoverCategory.AUDIO_RECORDINGS) }
+            )
+
+            VisualCategoryCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "डॉक्यूमेंट फाइलें" else "Documents",
+                subtitle = "PDF, DOCX, ZIP, APK",
+                icon = Icons.Default.Description,
+                gradient = listOf(Color(0xFF064E3B), Color(0xFF059669)),
+                iconTint = Color(0xFF34D399),
+                badgeText = "FILES",
+                onClick = { onSelectCategory(RecoverCategory.DOCUMENTS) }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // ── 2 QUICK ACCESS CARDS: TRASH & RECOVERED VAULT ──
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            QuickAccessCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "रीसायकल बिन" else "Recycle Bin",
+                subtitle = if (isHindi) "सिस्टम ट्रैश मीडिया" else "System Trashed Media",
+                icon = Icons.Default.DeleteSweep,
+                borderColor = Color(0xFFE11D48),
+                iconColor = Color(0xFFFB7185),
+                onClick = { onSelectCategory(RecoverCategory.TRASH) }
+            )
+
+            QuickAccessCard(
+                modifier = Modifier.weight(1f),
+                title = if (isHindi) "रिकवर की गई फाइलें" else "Recovered Vault",
+                subtitle = if (isHindi) "सहेजी गई फाइलों का वॉल्ट" else "Restored Media Gallery",
+                icon = Icons.Default.FolderSpecial,
+                borderColor = EmeraldAccent,
+                iconColor = EmeraldAccent,
+                onClick = { onSelectCategory(RecoverCategory.VAULT) }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // SAF Folder / SD Card Button
+        OutlinedButton(
+            onClick = onOpenSaf,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+            border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
+        ) {
+            Icon(
+                imageVector = Icons.Default.FolderOpen,
+                contentDescription = null,
+                tint = CyanAccent,
+                modifier = Modifier.size(18.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = if (isHindi) "कस्टम फ़ोल्डर या SD कार्ड स्कैन करें (SAF)" else "Custom Folder or SD Card Deep Scan (SAF)",
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = TextPrimary)
+            )
+        }
+    }
+}
+
+@Composable
+private fun VisualCategoryCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    gradient: List<Color>,
+    iconTint: Color,
+    badgeText: String,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(125.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(Brush.linearGradient(gradient))
+            .border(1.dp, iconTint.copy(alpha = 0.4f), RoundedCornerShape(20.dp))
+            .clickable { onClick() }
+            .padding(12.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .background(Color.Black.copy(alpha = 0.3f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = iconTint,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color.Black.copy(alpha = 0.35f))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = badgeText,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = iconTint,
+                            fontWeight = FontWeight.Black,
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    )
+                }
+            }
+
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Black,
+                        color = Color.White,
+                        fontSize = 14.sp
+                    )
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 10.sp
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuickAccessCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    borderColor: Color,
+    iconColor: Color,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(72.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(CardDark)
+            .border(1.dp, borderColor.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+            .padding(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(34.dp)
+                    .background(iconColor.copy(alpha = 0.15f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextSecondary,
+                        fontSize = 9.sp
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. LIVE RADAR SCANNING ANIMATION VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun RadarScanningScreen(
+    isHindi: Boolean,
+    category: RecoverCategory,
+    progress: Float,
+    currentPath: String,
+    foundCount: Int,
+    onStopScan: () -> Unit
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "radar")
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.8f,
+        targetValue = 1.25f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    val categoryColor = when (category) {
+        RecoverCategory.PHOTOS -> Color(0xFF0284C7)
+        RecoverCategory.VIDEOS -> Color(0xFF9333EA)
+        RecoverCategory.AUDIO_RECORDINGS -> Color(0xFFEA580C)
+        RecoverCategory.DOCUMENTS -> Color(0xFF059669)
+        else -> CyanAccent
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BgDark)
+            .statusBarsPadding()
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Radar Animation Circle
+            Box(
+                modifier = Modifier
+                    .size(240.dp)
+                    .clip(CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val center = Offset(size.width / 2, size.height / 2)
+                    val radius = size.width / 2
+
+                    // Concentric rings
+                    drawCircle(color = categoryColor.copy(alpha = 0.15f), radius = radius, center = center)
+                    drawCircle(color = categoryColor.copy(alpha = 0.25f), radius = radius * 0.7f, center = center)
+                    drawCircle(color = categoryColor.copy(alpha = 0.35f), radius = radius * 0.4f, center = center)
+
+                    // Sweeping radar wedge
+                    drawArc(
+                        brush = Brush.sweepGradient(
+                            listOf(
+                                Color.Transparent,
+                                categoryColor.copy(alpha = 0.05f),
+                                categoryColor.copy(alpha = 0.55f)
+                            ),
+                            center = center
+                        ),
+                        startAngle = rotation,
+                        sweepAngle = 90f,
+                        useCenter = true
+                    )
+                }
+
+                // Center Icon with Pulse
+                Box(
+                    modifier = Modifier
+                        .size((56 * pulseScale).dp)
+                        .background(categoryColor.copy(alpha = 0.25f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = when (category) {
+                            RecoverCategory.PHOTOS -> Icons.Default.PhotoLibrary
+                            RecoverCategory.VIDEOS -> Icons.Default.VideoLibrary
+                            RecoverCategory.AUDIO_RECORDINGS -> Icons.Default.Mic
+                            RecoverCategory.DOCUMENTS -> Icons.Default.Description
+                            else -> Icons.Default.Search
+                        },
+                        contentDescription = null,
+                        tint = categoryColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Percentage Counter
+            val percentInt = (progress * 100).toInt().coerceIn(0, 100)
+            Text(
+                text = "$percentInt%",
+                style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.Black,
+                    color = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = if (isHindi)
+                    "कृपया प्रतीक्षा करें... फोन स्टोरेज, थंबनेल कैश व हिडन फोल्डर्स स्कैन हो रहे हैं"
+                else
+                    "Please wait... Scanning phone memory, thumbnail cache & hidden directories",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Live Path Display
+            Text(
+                text = currentPath,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontFamily = FontFamily.Monospace,
+                    color = TextSecondary,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Live Counter Badge
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(EmeraldAccent.copy(alpha = 0.15f))
+                    .border(1.dp, EmeraldAccent.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                    .padding(horizontal = 14.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = if (isHindi)
+                        "⚡ मिली हुई फाइलें: $foundCount"
+                    else
+                        "⚡ Files Found: $foundCount",
+                    style = MaterialTheme.typography.labelMedium.copy(
+                        color = EmeraldAccent,
+                        fontWeight = FontWeight.Black
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Stop Scan Button
+            Button(
+                onClick = onStopScan,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = RoseAccent.copy(alpha = 0.2f),
+                    contentColor = RoseAccent
+                ),
+                border = androidx.compose.foundation.BorderStroke(1.dp, RoseAccent.copy(alpha = 0.5f)),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.height(48.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Close, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = if (isHindi) "स्कैन रोकें व परिणाम देखें" else "Stop Scan & View Results",
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. 3-COLUMN VISUAL GALLERY GRID VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun RecoverGalleryGridView(
+    isHindi: Boolean,
+    category: RecoverCategory,
+    items: List<RecoverItem>,
+    activeFilterTag: String,
+    onFilterTagSelected: (String) -> Unit,
+    onToggleSelect: (RecoverItem) -> Unit,
+    onToggleSelectAll: (Boolean) -> Unit,
+    onPreviewItem: (RecoverItem) -> Unit,
+    onBackToDashboard: () -> Unit,
+    onRestoreSelected: () -> Unit,
+    contentPadding: PaddingValues
+) {
+    val context = LocalContext.current
+
+    // Filter items based on active chip
+    val filteredList = remember(items.size, activeFilterTag) {
+        when (activeFilterTag) {
+            "TRASH" -> items.filter { it.tier == RecoverTier.SYSTEM_TRASH }
+            "THUMBS" -> items.filter { it.tier == RecoverTier.THUMBNAIL_PREVIEW }
+            "WHATSAPP" -> items.filter { it.sourcePath.contains("WhatsApp", ignoreCase = true) }
+            "DCIM" -> items.filter { it.sourcePath.contains("DCIM", ignoreCase = true) }
+            "DOWNLOADS" -> items.filter { it.sourcePath.contains("Download", ignoreCase = true) }
+            else -> items
+        }
+    }
+
+    val selectedCount = items.count { it.isSelected }
+    val totalBytes = items.filter { it.isSelected }.sumOf { it.sizeBytes }
+    val allSelected = items.isNotEmpty() && items.all { it.isSelected }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BgDark)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) {
+            // Top Bar
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onBackToDashboard) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Column {
+                        Text(
+                            text = if (isHindi) "${category.labelHi} (${filteredList.size})" else "${category.labelEn} (${filteredList.size})",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                color = Color.White
+                            )
+                        )
+                        Text(
+                            text = if (isHindi) "3-कॉलम विज़ुअल ग्रिड" else "Visual 3-Column Grid",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 10.sp)
+                        )
+                    }
+                }
+
+                // Select All Toggle
+                TextButton(
+                    onClick = { onToggleSelectAll(!allSelected) },
+                    colors = ButtonDefaults.textButtonColors(contentColor = CyanAccent)
+                ) {
+                    Text(
+                        text = if (allSelected) (if (isHindi) "सब हटाएं" else "Deselect All") else (if (isHindi) "सभी चुनें" else "Select All"),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp
+                    )
+                }
+            }
+
+            // Top Filter Chips
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                FilterTabChip(
+                    label = if (isHindi) "सभी (${items.size})" else "All (${items.size})",
+                    isSelected = activeFilterTag == "ALL",
+                    onClick = { onFilterTagSelected("ALL") }
+                )
+                FilterTabChip(
+                    label = if (isHindi) "🗑️ ट्रैश" else "🗑️ Trash",
+                    isSelected = activeFilterTag == "TRASH",
+                    onClick = { onFilterTagSelected("TRASH") }
+                )
+                FilterTabChip(
+                    label = if (isHindi) "🔍 थंबनेल" else "🔍 Thumbnails",
+                    isSelected = activeFilterTag == "THUMBS",
+                    onClick = { onFilterTagSelected("THUMBS") }
+                )
+                FilterTabChip(
+                    label = "WhatsApp",
+                    isSelected = activeFilterTag == "WHATSAPP",
+                    onClick = { onFilterTagSelected("WHATSAPP") }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // ── 3-COLUMN VISUAL LAZY VERTICAL GRID ──
+            if (filteredList.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.SearchOff,
+                            contentDescription = null,
+                            tint = TextMuted,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = if (isHindi) "इस फ़िल्टर में कोई फाइल नहीं मिली" else "No files found in this category",
+                            style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
+                        )
+                    }
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 8.dp),
+                    contentPadding = PaddingValues(
+                        bottom = contentPadding.calculateBottomPadding() + 90.dp
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    items(filteredList, key = { it.id }) { item ->
+                        VisualThumbnailGridCard(
+                            context = context,
+                            item = item,
+                            onToggleSelect = { onToggleSelect(item) },
+                            onPreview = { onPreviewItem(item) }
+                        )
+                    }
+                }
+            }
+        }
+
+        // ── STICKY BOTTOM RECOVER ACTION BAR ──
         if (selectedCount > 0) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(bottom = contentPadding.calculateBottomPadding())
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .background(CardDark)
-                    .border(1.dp, CardBorder, RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .background(Color(0xFF0F172A))
+                    .border(1.dp, EmeraldAccent.copy(alpha = 0.5f), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .padding(14.dp)
             ) {
                 Row(
@@ -419,34 +1143,27 @@ fun SuperRecoverScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = if (isHindi) "$selectedCount फाइलें चुनी गईं" else "$selectedCount Files Selected",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = EmeraldAccent)
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Black,
+                                color = EmeraldAccent
+                            )
                         )
                         Text(
-                            text = "Total: %.1f MB".format(Locale.US, selectedTotalBytes / 1_000_000f),
-                            style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, fontSize = 11.sp)
+                            text = "Size: %.1f MB".format(Locale.US, totalBytes / 1_000_000f),
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 11.sp)
                         )
                     }
 
                     Button(
-                        onClick = {
-                            val selectedList = discoveredItems.filter { it.isSelected }
-                            if (selectedList.isEmpty()) return@Button
-                            isRestoring = true
-                            coroutineScope.launch {
-                                val result = recoverEngine.restoreSelectedItems(selectedList)
-                                isRestoring = false
-                                restoreResult = result
-                            }
-                        },
+                        onClick = onRestoreSelected,
                         modifier = Modifier
-                            .height(52.dp)
-                            .defaultMinSize(minWidth = 180.dp),
-                        shape = RoundedCornerShape(12.dp),
+                            .height(50.dp)
+                            .defaultMinSize(minWidth = 190.dp),
+                        shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = EmeraldAccent,
                             contentColor = BgDark
-                        ),
-                        enabled = selectedCount > 0 && !isRestoring
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.SettingsBackupRestore,
@@ -455,10 +1172,7 @@ fun SuperRecoverScreen(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = if (isRestoring)
-                                (if (isHindi) "रीस्टोर जारी..." else "RESTORING...")
-                            else
-                                (if (isHindi) "फाइलें रीस्टोर करें" else "RESTORE SELECTED"),
+                            text = if (isHindi) "अभी रिकवर करें ($selectedCount)" else "RECOVER NOW ($selectedCount)",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
                         )
                     }
@@ -466,240 +1180,380 @@ fun SuperRecoverScreen(
             }
         }
     }
-
-    // ── ITEM PREVIEW MODAL ──
-    showPreviewItem?.let { item ->
-        AlertDialog(
-            onDismissRequest = { showPreviewItem = null },
-            title = {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = "Source: ${item.sourcePath}",
-                        style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Date: ${item.dateModified}", style = MaterialTheme.typography.bodySmall)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Size: %.2f MB".format(Locale.US, item.sizeBytes / 1_000_000f),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Tier: ${item.tier.titleEn}",
-                        style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent)
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { showPreviewItem = null },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
-                    modifier = Modifier.height(44.dp)
-                ) {
-                    Text(text = if (isHindi) "बंद करें" else "Close")
-                }
-            },
-            containerColor = CardDark
-        )
-    }
-
-    // ── RESTORE RESULT DIALOG ──
-    restoreResult?.let { (successCount, failedCount, path) ->
-        AlertDialog(
-            onDismissRequest = { restoreResult = null },
-            title = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = if (successCount > 0) Icons.Default.CheckCircle else Icons.Default.Error,
-                        contentDescription = null,
-                        tint = if (successCount > 0) EmeraldAccent else RoseAccent
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = if (isHindi) "रीस्टोर परिणाम" else "Restore Complete",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-            },
-            text = {
-                Column {
-                    Text(
-                        text = if (isHindi)
-                            "$successCount फाइलें बिना किसी ओवरराइट के सुरक्षित रूप से रीस्टोर कर दी गई हैं।"
-                        else
-                            "$successCount files safely restored without overwriting existing data.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    if (failedCount > 0) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = if (isHindi)
-                                "$failedCount फाइलें स्रोत अनुपलब्ध होने के कारण नहीं पढ़ी जा सकीं।"
-                            else
-                                "$failedCount file(s) were inaccessible from storage source.",
-                            style = MaterialTheme.typography.bodySmall.copy(color = RoseAccent)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Saved to: $path",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontFamily = FontFamily.Monospace,
-                            color = CyanAccent,
-                            fontSize = 11.sp
-                        )
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { restoreResult = null },
-                    colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
-                    modifier = Modifier.height(48.dp)
-                ) {
-                    Text(text = if (isHindi) "ठीक है (OK)" else "OK")
-                }
-            },
-            containerColor = CardDark
-        )
-    }
 }
 
 @Composable
-private fun CategoryFilterChip(
+private fun FilterTabChip(
     label: String,
     isSelected: Boolean,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Box(
-        modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isSelected) EmeraldAccent else CardDark)
-            .border(1.dp, if (isSelected) EmeraldAccent else CardBorder, RoundedCornerShape(8.dp))
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (isSelected) CyanAccent else CardDark)
+            .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
             .clickable { onClick() }
-            .padding(horizontal = 4.dp),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 10.dp, vertical = 5.dp)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall.copy(
+                color = if (isSelected) BgDark else TextSecondary,
                 fontWeight = if (isSelected) FontWeight.Black else FontWeight.Normal,
-                fontSize = 10.sp,
-                color = if (isSelected) BgDark else TextPrimary
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+                fontSize = 10.sp
+            )
         )
     }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// REAL BITMAP THUMBNAIL CARD
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Composable
-private fun RecoverItemCard(
+fun VisualThumbnailGridCard(
+    context: Context,
     item: RecoverItem,
-    isHindi: Boolean,
     onToggleSelect: () -> Unit,
     onPreview: () -> Unit
 ) {
-    val sizeText = when {
-        item.sizeBytes >= 1_000_000_000L -> "%.2f GB".format(Locale.US, item.sizeBytes / 1_000_000_000f)
+    // Asynchronously load real bitmap thumbnail safely with produceState
+    val thumbnailBitmap by produceState<Bitmap?>(initialValue = null, key1 = item.id) {
+        value = ThumbnailLoader.loadThumbnail(context, item, 300, 300)
+    }
+
+    val sizeFormatted = when {
         item.sizeBytes >= 1_000_000L -> "%.1f MB".format(Locale.US, item.sizeBytes / 1_000_000f)
         item.sizeBytes > 0 -> "${item.sizeBytes / 1024} KB"
-        else -> "0 KB"
+        else -> "0 B"
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(10.dp))
             .background(CardDark)
             .border(
-                1.dp,
-                if (item.isSelected) EmeraldAccent.copy(alpha = 0.6f) else CardBorder,
-                RoundedCornerShape(12.dp)
+                width = if (item.isSelected) 2.dp else 1.dp,
+                color = if (item.isSelected) EmeraldAccent else CardBorder,
+                shape = RoundedCornerShape(10.dp)
             )
-            .clickable { onToggleSelect() }
-            .padding(10.dp)
+            .clickable { onPreview() }
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = item.isSelected,
-                onCheckedChange = { onToggleSelect() },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = EmeraldAccent,
-                    checkmarkColor = BgDark,
-                    uncheckedColor = TextMuted
-                ),
-                modifier = Modifier.size(24.dp)
+        if (thumbnailBitmap != null) {
+            Image(
+                bitmap = thumbnailBitmap!!.asImageBitmap(),
+                contentDescription = item.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, fontSize = 12.sp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = sizeText,
-                        style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 10.sp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "• ${item.dateModified}",
-                        style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, fontSize = 10.sp)
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = item.tier.code + ": " + item.tier.titleEn,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 9.sp,
-                            color = Color(item.tier.badgeColorHex),
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = item.sourcePath,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = 9.sp,
-                            color = TextMuted,
-                            fontFamily = FontFamily.Monospace
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            IconButton(
-                onClick = onPreview,
-                modifier = Modifier.size(32.dp)
+        } else {
+            // Icon Placeholder for Audio / Docs / Loading state
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF1E293B)),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Visibility,
-                    contentDescription = "Preview",
+                    imageVector = when (item.category) {
+                        RecoverCategory.PHOTOS -> Icons.Default.Image
+                        RecoverCategory.VIDEOS -> Icons.Default.Videocam
+                        RecoverCategory.AUDIO_RECORDINGS -> Icons.Default.Audiotrack
+                        RecoverCategory.DOCUMENTS -> Icons.Default.Description
+                        else -> Icons.Default.InsertDriveFile
+                    },
+                    contentDescription = null,
                     tint = TextMuted,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
+        }
+
+        // Top Right Round Checkbox
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp)
+                .size(24.dp)
+                .clip(CircleShape)
+                .background(if (item.isSelected) EmeraldAccent else Color.Black.copy(alpha = 0.5f))
+                .clickable { onToggleSelect() },
+            contentAlignment = Alignment.Center
+        ) {
+            if (item.isSelected) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = BgDark,
                     modifier = Modifier.size(16.dp)
                 )
             }
         }
+
+        // Top Left Source Tag (Trash / WA / Cache)
+        if (item.tier == RecoverTier.SYSTEM_TRASH) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(RoseAccent.copy(alpha = 0.85f))
+                    .padding(horizontal = 4.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = "TRASH",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color.White,
+                        fontWeight = FontWeight.Black,
+                        fontSize = 8.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                )
+            }
+        }
+
+        // Bottom Gradient Overlay with File Size
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.Transparent, Color.Black.copy(alpha = 0.85f))
+                    )
+                )
+                .padding(horizontal = 6.dp, vertical = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = sizeFormatted,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+
+                if (item.category == RecoverCategory.VIDEOS) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = null,
+                        tint = CyanAccent,
+                        modifier = Modifier.size(14.dp)
+                    )
+                }
+            }
+        }
     }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. RECOVERED FILES VAULT VIEW
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun RecoveredVaultView(
+    isHindi: Boolean,
+    items: List<RecoverItem>,
+    onBackToDashboard: () -> Unit,
+    onPreviewItem: (RecoverItem) -> Unit,
+    contentPadding: PaddingValues
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
+        // Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackToDashboard) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Column {
+                Text(
+                    text = if (isHindi) "रिकवर की गई फाइलें (${items.size})" else "Recovered Vault (${items.size})",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Black,
+                        color = EmeraldAccent
+                    )
+                )
+                Text(
+                    text = "Downloads/SuperTelecom_Recovered",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = TextSecondary,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                )
+            }
+        }
+
+        if (items.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.FolderSpecial,
+                        contentDescription = null,
+                        tint = EmeraldAccent.copy(alpha = 0.4f),
+                        modifier = Modifier.size(54.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = if (isHindi) "वॉल्ट अभी खाली है" else "Vault is currently empty",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = if (isHindi) "किसी भी कैटेगरी से फाइलें रिकवर करें, वे यहाँ सुरक्षित रहेंगी।" else "Recover files from any category to preserve them here.",
+                        style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary, textAlign = TextAlign.Center)
+                    )
+                }
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp),
+                contentPadding = PaddingValues(
+                    bottom = contentPadding.calculateBottomPadding() + 20.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                items(items, key = { it.id }) { item ->
+                    VisualThumbnailGridCard(
+                        context = context,
+                        item = item,
+                        onToggleSelect = {},
+                        onPreview = { onPreviewItem(item) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. FULL-SCREEN MEDIA PREVIEW DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun FullScreenMediaPreviewDialog(
+    context: Context,
+    item: RecoverItem,
+    isHindi: Boolean,
+    onDismiss: () -> Unit,
+    onRecoverSingle: () -> Unit
+) {
+    val fullBitmap by produceState<Bitmap?>(initialValue = null, key1 = item.id) {
+        value = ThumbnailLoader.loadThumbnail(context, item, 800, 800)
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Image Preview Box
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(240.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF0F172A)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (fullBitmap != null) {
+                        Image(
+                            bitmap = fullBitmap!!.asImageBitmap(),
+                            contentDescription = item.name,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        Icon(
+                            imageVector = when (item.category) {
+                                RecoverCategory.PHOTOS -> Icons.Default.Image
+                                RecoverCategory.VIDEOS -> Icons.Default.Videocam
+                                RecoverCategory.AUDIO_RECORDINGS -> Icons.Default.Audiotrack
+                                else -> Icons.Default.InsertDriveFile
+                            },
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                }
+
+                // File Details
+                Text(
+                    text = "Size: %.2f MB • ${item.dateModified}".format(Locale.US, item.sizeBytes / 1_000_000f),
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                )
+
+                Text(
+                    text = "Source: ${item.sourcePath}",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = FontFamily.Monospace,
+                        color = TextSecondary,
+                        fontSize = 10.sp
+                    )
+                )
+
+                Text(
+                    text = "Status: ${item.tier.titleEn}",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = EmeraldAccent,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = onRecoverSingle,
+                colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Icon(imageVector = Icons.Default.SettingsBackupRestore, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = if (isHindi) "यह फाइल रीस्टोर करें" else "Recover This File", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = if (isHindi) "बंद करें" else "Close", color = TextSecondary)
+            }
+        },
+        containerColor = Color(0xFF0F172A),
+        shape = RoundedCornerShape(16.dp)
+    )
 }

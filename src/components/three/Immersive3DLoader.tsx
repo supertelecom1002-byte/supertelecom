@@ -91,7 +91,10 @@ export const Immersive3DLoader: React.FC<Immersive3DLoaderProps> = ({
     }, 180);
   };
 
-  if (!mounted || !isVisible) return null;
+  if (!mounted) return null;
+  if (!isVisible) {
+    return <div style={{ display: "none" }} aria-hidden="true" />;
+  }
 
   const currentStep =
     TELEMETRY_STEPS.find((s) => progress <= s.progress) || TELEMETRY_STEPS[TELEMETRY_STEPS.length - 1];

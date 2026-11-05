@@ -1,6 +1,6 @@
 import React, { Suspense, useRef, useState, useMemo, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { PerspectiveCamera, useGLTF, BakeShadows } from "@react-three/drei";
+import { PerspectiveCamera, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import {
   Sparkles,
@@ -156,7 +156,22 @@ function HeroModelRig({
 }) {
   const gltf = useGLTF("/models/smartphone_teardown.glb");
   const groupRef = useRef<THREE.Group>(null);
-  const clonedScene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
+
+  // Deep clone scene and materials to prevent cross-contamination
+  const clonedScene = useMemo(() => {
+    const c = gltf.scene.clone(true);
+    c.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        if (Array.isArray(mesh.material)) {
+          mesh.material = mesh.material.map((m) => m.clone());
+        } else if (mesh.material) {
+          mesh.material = mesh.material.clone();
+        }
+      }
+    });
+    return c;
+  }, [gltf.scene]);
 
   // Generate realistic high-res OLED screen and frosted back panel textures
   const screenTexture = useMemo(() => createSmartphoneScreenTexture(), []);
@@ -169,14 +184,14 @@ function HeroModelRig({
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat) {
-          mat.envMapIntensity = 1.4;
+          mat.envMapIntensity = 1.2;
           const name = (mesh.name || child.name || child.parent?.name || "").toLowerCase();
 
           if (name.includes("frontglass")) {
-            mat.roughness = 0.03;
-            mat.metalness = 0.08;
+            mat.roughness = 0.02;
+            mat.metalness = 0.05;
             mat.transparent = true;
-            mat.opacity = 0.10; // Crystal clear protective ceramic shield glass
+            mat.opacity = 0.12; // Crystal clear protective ceramic shield glass
             mat.depthWrite = false;
             mat.color = new THREE.Color("#ffffff");
           } else if (name.includes("touchdigitizer")) {
@@ -188,14 +203,14 @@ function HeroModelRig({
               mat.map = screenTexture;
               mat.emissiveMap = screenTexture;
               mat.emissive = new THREE.Color("#ffffff");
-              mat.emissiveIntensity = 0.90; // Ultra-crisp glowing AMOLED flagship display
+              mat.emissiveIntensity = 1.05; // Ultra-crisp glowing AMOLED flagship display
             } else {
               mat.color = new THREE.Color("#020617");
               mat.emissive = new THREE.Color("#0284c7");
-              mat.emissiveIntensity = 0.35;
+              mat.emissiveIntensity = 0.45;
             }
-            mat.roughness = 0.15;
-            mat.metalness = 0.2;
+            mat.roughness = 0.12;
+            mat.metalness = 0.20;
           } else if (name.includes("chassisframe")) {
             mat.metalness = 0.94;
             mat.roughness = 0.22;
@@ -204,7 +219,7 @@ function HeroModelRig({
             if (backTexture) {
               mat.map = backTexture;
             }
-            mat.metalness = 0.35;
+            mat.metalness = 0.38;
             mat.roughness = 0.28;
             mat.color = new THREE.Color("#0f172a"); // Deep cosmic slate
           } else if (name.includes("processorsoc") || name.includes("pmic")) {
@@ -217,7 +232,7 @@ function HeroModelRig({
             mat.roughness = 0.45;
           } else if (name.includes("battery")) {
             mat.color = new THREE.Color("#1e293b");
-            mat.metalness = 0.4;
+            mat.metalness = 0.40;
             mat.roughness = 0.35;
           } else if (name.includes("wirelesscoil") || name.includes("chargingflex")) {
             mat.color = new THREE.Color("#d97706"); // Copper coil
@@ -241,8 +256,8 @@ function HeroModelRig({
     groupRef.current.position.y = Math.sin(t * 1.3) * 0.06;
 
     // Determine target rotation (either user drag or hotspot target + mouse parallax)
-    const baseRotX = isDragging ? dragRotation.x : activeHotspot.targetRotation[0] + mousePos.y * 0.22;
-    const baseRotY = isDragging ? dragRotation.y : activeHotspot.targetRotation[1] + mousePos.x * 0.40;
+    const baseRotX = isDragging ? dragRotation.x : activeHotspot.targetRotation[0] + mousePos.y * 0.18;
+    const baseRotY = isDragging ? dragRotation.y : activeHotspot.targetRotation[1] + mousePos.x * 0.35;
 
     groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, baseRotX, 0.08);
     groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, baseRotY, 0.08);
@@ -270,7 +285,7 @@ function HeroModelRig({
                 color={spot.color}
                 side={THREE.DoubleSide}
                 transparent
-                opacity={isSelected ? 1 : 0.65}
+                opacity={isSelected ? 1.0 : 0.65}
               />
             </mesh>
             {/* Core Glow Dot */}
@@ -301,10 +316,33 @@ function HeroModelRig({
 export const Hero3DCanvas: React.FC = () => {
   const [activeHotspot, setActiveHotspot] = useState<Hotspot>(HERO_HOTSPOTS[1]);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [dragRotation, setDragRotation] = useState({ x: 0.1, y: 0.25 });
+  const [dragRotation, setDragRotation] = useState({ x: 0.08, y: 0.25 });
   const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef({ x: 0, y: 0, rotX: 0.1, rotY: 0.25 });
+  const [isInView, setIsInView] = useState(true);
+  const dragStartRef = useRef({ x: 0, y: 0, rotX: 0.08, rotY: 0.25 });
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Pause rendering when offscreen to preserve GPU contexts and eliminate conflicts
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setIsInView(entry.isIntersecting);
+        }
+      },
+      { rootMargin: "100px" }
+    );
+
+    observer.observe(el);
+    return () => {
+      try {
+        observer.disconnect();
+      } catch {}
+    };
+  }, []);
 
   // Parallax tracking from mouse move
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -413,6 +451,7 @@ export const Hero3DCanvas: React.FC = () => {
           }
         >
           <Canvas
+            frameloop={isInView ? "always" : "never"}
             dpr={[1, 1.5]}
             gl={{
               antialias: true,
@@ -421,12 +460,11 @@ export const Hero3DCanvas: React.FC = () => {
             }}
           >
             <PerspectiveCamera makeDefault position={[0, 0, 7.5]} fov={38} />
-            <ambientLight intensity={0.95} />
-            <directionalLight position={[5, 7, 5]} intensity={2.2} color="#ffffff" />
-            <directionalLight position={[-4, -2, -3]} intensity={1.2} color="#38bdf8" />
-            <directionalLight position={[-2, 3, 2]} intensity={0.9} color="#10b981" />
-            <spotLight position={[0, 6, 4]} intensity={1.5} angle={0.55} penumbra={0.8} color="#e0f2fe" />
-            <BakeShadows />
+            <ambientLight intensity={0.45} />
+            <directionalLight position={[4, 6, 6]} intensity={2.2} color="#ffffff" />
+            <directionalLight position={[-5, 2, -3]} intensity={1.0} color="#38bdf8" />
+            <directionalLight position={[-2, 3, 2]} intensity={0.7} color="#10b981" />
+            <spotLight position={[0, 7, 3]} intensity={1.5} angle={0.55} penumbra={0.8} color="#e0f2fe" />
 
             <Suspense fallback={<HeroLoadingHologram />}>
               <HeroModelRig
