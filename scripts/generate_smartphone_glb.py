@@ -59,9 +59,9 @@ def create_box(w, h, d, ox=0, oy=0, oz=0):
         indices.extend([b, b + 1, b + 2, b, b + 2, b + 3])
     return positions, normals, uvs, indices
 
-def create_squircle_plane(w, h, r, segs_x=24, segs_y=48, ox=0, oy=0, oz=0, normal_z=1.0):
+def create_squircle_plane(w, h, r, segs_x=28, segs_y=56, ox=0, oy=0, oz=0, normal_z=1.0):
     """
-    Creates a mathematically flawless, distortion-free squircle rectangular plane
+    Creates a mathematically flawless squircle rectangular plane
     with exact linear UV mapping: (0,0) top-left to (1,1) bottom-right.
     """
     hw, hh = w / 2.0 - r, h / 2.0 - r
@@ -80,7 +80,7 @@ def create_squircle_plane(w, h, r, segs_x=24, segs_y=48, ox=0, oy=0, oz=0, norma
             x = raw_x
             y = raw_y
             
-            # Corner clamping to curved squircle arc
+            # Corner clamping to smooth squircle arc
             if abs(raw_x) > hw and abs(raw_y) > hh:
                 cx = hw if raw_x > 0 else -hw
                 cy = hh if raw_y > 0 else -hh
@@ -110,7 +110,7 @@ def create_squircle_plane(w, h, r, segs_x=24, segs_y=48, ox=0, oy=0, oz=0, norma
                 
     return positions, normals, uvs, indices
 
-def create_squircle_rail(w, h, d, r=0.30, segs_corner=12, ox=0, oy=0, oz=0):
+def create_squircle_rail(w, h, d, r=0.30, segs_corner=14, ox=0, oy=0, oz=0):
     """
     Creates the outer rounded squircle side rail band (perimeter rim of phone)
     without solid faces covering the screen or the interior.
@@ -525,7 +525,7 @@ def build_gltf_binary(node_definitions, output_path):
     gltf_json = {
         "asset": {
             "version": "2.0",
-            "generator": "SuperTelecom Master Smartphone 3D Engine v4.0"
+            "generator": "SuperTelecom Master Flagship 3D CAD Engine v5.0"
         },
         "scene": 0,
         "scenes": [{
@@ -561,132 +561,139 @@ def build_gltf_binary(node_definitions, output_path):
     print(f"Generated flagship smartphone CAD: {output_path} ({len(glb)} bytes, {len(nodes)} components)")
 
 def main():
-    # Flagship Smartphone Pro Max Dimensions:
-    # Width: 2.65, Height: 5.60, Depth: 0.24 (Equivalent to 76.7mm x 159.9mm x 7.8mm)
-    W, H, D = 2.65, 5.60, 0.24
-    CORNER_R = 0.30
+    # Golden Ratio Flagship Smartphone Pro Dimensions (Apple iPhone 15/16 Pro / Galaxy S24 Ultra proportions):
+    # Width: 2.45, Height: 5.15, Depth: 0.22 (Aspect ratio ~19.5:9, 75mm x 158mm x 7.8mm)
+    W, H, D = 2.45, 5.15, 0.22
+    CORNER_R = 0.32
     
     nodes = []
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 1. FrontGlass (Ceramic Shield 2.5D Protective Front Crystal Glass)
+    # 1. FrontGlass (Ceramic Shield 2.5D Crystal Clear Protective Front Glass)
     # ─────────────────────────────────────────────────────────────────────────
-    fg_g = create_squircle_plane(W * 0.99, H * 0.99, CORNER_R * 0.98, segs_x=24, segs_y=48, ox=0, oy=0, oz=0.126, normal_z=1.0)
+    fg_g = create_squircle_plane(W * 0.985, H * 0.985, CORNER_R * 0.97, segs_x=24, segs_y=48, ox=0, oy=0, oz=0.115, normal_z=1.0)
     nodes.append({
         "name": "FrontGlass",
         "positions": fg_g[0], "normals": fg_g[1], "uvs": fg_g[2], "indices": fg_g[3],
-        "color": [0.92, 0.97, 1.0], "metallic": 0.05, "roughness": 0.02, "opacity": 0.15
+        "color": [0.95, 0.98, 1.0], "metallic": 0.05, "roughness": 0.02, "opacity": 0.08
     })
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 2. TouchDigitizer (Micro-Capacitive Diamond Touch Matrix & Flex)
+    # 2. TouchDigitizer (Micro-Capacitive Ribbon Connector Tail - Never blocks screen!)
     # ─────────────────────────────────────────────────────────────────────────
     td_parts = [
-        create_squircle_plane(W * 0.975, H * 0.975, CORNER_R * 0.96, segs_x=20, segs_y=40, ox=0, oy=0, oz=0.123, normal_z=1.0),
-        # Bottom touch flex connector tail
-        create_box(0.35, 0.25, 0.004, ox=0, oy=-H/2 + 0.15, oz=0.121)
+        # Ultra-thin perimeter border flex lip (outer perimeter only, completely open in center!)
+        create_squircle_rim_bezel(W * 0.97, H * 0.97, CORNER_R * 0.96, W * 0.95, H * 0.95, CORNER_R * 0.94, segs_corner=12, ox=0, oy=0, oz=0.112, normal_z=1.0),
+        # Bottom touch flex connector ribbon tail
+        create_box(0.35, 0.24, 0.006, ox=-0.30, oy=-H/2 + 0.25, oz=0.108)
     ]
     td_g = merge_geometries(td_parts)
     nodes.append({
         "name": "TouchDigitizer",
         "positions": td_g[0], "normals": td_g[1], "uvs": td_g[2], "indices": td_g[3],
-        "color": [0.06, 0.75, 0.92], "metallic": 0.35, "roughness": 0.18, "opacity": 0.25
+        "color": [0.06, 0.75, 0.92], "metallic": 0.65, "roughness": 0.25, "opacity": 0.75
     })
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 3. OLEDDisplay (120Hz LTPO Super Retina AMOLED Flagship Display)
+    # 3. OLEDDisplay (120Hz LTPO Super Retina AMOLED Flagship Screen Face)
     # ─────────────────────────────────────────────────────────────────────────
-    # High-precision squircle plane for 100% linear, zero-distortion canvas UV mapping
     oled_parts = [
-        # Front active AMOLED face
-        create_squircle_plane(W * 0.96, H * 0.96, CORNER_R * 0.94, segs_x=28, segs_y=56, ox=0, oy=0, oz=0.120, normal_z=1.0),
+        # Front active AMOLED face with exact UV mapping
+        create_squircle_plane(W * 0.955, H * 0.955, CORNER_R * 0.94, segs_x=28, segs_y=56, ox=0, oy=0, oz=0.110, normal_z=1.0),
         # Thin rear copper heat-shield backing for OLED panel
-        create_squircle_plane(W * 0.96, H * 0.96, CORNER_R * 0.94, segs_x=16, segs_y=32, ox=0, oy=0, oz=0.116, normal_z=-1.0),
-        # Flexible OLED ribbon cable looping down to motherboard
-        create_box(0.42, 0.40, 0.008, ox=-0.40, oy=1.10, oz=0.08)
+        create_squircle_plane(W * 0.955, H * 0.955, CORNER_R * 0.94, segs_x=16, segs_y=32, ox=0, oy=0, oz=0.105, normal_z=-1.0),
+        # Flexible OLED display ribbon cable looping to motherboard
+        create_box(0.38, 0.35, 0.008, ox=0.45, oy=1.10, oz=0.075)
     ]
     oled_g = merge_geometries(oled_parts)
     nodes.append({
         "name": "OLEDDisplay",
         "positions": oled_g[0], "normals": oled_g[1], "uvs": oled_g[2], "indices": oled_g[3],
-        "color": [0.02, 0.03, 0.06], "metallic": 0.20, "roughness": 0.15, "opacity": 1.0,
-        "emissive": [0.02, 0.05, 0.10]
+        "color": [1.0, 1.0, 1.0], "metallic": 0.10, "roughness": 0.15, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 4. ChassisFrame (Aerospace Grade 5 Brushed Titanium Perimeter Band)
+    # 4. ChassisFrame (Brushed Natural Titanium Chassis with Architectural Cutouts)
     # ─────────────────────────────────────────────────────────────────────────
+    # NOTE: NOT a solid monolith wall! Has battery pocket and motherboard tray!
     frame_parts = [
         # Outer squircle perimeter side rails
         create_squircle_rail(W, H, D, r=CORNER_R, segs_corner=16, ox=0, oy=0, oz=0),
         # Front screen bezel border lip (narrow black titanium rim)
-        create_squircle_rim_bezel(W, H, CORNER_R, W * 0.96, H * 0.96, CORNER_R * 0.94, segs_corner=14, ox=0, oy=0, oz=0.120, normal_z=1.0),
+        create_squircle_rim_bezel(W, H, CORNER_R, W * 0.955, H * 0.955, CORNER_R * 0.94, segs_corner=14, ox=0, oy=0, oz=0.110, normal_z=1.0),
         # Rear back glass bezel border lip
-        create_squircle_rim_bezel(W, H, CORNER_R, W * 0.97, H * 0.97, CORNER_R * 0.95, segs_corner=14, ox=0, oy=0, oz=-0.120, normal_z=-1.0),
-        # Internal midframe structural plate dividing front & back
-        create_box(W * 0.92, H * 0.92, 0.015, ox=0, oy=0, oz=0),
+        create_squircle_rim_bezel(W, H, CORNER_R, W * 0.965, H * 0.965, CORNER_R * 0.95, segs_corner=14, ox=0, oy=0, oz=-0.110, normal_z=-1.0),
+        
+        # Central titanium spine beam (structural backbone dividing components)
+        create_box(0.24, H * 0.82, 0.018, ox=0, oy=0, oz=0),
+        # Upper structural cross-beam (under motherboard)
+        create_box(W * 0.88, 0.18, 0.018, ox=0, oy=0.72, oz=0),
+        # Lower structural cross-beam (above speaker)
+        create_box(W * 0.88, 0.18, 0.018, ox=0, oy=-1.95, oz=0),
+        # Copper vapor chamber heat-pipe running along the central spine
+        create_box(0.18, 3.20, 0.012, ox=-0.05, oy=-0.40, oz=0.012),
         
         # Power / Lock button (Right rail)
-        create_box(0.045, 0.65, 0.07, ox=W/2 + 0.015, oy=0.45, oz=0),
+        create_box(0.045, 0.60, 0.065, ox=W/2 + 0.015, oy=0.45, oz=0),
         # Volume Up button (Left rail)
-        create_box(0.045, 0.48, 0.07, ox=-W/2 - 0.015, oy=0.85, oz=0),
+        create_box(0.045, 0.44, 0.065, ox=-W/2 - 0.015, oy=0.85, oz=0),
         # Volume Down button (Left rail)
-        create_box(0.045, 0.48, 0.07, ox=-W/2 - 0.015, oy=0.25, oz=0),
+        create_box(0.045, 0.44, 0.065, ox=-W/2 - 0.015, oy=0.30, oz=0),
         # Action button (Left rail top)
-        create_box(0.045, 0.28, 0.07, ox=-W/2 - 0.015, oy=1.35, oz=0),
+        create_box(0.045, 0.26, 0.065, ox=-W/2 - 0.015, oy=1.35, oz=0),
         
-        # Antenna insulation bands (top & bottom edges)
-        create_box(0.025, 0.04, 0.24, ox=W/2 - 0.25, oy=H/2 + 0.002, oz=0),
-        create_box(0.025, 0.04, 0.24, ox=-W/2 + 0.25, oy=H/2 + 0.002, oz=0),
-        create_box(0.025, 0.04, 0.24, ox=W/2 - 0.25, oy=-H/2 - 0.002, oz=0),
-        create_box(0.025, 0.04, 0.24, ox=-W/2 + 0.25, oy=-H/2 - 0.002, oz=0),
+        # Antenna insulation bands
+        create_box(0.025, 0.04, 0.22, ox=W/2 - 0.22, oy=H/2 + 0.002, oz=0),
+        create_box(0.025, 0.04, 0.22, ox=-W/2 + 0.22, oy=H/2 + 0.002, oz=0),
+        create_box(0.025, 0.04, 0.22, ox=W/2 - 0.22, oy=-H/2 - 0.002, oz=0),
+        create_box(0.025, 0.04, 0.22, ox=-W/2 + 0.22, oy=-H/2 - 0.002, oz=0),
     ]
-    # Add bottom speaker micro-holes
+    # Bottom speaker acoustic holes
     for h_i in range(5):
-        frame_parts.append(create_cylinder(0.020, 0.04, segments=10, ox=0.32 + h_i * 0.08, oy=-H/2 - 0.002, oz=0, axis='y'))
-        frame_parts.append(create_cylinder(0.020, 0.04, segments=10, ox=-0.32 - h_i * 0.08, oy=-H/2 - 0.002, oz=0, axis='y'))
+        frame_parts.append(create_cylinder(0.018, 0.04, segments=10, ox=0.30 + h_i * 0.075, oy=-H/2 - 0.002, oz=0, axis='y'))
+        frame_parts.append(create_cylinder(0.018, 0.04, segments=10, ox=-0.30 - h_i * 0.075, oy=-H/2 - 0.002, oz=0, axis='y'))
         
     cf_g = merge_geometries(frame_parts)
     nodes.append({
         "name": "ChassisFrame",
         "positions": cf_g[0], "normals": cf_g[1], "uvs": cf_g[2], "indices": cf_g[3],
-        "color": [0.84, 0.86, 0.90], "metallic": 0.94, "roughness": 0.22, "opacity": 1.0
+        "color": [0.82, 0.84, 0.88], "metallic": 0.94, "roughness": 0.22, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 5. RearCover (Matte AG Frosted Ceramic Glass in Cosmic Titanium)
+    # 5. RearCover (Matte AG Frosted Ceramic Glass in Titanium Cosmic Slate)
     # ─────────────────────────────────────────────────────────────────────────
     rc_parts = [
         # Back panel glass
-        create_squircle_plane(W * 0.97, H * 0.97, CORNER_R * 0.95, segs_x=24, segs_y=48, ox=0, oy=0, oz=-0.122, normal_z=-1.0),
+        create_squircle_plane(W * 0.965, H * 0.965, CORNER_R * 0.95, segs_x=24, segs_y=48, ox=0, oy=0, oz=-0.112, normal_z=-1.0),
         # Camera island plateau ramp (Top-Left rounded plateau)
-        create_squircle_plane(1.18, 1.42, 0.22, segs_x=16, segs_y=20, ox=-0.58, oy=1.46, oz=-0.145, normal_z=-1.0),
+        create_squircle_plane(1.10, 1.35, 0.20, segs_x=16, segs_y=20, ox=-0.52, oy=1.36, oz=-0.135, normal_z=-1.0),
         # Side bevel collar around camera bump
-        create_squircle_rail(1.18, 1.42, 0.023, r=0.22, segs_corner=10, ox=-0.58, oy=1.46, oz=-0.134),
+        create_squircle_rail(1.10, 1.35, 0.022, r=0.20, segs_corner=10, ox=-0.52, oy=1.36, oz=-0.124),
     ]
     rc_g = merge_geometries(rc_parts)
     nodes.append({
         "name": "RearCover",
         "positions": rc_g[0], "normals": rc_g[1], "uvs": rc_g[2], "indices": rc_g[3],
-        "color": [0.08, 0.12, 0.18], "metallic": 0.38, "roughness": 0.28, "opacity": 1.0
+        "color": [1.0, 1.0, 1.0], "metallic": 0.38, "roughness": 0.28, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
     # 6. Battery (5,000mAh High-Density Li-Ion Pouch Pack)
     # ─────────────────────────────────────────────────────────────────────────
     bat_parts = [
-        # Battery pouch body with chamfered rounded corners
-        create_box(1.30, 2.65, 0.09, ox=0.20, oy=-0.45, oz=-0.035),
+        # Battery pouch body
+        create_box(1.22, 2.50, 0.085, ox=0.20, oy=-0.50, oz=-0.030),
         # Top nickel safety terminal tab
-        create_box(0.25, 0.32, 0.015, ox=-0.38, oy=0.72, oz=-0.015),
+        create_box(0.25, 0.28, 0.015, ox=-0.35, oy=0.65, oz=-0.015),
         # Gold-plated BMS board connector
-        create_box(0.28, 0.10, 0.025, ox=-0.38, oy=0.88, oz=-0.005),
+        create_box(0.26, 0.10, 0.025, ox=-0.35, oy=0.78, oz=-0.005),
     ]
     bat_g = merge_geometries(bat_parts)
     nodes.append({
         "name": "Battery",
         "positions": bat_g[0], "normals": bat_g[1], "uvs": bat_g[2], "indices": bat_g[3],
-        "color": [0.12, 0.14, 0.17], "metallic": 0.35, "roughness": 0.38, "opacity": 1.0
+        "color": [0.12, 0.15, 0.18], "metallic": 0.35, "roughness": 0.38, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
@@ -694,57 +701,57 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     mb_parts = [
         # Main upper logic PCB substrate
-        create_box(2.28, 1.55, 0.032, ox=0, oy=1.45, oz=-0.025),
+        create_box(2.15, 1.45, 0.030, ox=0, oy=1.38, oz=-0.025),
         # Interconnect side extensions
-        create_box(0.38, 0.08, 0.040, ox=0.80, oy=0.70, oz=-0.025),
-        create_box(0.38, 0.08, 0.040, ox=-0.80, oy=0.70, oz=-0.025),
+        create_box(0.35, 0.08, 0.038, ox=0.75, oy=0.68, oz=-0.025),
+        create_box(0.35, 0.08, 0.038, ox=-0.75, oy=0.68, oz=-0.025),
     ]
-    # SMT capacitor and inductor arrays along edges
+    # SMT capacitor and inductor arrays
     for ci in range(6):
-        mb_parts.append(create_box(0.04, 0.06, 0.02, ox=-0.95 + ci * 0.12, oy=0.82, oz=-0.005))
-        mb_parts.append(create_box(0.04, 0.06, 0.02, ox=0.45 + ci * 0.10, oy=0.82, oz=-0.005))
+        mb_parts.append(create_box(0.035, 0.055, 0.018, ox=-0.90 + ci * 0.11, oy=0.80, oz=-0.005))
+        mb_parts.append(create_box(0.035, 0.055, 0.018, ox=0.42 + ci * 0.10, oy=0.80, oz=-0.005))
         
     mb_g = merge_geometries(mb_parts)
     nodes.append({
         "name": "Motherboard",
         "positions": mb_g[0], "normals": mb_g[1], "uvs": mb_g[2], "indices": mb_g[3],
-        "color": [0.04, 0.30, 0.18], "metallic": 0.30, "roughness": 0.42, "opacity": 1.0
+        "color": [0.04, 0.32, 0.19], "metallic": 0.30, "roughness": 0.42, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
     # 8. ShieldCover (Perforated Nickel EMI / Thermal Shield Can)
     # ─────────────────────────────────────────────────────────────────────────
     shield_parts = [
-        create_box(1.18, 1.18, 0.038, ox=0.38, oy=1.45, oz=-0.055),
+        create_box(1.10, 1.10, 0.035, ox=0.35, oy=1.38, oz=-0.052),
     ]
     shield_g = merge_geometries(shield_parts)
     nodes.append({
         "name": "ShieldCover",
         "positions": shield_g[0], "normals": shield_g[1], "uvs": shield_g[2], "indices": shield_g[3],
-        "color": [0.78, 0.80, 0.85], "metallic": 0.95, "roughness": 0.18, "opacity": 1.0
+        "color": [0.82, 0.84, 0.88], "metallic": 0.95, "roughness": 0.18, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
-    # 9. ProcessorSoC (Flagship Octa-Core Application Processor Silicon Die)
+    # 9. ProcessorSoC (Application Processor Silicon Die with 0.02mm Micro-Jumper)
     # ─────────────────────────────────────────────────────────────────────────
     soc_parts = [
         # Silicon die
-        create_box(0.55, 0.55, 0.020, ox=0.38, oy=1.45, oz=-0.035),
-        # 0.02mm microscopic copper micro-jumper wire! (Super Telecom signature repair)
-        create_box(0.28, 0.012, 0.012, ox=0.38, oy=1.45, oz=-0.022),
+        create_box(0.52, 0.52, 0.020, ox=0.35, oy=1.38, oz=-0.032),
+        # 0.02mm microscopic copper micro-jumper wire!
+        create_box(0.26, 0.012, 0.012, ox=0.35, oy=1.38, oz=-0.020),
     ]
     soc_g = merge_geometries(soc_parts)
     nodes.append({
         "name": "ProcessorSoC",
         "positions": soc_g[0], "normals": soc_g[1], "uvs": soc_g[2], "indices": soc_g[3],
-        "color": [0.15, 0.17, 0.20], "metallic": 0.65, "roughness": 0.28, "opacity": 1.0,
+        "color": [0.15, 0.18, 0.22], "metallic": 0.65, "roughness": 0.28, "opacity": 1.0,
         "emissive": [0.06, 0.72, 0.50]
     })
     
     # ─────────────────────────────────────────────────────────────────────────
     # 10. PMIC (Power Management IC)
     # ─────────────────────────────────────────────────────────────────────────
-    pmic_g = create_box(0.32, 0.32, 0.018, ox=0.38, oy=1.02, oz=-0.035)
+    pmic_g = create_box(0.30, 0.30, 0.018, ox=0.35, oy=0.98, oz=-0.032)
     nodes.append({
         "name": "PMIC",
         "positions": pmic_g[0], "normals": pmic_g[1], "uvs": pmic_g[2], "indices": pmic_g[3],
@@ -757,24 +764,24 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     cam_parts = [
         # Main housing
-        create_box(0.90, 1.20, 0.11, ox=-0.65, oy=1.50, oz=-0.07),
+        create_box(0.85, 1.15, 0.10, ox=-0.58, oy=1.42, oz=-0.065),
         
         # Camera 1 (Top Wide 200MP OIS Lens Barrel & Sapphire Disc)
-        create_cylinder(0.18, 0.05, segments=24, ox=-0.65, oy=1.82, oz=-0.145, axis='z'),
-        create_cylinder(0.14, 0.06, segments=20, ox=-0.65, oy=1.82, oz=-0.150, axis='z'),
+        create_cylinder(0.17, 0.05, segments=24, ox=-0.58, oy=1.74, oz=-0.135, axis='z'),
+        create_cylinder(0.13, 0.06, segments=20, ox=-0.58, oy=1.74, oz=-0.140, axis='z'),
         
         # Camera 2 (Middle Ultra-Wide Lens Barrel)
-        create_cylinder(0.16, 0.05, segments=24, ox=-0.65, oy=1.44, oz=-0.145, axis='z'),
-        create_cylinder(0.12, 0.06, segments=20, ox=-0.65, oy=1.44, oz=-0.150, axis='z'),
+        create_cylinder(0.15, 0.05, segments=24, ox=-0.58, oy=1.38, oz=-0.135, axis='z'),
+        create_cylinder(0.11, 0.06, segments=20, ox=-0.58, oy=1.38, oz=-0.140, axis='z'),
         
         # Camera 3 (Bottom Periscope Telephoto Lens Barrel)
-        create_cylinder(0.15, 0.05, segments=24, ox=-0.65, oy=1.08, oz=-0.145, axis='z'),
-        create_cylinder(0.11, 0.06, segments=20, ox=-0.65, oy=1.08, oz=-0.150, axis='z'),
+        create_cylinder(0.14, 0.05, segments=24, ox=-0.58, oy=1.04, oz=-0.135, axis='z'),
+        create_cylinder(0.10, 0.06, segments=20, ox=-0.58, oy=1.04, oz=-0.140, axis='z'),
         
         # Dual-tone True Tone LED Flash
-        create_cylinder(0.075, 0.02, segments=16, ox=-0.30, oy=1.65, oz=-0.14, axis='z'),
+        create_cylinder(0.070, 0.02, segments=16, ox=-0.26, oy=1.58, oz=-0.13, axis='z'),
         # LiDAR Scanner
-        create_cylinder(0.055, 0.02, segments=16, ox=-0.30, oy=1.35, oz=-0.14, axis='z'),
+        create_cylinder(0.050, 0.02, segments=16, ox=-0.26, oy=1.30, oz=-0.13, axis='z'),
     ]
     cam_g = merge_geometries(cam_parts)
     nodes.append({
@@ -787,21 +794,21 @@ def main():
     # 12. ChargingPort (Reinforced Type-C Sub-Board)
     # ─────────────────────────────────────────────────────────────────────────
     port_parts = [
-        create_box(1.20, 0.38, 0.028, ox=0, oy=-2.48, oz=-0.02),
-        create_box(0.38, 0.14, 0.08, ox=0, oy=-2.68, oz=-0.02),
+        create_box(1.15, 0.36, 0.026, ox=0, oy=-2.32, oz=-0.02),
+        create_box(0.36, 0.14, 0.075, ox=0, oy=-2.50, oz=-0.02),
     ]
     port_g = merge_geometries(port_parts)
     nodes.append({
         "name": "ChargingPort",
         "positions": port_g[0], "normals": port_g[1], "uvs": port_g[2], "indices": port_g[3],
-        "color": [0.72, 0.74, 0.78], "metallic": 0.92, "roughness": 0.20, "opacity": 1.0
+        "color": [0.75, 0.77, 0.82], "metallic": 0.92, "roughness": 0.20, "opacity": 1.0
     })
     
     # ─────────────────────────────────────────────────────────────────────────
     # 13. USBPort (Internal Gold Contact Pins)
     # ─────────────────────────────────────────────────────────────────────────
     usb_parts = [
-        create_box(0.32, 0.10, 0.06, ox=0, oy=-2.68, oz=-0.02),
+        create_box(0.30, 0.09, 0.055, ox=0, oy=-2.50, oz=-0.02),
     ]
     usb_g = merge_geometries(usb_parts)
     nodes.append({
@@ -814,9 +821,9 @@ def main():
     # 14. ChargingFlex (Polyimide Interconnect Ribbon)
     # ─────────────────────────────────────────────────────────────────────────
     flex_parts = [
-        create_box(0.16, 3.20, 0.008, ox=-0.75, oy=-0.50, oz=-0.01),
-        create_box(0.38, 0.14, 0.012, ox=-0.65, oy=1.10, oz=-0.01),
-        create_box(0.38, 0.14, 0.012, ox=-0.48, oy=-2.30, oz=-0.01),
+        create_box(0.15, 2.95, 0.008, ox=-0.70, oy=-0.45, oz=-0.01),
+        create_box(0.35, 0.14, 0.012, ox=-0.60, oy=1.05, oz=-0.01),
+        create_box(0.35, 0.14, 0.012, ox=-0.45, oy=-2.15, oz=-0.01),
     ]
     flex_g = merge_geometries(flex_parts)
     nodes.append({
@@ -829,8 +836,8 @@ def main():
     # 15. Loudspeaker (Bottom Acoustic Enclosure Box)
     # ─────────────────────────────────────────────────────────────────────────
     spk_parts = [
-        create_box(0.92, 0.52, 0.11, ox=0.65, oy=-2.38, oz=-0.03),
-        create_cylinder(0.16, 0.02, segments=16, ox=0.65, oy=-2.38, oz=0.035, axis='z')
+        create_box(0.88, 0.48, 0.10, ox=0.60, oy=-2.24, oz=-0.03),
+        create_cylinder(0.15, 0.02, segments=16, ox=0.60, oy=-2.24, oz=0.035, axis='z')
     ]
     spk_g = merge_geometries(spk_parts)
     nodes.append({
@@ -842,7 +849,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # 16. Earpiece (Top Stereo Acoustic Transducer)
     # ─────────────────────────────────────────────────────────────────────────
-    ear_g = create_box(0.58, 0.08, 0.045, ox=0, oy=2.60, oz=0.07)
+    ear_g = create_box(0.54, 0.075, 0.040, ox=0, oy=2.45, oz=0.065)
     nodes.append({
         "name": "Earpiece",
         "positions": ear_g[0], "normals": ear_g[1], "uvs": ear_g[2], "indices": ear_g[3],
@@ -852,7 +859,7 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     # 17. VibrationMotor (Taptic Engine Linear Resonant Actuator)
     # ─────────────────────────────────────────────────────────────────────────
-    vib_g = create_cylinder(0.22, 0.08, segments=24, ox=-0.75, oy=-2.38, oz=-0.03, axis='z')
+    vib_g = create_cylinder(0.20, 0.075, segments=24, ox=-0.70, oy=-2.24, oz=-0.03, axis='z')
     nodes.append({
         "name": "VibrationMotor",
         "positions": vib_g[0], "normals": vib_g[1], "uvs": vib_g[2], "indices": vib_g[3],
@@ -864,11 +871,11 @@ def main():
     # ─────────────────────────────────────────────────────────────────────────
     coil_parts = [
         # Magnetic back alignment ferrite disc
-        create_cylinder(0.68, 0.012, segments=32, ox=0.20, oy=-0.45, oz=-0.095, axis='z'),
+        create_cylinder(0.65, 0.012, segments=32, ox=0.20, oy=-0.45, oz=-0.090, axis='z'),
         # Concentric copper induction coils
-        create_torus(0.54, 0.020, ring_segs=32, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.085),
-        create_torus(0.42, 0.020, ring_segs=28, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.085),
-        create_torus(0.30, 0.020, ring_segs=24, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.085),
+        create_torus(0.52, 0.018, ring_segs=32, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.080),
+        create_torus(0.40, 0.018, ring_segs=28, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.080),
+        create_torus(0.28, 0.018, ring_segs=24, tube_segs=10, ox=0.20, oy=-0.45, oz=-0.080),
     ]
     coil_g = merge_geometries(coil_parts)
     nodes.append({
@@ -881,15 +888,15 @@ def main():
     # 19. Screws (Micro Torx Precision Fastener Array)
     # ─────────────────────────────────────────────────────────────────────────
     screw_coords = [
-        (-1.08, 2.45), (1.08, 2.45),
-        (-1.08, 0.78), (1.08, 0.78),
-        (-1.08, -0.78), (1.08, -0.78),
-        (-1.08, -2.45), (1.08, -2.45),
-        (0.0, 2.18), (0.0, -2.18)
+        (-1.00, 2.30), (1.00, 2.30),
+        (-1.00, 0.75), (1.00, 0.75),
+        (-1.00, -0.75), (1.00, -0.75),
+        (-1.00, -2.30), (1.00, -2.30),
+        (0.0, 2.05), (0.0, -2.05)
     ]
     screw_parts = []
     for sx, sy in screw_coords:
-        screw_parts.append(create_cylinder(0.040, 0.035, segments=12, ox=sx, oy=sy, oz=0.025, axis='z'))
+        screw_parts.append(create_cylinder(0.035, 0.030, segments=12, ox=sx, oy=sy, oz=0.022, axis='z'))
     screw_g = merge_geometries(screw_parts)
     nodes.append({
         "name": "Screws",
@@ -900,7 +907,7 @@ def main():
     output_path = os.path.join("public", "models", "smartphone_teardown.glb")
     build_gltf_binary(nodes, output_path)
     
-    # Also write to .output/public/models/ if it exists so both dev and build are synced immediately
+    # Also sync to .output/public/models/ if it exists
     dist_path = os.path.join(".output", "public", "models", "smartphone_teardown.glb")
     if os.path.exists(os.path.dirname(dist_path)):
         with open(output_path, "rb") as src_f:

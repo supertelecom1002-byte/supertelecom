@@ -47,9 +47,13 @@ class Safe3DErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBound
   }
   render() {
     if (this.state.hasError) {
-      return this.props.fallback;
+      return (
+        <div className="relative w-full h-full flex items-center justify-center">
+          {this.props.fallback}
+        </div>
+      );
     }
-    return this.props.children;
+    return <div className="relative w-full h-full">{this.props.children}</div>;
   }
 }
 
@@ -203,21 +207,27 @@ function HeroModelRig({
               mat.map = screenTexture;
               mat.emissiveMap = screenTexture;
               mat.emissive = new THREE.Color("#ffffff");
-              mat.emissiveIntensity = 1.05; // Ultra-crisp glowing AMOLED flagship display
+              mat.emissiveIntensity = 0.95; // Ultra-crisp glowing AMOLED flagship display
+              mat.color = new THREE.Color("#ffffff"); // Full-spectrum texture multiplier
+              mat.roughness = 0.10;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
             } else {
               mat.color = new THREE.Color("#020617");
               mat.emissive = new THREE.Color("#0284c7");
               mat.emissiveIntensity = 0.45;
+              mat.needsUpdate = true;
             }
-            mat.roughness = 0.12;
-            mat.metalness = 0.20;
           } else if (name.includes("chassisframe")) {
             mat.metalness = 0.94;
             mat.roughness = 0.22;
             mat.color = new THREE.Color("#cbd5e1"); // Aerospace titanium-silver chassis
+            mat.needsUpdate = true;
           } else if (name.includes("rearcover")) {
             if (backTexture) {
               mat.map = backTexture;
+              mat.color = new THREE.Color("#ffffff");
+              mat.needsUpdate = true;
             }
             mat.metalness = 0.38;
             mat.roughness = 0.28;
@@ -264,7 +274,7 @@ function HeroModelRig({
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} scale={[0.72, 0.72, 0.72]}>
+    <group ref={groupRef} position={[0, -0.05, 0]} scale={[0.65, 0.65, 0.65]}>
       {/* 3D Model Instance */}
       <primitive object={clonedScene} />
 
@@ -458,8 +468,14 @@ export const Hero3DCanvas: React.FC = () => {
               alpha: true,
               powerPreference: "high-performance",
             }}
+            onCreated={({ gl }) => {
+              gl.domElement.addEventListener("webglcontextlost", (e) => {
+                e.preventDefault();
+                console.warn("Hero3DCanvas WebGL context lost - prevented browser crash");
+              }, false);
+            }}
           >
-            <PerspectiveCamera makeDefault position={[0, 0, 7.5]} fov={38} />
+            <PerspectiveCamera makeDefault position={[0, 0, 7.2]} fov={36} />
             <ambientLight intensity={0.45} />
             <directionalLight position={[4, 6, 6]} intensity={2.2} color="#ffffff" />
             <directionalLight position={[-5, 2, -3]} intensity={1.0} color="#38bdf8" />

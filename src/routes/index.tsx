@@ -81,12 +81,11 @@ function SmartphoneTeardownSection() {
     };
   }, []);
 
-  if (!Component) {
-    return <Smartphone3DFallback />;
-  }
-
-  const Rendered = Component;
-  return <Rendered />;
+  return (
+    <div className="w-full">
+      {Component ? <Component /> : <Smartphone3DFallback />}
+    </div>
+  );
 }
 
 

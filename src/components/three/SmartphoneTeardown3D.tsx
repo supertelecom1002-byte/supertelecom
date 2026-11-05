@@ -57,9 +57,13 @@ class Safe3DErrorBoundary extends React.Component<Safe3DProps, Safe3DState> {
   }
   render() {
     if (this.state.hasError) {
-      return this.props.fallback;
+      return (
+        <div className="relative w-full h-full flex items-center justify-center">
+          {this.props.fallback}
+        </div>
+      );
     }
-    return this.props.children;
+    return <div className="relative w-full h-full">{this.props.children}</div>;
   }
 }
 
@@ -312,21 +316,27 @@ function SmartphoneGLBRig({
               mat.map = screenTexture;
               mat.emissiveMap = screenTexture;
               mat.emissive = new THREE.Color("#ffffff");
-              mat.emissiveIntensity = 1.05; // Ultra-crisp glowing AMOLED flagship display
+              mat.emissiveIntensity = 0.95; // Ultra-crisp glowing AMOLED flagship display
+              mat.color = new THREE.Color("#ffffff"); // Full-spectrum texture multiplier
+              mat.roughness = 0.10;
+              mat.metalness = 0.05;
+              mat.needsUpdate = true;
             } else {
               mat.color = new THREE.Color("#020617");
               mat.emissive = new THREE.Color("#0284c7");
               mat.emissiveIntensity = 0.40;
+              mat.needsUpdate = true;
             }
-            mat.roughness = 0.12;
-            mat.metalness = 0.20;
           } else if (name.includes("chassisframe")) {
             mat.metalness = 0.94;
             mat.roughness = 0.22;
             mat.color = new THREE.Color("#cbd5e1");
+            mat.needsUpdate = true;
           } else if (name.includes("rearcover")) {
             if (backTexture) {
               mat.map = backTexture;
+              mat.color = new THREE.Color("#ffffff");
+              mat.needsUpdate = true;
             }
             mat.metalness = 0.38;
             mat.roughness = 0.28;
@@ -554,7 +564,7 @@ function SmartphoneGLBRig({
   });
 
   return (
-    <group ref={rigGroupRef} scale={[0.72, 0.72, 0.72]} position={[0, -0.15, 0]}>
+    <group ref={rigGroupRef} scale={[0.66, 0.66, 0.66]} position={[0, -0.06, 0]}>
       <primitive object={scene} />
 
       {/* Guided 3D Diagnostic Inspection Pins (100% Native WebGL - Zero DOM removeChild collisions!) */}
@@ -945,11 +955,17 @@ export const SmartphoneTeardown3D: React.FC = () => {
                   }}
                   dpr={[1, isMobile ? 1.2 : 1.5]}
                   className="w-full h-full"
+                  onCreated={({ gl }) => {
+                    gl.domElement.addEventListener("webglcontextlost", (e) => {
+                      e.preventDefault();
+                      console.warn("SmartphoneTeardown3D WebGL context lost - prevented browser crash");
+                    }, false);
+                  }}
                 >
                   <PerspectiveCamera
                     makeDefault
-                    position={[0, 0, isMobile ? 9.8 : 8.8]}
-                    fov={isMobile ? 40 : 35}
+                    position={[0, 0, isMobile ? 8.2 : 7.6]}
+                    fov={isMobile ? 38 : 34}
                   />
 
                   {/* Balanced 3-Point Studio Lighting */}
