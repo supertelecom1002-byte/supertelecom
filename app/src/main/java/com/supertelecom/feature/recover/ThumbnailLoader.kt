@@ -1,5 +1,6 @@
 package com.supertelecom.feature.recover
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -15,7 +16,7 @@ import java.io.File
 
 /**
  * High-performance, in-memory LRU thumbnail caching engine.
- * Decodes real images and video frames safely without OutOfMemoryError.
+ * Safely decodes real images, carved byte buffers, and video frames without OutOfMemoryError.
  */
 object ThumbnailLoader {
 
@@ -41,26 +42,28 @@ object ThumbnailLoader {
         var bitmap: Bitmap? = null
 
         try {
-            // Method 1: Android 10+ (API 29+) ContentResolver.loadThumbnail for Images and Videos
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && item.uri != null) {
+            // Method 1: Android 10+ (API 29+) ContentResolver.loadThumbnail for Content URIs
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && item.uri != null && item.uri.scheme == ContentResolver.SCHEME_CONTENT) {
                 try {
                     bitmap = context.contentResolver.loadThumbnail(item.uri, Size(reqWidth, reqHeight), null)
                 } catch (_: Exception) {}
             }
 
-            // Method 2: MediaMetadataRetriever for Video if loadThumbnail did not succeed
-            if (bitmap == null && item.category == RecoverCategory.VIDEOS) {
+            // Method 2: MediaMetadataRetriever for Video frames (content:// or file://)
+            if (bitmap == null && item.category == RecoverCategory.VIDEOS && item.uri != null) {
                 try {
-                    if (item.uri != null) {
-                        val retriever = MediaMetadataRetriever()
+                    val retriever = MediaMetadataRetriever()
+                    if (item.uri.scheme == ContentResolver.SCHEME_FILE && item.uri.path != null) {
+                        retriever.setDataSource(item.uri.path)
+                    } else {
                         retriever.setDataSource(context, item.uri)
-                        bitmap = retriever.getFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-                        retriever.release()
                     }
+                    bitmap = retriever.getFrameAtTime(1_000_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                    retriever.release()
                 } catch (_: Exception) {}
             }
 
-            // Method 3: ContentResolver openInputStream with downsampling for Images
+            // Method 3: ContentResolver openInputStream with downsampling (works for content:// and file://)
             if (bitmap == null && item.uri != null) {
                 try {
                     context.contentResolver.openInputStream(item.uri)?.use { stream ->
@@ -79,19 +82,21 @@ object ThumbnailLoader {
                 } catch (_: Exception) {}
             }
 
-            // Method 4: Direct file path decoding if file is directly readable
+            // Method 4: Direct file path decoding if file is directly readable on disk
             if (bitmap == null) {
-                val directPath = extractDirectFilePath(item.sourcePath)
-                if (directPath != null && directPath.exists() && directPath.isFile) {
+                val directFile = item.uri?.path?.let { File(it) }?.takeIf { it.exists() }
+                    ?: extractDirectFilePath(item.sourcePath)
+
+                if (directFile != null && directFile.exists() && directFile.isFile) {
                     try {
                         val options = BitmapFactory.Options().apply {
                             inJustDecodeBounds = true
                         }
-                        BitmapFactory.decodeFile(directPath.absolutePath, options)
+                        BitmapFactory.decodeFile(directFile.absolutePath, options)
                         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
                         options.inJustDecodeBounds = false
                         options.inPreferredConfig = Bitmap.Config.RGB_565
-                        bitmap = BitmapFactory.decodeFile(directPath.absolutePath, options)
+                        bitmap = BitmapFactory.decodeFile(directFile.absolutePath, options)
                     } catch (_: Exception) {}
                 }
             }

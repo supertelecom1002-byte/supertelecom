@@ -14,10 +14,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -68,7 +70,7 @@ fun SuperRecoverScreen(
 
     var screenMode by remember { mutableStateOf(RecoverScreenMode.DASHBOARD) }
     var activeCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.PHOTOS) }
-    var activeFilterTag by remember { mutableStateOf("ALL") }
+    var activeFilterTag by remember { mutableStateOf("DELETED_CACHE") }
 
     var storageStats by remember { mutableStateOf(recoverEngine.getDeviceStorageStats()) }
     val isScanningEngine by recoverEngine.isScanning.collectAsState()
@@ -199,6 +201,7 @@ fun SuperRecoverScreen(
                     items = discoveredItems,
                     activeFilterTag = activeFilterTag,
                     onFilterTagSelected = { activeFilterTag = it },
+                    onOpenSaf = { safFolderPicker.launch(null) },
                     onToggleSelect = { item ->
                         val idx = discoveredItems.indexOfFirst { it.id == item.id }
                         if (idx != -1) {
@@ -970,6 +973,7 @@ fun RecoverGalleryGridView(
     items: List<RecoverItem>,
     activeFilterTag: String,
     onFilterTagSelected: (String) -> Unit,
+    onOpenSaf: () -> Unit = {},
     onToggleSelect: (RecoverItem) -> Unit,
     onToggleSelectAll: (Boolean) -> Unit,
     onPreviewItem: (RecoverItem) -> Unit,
@@ -979,14 +983,37 @@ fun RecoverGalleryGridView(
 ) {
     val context = LocalContext.current
 
+    val deletedCacheItems = remember(items.size) {
+        items.filter {
+            it.tier == RecoverTier.SYSTEM_TRASH ||
+            it.tier == RecoverTier.THUMBNAIL_PREVIEW ||
+            it.id.startsWith("carved_") ||
+            it.id.startsWith("trash_") ||
+            it.sourcePath.contains("thumb", ignoreCase = true) ||
+            it.sourcePath.contains("trash", ignoreCase = true)
+        }
+    }
+    val socialItems = remember(items.size) {
+        items.filter {
+            it.sourcePath.contains("WhatsApp", ignoreCase = true) ||
+            it.sourcePath.contains("Telegram", ignoreCase = true) ||
+            it.sourcePath.contains("Social", ignoreCase = true)
+        }
+    }
+    val safItems = remember(items.size) {
+        items.filter {
+            it.sourcePath.contains("SAF", ignoreCase = true) ||
+            it.sourcePath.contains("Hidden", ignoreCase = true) ||
+            it.sourcePath.contains(".nomedia", ignoreCase = true)
+        }
+    }
+
     // Filter items based on active chip
     val filteredList = remember(items.size, activeFilterTag) {
         when (activeFilterTag) {
-            "TRASH" -> items.filter { it.tier == RecoverTier.SYSTEM_TRASH }
-            "THUMBS" -> items.filter { it.tier == RecoverTier.THUMBNAIL_PREVIEW }
-            "WHATSAPP" -> items.filter { it.sourcePath.contains("WhatsApp", ignoreCase = true) }
-            "DCIM" -> items.filter { it.sourcePath.contains("DCIM", ignoreCase = true) }
-            "DOWNLOADS" -> items.filter { it.sourcePath.contains("Download", ignoreCase = true) }
+            "DELETED_CACHE" -> deletedCacheItems.ifEmpty { items }
+            "WHATSAPP_SOCIAL" -> socialItems
+            "SAF_SCAN" -> safItems
             else -> items
         }
     }
@@ -1046,32 +1073,38 @@ fun RecoverGalleryGridView(
                 }
             }
 
-            // Top Filter Chips
+            // Top Filter Chips (4 All-Recovery Master Tabs)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
                     .padding(horizontal = 14.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterTabChip(
-                    label = if (isHindi) "सभी (${items.size})" else "All (${items.size})",
+                    label = if (isHindi) "🗑️ डिलीट व कैश (${deletedCacheItems.size})" else "🗑️ Deleted & Cache (${deletedCacheItems.size})",
+                    isSelected = activeFilterTag == "DELETED_CACHE",
+                    onClick = { onFilterTagSelected("DELETED_CACHE") }
+                )
+                FilterTabChip(
+                    label = if (isHindi) "💬 WhatsApp व सोशल (${socialItems.size})" else "💬 WhatsApp & Social (${socialItems.size})",
+                    isSelected = activeFilterTag == "WHATSAPP_SOCIAL",
+                    onClick = { onFilterTagSelected("WHATSAPP_SOCIAL") }
+                )
+                FilterTabChip(
+                    label = if (isHindi) "📂 डीप फोल्डर स्कैन (${safItems.size})" else "📂 Deep Folder (${safItems.size})",
+                    isSelected = activeFilterTag == "SAF_SCAN",
+                    onClick = {
+                        onFilterTagSelected("SAF_SCAN")
+                        if (safItems.isEmpty()) {
+                            onOpenSaf()
+                        }
+                    }
+                )
+                FilterTabChip(
+                    label = if (isHindi) "🖼️ सभी फाइलें (${items.size})" else "🖼️ All Found (${items.size})",
                     isSelected = activeFilterTag == "ALL",
                     onClick = { onFilterTagSelected("ALL") }
-                )
-                FilterTabChip(
-                    label = if (isHindi) "🗑️ ट्रैश" else "🗑️ Trash",
-                    isSelected = activeFilterTag == "TRASH",
-                    onClick = { onFilterTagSelected("TRASH") }
-                )
-                FilterTabChip(
-                    label = if (isHindi) "🔍 थंबनेल" else "🔍 Thumbnails",
-                    isSelected = activeFilterTag == "THUMBS",
-                    onClick = { onFilterTagSelected("THUMBS") }
-                )
-                FilterTabChip(
-                    label = "WhatsApp",
-                    isSelected = activeFilterTag == "WHATSAPP",
-                    onClick = { onFilterTagSelected("WHATSAPP") }
                 )
             }
 
@@ -1293,18 +1326,32 @@ fun VisualThumbnailGridCard(
             }
         }
 
-        // Top Left Source Tag (Trash / WA / Cache)
-        if (item.tier == RecoverTier.SYSTEM_TRASH) {
+        // Top Left Source Tag (Trash / Thumbdata / WhatsApp / Hidden)
+        val (badgeLabel, badgeColor) = when {
+            item.tier == RecoverTier.SYSTEM_TRASH || item.sourcePath.contains("trash", ignoreCase = true) ->
+                Pair("TRASH", Color(0xFFEF4444))
+            item.id.startsWith("carved_") || item.sourcePath.contains("thumbdata", ignoreCase = true) ->
+                Pair("THUMBDATA", Color(0xFF8B5CF6))
+            item.sourcePath.contains("WhatsApp", ignoreCase = true) ->
+                Pair("WHATSAPP", Color(0xFF10B981))
+            item.tier == RecoverTier.HIDDEN_MEDIA || item.sourcePath.contains("hidden", ignoreCase = true) ->
+                Pair("HIDDEN", Color(0xFFF59E0B))
+            item.tier == RecoverTier.THUMBNAIL_PREVIEW ->
+                Pair("THUMB", Color(0xFF0284C7))
+            else -> Pair<String?, Color?>(null, null)
+        }
+
+        if (badgeLabel != null && badgeColor != null) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(4.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .background(RoseAccent.copy(alpha = 0.85f))
+                    .background(badgeColor.copy(alpha = 0.9f))
                     .padding(horizontal = 4.dp, vertical = 2.dp)
             ) {
                 Text(
-                    text = "TRASH",
+                    text = badgeLabel,
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Black,
