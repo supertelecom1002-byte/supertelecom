@@ -480,7 +480,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 className="w-full min-h-[46px] rounded-xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-850 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all"
               >
                 <Download className="h-4 w-4 text-cyan-400" />
-                <span>📲 Download True Native Android APK (v3.3.0)</span>
+                <span>📲 Download True Native Android APK (v3.4.0)</span>
               </a>
 
               {/* Old App vs New Native App Notice */}

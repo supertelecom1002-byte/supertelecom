@@ -78,7 +78,7 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=300"
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
         }
       ]
     },
@@ -95,7 +95,7 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600"
+          "value": "public, max-age=60, must-revalidate"
         },
         {
           "key": "X-Content-Type-Options",
@@ -215,6 +215,18 @@
       "destination": "/SuperTelecom.apk"
     },
     {
+      "source": "/download/apk",
+      "destination": "/SuperTelecom.apk"
+    },
+    {
+      "source": "/download/SuperTelecom.apk",
+      "destination": "/SuperTelecom.apk"
+    },
+    {
+      "source": "/SuperTelecom-Release.apk",
+      "destination": "/SuperTelecom.apk"
+    },
+    {
       "source": "/supertelecom.apk",
       "destination": "/SuperTelecom.apk"
     },
@@ -225,10 +237,6 @@
     {
       "source": "/apk",
       "destination": "/SuperTelecom.apk"
-    },
-    {
-      "source": "/download",
-      "destination": "/app"
     }
   ]
 }

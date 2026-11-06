@@ -46,6 +46,9 @@ android {
                     initWith(getByName("debug"))
                 }
             }
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
         }
     }
 

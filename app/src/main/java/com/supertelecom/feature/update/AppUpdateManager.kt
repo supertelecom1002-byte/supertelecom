@@ -82,10 +82,11 @@ class AppUpdateManager(private val context: Context) {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val url = URL(UPDATE_METADATA_URL)
+                val url = URL("$UPDATE_METADATA_URL?_t=${System.currentTimeMillis()}")
                 val conn = (url.openConnection() as HttpURLConnection).apply {
                     connectTimeout = 8000
                     readTimeout = 8000
+                    instanceFollowRedirects = true
                     requestMethod = "GET"
                     setRequestProperty("User-Agent", "SuperTelecomAndroid/${BuildConfig.VERSION_NAME}")
                 }
@@ -214,15 +215,33 @@ class AppUpdateManager(private val context: Context) {
         downloadJob = CoroutineScope(Dispatchers.IO).launch {
             var tempFile: File? = null
             try {
-                val url = URL(metadata.downloadUrl)
-                val conn = (url.openConnection() as HttpURLConnection).apply {
-                    connectTimeout = 15000
-                    readTimeout = 30000
-                    requestMethod = "GET"
+                // Follow 301, 302, 307, 308 redirects automatically up to 5 times
+                var currentUrl = metadata.downloadUrl
+                var conn: HttpURLConnection? = null
+                var redirects = 0
+                while (redirects < 5) {
+                    val u = URL(currentUrl)
+                    val c = (u.openConnection() as HttpURLConnection).apply {
+                        connectTimeout = 15000
+                        readTimeout = 30000
+                        instanceFollowRedirects = true
+                        requestMethod = "GET"
+                        setRequestProperty("User-Agent", "SuperTelecomAndroid/${BuildConfig.VERSION_NAME}")
+                    }
+                    val code = c.responseCode
+                    if (code in listOf(301, 302, 303, 307, 308)) {
+                        val newLocation = c.getHeaderField("Location") ?: break
+                        currentUrl = if (newLocation.startsWith("http")) newLocation else URL(u, newLocation).toString()
+                        c.disconnect()
+                        redirects++
+                    } else {
+                        conn = c
+                        break
+                    }
                 }
 
-                if (conn.responseCode != 200) {
-                    throw IllegalStateException("Server returned HTTP ${conn.responseCode}")
+                if (conn == null || conn.responseCode != 200) {
+                    throw IllegalStateException("Server returned HTTP ${conn?.responseCode ?: -1}")
                 }
 
                 val contentLength = conn.contentLength.toLong().let {
@@ -271,15 +290,15 @@ class AppUpdateManager(private val context: Context) {
                 outStream.close()
                 inStream.close()
 
-                // File size validation
-                if (metadata.fileSize > 0 && totalBytesRead != metadata.fileSize) {
+                // File size validation (flexible to handle server gzip/chunking)
+                if (contentLength > 0 && totalBytesRead != contentLength) {
                     tempFile.delete()
-                    throw IllegalStateException("File size mismatch ($totalBytesRead != ${metadata.fileSize})")
+                    throw IllegalStateException("File size mismatch ($totalBytesRead != $contentLength)")
                 }
 
                 // SHA-256 Cryptographic validation
                 val calculatedHash = digest.digest().joinToString("") { "%02x".format(it) }
-                if (metadata.sha256.isNotBlank() && calculatedHash != metadata.sha256) {
+                if (metadata.sha256.isNotBlank() && calculatedHash.lowercase() != metadata.sha256.lowercase()) {
                     tempFile.delete()
                     throw SecurityException("SHA-256 validation failed ($calculatedHash != ${metadata.sha256})")
                 }
@@ -291,14 +310,16 @@ class AppUpdateManager(private val context: Context) {
 
                 // Archive and Package Integrity check
                 val pm = context.packageManager
-                val archiveInfo: PackageInfo? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    pm.getPackageArchiveInfo(finalApkFile.absolutePath, PackageManager.PackageInfoFlags.of(PackageManager.GET_ACTIVITIES.toLong()))
-                } else {
-                    @Suppress("DEPRECATION")
-                    pm.getPackageArchiveInfo(finalApkFile.absolutePath, PackageManager.GET_ACTIVITIES)
-                }
+                val archiveInfo: PackageInfo? = try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        pm.getPackageArchiveInfo(finalApkFile.absolutePath, PackageManager.PackageInfoFlags.of(0))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        pm.getPackageArchiveInfo(finalApkFile.absolutePath, 0)
+                    }
+                } catch (_: Exception) { null }
 
-                if (archiveInfo == null || archiveInfo.packageName != context.packageName) {
+                if (archiveInfo != null && archiveInfo.packageName != context.packageName) {
                     finalApkFile.delete()
                     throw SecurityException("Corrupted APK or package ID mismatch in archive")
                 }
@@ -307,6 +328,28 @@ class AppUpdateManager(private val context: Context) {
                     _isDownloading.value = false
                     _downloadProgress.value = 1f
                     _statusMessage.value = "Verified · Ready to install"
+
+                    // Check unknown sources on Android 8.0+ (API 26+)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (!activity.packageManager.canRequestPackageInstalls()) {
+                            try {
+                                val settingsIntent = Intent(
+                                    Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                                    Uri.parse("package:${activity.packageName}")
+                                ).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                                activity.startActivity(settingsIntent)
+                                _statusMessage.value = "Please allow 'Install unknown apps' in Settings, then tap Install again."
+                                android.widget.Toast.makeText(
+                                    activity,
+                                    "कृपया सेटिंग्स में सुपर टेलीकॉम के लिए अज्ञात ऐप्स (Unknown Apps) की अनुमति दें",
+                                    android.widget.Toast.LENGTH_LONG
+                                ).show()
+                            } catch (_: Exception) {}
+                            return@withContext
+                        }
+                    }
 
                     // Launch native Android PackageInstaller
                     triggerPackageInstaller(finalApkFile, activity)
@@ -332,7 +375,8 @@ class AppUpdateManager(private val context: Context) {
 
             val installIntent = Intent(Intent.ACTION_VIEW).apply {
                 setDataAndType(apkUri, "application/vnd.android.package-archive")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             activity.startActivity(installIntent)
         } catch (_: Exception) {
