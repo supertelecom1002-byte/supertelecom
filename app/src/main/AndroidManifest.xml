@@ -36,6 +36,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:targetApi="tiramisu" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Official In-App Self-Update Package Installation (Android 8.0+) -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher (Malware-Free Queries Block) -->
     <queries>
         <intent>

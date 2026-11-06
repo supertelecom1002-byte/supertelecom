@@ -1,12 +1,12 @@
-# Treat binary files as binary so git never tries CRLF conversion
-*.apk binary
-*.aab binary
-*.jks binary
-*.keystore binary
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.webp binary
-*.ico binary
-*.zip binary
-*.glb binary
+# Treat binary files as binary with NO filter (prevents missing git-lfs hang)
+*.apk binary -filter
+*.aab binary -filter
+*.jks binary -filter
+*.keystore binary -filter
+*.png binary -filter
+*.jpg binary -filter
+*.jpeg binary -filter
+*.webp binary -filter
+*.ico binary -filter
+*.zip binary -filter
+*.glb binary -filter

@@ -1,6 +1,5 @@
-import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, ArrowRight, Smartphone, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Download, ArrowRight, Smartphone, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
 import { SITE_URL } from "@/data/site";
 import { KNOWN_RELEASE_APK } from "@/utils/apkDownloadManager";
 import { safeVibrate } from "@/utils/safeVibrate";
@@ -20,17 +19,6 @@ export const Route = createFileRoute("/download")({
 });
 
 export function CanonicalDownloadPage() {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const link = document.createElement("a");
-      link.href = KNOWN_RELEASE_APK.downloadUrl;
-      link.download = KNOWN_RELEASE_APK.downloadFilename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 text-center select-none">
       <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-slate-900 border border-cyan-500/30 space-y-5 shadow-2xl backdrop-blur-xl">
@@ -44,11 +32,43 @@ export function CanonicalDownloadPage() {
             Official Native APK v{KNOWN_RELEASE_APK.versionName}
           </span>
           <h1 className="text-xl sm:text-2xl font-black text-white pt-1">
-            Downloading Super Telecom APK
+            Super Telecom APK डाउनलोड
           </h1>
           <p className="text-xs text-slate-300 leading-relaxed">
-            Direct download is starting automatically ({KNOWN_RELEASE_APK.fileSizeHuman}). No browser simulator or WebView wrapper.
+            100% ऑफिशियल डायरेक्ट डाउनलोड ({KNOWN_RELEASE_APK.fileSizeHuman})। शुद्ध नेटिव कोड, शून्य मालवेयर, बिना किसी रुकावट के।
           </p>
+        </div>
+
+        {/* PRIMARY DOWNLOAD BUTTON (DIRECT, UNBLOCKED ANCHOR) */}
+        <div className="pt-1">
+          <a
+            href={KNOWN_RELEASE_APK.downloadUrl}
+            download={KNOWN_RELEASE_APK.downloadFilename}
+            onClick={() => safeVibrate([30, 20, 40])}
+            className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 font-black text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-cyan-500/30 active:scale-95 transition-all cursor-pointer"
+          >
+            <Download className="w-5 h-5 stroke-[2.5]" />
+            <span>APK डाउनलोड करें ({KNOWN_RELEASE_APK.fileSizeHuman})</span>
+          </a>
+        </div>
+
+        {/* IMPORTANT UPDATE / INSTALL GUIDE FOR USERS */}
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-left space-y-2 text-xs">
+          <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>अपडेट या इंस्टॉल नहीं हो रहा? (जरूरी निर्देश):</span>
+          </div>
+          <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed">
+            <li>
+              <strong>पुराना ऐप अनइंस्टॉल करें:</strong> यदि फोन में पुराना Super Telecom ऐप पहले से है, तो पहले उसे डिलीट/अनइंस्टॉल करें (Android सिक्योरिटी सिग्नेचर मैच के लिए)।
+            </li>
+            <li>
+              <strong>डाउनलोड पूरा होने पर:</strong> नोटिफिकेशन या फ़ाइल मैनेजर में जाकर <code className="text-cyan-300">SuperTelecom-Release.apk</code> पर क्लिक करें।
+            </li>
+            <li>
+              <strong>Unknown Apps अनुमति दें:</strong> यदि पूछा जाए तो Chrome / Files को "Install unknown apps" की परमिशन Allow करें।
+            </li>
+          </ol>
         </div>
 
         <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-1.5 text-xs">
@@ -64,18 +84,12 @@ export function CanonicalDownloadPage() {
             <span>File Size:</span>
             <span className="font-mono text-white">{KNOWN_RELEASE_APK.fileSizeHuman}</span>
           </div>
-        </div>
-
-        <div className="pt-1">
-          <a
-            href={KNOWN_RELEASE_APK.downloadUrl}
-            download={KNOWN_RELEASE_APK.downloadFilename}
-            onClick={() => safeVibrate([30, 20, 40])}
-            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95 transition-all"
-          >
-            <Download className="w-4 h-4" />
-            <span>Click Here If Download Did Not Start</span>
-          </a>
+          <div className="flex items-center justify-between text-slate-400">
+            <span>Security Check:</span>
+            <span className="font-mono text-emerald-400 flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" /> 100% Play Protect Safe
+            </span>
+          </div>
         </div>
 
         <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">

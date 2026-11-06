@@ -39,10 +39,10 @@ export const KNOWN_RELEASE_APK: ApkReleaseMetadata = {
   packageId: "com.supertelecom.app",
   minSdk: 24,
   targetSdk: 34,
-  fileSize: 12621406,
-  fileSizeHuman: "12.04 MB",
+  fileSize: 12618905,
+  fileSizeHuman: "12.03 MB",
   releaseDate: "2026-11-06",
-  sha256: "49382e72406f5d6e307e32e8edbf8c4a917b9faae7ca4abbc75535c034277ae3",
+  sha256: "21db1b812e643b34c0d188026474cfe86b461d43f7926dd123b9a7b7e18ee5bf",
   downloadUrl: "/SuperTelecom.apk",
   downloadFilename: "SuperTelecom-Release.apk",
 };
@@ -126,35 +126,49 @@ export function triggerBrowserDownload(urlOrBlob: string | Blob, filename: strin
   if (typeof window === "undefined") return;
 
   if (typeof urlOrBlob === "string") {
-    const link = document.createElement("a");
-    link.href = urlOrBlob;
-    link.download = filename;
-    link.target = "_self";
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      document.body.removeChild(link);
-    }, 200);
-
-    // Fallback if link.click() was suppressed by browser
-    setTimeout(() => {
-      try {
-        window.location.assign(urlOrBlob);
-      } catch {
-        // ignore
-      }
-    }, 400);
+    try {
+      const link = document.createElement("a");
+      link.href = urlOrBlob;
+      link.download = filename;
+      link.rel = "noopener noreferrer";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        try {
+          if (link.parentNode) {
+            document.body.removeChild(link);
+          }
+        } catch {
+          // ignore
+        }
+      }, 500);
+    } catch {
+      // Fallback only if programmatic click failed
+      window.location.assign(urlOrBlob);
+    }
   } else {
-    const url = URL.createObjectURL(urlOrBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.target = "_self";
-    document.body.appendChild(link);
-    link.click();
-    setTimeout(() => {
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-    }, 500);
+    try {
+      const url = URL.createObjectURL(urlOrBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.rel = "noopener noreferrer";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        try {
+          if (link.parentNode) {
+            document.body.removeChild(link);
+          }
+          URL.revokeObjectURL(url);
+        } catch {
+          // ignore
+        }
+      }, 1000);
+    } catch (err) {
+      console.error("Blob download failed:", err);
+    }
   }
 }

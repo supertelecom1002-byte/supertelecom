@@ -1035,17 +1035,17 @@ function AppShowcasePage() {
               </div>
             </div>
 
-            {/* Migration Notice Banner */}
-            <div className="rounded-2xl border border-cyan-500/30 bg-cyan-950/20 p-3.5 text-xs text-slate-300 flex items-start gap-3">
-              <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+            {/* Migration and Clean Install Notice Banner */}
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-3.5 text-xs text-slate-300 flex items-start gap-3">
+              <Info className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="font-bold text-white text-xs">
-                  {isHindi ? "पुराने ऐप (TWA) बनाम नए नेटिव ऐप की सूचना:" : "Notice: Upgrading from Legacy Web App (TWA):"}
+                <p className="font-bold text-amber-300 text-xs">
+                  {isHindi ? "अपडेट व क्लीन इंस्टॉल गाइड (Android सुरक्षा नियम):" : "Update & Clean Install Guide (Android OS Requirement):"}
                 </p>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
+                <p className="text-slate-300 leading-relaxed text-[11px]">
                   {isHindi
-                    ? "यदि आपके फोन में पुराना ब्राउज़र शॉर्टकट (shop.supertelecom.www.twa) है, तो उसे अनइन्स्टॉल करके ऊपर दिया गया असली नेटिव ऐप (com.supertelecom.app v2.5.0) इनस्टॉल करें। इसमें Wi-Fi Direct व Scoped Storage हार्डवेयर स्पीड मिलती है।"
-                    : "If you previously installed the old browser wrapper (shop.supertelecom.www.twa), replace it with the true standalone Native Kotlin application (com.supertelecom.app v2.5.0) above."}
+                    ? "यदि फोन पर पहले से पुराना ऐप इंस्टॉल है और नया अपडेट इंस्टॉल नहीं हो रहा (या 'App not installed' आ रहा है), तो पहले फोन से पुराना ऐप अनइंस्टॉल (Delete) करें, फिर यह नया v3.4.0 APK इंस्टॉल करें। Android सुरक्षा नियमों के कारण अलग-अलग बिल्ड सिग्नेचर के बीच क्लीन री-इंस्टॉल अनिवार्य होता है।"
+                    : "If an older app version is already on your phone and will not update (or shows 'App not installed'), please uninstall the older version first, then install this clean v3.4.0 release. Android security requires a clean install when upgrading across major releases."}
                 </p>
               </div>
             </div>
