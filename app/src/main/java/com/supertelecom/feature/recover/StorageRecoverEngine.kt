@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.IntentSender
 import android.graphics.BitmapFactory
 import android.media.MediaScannerConnection
@@ -14,6 +15,7 @@ import android.os.Environment
 import android.os.StatFs
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import androidx.core.content.FileProvider
 import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.RecoverItem
 import com.supertelecom.model.RecoverTier
@@ -280,19 +282,21 @@ class StorageRecoverEngine(private val context: Context) {
                             else -> "Deleted / Trashed Media File"
                         }
 
+                        val itemTimeMillis = if (dateSec > 0) dateSec * 1000L else System.currentTimeMillis()
                         list.add(
                             RecoverItem(
                                 id = "ms_${cat.name.lowercase()}_$id",
                                 name = name,
                                 sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateSec * 1000L)),
+                                dateModified = dateFormat.format(Date(itemTimeMillis)),
                                 sourcePath = "MediaStore Trash Bin > $name",
                                 category = cat,
                                 tier = tier,
                                 uri = contentUri,
                                 qualityTag = qualityTag,
                                 isSelected = true,
-                                isRestorable = true
+                                isRestorable = true,
+                                timestampMillis = itemTimeMillis
                             )
                         )
                     }
@@ -347,20 +351,22 @@ class StorageRecoverEngine(private val context: Context) {
                             val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
                             val file = if (dataPath != null) File(dataPath) else null
                             val sizeBytes = if (file != null && file.exists()) file.length() else 35_000L
+                            val thumbTime = if (file != null && file.exists()) file.lastModified() else (System.currentTimeMillis() - 86400000L * 120)
 
                             list.add(
                                 RecoverItem(
                                     id = "orphan_thumb_$thumbId",
                                     name = "Deleted_Photo_Thumb_$thumbId.jpg",
                                     sizeBytes = sizeBytes,
-                                    dateModified = if (file != null && file.exists()) dateFormat.format(Date(file.lastModified())) else "Cached Thumb",
+                                    dateModified = dateFormat.format(Date(thumbTime)),
                                     sourcePath = "MediaStore Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
                                     category = RecoverCategory.PHOTOS,
                                     tier = RecoverTier.THUMBNAIL_PREVIEW,
                                     uri = itemUri,
                                     qualityTag = "Orphan Thumbnail (Deleted Photo Cache)",
                                     isSelected = true,
-                                    isRestorable = true
+                                    isRestorable = true,
+                                    timestampMillis = thumbTime
                                 )
                             )
                             count++
@@ -400,20 +406,22 @@ class StorageRecoverEngine(private val context: Context) {
                             val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
                             val file = if (dataPath != null) File(dataPath) else null
                             val sizeBytes = if (file != null && file.exists()) file.length() else 45_000L
+                            val thumbTime = if (file != null && file.exists()) file.lastModified() else (System.currentTimeMillis() - 86400000L * 150)
 
                             list.add(
                                 RecoverItem(
                                     id = "orphan_vid_thumb_$thumbId",
                                     name = "Deleted_Video_Thumb_$thumbId.jpg",
                                     sizeBytes = sizeBytes,
-                                    dateModified = if (file != null && file.exists()) dateFormat.format(Date(file.lastModified())) else "Cached Thumb",
+                                    dateModified = dateFormat.format(Date(thumbTime)),
                                     sourcePath = "MediaStore Video Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
                                     category = RecoverCategory.VIDEOS,
                                     tier = RecoverTier.THUMBNAIL_PREVIEW,
                                     uri = itemUri,
                                     qualityTag = "Orphan Video Thumbnail (Deleted Video Cache)",
                                     isSelected = true,
-                                    isRestorable = true
+                                    isRestorable = true,
+                                    timestampMillis = thumbTime
                                 )
                             )
                             count++
@@ -488,7 +496,8 @@ class StorageRecoverEngine(private val context: Context) {
                                 uri = Uri.fromFile(file),
                                 qualityTag = "Thumbnail Cache Photo",
                                 isSelected = true,
-                                isRestorable = true
+                                isRestorable = true,
+                                timestampMillis = file.lastModified()
                             )
                         )
                         totalCarved++
@@ -569,7 +578,8 @@ class StorageRecoverEngine(private val context: Context) {
                                             uri = Uri.fromFile(carvedFile),
                                             qualityTag = "Carved JPEG (Deleted Photo Preview)",
                                             isSelected = true,
-                                            isRestorable = true
+                                            isRestorable = true,
+                                            timestampMillis = file.lastModified()
                                         )
                                     )
                                     carvedCount++
@@ -716,7 +726,8 @@ class StorageRecoverEngine(private val context: Context) {
                         uri = Uri.fromFile(f),
                         qualityTag = "Hidden Thumbnail Cache",
                         isSelected = false,
-                        isRestorable = true
+                        isRestorable = true,
+                        timestampMillis = f.lastModified()
                     )
                 )
             }
@@ -777,7 +788,8 @@ class StorageRecoverEngine(private val context: Context) {
                         uri = Uri.fromFile(f),
                         qualityTag = defaultQuality,
                         isSelected = false,
-                        isRestorable = true
+                        isRestorable = true,
+                        timestampMillis = f.lastModified()
                     )
                 )
             }
@@ -815,7 +827,8 @@ class StorageRecoverEngine(private val context: Context) {
                         uri = Uri.fromFile(f),
                         qualityTag = "Safely Restored to Gallery",
                         isSelected = false,
-                        isRestorable = true
+                        isRestorable = true,
+                        timestampMillis = f.lastModified()
                     )
                 )
             }
@@ -839,7 +852,8 @@ class StorageRecoverEngine(private val context: Context) {
                                 uri = Uri.fromFile(f),
                                 qualityTag = "Safely Restored in Vault",
                                 isSelected = false,
-                                isRestorable = true
+                                isRestorable = true,
+                                timestampMillis = f.lastModified()
                             )
                         )
                     }
@@ -877,19 +891,21 @@ class StorageRecoverEngine(private val context: Context) {
                             val size = cursor.getLong(sizeCol)
                             val dateSec = cursor.getLong(dateCol)
                             val contentUri = ContentUris.withAppendedId(uri, id)
+                            val vaultTime = if (dateSec > 0) dateSec * 1000L else System.currentTimeMillis()
                             list.add(
                                 RecoverItem(
                                     id = "vault_ms_${cat.name.lowercase()}_$id",
                                     name = name,
                                     sizeBytes = size,
-                                    dateModified = dateFormat.format(Date(dateSec * 1000L)),
+                                    dateModified = dateFormat.format(Date(vaultTime)),
                                     sourcePath = "Phone Gallery > SuperTelecom_Recovered",
                                     category = cat,
                                     tier = RecoverTier.RESTORABLE_ORIGINAL,
                                     uri = contentUri,
                                     qualityTag = "Restored to Phone Gallery",
                                     isSelected = false,
-                                    isRestorable = true
+                                    isRestorable = true,
+                                    timestampMillis = vaultTime
                                 )
                             )
                         }
@@ -971,19 +987,21 @@ class StorageRecoverEngine(private val context: Context) {
                         if (selectedCategory != RecoverCategory.ALL_MEDIA && selectedCategory != cat) continue
 
                         val fileDocUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, childId)
+                        val safTime = if (dateLong > 0) dateLong else System.currentTimeMillis()
                         results.add(
                             RecoverItem(
                                 id = "saf_${childId.hashCode()}",
                                 name = name,
                                 sizeBytes = size,
-                                dateModified = dateFormat.format(Date(dateLong)),
+                                dateModified = dateFormat.format(Date(safTime)),
                                 sourcePath = "SAF Tree > $name",
                                 category = cat,
                                 tier = RecoverTier.RESTORABLE_ORIGINAL,
                                 uri = fileDocUri,
                                 qualityTag = "SAF Verified Storage File",
                                 isSelected = true,
-                                isRestorable = true
+                                isRestorable = true,
+                                timestampMillis = safTime
                             )
                         )
                     }
@@ -1169,5 +1187,66 @@ class StorageRecoverEngine(private val context: Context) {
         }
 
         Triple(successCount, failedCount, targetDisplayPath)
+    }
+
+    /**
+     * Directly creates a standard Android share intent for selected recovered files
+     */
+    fun createShareIntent(items: List<RecoverItem>): Intent? {
+        val validUris = items.mapNotNull { item ->
+            item.uri?.let { uri ->
+                if (uri.scheme == ContentResolver.SCHEME_FILE && uri.path != null) {
+                    try {
+                        FileProvider.getUriForFile(
+                            context,
+                            "com.supertelecom.app.fileprovider",
+                            File(uri.path!!)
+                        )
+                    } catch (_: Exception) {
+                        uri
+                    }
+                } else {
+                    uri
+                }
+            }
+        }
+
+        if (validUris.isEmpty()) return null
+
+        return if (validUris.size == 1) {
+            Intent(Intent.ACTION_SEND).apply {
+                val mime = when (items.first().category) {
+                    RecoverCategory.PHOTOS -> "image/*"
+                    RecoverCategory.VIDEOS -> "video/*"
+                    RecoverCategory.AUDIO_RECORDINGS -> "audio/*"
+                    else -> "*/*"
+                }
+                type = mime
+                putExtra(Intent.EXTRA_STREAM, validUris.first())
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        } else {
+            Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                type = "*/*"
+                putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(validUris))
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        }
+    }
+
+    /**
+     * Securely removes orphaned cache file if user decides to permanently purge a sensitive preview
+     */
+    fun permanentlyDeleteCacheItem(item: RecoverItem): Boolean {
+        return try {
+            if (item.uri != null && item.uri.scheme == ContentResolver.SCHEME_FILE && item.uri.path != null) {
+                val f = File(item.uri.path!!)
+                if (f.exists() && f.isFile) {
+                    f.delete()
+                } else false
+            } else false
+        } catch (_: Exception) {
+            false
+        }
     }
 }

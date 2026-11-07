@@ -693,6 +693,42 @@ fun MoreFeaturesScreen(
                                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
                                             )
                                         }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            OutlinedButton(
+                                                onClick = {
+                                                    if (activity != null) {
+                                                        updateManager.purgeCachedUpdate(meta)
+                                                        updateManager.downloadAndInstallUpdate(meta, activity)
+                                                    }
+                                                },
+                                                modifier = Modifier.weight(1f).height(38.dp),
+                                                shape = RoundedCornerShape(8.dp),
+                                                colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanAccent),
+                                                border = androidx.compose.foundation.BorderStroke(1.dp, CyanAccent.copy(alpha = 0.5f))
+                                            ) {
+                                                Text(
+                                                    text = if (isHindi) "पुनः डाउनलोड" else "Re-download",
+                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp)
+                                                )
+                                            }
+                                            OutlinedButton(
+                                                onClick = {
+                                                    updateManager.downloadViaSystemDownloadManager(meta)
+                                                },
+                                                modifier = Modifier.weight(1f).height(38.dp),
+                                                shape = RoundedCornerShape(8.dp),
+                                                colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                                                border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
+                                            ) {
+                                                Text(
+                                                    text = if (isHindi) "सिस्टम डाउनलोडर" else "System DM",
+                                                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, fontSize = 10.sp)
+                                                )
+                                            }
+                                        }
                                         Text(
                                             text = if (isHindi) "नोट: यदि पैकेज एरर आए, तो पुरानी ऐप अनइंस्टॉल करके फिर से इंस्टॉल करें।"
                                             else "Note: If signature conflict occurs, uninstall older build once before reinstalling.",

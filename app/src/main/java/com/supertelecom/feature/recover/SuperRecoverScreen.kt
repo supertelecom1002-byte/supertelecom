@@ -49,7 +49,28 @@ import com.supertelecom.model.RecoverTier
 import com.supertelecom.model.StorageStats
 import com.supertelecom.theme.*
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import android.content.Intent
+import android.widget.Toast
+
+enum class TimeRangeFilter(val labelHi: String, val labelEn: String) {
+    ALL("📅 सभी समय", "All Time"),
+    ONE_YEAR("🕒 1 साल के अंदर", "Last 1 Year"),
+    TWO_YEARS("⏳ 2 साल के अंदर", "Last 2 Years"),
+    LAST_6_MONTHS("⚡ 6 महीने", "Last 6 Months"),
+    OLDER_ARCHIVE("🏛️ 2+ साल पुरानी", "Older Archive"),
+    CUSTOM("🗓️ तारीख चुनें...", "Custom Range...")
+}
+
+enum class SizeFilter(val labelHi: String, val labelEn: String, val minBytes: Long) {
+    ALL("🔍 सभी साइज़", "All Sizes", 0L),
+    CLEAN("✨ स्पष्ट (>50 KB)", "Clear (>50 KB)", 50 * 1024L),
+    HD("💎 HD (>250 KB)", "HD (>250 KB)", 250 * 1024L),
+    ORIGINAL("📸 ओरिजिनल (>1 MB)", "Original (>1 MB)", 1024 * 1024L)
+}
 
 enum class RecoverScreenMode {
     DASHBOARD,
@@ -71,6 +92,12 @@ fun SuperRecoverScreen(
     var screenMode by remember { mutableStateOf(RecoverScreenMode.DASHBOARD) }
     var activeCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.PHOTOS) }
     var activeFilterTag by remember { mutableStateOf("ALL") }
+    var activeTimeFilter by remember { mutableStateOf(TimeRangeFilter.ALL) }
+    var activeSizeFilter by remember { mutableStateOf(SizeFilter.ALL) }
+    var customStartMillis by remember { mutableStateOf(0L) }
+    var customEndMillis by remember { mutableStateOf(System.currentTimeMillis()) }
+    var customRangeLabel by remember { mutableStateOf("") }
+    var showCustomDateDialog by remember { mutableStateOf(false) }
 
     var storageStats by remember { mutableStateOf(recoverEngine.getDeviceStorageStats()) }
     val isScanningEngine by recoverEngine.isScanning.collectAsState()
@@ -122,6 +149,9 @@ fun SuperRecoverScreen(
     fun startCategoryScan(cat: RecoverCategory) {
         activeCategory = cat
         activeFilterTag = "ALL"
+        activeTimeFilter = TimeRangeFilter.ALL
+        activeSizeFilter = SizeFilter.ALL
+        customRangeLabel = ""
         if (cat == RecoverCategory.VAULT) {
             coroutineScope.launch {
                 vaultItems.clear()
@@ -202,6 +232,19 @@ fun SuperRecoverScreen(
                     items = discoveredItems,
                     activeFilterTag = activeFilterTag,
                     onFilterTagSelected = { activeFilterTag = it },
+                    activeTimeFilter = activeTimeFilter,
+                    onTimeFilterSelected = { filter ->
+                        activeTimeFilter = filter
+                        if (filter == TimeRangeFilter.CUSTOM) {
+                            showCustomDateDialog = true
+                        }
+                    },
+                    activeSizeFilter = activeSizeFilter,
+                    onSizeFilterSelected = { filter -> activeSizeFilter = filter },
+                    customStartMillis = customStartMillis,
+                    customEndMillis = customEndMillis,
+                    customRangeLabel = customRangeLabel,
+                    onOpenCustomDateDialog = { showCustomDateDialog = true },
                     onOpenSaf = { safFolderPicker.launch(null) },
                     onToggleSelect = { item ->
                         val idx = discoveredItems.indexOfFirst { it.id == item.id }
@@ -224,6 +267,17 @@ fun SuperRecoverScreen(
                                 val res = recoverEngine.restoreSelectedItems(selectedList)
                                 isRestoring = false
                                 restoreResult = res
+                            }
+                        }
+                    },
+                    onShareSelected = {
+                        val selectedList = discoveredItems.filter { it.isSelected }
+                        if (selectedList.isNotEmpty()) {
+                            val shareIntent = recoverEngine.createShareIntent(selectedList)
+                            if (shareIntent != null) {
+                                context.startActivity(Intent.createChooser(shareIntent, if (isHindi) "फाइलें शेयर करें" else "Share Files"))
+                            } else {
+                                Toast.makeText(context, if (isHindi) "शेयर करने के लिए फाइल उपलब्ध नहीं" else "File not accessible for sharing", Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
@@ -255,6 +309,37 @@ fun SuperRecoverScreen(
                         previewItem = null
                         restoreResult = res
                     }
+                },
+                onShareSingle = {
+                    val shareIntent = recoverEngine.createShareIntent(listOf(item))
+                    if (shareIntent != null) {
+                        context.startActivity(Intent.createChooser(shareIntent, if (isHindi) "शेयर करें" else "Share via"))
+                    } else {
+                        Toast.makeText(context, if (isHindi) "शेयर करने के लिए फाइल उपलब्ध नहीं" else "File not accessible for sharing", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                onShredCache = {
+                    val deleted = recoverEngine.permanentlyDeleteCacheItem(item)
+                    if (deleted) {
+                        discoveredItems.removeAll { it.id == item.id }
+                        previewItem = null
+                        Toast.makeText(context, if (isHindi) "कैश फाइल स्थायी रूप से मिटा दी गई" else "Cache file shredded permanently", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
+        }
+
+        // Custom Date Range Dialog
+        if (showCustomDateDialog) {
+            CustomDateRangeDialog(
+                isHindi = isHindi,
+                onDismiss = { showCustomDateDialog = false },
+                onApplyRange = { start, end, label ->
+                    customStartMillis = start
+                    customEndMillis = end
+                    customRangeLabel = label
+                    activeTimeFilter = TimeRangeFilter.CUSTOM
+                    showCustomDateDialog = false
                 }
             )
         }
@@ -974,12 +1059,21 @@ fun RecoverGalleryGridView(
     items: List<RecoverItem>,
     activeFilterTag: String,
     onFilterTagSelected: (String) -> Unit,
+    activeTimeFilter: TimeRangeFilter = TimeRangeFilter.ALL,
+    onTimeFilterSelected: (TimeRangeFilter) -> Unit = {},
+    activeSizeFilter: SizeFilter = SizeFilter.ALL,
+    onSizeFilterSelected: (SizeFilter) -> Unit = {},
+    customStartMillis: Long = 0L,
+    customEndMillis: Long = Long.MAX_VALUE,
+    customRangeLabel: String = "",
+    onOpenCustomDateDialog: () -> Unit = {},
     onOpenSaf: () -> Unit = {},
     onToggleSelect: (RecoverItem) -> Unit,
     onToggleSelectAll: (Boolean) -> Unit,
     onPreviewItem: (RecoverItem) -> Unit,
     onBackToDashboard: () -> Unit,
     onRestoreSelected: () -> Unit,
+    onShareSelected: () -> Unit = {},
     contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
@@ -1014,13 +1108,37 @@ fun RecoverGalleryGridView(
         }
     }
 
-    // Filter items based on active chip - Default ALL shows all found items
-    val filteredList = remember(items.size, activeFilterTag) {
-        when (activeFilterTag) {
+    val now = remember { System.currentTimeMillis() }
+    val oneYearAgo = remember(now) { now - 365L * 24 * 60 * 60 * 1000L }
+    val twoYearsAgo = remember(now) { now - 730L * 24 * 60 * 60 * 1000L }
+    val sixMonthsAgo = remember(now) { now - 180L * 24 * 60 * 60 * 1000L }
+
+    // Multi-dimensional Filtering: Source Tag + Time Range + Size/Quality
+    val filteredList = remember(items.size, activeFilterTag, activeTimeFilter, activeSizeFilter, customStartMillis, customEndMillis) {
+        val tagFiltered = when (activeFilterTag) {
             "DELETED_CACHE" -> deletedCacheItems.ifEmpty { items }
             "WHATSAPP_SOCIAL" -> socialItems.ifEmpty { items }
             "SAF_SCAN" -> safItems.ifEmpty { items }
             else -> items
+        }
+
+        tagFiltered.filter { item ->
+            // Quality / Size Filter
+            val passesSize = item.sizeBytes >= activeSizeFilter.minBytes
+
+            // Time / Date Range Filter
+            val passesTime = when (activeTimeFilter) {
+                TimeRangeFilter.ALL -> true
+                TimeRangeFilter.ONE_YEAR -> item.timestampMillis == 0L || item.timestampMillis >= oneYearAgo
+                TimeRangeFilter.TWO_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= twoYearsAgo
+                TimeRangeFilter.LAST_6_MONTHS -> item.timestampMillis == 0L || item.timestampMillis >= sixMonthsAgo
+                TimeRangeFilter.OLDER_ARCHIVE -> item.timestampMillis in 1L until twoYearsAgo
+                TimeRangeFilter.CUSTOM -> {
+                    if (item.timestampMillis == 0L) true
+                    else item.timestampMillis in customStartMillis..customEndMillis
+                }
+            }
+            passesSize && passesTime
         }
     }
 
@@ -1042,7 +1160,7 @@ fun RecoverGalleryGridView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -1060,7 +1178,7 @@ fun RecoverGalleryGridView(
                             )
                         )
                         Text(
-                            text = if (isHindi) "3-कॉलम विज़ुअल ग्रिड" else "Visual 3-Column Grid",
+                            text = if (isHindi) "3-कॉलम विज़ुअल ग्रिड • फ़िल्टर लागू" else "3-Column Grid • Filters Active",
                             style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 10.sp)
                         )
                     }
@@ -1079,16 +1197,16 @@ fun RecoverGalleryGridView(
                 }
             }
 
-            // Top Filter Chips (4 All-Recovery Master Tabs)
+            // ── ROW 1: MASTER RECOVERY SOURCE CHIPS ──
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 14.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 12.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 FilterTabChip(
-                    label = if (isHindi) "🖼️ सभी फाइलें (${items.size})" else "🖼️ All Found (${items.size})",
+                    label = if (isHindi) "🖼️ सभी (${items.size})" else "🖼️ All (${items.size})",
                     isSelected = activeFilterTag == "ALL",
                     onClick = { onFilterTagSelected("ALL") }
                 )
@@ -1098,23 +1216,62 @@ fun RecoverGalleryGridView(
                     onClick = { onFilterTagSelected("DELETED_CACHE") }
                 )
                 FilterTabChip(
-                    label = if (isHindi) "💬 WhatsApp व सोशल (${socialItems.size})" else "💬 WhatsApp & Social (${socialItems.size})",
+                    label = if (isHindi) "💬 WhatsApp (${socialItems.size})" else "💬 WhatsApp (${socialItems.size})",
                     isSelected = activeFilterTag == "WHATSAPP_SOCIAL",
                     onClick = { onFilterTagSelected("WHATSAPP_SOCIAL") }
                 )
                 FilterTabChip(
-                    label = if (isHindi) "📂 डीप फोल्डर स्कैन (${safItems.size})" else "📂 Deep Folder (${safItems.size})",
+                    label = if (isHindi) "📂 SAF स्कैन (${safItems.size})" else "📂 SAF (${safItems.size})",
                     isSelected = activeFilterTag == "SAF_SCAN",
                     onClick = {
                         onFilterTagSelected("SAF_SCAN")
-                        if (safItems.isEmpty()) {
-                            onOpenSaf()
-                        }
+                        if (safItems.isEmpty()) onOpenSaf()
                     }
                 )
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            // ── ROW 2: TIME-BASED FILTERS (1-YEAR, 2-YEAR, CUSTOM DATE) ──
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                TimeRangeFilter.values().forEach { filter ->
+                    val isSelected = activeTimeFilter == filter
+                    val label = if (filter == TimeRangeFilter.CUSTOM && customRangeLabel.isNotBlank()) {
+                        "🗓️ $customRangeLabel"
+                    } else {
+                        if (isHindi) filter.labelHi else filter.labelEn
+                    }
+                    FilterTabChip(
+                        label = label,
+                        isSelected = isSelected,
+                        onClick = { onTimeFilterSelected(filter) }
+                    )
+                }
+            }
+
+            // ── ROW 3: QUALITY & SIZE FILTERS ──
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp, vertical = 2.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                SizeFilter.values().forEach { filter ->
+                    val isSelected = activeSizeFilter == filter
+                    FilterTabChip(
+                        label = if (isHindi) filter.labelHi else filter.labelEn,
+                        isSelected = isSelected,
+                        onClick = { onSizeFilterSelected(filter) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             // ── 3-COLUMN VISUAL LAZY VERTICAL GRID ──
             if (filteredList.isEmpty()) {
@@ -1150,7 +1307,7 @@ fun RecoverGalleryGridView(
                         }
                         Spacer(modifier = Modifier.height(14.dp))
                         Text(
-                            text = if (isHindi) "क्विक स्कैन में कोई डिलीटेड फाइल नहीं मिली" else "No Deleted Files in Quick Scan",
+                            text = if (isHindi) "इस फ़िल्टर में कोई फाइल नहीं मिली" else "No Files Matching Active Filter",
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -1160,9 +1317,9 @@ fun RecoverGalleryGridView(
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = if (isHindi)
-                                "रीसायकल बिन या क्विक कैशे खाली है।\nपूरे फोन के छिपे .thumbnails, WhatsApp .Statuses और SD कार्ड को गहराई से स्कैन करने के लिए नीचे टैप करें:"
+                                "फ़िल्टर बदलकर '📅 सभी समय' या '🔍 सभी साइज़' चुनें, या गहरे .thumbnails और WhatsApp फ़ोल्डरों को स्कैन करने के लिए नीचे टैप करें:"
                             else
-                                "Recycle bin and quick cache are empty.\nTo scan all hidden .thumbnails, WhatsApp .Statuses and full storage folders, tap below:",
+                                "Change filter to 'All Time' or 'All Sizes', or deep scan hidden storage folders below:",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = TextSecondary,
                                 fontSize = 12.sp
@@ -1214,7 +1371,7 @@ fun RecoverGalleryGridView(
             }
         }
 
-        // ── STICKY BOTTOM RECOVER ACTION BAR ──
+        // ── STICKY BOTTOM ACTION BAR (RECOVER + DIRECT SHARE) ──
         if (selectedCount > 0) {
             Box(
                 modifier = Modifier
@@ -1224,16 +1381,16 @@ fun RecoverGalleryGridView(
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .background(Color(0xFF0F172A))
                     .border(1.dp, EmeraldAccent.copy(alpha = 0.5f), RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                    .padding(14.dp)
+                    .padding(12.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (isHindi) "$selectedCount फाइलें चुनी गईं" else "$selectedCount Files Selected",
+                            text = if (isHindi) "$selectedCount फाइलें चुनी गईं" else "$selectedCount Selected",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Black,
                                 color = EmeraldAccent
@@ -1245,12 +1402,27 @@ fun RecoverGalleryGridView(
                         )
                     }
 
+                    // Direct Share Button (WhatsApp / Apps)
+                    OutlinedButton(
+                        onClick = onShareSelected,
+                        modifier = Modifier.height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CyanAccent),
+                        border = androidx.compose.foundation.BorderStroke(1.5.dp, CyanAccent)
+                    ) {
+                        Icon(imageVector = Icons.Default.Share, contentDescription = "Share", modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = if (isHindi) "शेयर" else "Share",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
+                    // Recover to Gallery Button
                     Button(
                         onClick = onRestoreSelected,
-                        modifier = Modifier
-                            .height(50.dp)
-                            .defaultMinSize(minWidth = 190.dp),
-                        shape = RoundedCornerShape(14.dp),
+                        modifier = Modifier.height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = EmeraldAccent,
                             contentColor = BgDark
@@ -1259,11 +1431,11 @@ fun RecoverGalleryGridView(
                         Icon(
                             imageVector = Icons.Default.SettingsBackupRestore,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(16.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = if (isHindi) "अभी रिकवर करें ($selectedCount)" else "RECOVER NOW ($selectedCount)",
+                            text = if (isHindi) "रिकवर ($selectedCount)" else "RECOVER ($selectedCount)",
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
                         )
                     }
@@ -1569,10 +1741,72 @@ fun FullScreenMediaPreviewDialog(
     item: RecoverItem,
     isHindi: Boolean,
     onDismiss: () -> Unit,
-    onRecoverSingle: () -> Unit
+    onRecoverSingle: () -> Unit,
+    onShareSingle: () -> Unit = {},
+    onShredCache: () -> Unit = {}
 ) {
     val fullBitmap by produceState<Bitmap?>(initialValue = null, key1 = item.id) {
         value = ThumbnailLoader.loadThumbnail(context, item, 800, 800)
+    }
+
+    var showShredConfirm by remember { mutableStateOf(false) }
+
+    val formattedDate = remember(item.timestampMillis, item.dateModified) {
+        if (item.timestampMillis > 0L) {
+            try {
+                SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault()).format(Date(item.timestampMillis))
+            } catch (_: Exception) {
+                item.dateModified
+            }
+        } else {
+            item.dateModified
+        }
+    }
+
+    val isCacheOrOrphan = remember(item.id, item.sourcePath) {
+        item.id.startsWith("carved_") || item.id.startsWith("thumb_") || item.id.startsWith("orphan_") ||
+        item.sourcePath.contains("thumb", ignoreCase = true) || item.sourcePath.contains("cache", ignoreCase = true)
+    }
+
+    if (showShredConfirm) {
+        AlertDialog(
+            onDismissRequest = { showShredConfirm = false },
+            title = {
+                Text(
+                    text = if (isHindi) "⚠️ स्थायी रूप से मिटाएं?" else "⚠️ Permanently Shred?",
+                    fontWeight = FontWeight.Bold,
+                    color = RoseAccent
+                )
+            },
+            text = {
+                Text(
+                    text = if (isHindi)
+                        "यह कैश्ड फाइल आपके डिवाइस से स्थायी रूप से मिटा दी जाएगी और इसे दोबारा नहीं देखा जा सकेगा।"
+                    else
+                        "This cached file will be permanently deleted from device storage.",
+                    style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary)
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showShredConfirm = false
+                        onShredCache()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = RoseAccent, contentColor = Color.White),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(text = if (isHindi) "हाँ, मिटाएं" else "Yes, Shred", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showShredConfirm = false }) {
+                    Text(text = if (isHindi) "रद्द करें" else "Cancel", color = TextSecondary)
+                }
+            },
+            containerColor = Color(0xFF0F172A),
+            shape = RoundedCornerShape(14.dp)
+        )
     }
 
     AlertDialog(
@@ -1620,7 +1854,7 @@ fun FullScreenMediaPreviewDialog(
 
                 // File Details
                 Text(
-                    text = "Size: %.2f MB • ${item.dateModified}".format(Locale.US, item.sizeBytes / 1_000_000f),
+                    text = "Size: %.2f MB • $formattedDate".format(Locale.US, item.sizeBytes / 1_000_000f),
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                 )
 
@@ -1633,13 +1867,41 @@ fun FullScreenMediaPreviewDialog(
                     )
                 )
 
-                Text(
-                    text = "Status: ${item.tier.titleEn}",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = EmeraldAccent,
-                        fontWeight = FontWeight.Bold
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Status: ${item.tier.titleEn}",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = EmeraldAccent,
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                )
+
+                    // Action buttons: Share & Shred
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        IconButton(
+                            onClick = onShareSingle,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(CyanAccent.copy(alpha = 0.15f), CircleShape)
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = "Share", tint = CyanAccent, modifier = Modifier.size(16.dp))
+                        }
+                        if (isCacheOrOrphan) {
+                            IconButton(
+                                onClick = { showShredConfirm = true },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(RoseAccent.copy(alpha = 0.15f), CircleShape)
+                            ) {
+                                Icon(Icons.Default.DeleteForever, contentDescription = "Shred", tint = RoseAccent, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
@@ -1656,6 +1918,128 @@ fun FullScreenMediaPreviewDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text(text = if (isHindi) "बंद करें" else "Close", color = TextSecondary)
+            }
+        },
+        containerColor = Color(0xFF0F172A),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. CUSTOM DATE / YEAR RANGE DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun CustomDateRangeDialog(
+    isHindi: Boolean,
+    onDismiss: () -> Unit,
+    onApplyRange: (startMillis: Long, endMillis: Long, label: String) -> Unit
+) {
+    val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
+    var selectedYear by remember { mutableStateOf(currentYear) }
+    val years = remember { (currentYear downTo currentYear - 5).toList() }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(22.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isHindi) "📅 तारीख या वर्ष चुनें" else "📅 Select Year / Time Range",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    text = if (isHindi) "त्वरित वर्ष चुनें (Quick Year Filter):" else "Quick Year Filter:",
+                    style = MaterialTheme.typography.labelMedium.copy(color = TextSecondary, fontWeight = FontWeight.Bold)
+                )
+
+                // 2 Rows of 3 year chips each
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    years.take(3).forEach { year ->
+                        val isSelected = selectedYear == year
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (isSelected) CyanAccent else CardDark)
+                                .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
+                                .clickable { selectedYear = year }
+                                .padding(vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "$year",
+                                color = if (isSelected) BgDark else TextPrimary,
+                                fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    years.drop(3).forEach { year ->
+                        val isSelected = selectedYear == year
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (isSelected) CyanAccent else CardDark)
+                                .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
+                                .clickable { selectedYear = year }
+                                .padding(vertical = 10.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "$year",
+                                color = if (isSelected) BgDark else TextPrimary,
+                                fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = if (isHindi)
+                        "वर्ष $selectedYear (1 जनवरी - 31 दिसंबर) के दौरान कैप्चर या डिलीट की गई सभी फाइलें फ़िल्टर होंगी।"
+                    else
+                        "Filters all files from Jan 1 to Dec 31 of $selectedYear.",
+                    style = MaterialTheme.typography.bodySmall.copy(color = TextMuted, fontSize = 11.sp)
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val cal = Calendar.getInstance()
+                    cal.set(selectedYear, Calendar.JANUARY, 1, 0, 0, 0)
+                    val start = cal.timeInMillis
+                    cal.set(selectedYear, Calendar.DECEMBER, 31, 23, 59, 59)
+                    val end = cal.timeInMillis
+                    onApplyRange(start, end, "$selectedYear")
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(text = if (isHindi) "लागू करें" else "Apply Filter", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = if (isHindi) "रद्द करें" else "Cancel", color = TextSecondary)
             }
         },
         containerColor = Color(0xFF0F172A),

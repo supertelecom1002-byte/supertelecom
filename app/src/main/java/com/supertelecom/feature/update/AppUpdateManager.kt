@@ -244,12 +244,28 @@ class AppUpdateManager(private val context: Context) {
     }
 
     /**
-     * Target APK file stored in internal cache directory (never blocked by Android 11+ Scoped Storage)
+     * Target APK file stored in external files downloads dir or internal cache fallback (accessible by all OEM installers)
      */
-    private fun getTargetApkFile(metadata: UpdateMetadata): File {
-        val updateDir = File(context.cacheDir, "apk_updates")
+    fun getTargetApkFile(metadata: UpdateMetadata): File {
+        val baseDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
+        val updateDir = File(baseDir, "apk_updates")
         if (!updateDir.exists()) updateDir.mkdirs()
         return File(updateDir, "SuperTelecom-v${metadata.versionName}.apk")
+    }
+
+    /**
+     * Purges cached update APK so user can force a fresh re-download
+     */
+    fun purgeCachedUpdate(metadata: UpdateMetadata) {
+        try {
+            val apk = getTargetApkFile(metadata)
+            if (apk.exists()) apk.delete()
+            val oldCache = File(File(context.cacheDir, "apk_updates"), "SuperTelecom-v${metadata.versionName}.apk")
+            if (oldCache.exists()) oldCache.delete()
+        } catch (_: Exception) {}
+        _installState.value = UpdateInstallState.Idle
+        _downloadProgress.value = 0f
+        _statusMessage.value = "कैश्ड APK हटाया गया। ताज़ा डाउनलोड के लिए तैयार।"
     }
 
     /**
@@ -500,17 +516,40 @@ class AppUpdateManager(private val context: Context) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
             }
 
             // Explicitly grant read/write URI permission to every resolving package installer component
             val resolveInfoList = activity.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
             for (resolveInfo in resolveInfoList) {
                 val packageName = resolveInfo.activityInfo.packageName
-                activity.grantUriPermission(
-                    packageName,
-                    apkUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
+                try {
+                    activity.grantUriPermission(
+                        packageName,
+                        apkUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                } catch (_: Exception) {}
+            }
+
+            // Also grant directly to all standard OEM package installer service packages
+            val oemInstallerPackages = listOf(
+                "com.google.android.packageinstaller",
+                "com.android.packageinstaller",
+                "com.samsung.android.packageinstaller",
+                "com.miui.packageinstaller",
+                "com.coloros.packageinstaller",
+                "com.vivo.packageinstaller",
+                "com.transsion.installer"
+            )
+            for (pkg in oemInstallerPackages) {
+                try {
+                    activity.grantUriPermission(
+                        pkg,
+                        apkUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    )
+                } catch (_: Exception) {}
             }
 
             activity.startActivity(installIntent)

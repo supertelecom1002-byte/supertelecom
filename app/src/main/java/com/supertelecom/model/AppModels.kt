@@ -153,7 +153,8 @@ data class RecoverItem(
     val uri: Uri? = null,
     val qualityTag: String = "Legitimate On-Device File",
     val isSelected: Boolean = false,
-    val isRestorable: Boolean = true
+    val isRestorable: Boolean = true,
+    val timestampMillis: Long = 0L
 )
 
 // ──────────────────────────────────────────────
