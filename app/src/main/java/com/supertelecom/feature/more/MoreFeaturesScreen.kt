@@ -36,6 +36,7 @@ import com.supertelecom.HomeLauncherActivity
 import com.supertelecom.R
 import com.supertelecom.feature.launcher.AppRepository
 import com.supertelecom.feature.update.AppUpdateManager
+import com.supertelecom.feature.update.UpdateInstallState
 import com.supertelecom.model.AppItem
 import com.supertelecom.model.NavTab
 import com.supertelecom.theme.*
@@ -59,6 +60,7 @@ fun MoreFeaturesScreen(
     val downloadProgress by updateManager.downloadProgress.collectAsState()
     val updateStatusMsg by updateManager.statusMessage.collectAsState()
     val isCheckingUpdate by updateManager.isChecking.collectAsState()
+    val installState by updateManager.installState.collectAsState()
 
     var showPrivacyDialog by remember { mutableStateOf(false) }
     var showGrievanceDialog by remember { mutableStateOf(false) }
@@ -638,38 +640,118 @@ fun MoreFeaturesScreen(
                                 style = MaterialTheme.typography.titleSmall.copy(color = EmeraldAccent, fontWeight = FontWeight.Bold)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            if (isDownloadingUpdate) {
-                                LinearProgressIndicator(
-                                    progress = { downloadProgress },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(6.dp)
-                                        .clip(RoundedCornerShape(3.dp)),
-                                    color = CyanAccent,
-                                    trackColor = CardBorder
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = updateStatusMsg ?: "Downloading...",
-                                    style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, fontSize = 10.sp)
-                                )
-                            } else {
-                                Button(
-                                    onClick = {
-                                        if (activity != null) {
-                                            updateManager.downloadAndInstallUpdate(meta, activity)
+                            when (val state = installState) {
+                                is UpdateInstallState.Downloading -> {
+                                    Column {
+                                        LinearProgressIndicator(
+                                            progress = { downloadProgress },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(6.dp)
+                                                .clip(RoundedCornerShape(3.dp)),
+                                            color = CyanAccent,
+                                            trackColor = CardBorder
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(
+                                                text = updateStatusMsg ?: "Downloading...",
+                                                style = MaterialTheme.typography.labelSmall.copy(color = TextMuted, fontSize = 10.sp)
+                                            )
+                                            Text(
+                                                text = "${(downloadProgress * 100).toInt()}%",
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontSize = 10.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = CyanAccent
+                                                )
+                                            )
                                         }
-                                    },
-                                    modifier = Modifier.fillMaxWidth().height(46.dp),
-                                    shape = RoundedCornerShape(10.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (isHindi) "अपडेट इंस्टॉल करें (${meta.fileSizeHuman})" else "INSTALL UPDATE (${meta.fileSizeHuman})",
-                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
-                                    )
+                                    }
+                                }
+                                is UpdateInstallState.ReadyToInstall -> {
+                                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Button(
+                                            onClick = {
+                                                if (activity != null) {
+                                                    updateManager.triggerPackageInstaller(state.apkFile, activity)
+                                                }
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(46.dp),
+                                            shape = RoundedCornerShape(10.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark)
+                                        ) {
+                                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = if (isHindi) "अभी इंस्टॉल करें (डाउनलोड पूरा हुआ)" else "INSTALL NOW (DOWNLOAD READY)",
+                                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
+                                            )
+                                        }
+                                        Text(
+                                            text = if (isHindi) "नोट: यदि पैकेज एरर आए, तो पुरानी ऐप अनइंस्टॉल करके फिर से इंस्टॉल करें।"
+                                            else "Note: If signature conflict occurs, uninstall older build once before reinstalling.",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 9.sp,
+                                                color = AmberAccent
+                                            )
+                                        )
+                                    }
+                                }
+                                else -> {
+                                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Button(
+                                            onClick = {
+                                                if (activity != null) {
+                                                    updateManager.downloadAndInstallUpdate(meta, activity)
+                                                }
+                                            },
+                                            modifier = Modifier.fillMaxWidth().height(46.dp),
+                                            shape = RoundedCornerShape(10.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                                        ) {
+                                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = if (isHindi) "अपडेट डाउनलोड व इंस्टॉल करें (${meta.fileSizeHuman})" else "INSTALL UPDATE (${meta.fileSizeHuman})",
+                                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                                            )
+                                        }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(
+                                                text = if (isHindi) "सिस्टम डाउनलोडर" else "System Downloader",
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontSize = 10.sp,
+                                                    color = CyanAccent,
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                modifier = Modifier.clickable {
+                                                    updateManager.downloadViaSystemDownloadManager(meta)
+                                                }
+                                            )
+                                            Text(
+                                                text = if (isHindi) "ब्राउज़र से डाउनलोड" else "Browser Download",
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontSize = 10.sp,
+                                                    color = TextSecondary,
+                                                    fontWeight = FontWeight.Medium
+                                                ),
+                                                modifier = Modifier.clickable {
+                                                    if (activity != null) {
+                                                        updateManager.triggerBrowserDownloadFallback(activity)
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -171,6 +171,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         isDefaultLauncherState = appRepository.isDefaultLauncher()
+        updateManager.onActivityResume(this)
     }
 
     private fun loadApps() {

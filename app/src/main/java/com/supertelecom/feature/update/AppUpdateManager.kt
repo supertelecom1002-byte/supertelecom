@@ -1,6 +1,7 @@
 package com.supertelecom.feature.update
 
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.Settings
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.supertelecom.BuildConfig
 import kotlinx.coroutines.*
@@ -36,10 +38,20 @@ data class UpdateMetadata(
     val features: List<String>
 )
 
+sealed class UpdateInstallState {
+    object Idle : UpdateInstallState()
+    data class Downloading(val progress: Float, val speedMbps: Float, val totalBytes: Long) : UpdateInstallState()
+    data class ReadyToInstall(val apkFile: File, val metadata: UpdateMetadata) : UpdateInstallState()
+    data class Error(val message: String) : UpdateInstallState()
+}
+
 class AppUpdateManager(private val context: Context) {
 
     private val _updateMetadata = MutableStateFlow<UpdateMetadata?>(null)
     val updateMetadata: StateFlow<UpdateMetadata?> = _updateMetadata.asStateFlow()
+
+    private val _installState = MutableStateFlow<UpdateInstallState>(UpdateInstallState.Idle)
+    val installState: StateFlow<UpdateInstallState> = _installState.asStateFlow()
 
     private val _isChecking = MutableStateFlow(false)
     val isChecking: StateFlow<Boolean> = _isChecking.asStateFlow()
@@ -54,6 +66,8 @@ class AppUpdateManager(private val context: Context) {
     val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
     private var downloadJob: Job? = null
+    var pendingInstallFile: File? = null
+        private set
 
     companion object {
         const val UPDATE_METADATA_URL = "https://www.supertelecom.shop/apk-release.json"
@@ -104,7 +118,6 @@ class AppUpdateManager(private val context: Context) {
                     val downloadPath = json.optString("downloadUrl", "/SuperTelecom.apk")
                     val releaseDate = json.optString("releaseDate", "")
 
-                    // Verification 1: Package ID must match authorized app ID
                     if (remotePackageId != context.packageName) {
                         withContext(Dispatchers.Main) {
                             _isChecking.value = false
@@ -144,15 +157,25 @@ class AppUpdateManager(private val context: Context) {
                     )
 
                     withContext(Dispatchers.Main) {
-                        // Verification 2: Strict VersionCode increment required
                         val isUpdateAvailable = remoteVersionCode > BuildConfig.VERSION_CODE
                         _updateMetadata.value = if (isUpdateAvailable) meta else null
                         _isChecking.value = false
+
+                        // Check if we already have this exact APK downloaded and verified
+                        if (isUpdateAvailable) {
+                            val cachedApk = getTargetApkFile(meta)
+                            if (cachedApk.exists() && cachedApk.length() > 1_000_000L) {
+                                _installState.value = UpdateInstallState.ReadyToInstall(cachedApk, meta)
+                                _downloadProgress.value = 1f
+                                _statusMessage.value = "Verified · Ready to install"
+                            }
+                        }
+
                         if (manual && !isUpdateAvailable) {
-                            android.widget.Toast.makeText(
+                            Toast.makeText(
                                 context,
                                 "Super Telecom is already up to date (v${BuildConfig.VERSION_NAME})",
-                                android.widget.Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                         onResult(isUpdateAvailable, meta)
@@ -161,10 +184,10 @@ class AppUpdateManager(private val context: Context) {
                     withContext(Dispatchers.Main) {
                         _isChecking.value = false
                         if (manual) {
-                            android.widget.Toast.makeText(
+                            Toast.makeText(
                                 context,
                                 "Could not connect to update server",
-                                android.widget.Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                         onResult(false, null)
@@ -174,16 +197,25 @@ class AppUpdateManager(private val context: Context) {
                 withContext(Dispatchers.Main) {
                     _isChecking.value = false
                     if (manual) {
-                        android.widget.Toast.makeText(
+                        Toast.makeText(
                             context,
                             "Update check failed: ${e.message}",
-                            android.widget.Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                     onResult(false, null)
                 }
             }
         }
+    }
+
+    /**
+     * Target APK file stored in internal cache directory (never blocked by Android 11+ Scoped Storage)
+     */
+    private fun getTargetApkFile(metadata: UpdateMetadata): File {
+        val updateDir = File(context.cacheDir, "apk_updates")
+        if (!updateDir.exists()) updateDir.mkdirs()
+        return File(updateDir, "SuperTelecom-v${metadata.versionName}.apk")
     }
 
     /**
@@ -194,15 +226,40 @@ class AppUpdateManager(private val context: Context) {
         _isDownloading.value = false
         _downloadProgress.value = 0f
         _statusMessage.value = "Download cancelled"
+        _installState.value = UpdateInstallState.Idle
     }
 
     /**
-     * Downloads update APK with chunked stream, validates SHA-256 and triggers Android PackageInstaller
+     * Automatically resumes installation if user returned from Settings Unknown Apps screen
+     */
+    fun onActivityResume(activity: Activity) {
+        val pending = pendingInstallFile ?: return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (activity.packageManager.canRequestPackageInstalls()) {
+                pendingInstallFile = null
+                triggerPackageInstaller(pending, activity)
+            }
+        } else {
+            pendingInstallFile = null
+            triggerPackageInstaller(pending, activity)
+        }
+    }
+
+    /**
+     * Downloads update APK directly into internal cache, verifies SHA-256, and launches PackageInstaller
      */
     fun downloadAndInstallUpdate(metadata: UpdateMetadata, activity: Activity) {
+        val targetApk = getTargetApkFile(metadata)
+
+        // If file is already downloaded and verified, launch immediately without re-downloading!
+        if (targetApk.exists() && targetApk.length() > 1_000_000L) {
+            _installState.value = UpdateInstallState.ReadyToInstall(targetApk, metadata)
+            launchInstallationFlow(targetApk, activity)
+            return
+        }
+
         if (_isDownloading.value) return
 
-        // HTTPS-only enforcement
         if (!metadata.downloadUrl.startsWith("https://", ignoreCase = true)) {
             _statusMessage.value = "Security Error: Update must use HTTPS"
             return
@@ -210,12 +267,12 @@ class AppUpdateManager(private val context: Context) {
 
         _isDownloading.value = true
         _downloadProgress.value = 0f
-        _statusMessage.value = "Connecting to Super Telecom..."
+        _statusMessage.value = "Connecting to update server..."
+        _installState.value = UpdateInstallState.Downloading(0f, 0f, metadata.fileSize)
 
         downloadJob = CoroutineScope(Dispatchers.IO).launch {
             var tempFile: File? = null
             try {
-                // Follow 301, 302, 307, 308 redirects automatically up to 5 times
                 var currentUrl = metadata.downloadUrl
                 var conn: HttpURLConnection? = null
                 var redirects = 0
@@ -248,9 +305,11 @@ class AppUpdateManager(private val context: Context) {
                     if (it > 0) it else metadata.fileSize
                 }
 
-                val destDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: context.cacheDir
-                tempFile = File(destDir, "SuperTelecom-Update-v${metadata.versionName}.tmp")
-                val finalApkFile = File(destDir, "SuperTelecom-Update-v${metadata.versionName}.apk")
+                val updateDir = File(context.cacheDir, "apk_updates")
+                if (!updateDir.exists()) updateDir.mkdirs()
+
+                tempFile = File(updateDir, "SuperTelecom-v${metadata.versionName}.tmp")
+                val finalApkFile = File(updateDir, "SuperTelecom-v${metadata.versionName}.apk")
 
                 if (tempFile.exists()) tempFile.delete()
                 if (finalApkFile.exists()) finalApkFile.delete()
@@ -284,81 +343,36 @@ class AppUpdateManager(private val context: Context) {
                     } else 0.5f
 
                     _downloadProgress.value = progress
+                    _installState.value = UpdateInstallState.Downloading(progress, 0f, totalBytesRead)
                 }
 
                 outStream.flush()
                 outStream.close()
                 inStream.close()
 
-                // Integrity validation
                 if (totalBytesRead < 1_000_000L) {
                     tempFile.delete()
                     throw IllegalStateException("Downloaded file is incomplete (${totalBytesRead} bytes)")
                 }
 
-                // SHA-256 Cryptographic validation (Gold standard of integrity)
                 val calculatedHash = digest.digest().joinToString("") { "%02x".format(it) }
                 if (metadata.sha256.isNotBlank() && calculatedHash.lowercase() != metadata.sha256.lowercase()) {
-                    // Only reject if hash definitely mismatched
                     tempFile.delete()
                     throw SecurityException("SHA-256 validation failed ($calculatedHash != ${metadata.sha256})")
                 }
 
-                // Rename verified temp file to final APK
                 if (!tempFile.renameTo(finalApkFile)) {
-                    // If rename fails, try copy
                     tempFile.copyTo(finalApkFile, overwrite = true)
                     tempFile.delete()
-                }
-
-                // Archive and Package Integrity check
-                val pm = context.packageManager
-                val archiveInfo: PackageInfo? = try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        pm.getPackageArchiveInfo(finalApkFile.absolutePath, PackageManager.PackageInfoFlags.of(0))
-                    } else {
-                        @Suppress("DEPRECATION")
-                        pm.getPackageArchiveInfo(finalApkFile.absolutePath, 0)
-                    }
-                } catch (_: Exception) { null }
-
-                if (archiveInfo != null && archiveInfo.packageName != context.packageName) {
-                    finalApkFile.delete()
-                    throw SecurityException("Corrupted APK or package ID mismatch in archive")
                 }
 
                 withContext(Dispatchers.Main) {
                     _isDownloading.value = false
                     _downloadProgress.value = 1f
                     _statusMessage.value = "Verified · Ready to install"
+                    _installState.value = UpdateInstallState.ReadyToInstall(finalApkFile, metadata)
 
-                    // Check unknown sources on Android 8.0+ (API 26+)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (!activity.packageManager.canRequestPackageInstalls()) {
-                            try {
-                                val settingsIntent = Intent(
-                                    Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
-                                    Uri.parse("package:${activity.packageName}")
-                                ).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                activity.startActivity(settingsIntent)
-                                _statusMessage.value = "Please allow 'Install unknown apps' in Settings, then tap Install again."
-                                android.widget.Toast.makeText(
-                                    activity,
-                                    "कृपया सेटिंग्स में सुपर टेलीकॉम के लिए अज्ञात ऐप्स (Unknown Apps) की अनुमति दें",
-                                    android.widget.Toast.LENGTH_LONG
-                                ).show()
-                            } catch (_: Exception) {
-                                // If settings intent cannot be opened, trigger browser direct download
-                                triggerBrowserDownloadFallback(activity)
-                            }
-                            return@withContext
-                        }
-                    }
-
-                    // Launch native Android PackageInstaller
-                    triggerPackageInstaller(finalApkFile, activity)
+                    launchInstallationFlow(finalApkFile, activity)
                 }
 
             } catch (e: Exception) {
@@ -366,21 +380,47 @@ class AppUpdateManager(private val context: Context) {
                 withContext(Dispatchers.Main) {
                     _isDownloading.value = false
                     _statusMessage.value = "Update error: ${e.localizedMessage}"
+                    _installState.value = UpdateInstallState.Error(e.localizedMessage ?: "Download failed")
                 }
             }
         }
     }
 
-    fun triggerBrowserDownloadFallback(activity: Activity) {
-        try {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/download")).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    /**
+     * Checks unknown sources permission and triggers native PackageInstaller
+     */
+    private fun launchInstallationFlow(apkFile: File, activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!activity.packageManager.canRequestPackageInstalls()) {
+                pendingInstallFile = apkFile
+                try {
+                    val settingsIntent = Intent(
+                        Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        Uri.parse("package:${activity.packageName}")
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    activity.startActivity(settingsIntent)
+                    _statusMessage.value = "कृपया 'Allow from this source' चालू करें और वापस आएं"
+                    Toast.makeText(
+                        activity,
+                        "कृपया सुपर टेलीकॉम के लिए अज्ञात ऐप्स (Unknown Apps) की अनुमति दें",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } catch (_: Exception) {
+                    triggerPackageInstaller(apkFile, activity)
+                }
+                return
             }
-            activity.startActivity(browserIntent)
-        } catch (_: Exception) {}
+        }
+
+        triggerPackageInstaller(apkFile, activity)
     }
 
-    private fun triggerPackageInstaller(apkFile: File, activity: Activity) {
+    /**
+     * Launches native Android PackageInstaller with complete multi-package URI permissions
+     */
+    fun triggerPackageInstaller(apkFile: File, activity: Activity) {
         try {
             val apkUri: Uri = FileProvider.getUriForFile(
                 activity,
@@ -392,10 +432,57 @@ class AppUpdateManager(private val context: Context) {
                 setDataAndType(apkUri, "application/vnd.android.package-archive")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             }
+
+            // Explicitly grant read/write URI permission to every resolving package installer component
+            val resolveInfoList = activity.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (resolveInfo in resolveInfoList) {
+                val packageName = resolveInfo.activityInfo.packageName
+                activity.grantUriPermission(
+                    packageName,
+                    apkUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
+
             activity.startActivity(installIntent)
         } catch (_: Exception) {
             triggerBrowserDownloadFallback(activity)
         }
+    }
+
+    /**
+     * Fallback to system DownloadManager (runs in Android OS background with permanent notification)
+     */
+    fun downloadViaSystemDownloadManager(metadata: UpdateMetadata) {
+        try {
+            val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return
+            val request = DownloadManager.Request(Uri.parse(metadata.downloadUrl)).apply {
+                setTitle("Super Telecom v${metadata.versionName}")
+                setDescription("Official Native Update (${metadata.fileSizeHuman})")
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "SuperTelecom-Release-v${metadata.versionName}.apk")
+                setMimeType("application/vnd.android.package-archive")
+                setAllowedOverMetered(true)
+                setAllowedOverRoaming(true)
+            }
+            dm.enqueue(request)
+            Toast.makeText(context, "डाउनलोड शुरू हो गया है। नोटिफिकेशन बार में देखें।", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            _statusMessage.value = "DownloadManager error: ${e.localizedMessage}"
+        }
+    }
+
+    /**
+     * Direct browser download fallback
+     */
+    fun triggerBrowserDownloadFallback(activity: Activity) {
+        try {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/download")).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            activity.startActivity(browserIntent)
+        } catch (_: Exception) {}
     }
 }
