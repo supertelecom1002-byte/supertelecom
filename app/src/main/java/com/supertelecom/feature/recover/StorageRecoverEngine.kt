@@ -132,6 +132,15 @@ class StorageRecoverEngine(private val context: Context) {
                 _scannedCount.value = results.size
             }
 
+            // ── LAYER 1B: Orphan Thumbnail Database Excavation (Deleted Photos/Videos) ──
+            if (_isScanning.value && (selectedCategory == RecoverCategory.ALL_MEDIA || selectedCategory == RecoverCategory.PHOTOS || selectedCategory == RecoverCategory.VIDEOS)) {
+                _currentScanPath.value = "Scanning Orphan Thumbnail Database for Deleted Media"
+                _scanProgress.value = 0.30f
+                onProgress(_currentScanPath.value, results.size, 0.30f)
+                results.addAll(scanOrphanThumbnails(selectedCategory))
+                _scannedCount.value = results.size
+            }
+
             // If user specifically only wants Trash, return here
             if (selectedCategory == RecoverCategory.TRASH) {
                 _scanProgress.value = 1f
@@ -142,8 +151,8 @@ class StorageRecoverEngine(private val context: Context) {
             // ── LAYER 2: JPEG Byte-Carving from .thumbdata* & Binary Caches ──
             if (_isScanning.value && (selectedCategory == RecoverCategory.ALL_MEDIA || selectedCategory == RecoverCategory.PHOTOS)) {
                 _currentScanPath.value = "DCIM & Gallery .thumbdata Byte Carving (0xFFD8FF)"
-                _scanProgress.value = 0.40f
-                onProgress(_currentScanPath.value, results.size, 0.40f)
+                _scanProgress.value = 0.50f
+                onProgress(_currentScanPath.value, results.size, 0.50f)
                 results.addAll(carveJpegFromThumbdataCaches())
                 _scannedCount.value = results.size
             }
@@ -247,18 +256,28 @@ class StorageRecoverEngine(private val context: Context) {
 
                         val isTrashed = if (trashedCol != -1) cursor.getInt(trashedCol) == 1 else false
                         val isPending = if (pendingCol != -1) cursor.getInt(pendingCol) == 1 else false
+                        val isTrashName = name.contains(".trash", ignoreCase = true) ||
+                                name.contains("trash", ignoreCase = true) ||
+                                name.startsWith(".pending", ignoreCase = true) ||
+                                name.startsWith(".")
+
+                        // STRICT FILTER: Never include normal active gallery photos!
+                        // Only add genuine Recycle Bin, pending unindexed, or trash folder items
+                        if (!isTrashed && !isPending && !isTrashName) {
+                            continue
+                        }
 
                         val tier = when {
                             isTrashed -> RecoverTier.SYSTEM_TRASH
                             isPending -> RecoverTier.SYSTEM_TRASH
-                            name.contains(".trash", ignoreCase = true) -> RecoverTier.SYSTEM_TRASH
-                            else -> RecoverTier.RESTORABLE_ORIGINAL
+                            isTrashName -> RecoverTier.SYSTEM_TRASH
+                            else -> RecoverTier.SYSTEM_TRASH
                         }
 
                         val qualityTag = when {
                             isTrashed -> "Original Quality (Recycle Bin)"
                             isPending -> "Pending Unindexed Media"
-                            else -> "Original Media Quality"
+                            else -> "Deleted / Trashed Media File"
                         }
 
                         list.add(
@@ -267,12 +286,12 @@ class StorageRecoverEngine(private val context: Context) {
                                 name = name,
                                 sizeBytes = size,
                                 dateModified = dateFormat.format(Date(dateSec * 1000L)),
-                                sourcePath = if (isTrashed) "MediaStore Trash Bin > $name" else "Device MediaStore Library > $name",
+                                sourcePath = "MediaStore Trash Bin > $name",
                                 category = cat,
                                 tier = tier,
                                 uri = contentUri,
                                 qualityTag = qualityTag,
-                                isSelected = isTrashed || isPending,
+                                isSelected = true,
                                 isRestorable = true
                             )
                         )
@@ -280,6 +299,129 @@ class StorageRecoverEngine(private val context: Context) {
                 }
             } catch (_: Exception) {}
         }
+
+        return list
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // LAYER 1B: ORPHAN THUMBNAIL DATABASE EXCAVATION (DELETED PHOTOS & VIDEOS)
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    private fun scanOrphanThumbnails(category: RecoverCategory): List<RecoverItem> {
+        val list = mutableListOf<RecoverItem>()
+        if (category != RecoverCategory.ALL_MEDIA && category != RecoverCategory.PHOTOS && category != RecoverCategory.VIDEOS) {
+            return list
+        }
+
+        try {
+            // 1. Image Orphan Thumbnails
+            if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.PHOTOS) {
+                val thumbUri = MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
+                val projection = arrayOf(
+                    MediaStore.Images.Thumbnails._ID,
+                    MediaStore.Images.Thumbnails.IMAGE_ID,
+                    MediaStore.Images.Thumbnails.DATA
+                )
+
+                context.contentResolver.query(thumbUri, projection, null, null, "${MediaStore.Images.Thumbnails._ID} DESC")?.use { cursor ->
+                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID)
+                    val imageIdCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID)
+                    val dataCol = cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA)
+
+                    var count = 0
+                    while (cursor.moveToNext() && count < 150 && _isScanning.value) {
+                        val thumbId = cursor.getLong(idCol)
+                        val originalImageId = cursor.getLong(imageIdCol)
+                        val dataPath = if (dataCol != -1) cursor.getString(dataCol) else null
+
+                        // Check if original image still exists in MediaStore
+                        val origUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, originalImageId)
+                        val originalExists = try {
+                            context.contentResolver.openFileDescriptor(origUri, "r")?.use { true } ?: false
+                        } catch (_: Exception) {
+                            false
+                        }
+
+                        // If original does NOT exist, this is an orphan thumbnail of a deleted photo!
+                        if (!originalExists) {
+                            val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
+                            val file = if (dataPath != null) File(dataPath) else null
+                            val sizeBytes = if (file != null && file.exists()) file.length() else 35_000L
+
+                            list.add(
+                                RecoverItem(
+                                    id = "orphan_thumb_$thumbId",
+                                    name = "Deleted_Photo_Thumb_$thumbId.jpg",
+                                    sizeBytes = sizeBytes,
+                                    dateModified = if (file != null && file.exists()) dateFormat.format(Date(file.lastModified())) else "Cached Thumb",
+                                    sourcePath = "MediaStore Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
+                                    category = RecoverCategory.PHOTOS,
+                                    tier = RecoverTier.THUMBNAIL_PREVIEW,
+                                    uri = itemUri,
+                                    qualityTag = "Orphan Thumbnail (Deleted Photo Cache)",
+                                    isSelected = true,
+                                    isRestorable = true
+                                )
+                            )
+                            count++
+                        }
+                    }
+                }
+            }
+
+            // 2. Video Orphan Thumbnails
+            if (category == RecoverCategory.ALL_MEDIA || category == RecoverCategory.VIDEOS) {
+                val thumbUri = MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI
+                val projection = arrayOf(
+                    MediaStore.Video.Thumbnails._ID,
+                    MediaStore.Video.Thumbnails.VIDEO_ID,
+                    MediaStore.Video.Thumbnails.DATA
+                )
+
+                context.contentResolver.query(thumbUri, projection, null, null, "${MediaStore.Video.Thumbnails._ID} DESC")?.use { cursor ->
+                    val idCol = cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails._ID)
+                    val videoIdCol = cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.VIDEO_ID)
+                    val dataCol = cursor.getColumnIndex(MediaStore.Video.Thumbnails.DATA)
+
+                    var count = 0
+                    while (cursor.moveToNext() && count < 80 && _isScanning.value) {
+                        val thumbId = cursor.getLong(idCol)
+                        val originalVideoId = cursor.getLong(videoIdCol)
+                        val dataPath = if (dataCol != -1) cursor.getString(dataCol) else null
+
+                        val origUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, originalVideoId)
+                        val originalExists = try {
+                            context.contentResolver.openFileDescriptor(origUri, "r")?.use { true } ?: false
+                        } catch (_: Exception) {
+                            false
+                        }
+
+                        if (!originalExists) {
+                            val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
+                            val file = if (dataPath != null) File(dataPath) else null
+                            val sizeBytes = if (file != null && file.exists()) file.length() else 45_000L
+
+                            list.add(
+                                RecoverItem(
+                                    id = "orphan_vid_thumb_$thumbId",
+                                    name = "Deleted_Video_Thumb_$thumbId.jpg",
+                                    sizeBytes = sizeBytes,
+                                    dateModified = if (file != null && file.exists()) dateFormat.format(Date(file.lastModified())) else "Cached Thumb",
+                                    sourcePath = "MediaStore Video Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
+                                    category = RecoverCategory.VIDEOS,
+                                    tier = RecoverTier.THUMBNAIL_PREVIEW,
+                                    uri = itemUri,
+                                    qualityTag = "Orphan Video Thumbnail (Deleted Video Cache)",
+                                    isSelected = true,
+                                    isRestorable = true
+                                )
+                            )
+                            count++
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) {}
 
         return list
     }
@@ -306,16 +448,24 @@ class StorageRecoverEngine(private val context: Context) {
         val results = mutableListOf<RecoverItem>()
         val outputDir = File(context.cacheDir, "carved_previews").apply { if (!exists()) mkdirs() }
 
-        val externalStorage = Environment.getExternalStorageDirectory() ?: return results
+        val externalStorage = Environment.getExternalStorageDirectory()
 
-        val searchDirs = listOf(
-            File(externalStorage, "DCIM/.thumbnails"),
-            File(externalStorage, "Pictures/.thumbnails"),
-            File(externalStorage, ".thumbnails")
-        )
+        val searchDirs = mutableListOf<File>()
+        if (externalStorage != null) {
+            searchDirs.add(File(externalStorage, "DCIM/.thumbnails"))
+            searchDirs.add(File(externalStorage, "Pictures/.thumbnails"))
+            searchDirs.add(File(externalStorage, ".thumbnails"))
+            searchDirs.add(File(externalStorage, "Movies/.thumbnails"))
+            searchDirs.add(File(externalStorage, "Download/.thumbnails"))
+            searchDirs.add(File(externalStorage, "DCIM/Camera/.thumbnails"))
+        }
+        try {
+            context.externalCacheDirs?.filterNotNull()?.forEach { searchDirs.add(it) }
+            context.getExternalFilesDirs(null)?.filterNotNull()?.forEach { searchDirs.add(it) }
+        } catch (_: Exception) {}
 
         var totalCarved = 0
-        val maxCarvedTotal = 120 // Safe, responsive preview extraction cap
+        val maxCarvedTotal = 150 // Safe, responsive preview extraction cap
 
         for (dir in searchDirs) {
             if (!dir.exists() || !dir.isDirectory) continue
@@ -323,8 +473,31 @@ class StorageRecoverEngine(private val context: Context) {
             for (file in files) {
                 if (totalCarved >= maxCarvedTotal || !_isScanning.value) break
 
+                // If file is a direct thumbnail image in cache, include it
+                if (file.isFile && (file.name.endsWith(".jpg", ignoreCase = true) || file.name.endsWith(".png", ignoreCase = true) || file.name.endsWith(".webp", ignoreCase = true))) {
+                    if (file.length() > 2048) {
+                        results.add(
+                            RecoverItem(
+                                id = "thumb_file_${file.absolutePath.hashCode()}",
+                                name = "Cached_${file.name}",
+                                sizeBytes = file.length(),
+                                dateModified = dateFormat.format(Date(file.lastModified())),
+                                sourcePath = "Thumbnail Cache Directory > ${file.name}",
+                                category = RecoverCategory.PHOTOS,
+                                tier = RecoverTier.THUMBNAIL_PREVIEW,
+                                uri = Uri.fromFile(file),
+                                qualityTag = "Thumbnail Cache Photo",
+                                isSelected = true,
+                                isRestorable = true
+                            )
+                        )
+                        totalCarved++
+                        continue
+                    }
+                }
+
                 val isThumbdataFile = file.name.contains("thumbdata", ignoreCase = true) ||
-                        (file.isFile && file.length() > 200_000 && !file.name.endsWith(".jpg") && !file.name.endsWith(".png"))
+                        (file.isFile && file.length() > 50_000 && !file.name.endsWith(".mp4") && !file.name.endsWith(".apk"))
 
                 if (isThumbdataFile) {
                     val carved = carveJpegsFromSingleFile(file, outputDir, maxCarvedTotal - totalCarved)

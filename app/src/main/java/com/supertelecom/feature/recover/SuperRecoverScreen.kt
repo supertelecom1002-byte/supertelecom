@@ -989,6 +989,8 @@ fun RecoverGalleryGridView(
             it.tier == RecoverTier.THUMBNAIL_PREVIEW ||
             it.id.startsWith("carved_") ||
             it.id.startsWith("trash_") ||
+            it.id.startsWith("orphan_") ||
+            it.id.startsWith("thumb_") ||
             it.sourcePath.contains("thumb", ignoreCase = true) ||
             it.sourcePath.contains("trash", ignoreCase = true)
         }
@@ -1008,10 +1010,10 @@ fun RecoverGalleryGridView(
         }
     }
 
-    // Filter items based on active chip
+    // Filter items based on active chip - STRICT: No fake gallery fallback!
     val filteredList = remember(items.size, activeFilterTag) {
         when (activeFilterTag) {
-            "DELETED_CACHE" -> deletedCacheItems.ifEmpty { items }
+            "DELETED_CACHE" -> deletedCacheItems
             "WHATSAPP_SOCIAL" -> socialItems
             "SAF_SCAN" -> safItems
             else -> items
@@ -1115,21 +1117,73 @@ fun RecoverGalleryGridView(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(20.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.SearchOff,
-                            contentDescription = null,
-                            tint = TextMuted,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF0F172A))
+                            .border(1.dp, CardBorder, RoundedCornerShape(20.dp))
+                            .padding(22.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(CyanAccent.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FolderOpen,
+                                contentDescription = null,
+                                tint = CyanAccent,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(14.dp))
                         Text(
-                            text = if (isHindi) "इस फ़िल्टर में कोई फाइल नहीं मिली" else "No files found in this category",
-                            style = MaterialTheme.typography.bodyMedium.copy(color = TextSecondary)
+                            text = if (isHindi) "क्विक स्कैन में कोई डिलीटेड फाइल नहीं मिली" else "No Deleted Files in Quick Scan",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            ),
+                            textAlign = TextAlign.Center
                         )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = if (isHindi)
+                                "रीसायकल बिन या क्विक कैशे खाली है।\nपूरे फोन के छिपे .thumbnails, WhatsApp .Statuses और SD कार्ड को गहराई से स्कैन करने के लिए नीचे टैप करें:"
+                            else
+                                "Recycle bin and quick cache are empty.\nTo scan all hidden .thumbnails, WhatsApp .Statuses and full storage folders, tap below:",
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = TextSecondary,
+                                fontSize = 12.sp
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = onOpenSaf,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(46.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CyanAccent,
+                                contentColor = BgDark
+                            )
+                        ) {
+                            Icon(Icons.Default.Search, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (isHindi) "पूरा स्टोरेज डीप स्कैन करें (SAF)" else "DEEP SCAN FULL STORAGE (SAF)",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
                     }
                 }
             } else {
