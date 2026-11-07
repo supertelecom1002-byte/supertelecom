@@ -4,11 +4,11 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.os.SystemClock
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -82,6 +83,26 @@ class AppUpdateManager(private val context: Context) {
                 instance ?: AppUpdateManager(context.applicationContext).also { instance = it }
             }
         }
+
+        /**
+         * Computes SHA-256 hexadecimal hash of any local file
+         */
+        fun calculateFileSha256(file: File): String {
+            if (!file.exists() || !file.canRead() || file.length() < 1000L) return ""
+            return try {
+                val digest = MessageDigest.getInstance("SHA-256")
+                FileInputStream(file).use { fis ->
+                    val buffer = ByteArray(64 * 1024)
+                    var n: Int
+                    while (fis.read(buffer).also { n = it } != -1) {
+                        digest.update(buffer, 0, n)
+                    }
+                }
+                digest.digest().joinToString("") { "%02x".format(it) }
+            } catch (_: Exception) {
+                ""
+            }
+        }
     }
 
     /**
@@ -103,6 +124,8 @@ class AppUpdateManager(private val context: Context) {
                     instanceFollowRedirects = true
                     requestMethod = "GET"
                     setRequestProperty("User-Agent", "SuperTelecomAndroid/${BuildConfig.VERSION_NAME}")
+                    setRequestProperty("Cache-Control", "no-cache, no-store")
+                    setRequestProperty("Pragma", "no-cache")
                 }
 
                 if (conn.responseCode == 200) {
@@ -135,13 +158,17 @@ class AppUpdateManager(private val context: Context) {
                         }
                     }
 
-                    val finalDownloadUrl = if (downloadPath.startsWith("https://")) {
+                    var finalDownloadUrl = if (downloadPath.startsWith("https://") || downloadPath.startsWith("http://")) {
                         downloadPath
                     } else if (downloadPath.startsWith("/")) {
                         "$BASE_URL$downloadPath"
                     } else {
                         "$BASE_URL/$downloadPath"
                     }
+
+                    // Append cache-busting query parameter so CDNs and mobile proxies never serve stale cached APK
+                    val separator = if (finalDownloadUrl.contains("?")) "&" else "?"
+                    finalDownloadUrl = "$finalDownloadUrl${separator}v=$remoteVersionCode&_t=${System.currentTimeMillis()}"
 
                     val meta = UpdateMetadata(
                         appName = json.optString("appName", "Super Telecom"),
@@ -165,16 +192,23 @@ class AppUpdateManager(private val context: Context) {
                         if (isUpdateAvailable) {
                             val cachedApk = getTargetApkFile(meta)
                             if (cachedApk.exists() && cachedApk.length() > 1_000_000L) {
-                                _installState.value = UpdateInstallState.ReadyToInstall(cachedApk, meta)
-                                _downloadProgress.value = 1f
-                                _statusMessage.value = "Verified · Ready to install"
+                                val existingHash = calculateFileSha256(cachedApk)
+                                if (meta.sha256.isBlank() || existingHash.equals(meta.sha256, ignoreCase = true)) {
+                                    _installState.value = UpdateInstallState.ReadyToInstall(cachedApk, meta)
+                                    _downloadProgress.value = 1f
+                                    _statusMessage.value = "Verified · Ready to install"
+                                } else {
+                                    // Stale or corrupted file from previous failed run: purge it!
+                                    cachedApk.delete()
+                                    _installState.value = UpdateInstallState.Idle
+                                }
                             }
                         }
 
                         if (manual && !isUpdateAvailable) {
                             Toast.makeText(
                                 context,
-                                "Super Telecom is already up to date (v${BuildConfig.VERSION_NAME})",
+                                "सुपर टेलीकॉम पहले से नवीनतम वर्शन पर है (v${BuildConfig.VERSION_NAME})",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -186,7 +220,7 @@ class AppUpdateManager(private val context: Context) {
                         if (manual) {
                             Toast.makeText(
                                 context,
-                                "Could not connect to update server",
+                                "अपडेट सर्वर से संपर्क नहीं हो सका (HTTP ${conn.responseCode})",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -199,7 +233,7 @@ class AppUpdateManager(private val context: Context) {
                     if (manual) {
                         Toast.makeText(
                             context,
-                            "Update check failed: ${e.message}",
+                            "अपडेट जांच असफल: ${e.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -225,7 +259,7 @@ class AppUpdateManager(private val context: Context) {
         downloadJob?.cancel()
         _isDownloading.value = false
         _downloadProgress.value = 0f
-        _statusMessage.value = "Download cancelled"
+        _statusMessage.value = "डाउनलोड रद्द किया गया"
         _installState.value = UpdateInstallState.Idle
     }
 
@@ -253,21 +287,21 @@ class AppUpdateManager(private val context: Context) {
 
         // If file is already downloaded and verified, launch immediately without re-downloading!
         if (targetApk.exists() && targetApk.length() > 1_000_000L) {
-            _installState.value = UpdateInstallState.ReadyToInstall(targetApk, metadata)
-            launchInstallationFlow(targetApk, activity)
-            return
+            val existingHash = calculateFileSha256(targetApk)
+            if (metadata.sha256.isBlank() || existingHash.equals(metadata.sha256, ignoreCase = true)) {
+                _installState.value = UpdateInstallState.ReadyToInstall(targetApk, metadata)
+                launchInstallationFlow(targetApk, activity)
+                return
+            } else {
+                targetApk.delete()
+            }
         }
 
         if (_isDownloading.value) return
 
-        if (!metadata.downloadUrl.startsWith("https://", ignoreCase = true)) {
-            _statusMessage.value = "Security Error: Update must use HTTPS"
-            return
-        }
-
         _isDownloading.value = true
         _downloadProgress.value = 0f
-        _statusMessage.value = "Connecting to update server..."
+        _statusMessage.value = "अपडेट सर्वर से जुड़ रहा है..."
         _installState.value = UpdateInstallState.Downloading(0f, 0f, metadata.fileSize)
 
         downloadJob = CoroutineScope(Dispatchers.IO).launch {
@@ -276,14 +310,18 @@ class AppUpdateManager(private val context: Context) {
                 var currentUrl = metadata.downloadUrl
                 var conn: HttpURLConnection? = null
                 var redirects = 0
+
                 while (redirects < 5) {
                     val u = URL(currentUrl)
                     val c = (u.openConnection() as HttpURLConnection).apply {
                         connectTimeout = 15000
-                        readTimeout = 30000
+                        readTimeout = 40000
                         instanceFollowRedirects = true
                         requestMethod = "GET"
                         setRequestProperty("User-Agent", "SuperTelecomAndroid/${BuildConfig.VERSION_NAME}")
+                        setRequestProperty("Accept-Encoding", "identity")
+                        setRequestProperty("Cache-Control", "no-cache, no-store")
+                        setRequestProperty("Pragma", "no-cache")
                     }
                     val code = c.responseCode
                     if (code in listOf(301, 302, 303, 307, 308)) {
@@ -298,12 +336,15 @@ class AppUpdateManager(private val context: Context) {
                 }
 
                 if (conn == null || conn.responseCode != 200) {
-                    throw IllegalStateException("Server returned HTTP ${conn?.responseCode ?: -1}")
+                    throw IllegalStateException("सर्वर त्रुटि: HTTP ${conn?.responseCode ?: -1}")
                 }
 
-                val contentLength = conn.contentLength.toLong().let {
-                    if (it > 0) it else metadata.fileSize
+                val headerLength = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    conn.contentLengthLong
+                } else {
+                    conn.contentLength.toLong()
                 }
+                val contentLength = if (headerLength > 0) headerLength else metadata.fileSize
 
                 val updateDir = File(context.cacheDir, "apk_updates")
                 if (!updateDir.exists()) updateDir.mkdirs()
@@ -318,12 +359,15 @@ class AppUpdateManager(private val context: Context) {
                 val outStream = FileOutputStream(tempFile)
                 val digest = MessageDigest.getInstance("SHA-256")
 
-                val buffer = ByteArray(32 * 1024)
+                val buffer = ByteArray(64 * 1024)
                 var bytesRead: Int
                 var totalBytesRead = 0L
+                var lastTime = SystemClock.elapsedRealtime()
+                var bytesSinceLast = 0L
+                var speedMbps = 0f
 
                 withContext(Dispatchers.Main) {
-                    _statusMessage.value = "Downloading update..."
+                    _statusMessage.value = "अपडेट डाउनलोड हो रहा है..."
                 }
 
                 while (inStream.read(buffer).also { bytesRead = it } != -1) {
@@ -337,13 +381,29 @@ class AppUpdateManager(private val context: Context) {
                     outStream.write(buffer, 0, bytesRead)
                     digest.update(buffer, 0, bytesRead)
                     totalBytesRead += bytesRead
+                    bytesSinceLast += bytesRead
 
-                    val progress = if (contentLength > 0) {
-                        (totalBytesRead.toFloat() / contentLength).coerceIn(0f, 1f)
-                    } else 0.5f
+                    val now = SystemClock.elapsedRealtime()
+                    if (now - lastTime >= 400) {
+                        val dt = (now - lastTime) / 1000f
+                        speedMbps = if (dt > 0) (bytesSinceLast * 8f / 1_000_000f) / dt else 0f
+                        lastTime = now
+                        bytesSinceLast = 0L
 
-                    _downloadProgress.value = progress
-                    _installState.value = UpdateInstallState.Downloading(progress, 0f, totalBytesRead)
+                        val progress = if (contentLength > 0) {
+                            (totalBytesRead.toFloat() / contentLength).coerceIn(0f, 1f)
+                        } else 0.5f
+
+                        val readMb = totalBytesRead / (1024f * 1024f)
+                        val totalMb = contentLength / (1024f * 1024f)
+                        val statusText = "डाउनलोड: %.1f MB / %.1f MB (%.1f Mbps)".format(readMb, totalMb, speedMbps)
+
+                        withContext(Dispatchers.Main) {
+                            _downloadProgress.value = progress
+                            _statusMessage.value = statusText
+                            _installState.value = UpdateInstallState.Downloading(progress, speedMbps, totalBytesRead)
+                        }
+                    }
                 }
 
                 outStream.flush()
@@ -352,13 +412,13 @@ class AppUpdateManager(private val context: Context) {
 
                 if (totalBytesRead < 1_000_000L) {
                     tempFile.delete()
-                    throw IllegalStateException("Downloaded file is incomplete (${totalBytesRead} bytes)")
+                    throw IllegalStateException("डाउनलोड अधूरा रह गया (${totalBytesRead} बाइट्स प्राप्त हुए)")
                 }
 
                 val calculatedHash = digest.digest().joinToString("") { "%02x".format(it) }
-                if (metadata.sha256.isNotBlank() && calculatedHash.lowercase() != metadata.sha256.lowercase()) {
+                if (metadata.sha256.isNotBlank() && !calculatedHash.equals(metadata.sha256, ignoreCase = true)) {
                     tempFile.delete()
-                    throw SecurityException("SHA-256 validation failed ($calculatedHash != ${metadata.sha256})")
+                    throw SecurityException("सुरक्षा सत्यापन असफल: SHA-256 मेल नहीं खाया (${calculatedHash.take(8)} != ${metadata.sha256.take(8)})")
                 }
 
                 if (!tempFile.renameTo(finalApkFile)) {
@@ -369,7 +429,7 @@ class AppUpdateManager(private val context: Context) {
                 withContext(Dispatchers.Main) {
                     _isDownloading.value = false
                     _downloadProgress.value = 1f
-                    _statusMessage.value = "Verified · Ready to install"
+                    _statusMessage.value = "सत्यापित · इंस्टॉल करने के लिए तैयार"
                     _installState.value = UpdateInstallState.ReadyToInstall(finalApkFile, metadata)
 
                     launchInstallationFlow(finalApkFile, activity)
@@ -379,8 +439,9 @@ class AppUpdateManager(private val context: Context) {
                 tempFile?.delete()
                 withContext(Dispatchers.Main) {
                     _isDownloading.value = false
-                    _statusMessage.value = "Update error: ${e.localizedMessage}"
-                    _installState.value = UpdateInstallState.Error(e.localizedMessage ?: "Download failed")
+                    val errorMsg = e.localizedMessage ?: "डाउनलोड असफल रहा"
+                    _statusMessage.value = "अपडेट त्रुटि: $errorMsg"
+                    _installState.value = UpdateInstallState.Error(errorMsg)
                 }
             }
         }
@@ -422,6 +483,12 @@ class AppUpdateManager(private val context: Context) {
      */
     fun triggerPackageInstaller(apkFile: File, activity: Activity) {
         try {
+            if (!apkFile.exists() || apkFile.length() < 1_000_000L) {
+                _statusMessage.value = "APK फाइल अमान्य है। कृपया पुनः डाउनलोड करें।"
+                _installState.value = UpdateInstallState.Error("APK फाइल अमान्य है। कृपया पुनः डाउनलोड करें।")
+                return
+            }
+
             val apkUri: Uri = FileProvider.getUriForFile(
                 activity,
                 FILE_PROVIDER_AUTHORITY,
@@ -447,7 +514,8 @@ class AppUpdateManager(private val context: Context) {
             }
 
             activity.startActivity(installIntent)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Toast.makeText(activity, "पैकेज इंस्टॉलर शुरू नहीं हो सका: ${e.message}", Toast.LENGTH_LONG).show()
             triggerBrowserDownloadFallback(activity)
         }
     }
@@ -458,7 +526,12 @@ class AppUpdateManager(private val context: Context) {
     fun downloadViaSystemDownloadManager(metadata: UpdateMetadata) {
         try {
             val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return
-            val request = DownloadManager.Request(Uri.parse(metadata.downloadUrl)).apply {
+            val downloadUrl = if (metadata.downloadUrl.contains("?")) {
+                "${metadata.downloadUrl}&t=${System.currentTimeMillis()}"
+            } else {
+                "${metadata.downloadUrl}?t=${System.currentTimeMillis()}"
+            }
+            val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
                 setTitle("Super Telecom v${metadata.versionName}")
                 setDescription("Official Native Update (${metadata.fileSizeHuman})")
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
@@ -479,7 +552,7 @@ class AppUpdateManager(private val context: Context) {
      */
     fun triggerBrowserDownloadFallback(activity: Activity) {
         try {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/download")).apply {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(BASE_URL + "/SuperTelecom.apk?t=" + System.currentTimeMillis())).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             activity.startActivity(browserIntent)

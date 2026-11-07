@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import android.provider.MediaStore
 import android.util.LruCache
 import android.util.Size
 import com.supertelecom.model.RecoverCategory
@@ -99,6 +100,35 @@ object ThumbnailLoader {
                         bitmap = BitmapFactory.decodeFile(directFile.absolutePath, options)
                     } catch (_: Exception) {}
                 }
+            }
+
+            // Method 5: MediaStore Thumbnail API for orphan thumbnail IDs
+            if (bitmap == null && item.id.startsWith("orphan_thumb_")) {
+                try {
+                    val rawId = item.id.removePrefix("orphan_thumb_").toLongOrNull()
+                    if (rawId != null) {
+                        bitmap = MediaStore.Images.Thumbnails.getThumbnail(
+                            context.contentResolver,
+                            rawId,
+                            MediaStore.Images.Thumbnails.MINI_KIND,
+                            null
+                        )
+                    }
+                } catch (_: Exception) {}
+            }
+
+            if (bitmap == null && item.id.startsWith("orphan_vid_thumb_")) {
+                try {
+                    val rawId = item.id.removePrefix("orphan_vid_thumb_").toLongOrNull()
+                    if (rawId != null) {
+                        bitmap = MediaStore.Video.Thumbnails.getThumbnail(
+                            context.contentResolver,
+                            rawId,
+                            MediaStore.Video.Thumbnails.MINI_KIND,
+                            null
+                        )
+                    }
+                } catch (_: Exception) {}
             }
 
             if (bitmap != null) {

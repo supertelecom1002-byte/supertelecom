@@ -70,7 +70,7 @@ fun SuperRecoverScreen(
 
     var screenMode by remember { mutableStateOf(RecoverScreenMode.DASHBOARD) }
     var activeCategory by remember(initialCategory) { mutableStateOf(initialCategory ?: RecoverCategory.PHOTOS) }
-    var activeFilterTag by remember { mutableStateOf("DELETED_CACHE") }
+    var activeFilterTag by remember { mutableStateOf("ALL") }
 
     var storageStats by remember { mutableStateOf(recoverEngine.getDeviceStorageStats()) }
     val isScanningEngine by recoverEngine.isScanning.collectAsState()
@@ -121,6 +121,7 @@ fun SuperRecoverScreen(
 
     fun startCategoryScan(cat: RecoverCategory) {
         activeCategory = cat
+        activeFilterTag = "ALL"
         if (cat == RecoverCategory.VAULT) {
             coroutineScope.launch {
                 vaultItems.clear()
@@ -991,6 +992,7 @@ fun RecoverGalleryGridView(
             it.id.startsWith("trash_") ||
             it.id.startsWith("orphan_") ||
             it.id.startsWith("thumb_") ||
+            it.id.startsWith("ms_") ||
             it.sourcePath.contains("thumb", ignoreCase = true) ||
             it.sourcePath.contains("trash", ignoreCase = true)
         }
@@ -1006,16 +1008,18 @@ fun RecoverGalleryGridView(
         items.filter {
             it.sourcePath.contains("SAF", ignoreCase = true) ||
             it.sourcePath.contains("Hidden", ignoreCase = true) ||
-            it.sourcePath.contains(".nomedia", ignoreCase = true)
+            it.sourcePath.contains(".nomedia", ignoreCase = true) ||
+            it.sourcePath.contains("Recording", ignoreCase = true) ||
+            it.category == RecoverCategory.DOCUMENTS
         }
     }
 
-    // Filter items based on active chip - STRICT: No fake gallery fallback!
+    // Filter items based on active chip - Default ALL shows all found items
     val filteredList = remember(items.size, activeFilterTag) {
         when (activeFilterTag) {
-            "DELETED_CACHE" -> deletedCacheItems
-            "WHATSAPP_SOCIAL" -> socialItems
-            "SAF_SCAN" -> safItems
+            "DELETED_CACHE" -> deletedCacheItems.ifEmpty { items }
+            "WHATSAPP_SOCIAL" -> socialItems.ifEmpty { items }
+            "SAF_SCAN" -> safItems.ifEmpty { items }
             else -> items
         }
     }
@@ -1084,6 +1088,11 @@ fun RecoverGalleryGridView(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 FilterTabChip(
+                    label = if (isHindi) "🖼️ सभी फाइलें (${items.size})" else "🖼️ All Found (${items.size})",
+                    isSelected = activeFilterTag == "ALL",
+                    onClick = { onFilterTagSelected("ALL") }
+                )
+                FilterTabChip(
                     label = if (isHindi) "🗑️ डिलीट व कैश (${deletedCacheItems.size})" else "🗑️ Deleted & Cache (${deletedCacheItems.size})",
                     isSelected = activeFilterTag == "DELETED_CACHE",
                     onClick = { onFilterTagSelected("DELETED_CACHE") }
@@ -1102,11 +1111,6 @@ fun RecoverGalleryGridView(
                             onOpenSaf()
                         }
                     }
-                )
-                FilterTabChip(
-                    label = if (isHindi) "🖼️ सभी फाइलें (${items.size})" else "🖼️ All Found (${items.size})",
-                    isSelected = activeFilterTag == "ALL",
-                    onClick = { onFilterTagSelected("ALL") }
                 )
             }
 

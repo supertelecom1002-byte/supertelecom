@@ -820,7 +820,85 @@ class StorageRecoverEngine(private val context: Context) {
                 )
             }
         }
-        return list.sortedByDescending { it.dateModified }
+
+        try {
+            val vaultDir = File(context.getExternalFilesDir(null), "RecoveredVault")
+            if (vaultDir.exists() && vaultDir.isDirectory) {
+                vaultDir.listFiles()?.forEach { f ->
+                    if (!f.isDirectory) {
+                        val cat = getCategoryForExtension(f.extension) ?: RecoverCategory.DOCUMENTS
+                        list.add(
+                            RecoverItem(
+                                id = "vault_${f.absolutePath.hashCode()}",
+                                name = f.name,
+                                sizeBytes = f.length(),
+                                dateModified = dateFormat.format(Date(f.lastModified())),
+                                sourcePath = "Recovered Vault > ${f.name}",
+                                category = cat,
+                                tier = RecoverTier.RESTORABLE_ORIGINAL,
+                                uri = Uri.fromFile(f),
+                                qualityTag = "Safely Restored in Vault",
+                                isSelected = false,
+                                isRestorable = true
+                            )
+                        )
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        // Query MediaStore directly for Android 10+ inserted photos/videos in SuperTelecom_Recovered
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                val collections = listOf(
+                    Pair(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, RecoverCategory.PHOTOS),
+                    Pair(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, RecoverCategory.VIDEOS),
+                    Pair(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, RecoverCategory.AUDIO_RECORDINGS)
+                )
+                for ((uri, cat) in collections) {
+                    val projection = arrayOf(
+                        MediaStore.MediaColumns._ID,
+                        MediaStore.MediaColumns.DISPLAY_NAME,
+                        MediaStore.MediaColumns.SIZE,
+                        MediaStore.MediaColumns.DATE_MODIFIED
+                    )
+                    val bundle = Bundle().apply {
+                        putString(ContentResolver.QUERY_ARG_SQL_SELECTION, "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?")
+                        putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, arrayOf("%SuperTelecom_Recovered%"))
+                    }
+                    context.contentResolver.query(uri, projection, bundle, null)?.use { cursor ->
+                        val idCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
+                        val nameCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+                        val sizeCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
+                        val dateCol = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
+                        while (cursor.moveToNext()) {
+                            val id = cursor.getLong(idCol)
+                            val name = cursor.getString(nameCol) ?: "Media_$id"
+                            val size = cursor.getLong(sizeCol)
+                            val dateSec = cursor.getLong(dateCol)
+                            val contentUri = ContentUris.withAppendedId(uri, id)
+                            list.add(
+                                RecoverItem(
+                                    id = "vault_ms_${cat.name.lowercase()}_$id",
+                                    name = name,
+                                    sizeBytes = size,
+                                    dateModified = dateFormat.format(Date(dateSec * 1000L)),
+                                    sourcePath = "Phone Gallery > SuperTelecom_Recovered",
+                                    category = cat,
+                                    tier = RecoverTier.RESTORABLE_ORIGINAL,
+                                    uri = contentUri,
+                                    qualityTag = "Restored to Phone Gallery",
+                                    isSelected = false,
+                                    isRestorable = true
+                                )
+                            )
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
+        return list.distinctBy { it.id }.sortedByDescending { it.dateModified }
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -925,7 +1003,7 @@ class StorageRecoverEngine(private val context: Context) {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // LAYER 4: GUARANTEED NATIVE GALLERY RESTORE
+    // LAYER 4: GUARANTEED NATIVE GALLERY RESTORE (SCOPED STORAGE COMPLIANT)
     // ─────────────────────────────────────────────────────────────────────────────
 
     suspend fun restoreSelectedItems(
@@ -942,7 +1020,6 @@ class StorageRecoverEngine(private val context: Context) {
             }
 
             try {
-                // 1. Determine Public Destination Directory
                 val (publicDirType, relFolder) = when (item.category) {
                     RecoverCategory.PHOTOS -> Pair(Environment.DIRECTORY_DCIM, "DCIM/SuperTelecom_Recovered")
                     RecoverCategory.VIDEOS -> Pair(Environment.DIRECTORY_MOVIES, "Movies/SuperTelecom_Recovered")
@@ -951,81 +1028,138 @@ class StorageRecoverEngine(private val context: Context) {
                 }
                 targetDisplayPath = relFolder
 
-                val targetDir = File(
-                    Environment.getExternalStoragePublicDirectory(publicDirType),
-                    "SuperTelecom_Recovered"
-                ).apply { if (!exists()) mkdirs() }
+                // Safe clean file name and extension
+                val rawName = if (item.name.isNotBlank()) item.name else "Recovered_${System.currentTimeMillis()}"
+                val ext = rawName.substringAfterLast('.', "")
+                val cleanExt = when {
+                    ext.isNotEmpty() -> ext
+                    item.category == RecoverCategory.PHOTOS -> "jpg"
+                    item.category == RecoverCategory.VIDEOS -> "mp4"
+                    item.category == RecoverCategory.AUDIO_RECORDINGS -> "mp3"
+                    else -> "dat"
+                }
+                val baseName = if (ext.isNotEmpty()) rawName.substringBeforeLast('.') else rawName
+                val destFileName = "$baseName.$cleanExt"
 
-                // Safe non-destructive collision renaming
-                var destFile = File(targetDir, item.name)
-                if (destFile.exists()) {
-                    val baseName = destFile.nameWithoutExtension
-                    val ext = if (destFile.extension.isNotEmpty()) ".${destFile.extension}" else ""
-                    var counter = 1
-                    while (destFile.exists()) {
-                        destFile = File(targetDir, "$baseName ($counter)$ext")
-                        counter++
+                val mimeType = when (cleanExt.lowercase()) {
+                    "jpg", "jpeg" -> "image/jpeg"
+                    "png" -> "image/png"
+                    "webp" -> "image/webp"
+                    "heic" -> "image/heic"
+                    "mp4" -> "video/mp4"
+                    "mkv" -> "video/x-matroska"
+                    "3gp" -> "video/3gpp"
+                    "mp3" -> "audio/mpeg"
+                    "m4a" -> "audio/mp4"
+                    "wav" -> "audio/wav"
+                    "amr" -> "audio/amr"
+                    "pdf" -> "application/pdf"
+                    "doc", "docx" -> "application/msword"
+                    else -> "application/octet-stream"
+                }
+
+                // Read input byte stream safely from source (content:// or file://)
+                val inBytes: ByteArray? = try {
+                    if (item.uri.scheme == ContentResolver.SCHEME_FILE && item.uri.path != null) {
+                        val f = File(item.uri.path!!)
+                        if (f.exists() && f.canRead()) f.readBytes() else context.contentResolver.openInputStream(item.uri)?.use { it.readBytes() }
+                    } else {
+                        context.contentResolver.openInputStream(item.uri)?.use { it.readBytes() }
                     }
+                } catch (_: Exception) {
+                    null
                 }
 
-                // 2. Read real byte stream
-                val inStream = if (item.uri.scheme == ContentResolver.SCHEME_FILE && item.uri.path != null) {
-                    val f = File(item.uri.path!!)
-                    if (f.exists()) f.inputStream() else context.contentResolver.openInputStream(item.uri)
-                } else {
-                    context.contentResolver.openInputStream(item.uri)
-                }
-
-                if (inStream == null) {
+                if (inBytes == null || inBytes.isEmpty()) {
                     failedCount++
                     continue
                 }
 
-                FileOutputStream(destFile).use { out ->
-                    inStream.copyTo(out, bufferSize = 64 * 1024)
-                }
-                inStream.close()
+                var restoredSuccessfully = false
 
-                // 3. Verify written file has positive size
-                if (destFile.exists() && destFile.length() > 0) {
-                    successCount++
-
-                    // 4. Index into MediaStore so it immediately appears in phone's native Gallery
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        val mediaUri = when (item.category) {
+                // ── STRATEGY 1: Android 10+ (API 29+) MediaStore Insert (Guaranteed Gallery Visibility) ──
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    try {
+                        val mediaCollection = when (item.category) {
                             RecoverCategory.PHOTOS -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                             RecoverCategory.VIDEOS -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                             RecoverCategory.AUDIO_RECORDINGS -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                             else -> MediaStore.Downloads.EXTERNAL_CONTENT_URI
                         }
 
-                        val values = ContentValues().apply {
-                            put(MediaStore.MediaColumns.DISPLAY_NAME, destFile.name)
-                            put(MediaStore.MediaColumns.MIME_TYPE, when (item.category) {
-                                RecoverCategory.PHOTOS -> "image/jpeg"
-                                RecoverCategory.VIDEOS -> "video/mp4"
-                                RecoverCategory.AUDIO_RECORDINGS -> "audio/mp4"
-                                else -> "application/octet-stream"
-                            })
+                        val contentValues = ContentValues().apply {
+                            put(MediaStore.MediaColumns.DISPLAY_NAME, destFileName)
+                            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
                             put(MediaStore.MediaColumns.RELATIVE_PATH, relFolder)
-                            put(MediaStore.MediaColumns.IS_PENDING, 0)
+                            put(MediaStore.MediaColumns.IS_PENDING, 1)
                         }
-                        try {
-                            context.contentResolver.insert(mediaUri, values)
-                        } catch (_: Exception) {}
-                    }
 
-                    // 5. Explicit MediaScanner notification
-                    try {
-                        MediaScannerConnection.scanFile(
-                            context,
-                            arrayOf(destFile.absolutePath),
-                            null,
-                            null
-                        )
+                        val insertUri = context.contentResolver.insert(mediaCollection, contentValues)
+                        if (insertUri != null) {
+                            context.contentResolver.openOutputStream(insertUri)?.use { out ->
+                                out.write(inBytes)
+                                out.flush()
+                            }
+
+                            contentValues.clear()
+                            contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                            context.contentResolver.update(insertUri, contentValues, null, null)
+
+                            restoredSuccessfully = true
+                        }
                     } catch (_: Exception) {}
+                }
+
+                // ── STRATEGY 2: Direct File System Fallback (For Android 9 or SD Card) ──
+                if (!restoredSuccessfully) {
+                    try {
+                        val targetDir = File(
+                            Environment.getExternalStoragePublicDirectory(publicDirType),
+                            "SuperTelecom_Recovered"
+                        ).apply { if (!exists()) mkdirs() }
+
+                        var destFile = File(targetDir, destFileName)
+                        var counter = 1
+                        while (destFile.exists()) {
+                            destFile = File(targetDir, "$baseName ($counter).$cleanExt")
+                            counter++
+                        }
+
+                        destFile.outputStream().use { out ->
+                            out.write(inBytes)
+                            out.flush()
+                        }
+
+                        if (destFile.exists() && destFile.length() > 0) {
+                            MediaScannerConnection.scanFile(
+                                context,
+                                arrayOf(destFile.absolutePath),
+                                arrayOf(mimeType),
+                                null
+                            )
+                            restoredSuccessfully = true
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                // ── STRATEGY 3: App Private Vault Fallback (Guaranteed to always succeed) ──
+                if (!restoredSuccessfully) {
+                    try {
+                        val vaultDir = File(context.getExternalFilesDir(null), "RecoveredVault").apply { if (!exists()) mkdirs() }
+                        val vaultFile = File(vaultDir, destFileName)
+                        vaultFile.outputStream().use { out ->
+                            out.write(inBytes)
+                            out.flush()
+                        }
+                        if (vaultFile.exists() && vaultFile.length() > 0) {
+                            restoredSuccessfully = true
+                        }
+                    } catch (_: Exception) {}
+                }
+
+                if (restoredSuccessfully) {
+                    successCount++
                 } else {
-                    destFile.delete()
                     failedCount++
                 }
 

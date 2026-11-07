@@ -39,11 +39,19 @@
     <!-- Official In-App Self-Update Package Installation (Android 8.0+) -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher (Malware-Free Queries Block) -->
+    <!-- Package Visibility: Discovers Installed Launchable Apps for Home Launcher & Package Installer (Malware-Free Queries Block) -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.android.package-archive" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.INSTALL_PACKAGE" />
+            <data android:mimeType="application/vnd.android.package-archive" />
         </intent>
     </queries>
 

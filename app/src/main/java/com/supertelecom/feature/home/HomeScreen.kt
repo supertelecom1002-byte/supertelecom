@@ -293,6 +293,70 @@ fun HomeScreen(
                                     )
                                 }
                             }
+                            is UpdateInstallState.Error -> {
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(Color(0xFF331515))
+                                            .border(1.dp, Color(0xFFEF4444), RoundedCornerShape(8.dp))
+                                            .padding(10.dp)
+                                    ) {
+                                        Text(
+                                            text = "⚠️ " + state.message,
+                                            style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFFCA5A5), fontSize = 11.sp)
+                                        )
+                                    }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                if (activity != null) {
+                                                    updateManager.downloadAndInstallUpdate(meta, activity)
+                                                }
+                                            },
+                                            modifier = Modifier.weight(1f).height(44.dp),
+                                            shape = RoundedCornerShape(8.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark)
+                                        ) {
+                                            Text(
+                                                text = if (isHindi) "फिर से कोशिश करें" else "Retry",
+                                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                            )
+                                        }
+                                        OutlinedButton(
+                                            onClick = {
+                                                if (activity != null) {
+                                                    updateManager.triggerBrowserDownloadFallback(activity)
+                                                }
+                                            },
+                                            modifier = Modifier.weight(1f).height(44.dp),
+                                            shape = RoundedCornerShape(8.dp),
+                                            colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary),
+                                            border = androidx.compose.foundation.BorderStroke(1.dp, CardBorder)
+                                        ) {
+                                            Text(
+                                                text = if (isHindi) "ब्राउज़र से डाउनलोड" else "Browser",
+                                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = if (isHindi) "सिस्टम डाउनलोडर से डाउनलोड करें" else "Or download via System Downloader",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            color = CyanAccent,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        modifier = Modifier.clickable {
+                                            updateManager.downloadViaSystemDownloadManager(meta)
+                                        }
+                                    )
+                                }
+                            }
                             else -> {
                                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Button(
