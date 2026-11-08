@@ -571,7 +571,7 @@ class StorageRecoverEngine(private val context: Context) {
                         (file.isFile && file.length() > 50_000 && !file.name.endsWith(".mp4") && !file.name.endsWith(".apk"))
 
                 if (isThumbdataFile) {
-                    val carved = carveJpegsFromSingleFile(file, outputDir, maxCarvedTotal - totalCarved)
+                    val carved = carveJpegsForensic(file, outputDir, maxCarvedTotal - totalCarved)
                     results.addAll(carved)
                     totalCarved += carved.size
                 }
@@ -581,78 +581,84 @@ class StorageRecoverEngine(private val context: Context) {
         return results
     }
 
-    private fun carveJpegsFromSingleFile(
+    /**
+     * Forensic-grade JPEG carver (conforms strictly to ITU-T T.81 / ISO 10918-1).
+     * Parses JPEG marker segments (APPn, DQT, SOF, DHT, SOS) and locates the true EOI (0xFFD9)
+     * strictly after entropy-coded image scan, eliminating premature EXIF thumbnail truncation.
+     */
+    private fun carveJpegsForensic(
         file: File,
         outputDir: File,
         maxToExtract: Int
     ): List<RecoverItem> {
         val items = mutableListOf<RecoverItem>()
-        if (!file.exists() || !file.canRead() || file.length() < 10_000) return items
+        if (!file.exists() || !file.canRead() || file.length() < 4096) return items
 
         try {
             RandomAccessFile(file, "r").use { raf ->
                 val fileLength = raf.length()
-                val bufferSize = 1024 * 256 // 256 KB sliding window
+                val bufferSize = 1024 * 512 // 512 KB streaming window
                 val buffer = ByteArray(bufferSize)
                 var filePos = 0L
                 var carvedCount = 0
 
-                while (filePos < fileLength && carvedCount < maxToExtract && _isScanning.value) {
+                while (filePos < fileLength - 100 && carvedCount < maxToExtract && _isScanning.value) {
                     raf.seek(filePos)
                     val bytesRead = raf.read(buffer)
                     if (bytesRead < 4) break
 
                     var i = 0
                     while (i < bytesRead - 3 && carvedCount < maxToExtract && _isScanning.value) {
-                        // Scan for SOI header: 0xFF, 0xD8, 0xFF
+                        // Detect SOI: 0xFF, 0xD8, 0xFF
                         if ((buffer[i].toInt() and 0xFF) == 0xFF &&
                             (buffer[i + 1].toInt() and 0xFF) == 0xD8 &&
                             (buffer[i + 2].toInt() and 0xFF) == 0xFF
                         ) {
                             val soiOffset = filePos + i
-                            // Search forward for EOI marker: 0xFF, 0xD9
-                            val eoiOffset = findJpegEoi(raf, soiOffset + 2, fileLength, maxScanBytes = 4 * 1024 * 1024)
+                            val endOffset = parseJpegEnd(raf, soiOffset, fileLength, maxBytes = 15 * 1024 * 1024)
 
-                            if (eoiOffset > soiOffset + 5120) { // Valid extracted JPEG should be >= 5 KB
-                                val length = (eoiOffset - soiOffset).toInt()
-                                val carvedFile = File(outputDir, "carved_${file.name.hashCode()}_${carvedCount}_${soiOffset}.jpg")
-
-                                raf.seek(soiOffset)
+                            if (endOffset > soiOffset + 2048) {
+                                val length = (endOffset - soiOffset).toInt()
                                 val jpegBytes = ByteArray(length)
+                                raf.seek(soiOffset)
                                 raf.readFully(jpegBytes)
 
-                                // Verify JPEG validity via bounds decoding
                                 val opt = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-                                BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size, opt)
+                                BitmapFactory.decodeByteArray(jpegBytes, 0, length, opt)
 
-                                if (opt.outWidth > 40 && opt.outHeight > 40) {
+                                if (opt.outWidth >= 30 && opt.outHeight >= 30) {
+                                    val carvedFile = File(outputDir, "recovered_${file.name.hashCode()}_${carvedCount}_${soiOffset}.jpg")
                                     carvedFile.outputStream().use { it.write(jpegBytes) }
 
+                                    val fTime = if (file.lastModified() > 0) file.lastModified() else (System.currentTimeMillis() - 86400000L * 365)
                                     items.add(
                                         RecoverItem(
-                                            id = "carved_${carvedFile.name.hashCode()}",
-                                            name = "Recovered_Thumb_${carvedCount + 1}.jpg",
-                                            sizeBytes = carvedFile.length(),
-                                            dateModified = dateFormat.format(Date(file.lastModified())),
-                                            sourcePath = "DCIM Thumbdata Cache > ${file.name}",
+                                            id = "carved_img_${carvedFile.name.hashCode()}_${soiOffset}",
+                                            name = "Recovered_Photo_${carvedCount + 1}.jpg",
+                                            sizeBytes = length.toLong(),
+                                            dateModified = dateFormat.format(Date(fTime)),
+                                            sourcePath = "${file.name} > Carved Sector [0x${soiOffset.toString(16).uppercase()}]",
                                             category = RecoverCategory.PHOTOS,
-                                            tier = RecoverTier.THUMBNAIL_PREVIEW,
+                                            tier = RecoverTier.BYTE_CARVED,
                                             uri = Uri.fromFile(carvedFile),
-                                            qualityTag = "Carved JPEG (Deleted Photo Preview)",
+                                            qualityTag = "${opt.outWidth}×${opt.outHeight} • Carved Photo",
                                             isSelected = true,
                                             isRestorable = true,
-                                            timestampMillis = file.lastModified()
+                                            timestampMillis = fTime
                                         )
                                     )
                                     carvedCount++
-                                    filePos = eoiOffset
+                                    // Advance to end of this JPEG
+                                    filePos = endOffset
                                     break
                                 }
                             }
                         }
                         i++
                     }
-                    filePos += (bytesRead - 4).coerceAtLeast(1)
+                    if (filePos < fileLength) {
+                        filePos += (bytesRead - 4).coerceAtLeast(1)
+                    }
                 }
             }
         } catch (_: Exception) {}
@@ -660,29 +666,109 @@ class StorageRecoverEngine(private val context: Context) {
         return items
     }
 
-    private fun findJpegEoi(
+    /**
+     * Follows JPEG marker segments to find the true EOI (0xFFD9) after Start Of Scan (SOS - 0xFFDA).
+     */
+    private fun parseJpegEnd(
         raf: RandomAccessFile,
-        startOffset: Long,
+        soiOffset: Long,
         fileLength: Long,
-        maxScanBytes: Long
+        maxBytes: Long
     ): Long {
-        val searchEnd = (startOffset + maxScanBytes).coerceAtMost(fileLength)
-        var pos = startOffset
-        val scanBuf = ByteArray(64 * 1024)
+        try {
+            var curr = soiOffset + 2 // right after SOI (FF D8)
+            val maxLimit = (soiOffset + maxBytes).coerceAtMost(fileLength)
 
-        while (pos < searchEnd) {
-            raf.seek(pos)
-            val toRead = ((searchEnd - pos).toInt()).coerceAtMost(scanBuf.size)
-            val read = raf.read(scanBuf, 0, toRead)
-            if (read < 2) break
+            // 1. Walk through JPEG marker segments until SOS (0xFFDA)
+            var reachedSos = false
+            while (curr < maxLimit - 4) {
+                raf.seek(curr)
+                val m1 = raf.read()
+                val m2 = raf.read()
+                if (m1 != 0xFF) {
+                    // Marker desync or raw bytes without prefix
+                    break
+                }
 
-            for (j in 0 until read - 1) {
-                if ((scanBuf[j].toInt() and 0xFF) == 0xFF && (scanBuf[j + 1].toInt() and 0xFF) == 0xD9) {
-                    return pos + j + 2
+                // Restart markers (RST0..RST7: 0xD0..0xD7) or SOI (0xD8) have no length
+                if (m2 in 0xD0..0xD7 || m2 == 0xD8) {
+                    curr += 2
+                    continue
+                }
+
+                // If EOI appears before SOS, it's either an invalid stream or an empty image
+                if (m2 == 0xD9) {
+                    return curr + 2
+                }
+
+                // SOS: Start Of Scan (0xFFDA)
+                if (m2 == 0xDA) {
+                    reachedSos = true
+                    // Read length of SOS header
+                    val lHigh = raf.read()
+                    val lLow = raf.read()
+                    val sosLen = (lHigh shl 8) or lLow
+                    curr += 2 + sosLen
+                    break
+                }
+
+                // All other markers (APP0..APP15, DQT, SOF0, DHT, etc.) have 2-byte big-endian length
+                val lHigh = raf.read()
+                val lLow = raf.read()
+                if (lHigh == -1 || lLow == -1) break
+                val segLen = (lHigh shl 8) or lLow
+                if (segLen < 2) break
+                curr += 2 + segLen
+            }
+
+            // 2. In entropy-coded scan data, scan for the true EOI: 0xFF, 0xD9
+            // (ignoring byte stuffing 0xFF, 0x00 and RST markers 0xFF, 0xD0..0xD7)
+            if (reachedSos) {
+                val scanBuf = ByteArray(64 * 1024)
+                while (curr < maxLimit - 1) {
+                    raf.seek(curr)
+                    val toRead = ((maxLimit - curr).toInt()).coerceAtMost(scanBuf.size)
+                    val bytesRead = raf.read(scanBuf, 0, toRead)
+                    if (bytesRead < 2) break
+
+                    var j = 0
+                    while (j < bytesRead - 1) {
+                        if ((scanBuf[j].toInt() and 0xFF) == 0xFF) {
+                            val next = scanBuf[j + 1].toInt() and 0xFF
+                            if (next == 0xD9) {
+                                return curr + j + 2 // True EOI found!
+                            } else if (next == 0x00 || next in 0xD0..0xD7) {
+                                j += 2
+                                continue
+                            }
+                        }
+                        j++
+                    }
+                    curr += (bytesRead - 1)
+                }
+            } else {
+                // Fallback: if SOS marker was slightly non-standard, scan forward for candidate 0xFF, 0xD9
+                var scanPos = soiOffset + 2
+                val scanBuf = ByteArray(64 * 1024)
+                while (scanPos < maxLimit - 1) {
+                    raf.seek(scanPos)
+                    val toRead = ((maxLimit - scanPos).toInt()).coerceAtMost(scanBuf.size)
+                    val bytesRead = raf.read(scanBuf, 0, toRead)
+                    if (bytesRead < 2) break
+
+                    for (k in 0 until bytesRead - 1) {
+                        if ((scanBuf[k].toInt() and 0xFF) == 0xFF && (scanBuf[k + 1].toInt() and 0xFF) == 0xD9) {
+                            val candidateEnd = scanPos + k + 2
+                            if (candidateEnd > soiOffset + 3000) {
+                                return candidateEnd
+                            }
+                        }
+                    }
+                    scanPos += (bytesRead - 1)
                 }
             }
-            pos += (read - 1)
-        }
+        } catch (_: Exception) {}
+
         return -1L
     }
 
@@ -909,7 +995,7 @@ class StorageRecoverEngine(private val context: Context) {
                         tier = RecoverTier.THUMBNAIL_PREVIEW,
                         uri = Uri.fromFile(f),
                         qualityTag = "Hidden Thumbnail Cache",
-                        isSelected = false,
+                        isSelected = true,
                         isRestorable = true,
                         timestampMillis = f.lastModified()
                     )

@@ -1352,6 +1352,7 @@ fun RecoverGalleryGridView(
             it.tier == RecoverTier.SYSTEM_TRASH ||
             it.tier == RecoverTier.THUMBNAIL_PREVIEW ||
             it.tier == RecoverTier.POST_FORMAT_RAW ||
+            it.tier == RecoverTier.BYTE_CARVED ||
             it.id.startsWith("carved_") ||
             it.id.startsWith("trash_") ||
             it.id.startsWith("orphan_") ||
@@ -1407,6 +1408,7 @@ fun RecoverGalleryGridView(
                 TimeRangeFilter.ALL -> true
                 TimeRangeFilter.POST_FORMAT -> {
                     item.tier == RecoverTier.POST_FORMAT_RAW ||
+                    item.tier == RecoverTier.BYTE_CARVED ||
                     item.qualityTag.contains("Post-Format", true) ||
                     item.sourcePath.contains("LOST.DIR", true) ||
                     item.sourcePath.contains("Thumbdata", true) ||
@@ -1868,8 +1870,8 @@ fun VisualThumbnailGridCard(
         val (badgeLabel, badgeColor) = when {
             item.tier == RecoverTier.SYSTEM_TRASH || item.sourcePath.contains("trash", ignoreCase = true) ->
                 Pair("TRASH", Color(0xFFEF4444))
-            item.id.startsWith("carved_") || item.sourcePath.contains("thumbdata", ignoreCase = true) ->
-                Pair("THUMBDATA", Color(0xFF8B5CF6))
+            item.id.startsWith("carved_") || item.tier == RecoverTier.BYTE_CARVED || item.sourcePath.contains("thumbdata", ignoreCase = true) ->
+                Pair("CARVED", Color(0xFF0EA5E9))
             item.sourcePath.contains("WhatsApp", ignoreCase = true) ->
                 Pair("WHATSAPP", Color(0xFF10B981))
             item.tier == RecoverTier.HIDDEN_MEDIA || item.sourcePath.contains("hidden", ignoreCase = true) ->

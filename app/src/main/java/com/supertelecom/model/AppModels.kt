@@ -146,6 +146,13 @@ enum class RecoverTier(
         "P. फॉर्मेट के बाद की फाइल",
         "Raw unlinked cluster files carved from LOST.DIR, formatted partitions, and thumbdata",
         0xFF0EA5E9 // Sky Blue
+    ),
+    BYTE_CARVED(
+        "H",
+        "H. Byte Carved",
+        "H. डीप बाइनरी कार्व्ड",
+        "Forensically carved photos from .thumbdata and raw storage blocks",
+        0xFF06B6D4 // Cyan
     )
 }
 
