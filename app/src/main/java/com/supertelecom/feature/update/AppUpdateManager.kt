@@ -262,6 +262,10 @@ class AppUpdateManager(private val context: Context) {
             if (apk.exists()) apk.delete()
             val oldCache = File(File(context.cacheDir, "apk_updates"), "SuperTelecom-v${metadata.versionName}.apk")
             if (oldCache.exists()) oldCache.delete()
+            val tmp1 = File(apk.parentFile, "SuperTelecom-v${metadata.versionName}.tmp")
+            if (tmp1.exists()) tmp1.delete()
+            val tmp2 = File(File(context.cacheDir, "apk_updates"), "SuperTelecom-v${metadata.versionName}.tmp")
+            if (tmp2.exists()) tmp2.delete()
         } catch (_: Exception) {}
         _installState.value = UpdateInstallState.Idle
         _downloadProgress.value = 0f
@@ -296,20 +300,24 @@ class AppUpdateManager(private val context: Context) {
     }
 
     /**
-     * Downloads update APK directly into internal cache, verifies SHA-256, and launches PackageInstaller
+     * Downloads update APK directly, verifies SHA-256, and launches PackageInstaller
      */
-    fun downloadAndInstallUpdate(metadata: UpdateMetadata, activity: Activity) {
+    fun downloadAndInstallUpdate(metadata: UpdateMetadata, activity: Activity, forceRedownload: Boolean = false) {
         val targetApk = getTargetApkFile(metadata)
 
-        // If file is already downloaded and verified, launch immediately without re-downloading!
-        if (targetApk.exists() && targetApk.length() > 1_000_000L) {
-            val existingHash = calculateFileSha256(targetApk)
-            if (metadata.sha256.isBlank() || existingHash.equals(metadata.sha256, ignoreCase = true)) {
-                _installState.value = UpdateInstallState.ReadyToInstall(targetApk, metadata)
-                launchInstallationFlow(targetApk, activity)
-                return
-            } else {
-                targetApk.delete()
+        if (forceRedownload) {
+            purgeCachedUpdate(metadata)
+        } else {
+            // If file is already downloaded and verified, launch immediately without re-downloading!
+            if (targetApk.exists() && targetApk.length() > 1_000_000L) {
+                val existingHash = calculateFileSha256(targetApk)
+                if (metadata.sha256.isBlank() || existingHash.equals(metadata.sha256, ignoreCase = true)) {
+                    _installState.value = UpdateInstallState.ReadyToInstall(targetApk, metadata)
+                    launchInstallationFlow(targetApk, activity)
+                    return
+                } else {
+                    targetApk.delete()
+                }
             }
         }
 
@@ -362,11 +370,11 @@ class AppUpdateManager(private val context: Context) {
                 }
                 val contentLength = if (headerLength > 0) headerLength else metadata.fileSize
 
-                val updateDir = File(context.cacheDir, "apk_updates")
+                val updateDir = targetApk.parentFile ?: context.cacheDir
                 if (!updateDir.exists()) updateDir.mkdirs()
 
                 tempFile = File(updateDir, "SuperTelecom-v${metadata.versionName}.tmp")
-                val finalApkFile = File(updateDir, "SuperTelecom-v${metadata.versionName}.apk")
+                val finalApkFile = targetApk
 
                 if (tempFile.exists()) tempFile.delete()
                 if (finalApkFile.exists()) finalApkFile.delete()
@@ -441,6 +449,20 @@ class AppUpdateManager(private val context: Context) {
                     tempFile.copyTo(finalApkFile, overwrite = true)
                     tempFile.delete()
                 }
+
+                try {
+                    finalApkFile.setReadable(true, false)
+                } catch (_: Exception) {}
+
+                // Also make a public Downloads copy so user has immediate access from Files/Downloads app
+                try {
+                    val publicDownloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    if (publicDownloadsDir.exists() || publicDownloadsDir.mkdirs()) {
+                        val pubApk = File(publicDownloadsDir, "SuperTelecom-v${metadata.versionName}.apk")
+                        finalApkFile.copyTo(pubApk, overwrite = true)
+                        pubApk.setReadable(true, false)
+                    }
+                } catch (_: Exception) {}
 
                 withContext(Dispatchers.Main) {
                     _isDownloading.value = false

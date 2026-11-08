@@ -60,7 +60,7 @@ const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 
 const SEO_TITLE = "Super Telecom Native Android App — Super Transfer, Super Recover & Super Launcher | 100% Free APK";
 const SEO_DESC =
-  "Official Super Telecom Native Android App (v3.4.0, Target SDK 34). 100% Free, zero ads, Privacy & Your Data focused. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
+  "Official Super Telecom Native Android App (v3.11.0, Target SDK 34). 100% Free, zero ads, Privacy & Your Data focused. Super Transfer (Wi-Fi Direct P2P), Super Recover (honest Scoped Storage recovery), and Super Launcher (4 themes with 1-tap restore).";
 const CANONICAL_URL = `${SITE_URL}/app`;
 
 export const Route = createFileRoute("/app")({
@@ -1044,8 +1044,8 @@ function AppShowcasePage() {
                 </p>
                 <p className="text-slate-300 leading-relaxed text-[11px]">
                   {isHindi
-                    ? "यदि फोन पर पहले से पुराना ऐप इंस्टॉल है और नया अपडेट इंस्टॉल नहीं हो रहा (या 'App not installed' आ रहा है), तो पहले फोन से पुराना ऐप अनइंस्टॉल (Delete) करें, फिर यह नया v3.4.0 APK इंस्टॉल करें। Android सुरक्षा नियमों के कारण अलग-अलग बिल्ड सिग्नेचर के बीच क्लीन री-इंस्टॉल अनिवार्य होता है।"
-                    : "If an older app version is already on your phone and will not update (or shows 'App not installed'), please uninstall the older version first, then install this clean v3.4.0 release. Android security requires a clean install when upgrading across major releases."}
+                    ? "यदि फोन पर पहले से पुराना ऐप इंस्टॉल है और नया अपडेट इंस्टॉल नहीं हो रहा (या 'App not installed' आ रहा है), तो पहले फोन से पुराना ऐप अनइंस्टॉल (Delete) करें, फिर यह नया v3.11.0 APK इंस्टॉल करें। Android सुरक्षा नियमों के कारण अलग-अलग बिल्ड सिग्नेचर के बीच क्लीन री-इंस्टॉल अनिवार्य होता है।"
+                    : "If an older app version is already on your phone and will not update (or shows 'App not installed'), please uninstall the older version first, then install this clean v3.11.0 release. Android security requires a clean install when upgrading across major releases."}
                 </p>
               </div>
             </div>

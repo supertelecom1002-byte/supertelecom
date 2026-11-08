@@ -139,8 +139,24 @@ enum class RecoverTier(
         "G. अनुपलब्ध फाइल",
         "Unreadable or permanently purged entries that cannot be restored",
         0xFF64748B // Slate
+    ),
+    POST_FORMAT_RAW(
+        "P",
+        "P. Post-Format Remnant",
+        "P. फॉर्मेट के बाद की फाइल",
+        "Raw unlinked cluster files carved from LOST.DIR, formatted partitions, and thumbdata",
+        0xFF0EA5E9 // Sky Blue
     )
 }
+
+data class RecoverSettings(
+    val postFormatDeepScan: Boolean = true,
+    val aggressiveByteCarving: Boolean = true,
+    val autoSkipDuplicates: Boolean = true,
+    val forceMediaScannerSync: Boolean = true,
+    val gallerySaveDestination: String = "DCIM/SuperTelecom_Recovered",
+    val minFileSizeBytes: Long = 1024L
+)
 
 data class RecoverItem(
     val id: String,

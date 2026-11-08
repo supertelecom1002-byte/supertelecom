@@ -700,8 +700,7 @@ fun MoreFeaturesScreen(
                                             OutlinedButton(
                                                 onClick = {
                                                     if (activity != null) {
-                                                        updateManager.purgeCachedUpdate(meta)
-                                                        updateManager.downloadAndInstallUpdate(meta, activity)
+                                                        updateManager.downloadAndInstallUpdate(meta, activity, forceRedownload = true)
                                                     }
                                                 },
                                                 modifier = Modifier.weight(1f).height(38.dp),

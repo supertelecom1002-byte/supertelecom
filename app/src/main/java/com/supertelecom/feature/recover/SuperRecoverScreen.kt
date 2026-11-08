@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.RecoverItem
+import com.supertelecom.model.RecoverSettings
 import com.supertelecom.model.RecoverTier
 import com.supertelecom.model.StorageStats
 import com.supertelecom.theme.*
@@ -55,13 +56,19 @@ import java.util.Date
 import java.util.Locale
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.ui.window.Dialog
+import androidx.compose.foundation.BorderStroke
 
 enum class TimeRangeFilter(val labelHi: String, val labelEn: String) {
     ALL("📅 सभी समय", "All Time"),
-    ONE_YEAR("🕒 1 साल के अंदर", "Last 1 Year"),
-    TWO_YEARS("⏳ 2 साल के अंदर", "Last 2 Years"),
-    LAST_6_MONTHS("⚡ 6 महीने", "Last 6 Months"),
-    OLDER_ARCHIVE("🏛️ 2+ साल पुरानी", "Older Archive"),
+    POST_FORMAT("💾 फॉर्मेट रिकवरी (पुराना डेटा)", "Post-Format (Raw)"),
+    ONE_YEAR("🕒 1 साल तक", "1 Year"),
+    TWO_YEARS("⏳ 2 साल तक", "2 Years"),
+    THREE_YEARS("⏳ 3 साल तक", "3 Years"),
+    FOUR_YEARS("⏳ 4 साल तक", "4 Years"),
+    FIVE_YEARS("⏳ 5 साल तक", "5 Years"),
+    TEN_YEARS("🏛️ 10 साल तक", "10 Years"),
+    TWENTY_YEARS("🏛️ 20 साल (आर्काइव)", "20 Years Archive"),
     CUSTOM("🗓️ तारीख चुनें...", "Custom Range...")
 }
 
@@ -98,6 +105,13 @@ fun SuperRecoverScreen(
     var customEndMillis by remember { mutableStateOf(System.currentTimeMillis()) }
     var customRangeLabel by remember { mutableStateOf("") }
     var showCustomDateDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+    var recoverSettings by remember { mutableStateOf(RecoverSettings()) }
+
+    var isOneClickRunning by remember { mutableStateOf(false) }
+    var oneClickPhase by remember { mutableStateOf("") }
+    var oneClickProgress by remember { mutableStateOf(0f) }
+    var oneClickFoundCount by remember { mutableStateOf(0) }
 
     var storageStats by remember { mutableStateOf(recoverEngine.getDeviceStorageStats()) }
     val isScanningEngine by recoverEngine.isScanning.collectAsState()
@@ -111,6 +125,40 @@ fun SuperRecoverScreen(
     var previewItem by remember { mutableStateOf<RecoverItem?>(null) }
     var restoreResult by remember { mutableStateOf<Triple<Int, Int, String>?>(null) }
     var isRestoring by remember { mutableStateOf(false) }
+
+    fun runOneClickAutoRecover() {
+        if (!StorageRecoverEngine.hasStoragePermission(context)) {
+            Toast.makeText(
+                context,
+                if (isHindi) "कृपया पहले पूर्ण स्टोरेज (All Files Access) की अनुमति दें" else "Please grant All Files Access to recover files",
+                Toast.LENGTH_LONG
+            ).show()
+            StorageRecoverEngine.requestStoragePermission(context)
+            return
+        }
+
+        isOneClickRunning = true
+        oneClickProgress = 0.05f
+        oneClickPhase = if (isHindi) "1-क्लिक डीप स्टोरेज स्कैन शुरू हो रहा है..." else "Initializing 1-Tap Deep Scan..."
+        oneClickFoundCount = 0
+
+        coroutineScope.launch {
+            try {
+                val result = recoverEngine.executeOneClickFullScanAndRecover { phase, progress, found ->
+                    oneClickPhase = phase
+                    oneClickProgress = progress
+                    oneClickFoundCount = found
+                }
+                isOneClickRunning = false
+                restoreResult = result
+                vaultItems.clear()
+                vaultItems.addAll(recoverEngine.scanRecoveredVault())
+            } catch (e: Exception) {
+                isOneClickRunning = false
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     // Refresh storage stats on launch
     LaunchedEffect(Unit) {
@@ -161,37 +209,22 @@ fun SuperRecoverScreen(
             return
         }
 
-        // Check required permissions
-        val neededPermissions = mutableListOf<String>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            when (cat) {
-                RecoverCategory.PHOTOS -> neededPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-                RecoverCategory.VIDEOS -> neededPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
-                RecoverCategory.AUDIO_RECORDINGS -> neededPermissions.add(Manifest.permission.READ_MEDIA_AUDIO)
-                else -> {
-                    neededPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
-                    neededPermissions.add(Manifest.permission.READ_MEDIA_VIDEO)
-                    neededPermissions.add(Manifest.permission.READ_MEDIA_AUDIO)
-                }
-            }
-        } else {
-            neededPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (!StorageRecoverEngine.hasStoragePermission(context)) {
+            Toast.makeText(
+                context,
+                if (isHindi) "डीप रिकवरी के लिए ऑल फाइल्स एक्सेस की अनुमति आवश्यक है" else "All Files Access is required for deep file recovery",
+                Toast.LENGTH_SHORT
+            ).show()
+            StorageRecoverEngine.requestStoragePermission(context)
+            return
         }
 
-        val hasAll = neededPermissions.all {
-            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-        }
-
-        if (hasAll) {
-            coroutineScope.launch {
-                screenMode = RecoverScreenMode.SCANNING
-                val results = recoverEngine.executeDeepScan(cat)
-                discoveredItems.clear()
-                discoveredItems.addAll(results)
-                screenMode = RecoverScreenMode.GALLERY
-            }
-        } else {
-            permissionLauncher.launch(neededPermissions.toTypedArray())
+        coroutineScope.launch {
+            screenMode = RecoverScreenMode.SCANNING
+            val results = recoverEngine.executeDeepScan(cat)
+            discoveredItems.clear()
+            discoveredItems.addAll(results)
+            screenMode = RecoverScreenMode.GALLERY
         }
     }
 
@@ -207,6 +240,8 @@ fun SuperRecoverScreen(
                     stats = storageStats,
                     onSelectCategory = { cat -> startCategoryScan(cat) },
                     onOpenSaf = { safFolderPicker.launch(null) },
+                    onOneClickAutoRecover = { runOneClickAutoRecover() },
+                    onOpenSettings = { showSettingsDialog = true },
                     contentPadding = contentPadding
                 )
             }
@@ -246,6 +281,7 @@ fun SuperRecoverScreen(
                     customRangeLabel = customRangeLabel,
                     onOpenCustomDateDialog = { showCustomDateDialog = true },
                     onOpenSaf = { safFolderPicker.launch(null) },
+                    onOpenSettings = { showSettingsDialog = true },
                     onToggleSelect = { item ->
                         val idx = discoveredItems.indexOfFirst { it.id == item.id }
                         if (idx != -1) {
@@ -260,7 +296,11 @@ fun SuperRecoverScreen(
                     onPreviewItem = { previewItem = it },
                     onBackToDashboard = { screenMode = RecoverScreenMode.DASHBOARD },
                     onRestoreSelected = {
-                        val selectedList = discoveredItems.filter { it.isSelected }
+                        val selectedList = if (discoveredItems.any { it.isSelected }) {
+                            discoveredItems.filter { it.isSelected }
+                        } else {
+                            discoveredItems.filter { it.isRestorable }
+                        }
                         if (selectedList.isNotEmpty() && !isRestoring) {
                             isRestoring = true
                             coroutineScope.launch {
@@ -400,15 +440,30 @@ fun SuperRecoverScreen(
                     }
                 },
                 confirmButton = {
-                    Button(
-                        onClick = {
-                            restoreResult = null
-                            startCategoryScan(RecoverCategory.VAULT)
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = if (isHindi) "वॉल्ट देखें (Open Vault)" else "Open Vault", fontWeight = FontWeight.Bold)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = {
+                                try {
+                                    context.startActivity(recoverEngine.openGalleryIntent())
+                                } catch (_: Exception) {}
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB), contentColor = Color.White),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Icon(imageVector = Icons.Default.PhotoLibrary, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = if (isHindi) "गैलरी खोलें" else "Open Gallery", fontWeight = FontWeight.Bold)
+                        }
+                        Button(
+                            onClick = {
+                                restoreResult = null
+                                startCategoryScan(RecoverCategory.VAULT)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldAccent, contentColor = BgDark),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(text = if (isHindi) "वॉल्ट देखें" else "Open Vault", fontWeight = FontWeight.Bold)
+                        }
                     }
                 },
                 dismissButton = {
@@ -419,6 +474,71 @@ fun SuperRecoverScreen(
                 containerColor = Color(0xFF0F172A),
                 shape = RoundedCornerShape(16.dp)
             )
+        }
+
+        // ── ⚙️ RECOVERY SETTINGS DIALOG ──
+        if (showSettingsDialog) {
+            RecoverySettingsDialog(
+                isHindi = isHindi,
+                settings = recoverSettings,
+                onSettingsChanged = { recoverSettings = it },
+                onClearCache = {
+                    ThumbnailLoader.clearCache()
+                    Toast.makeText(context, if (isHindi) "इंजन का कैश खाली कर दिया गया" else "Engine cache cleared", Toast.LENGTH_SHORT).show()
+                },
+                onDismiss = { showSettingsDialog = false }
+            )
+        }
+
+        // ── ⚡ 1-CLICK ALL-IN-ONE RECOVERY PROGRESS MODAL ──
+        if (isOneClickRunning) {
+            Dialog(onDismissRequest = {}) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFF0B192C))
+                        .border(1.5.dp, CyanAccent, RoundedCornerShape(20.dp))
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            progress = { oneClickProgress },
+                            modifier = Modifier.size(60.dp),
+                            color = EmeraldAccent,
+                            strokeWidth = 5.dp
+                        )
+                        Text(
+                            text = if (isHindi) "⚡ 1-क्लिक ऑल-इन-वन रिकवरी चालू है" else "⚡ 1-Tap Auto Full Recovery",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black, color = Color.White),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = oneClickPhase,
+                            style = MaterialTheme.typography.bodySmall.copy(color = CyanAccent),
+                            textAlign = TextAlign.Center
+                        )
+                        if (oneClickFoundCount > 0) {
+                            Text(
+                                text = if (isHindi) "खोजे गए: $oneClickFoundCount फाइलें" else "Found: $oneClickFoundCount files",
+                                style = MaterialTheme.typography.labelSmall.copy(color = EmeraldAccent, fontWeight = FontWeight.Bold)
+                            )
+                        }
+                        LinearProgressIndicator(
+                            progress = { oneClickProgress },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(3.dp)),
+                            color = EmeraldAccent,
+                            trackColor = CardDark
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -433,6 +553,8 @@ fun RecoverDashboardView(
     stats: StorageStats,
     onSelectCategory: (RecoverCategory) -> Unit,
     onOpenSaf: () -> Unit,
+    onOneClickAutoRecover: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     contentPadding: PaddingValues
 ) {
     Column(
@@ -467,20 +589,166 @@ fun RecoverDashboardView(
                 )
             }
 
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(EmeraldAccent.copy(alpha = 0.15f))
-                    .border(1.dp, EmeraldAccent.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = if (isHindi) "100% फ्री व सुरक्षित" else "100% Free & Safe",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = EmeraldAccent,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    onClick = onOpenSettings,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(CardDark)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = CyanAccent,
+                        modifier = Modifier.size(20.dp)
                     )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(EmeraldAccent.copy(alpha = 0.15f))
+                        .border(1.dp, EmeraldAccent.copy(alpha = 0.35f), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = if (isHindi) "100% फ्री व सुरक्षित" else "100% Free & Safe",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = EmeraldAccent,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.sp
+                        )
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        val context = LocalContext.current
+        val hasStorageAccess = remember(context) { StorageRecoverEngine.hasStoragePermission(context) }
+        if (!hasStorageAccess) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .clickable { StorageRecoverEngine.requestStoragePermission(context) },
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF3B1515)),
+                border = BorderStroke(1.5.dp, Color(0xFFEF4444))
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .background(Color(0xFFEF4444).copy(alpha = 0.2f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "⚠️ ऑल फाइल्स एक्सेस की अनुमति दें" else "⚠️ All Files Access Required",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                        Text(
+                            text = if (isHindi)
+                                "Play Store ऐप्स की तरह पुराने डिलीटेड फोटो/वीडियो निकालने के लिए अनुमति आवश्यक है।"
+                            else
+                                "Grant All Files Access to unearth deleted photo thumbnails and deep storage clusters.",
+                            style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFFFCA5A5), fontSize = 11.sp)
+                        )
+                    }
+                    Button(
+                        onClick = { StorageRecoverEngine.requestStoragePermission(context) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444), contentColor = Color.White),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(text = if (isHindi) "चालू करें" else "Allow", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+
+        // ── ⚡ 1-CLICK ALL-IN-ONE RECOVER BANNER ──
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(18.dp))
+                .clickable { onOneClickAutoRecover() },
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F2537)),
+            border = BorderStroke(1.5.dp, Brush.horizontalGradient(listOf(CyanAccent, EmeraldAccent)))
+        ) {
+            Row(
+                modifier = Modifier.padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            Brush.linearGradient(listOf(Color(0xFF0EA5E9), Color(0xFF10B981))),
+                            shape = RoundedCornerShape(14.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FlashOn,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = if (isHindi) "⚡ 1-क्लिक ऑल-इन-वन रिकवरी" else "⚡ 1-Tap All-in-One Recovery",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+                            color = Color.White,
+                            fontSize = 15.sp
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(EmeraldAccent)
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = "AUTO",
+                                color = BgDark,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 9.sp
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = if (isHindi)
+                            "पूरे फोन का डीप स्कैन करके फॉर्मेट, डिलीट व छुपी सभी फाइल्स को 1 ही बार में सीधे फोन गैलरी में सुरक्षित करें।"
+                        else
+                            "Deep scan entire phone & recover all deleted/formatted media directly to Gallery in 1 tap.",
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp),
+                        color = TextSecondary
+                    )
+                }
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = null,
+                    tint = CyanAccent,
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }
@@ -1068,6 +1336,7 @@ fun RecoverGalleryGridView(
     customRangeLabel: String = "",
     onOpenCustomDateDialog: () -> Unit = {},
     onOpenSaf: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     onToggleSelect: (RecoverItem) -> Unit,
     onToggleSelectAll: (Boolean) -> Unit,
     onPreviewItem: (RecoverItem) -> Unit,
@@ -1082,13 +1351,16 @@ fun RecoverGalleryGridView(
         items.filter {
             it.tier == RecoverTier.SYSTEM_TRASH ||
             it.tier == RecoverTier.THUMBNAIL_PREVIEW ||
+            it.tier == RecoverTier.POST_FORMAT_RAW ||
             it.id.startsWith("carved_") ||
             it.id.startsWith("trash_") ||
             it.id.startsWith("orphan_") ||
             it.id.startsWith("thumb_") ||
+            it.id.startsWith("lostdir_") ||
             it.id.startsWith("ms_") ||
             it.sourcePath.contains("thumb", ignoreCase = true) ||
-            it.sourcePath.contains("trash", ignoreCase = true)
+            it.sourcePath.contains("trash", ignoreCase = true) ||
+            it.sourcePath.contains("LOST.DIR", ignoreCase = true)
         }
     }
     val socialItems = remember(items.size) {
@@ -1110,8 +1382,12 @@ fun RecoverGalleryGridView(
 
     val now = remember { System.currentTimeMillis() }
     val oneYearAgo = remember(now) { now - 365L * 24 * 60 * 60 * 1000L }
-    val twoYearsAgo = remember(now) { now - 730L * 24 * 60 * 60 * 1000L }
-    val sixMonthsAgo = remember(now) { now - 180L * 24 * 60 * 60 * 1000L }
+    val twoYearsAgo = remember(now) { now - 2 * 365L * 24 * 60 * 60 * 1000L }
+    val threeYearsAgo = remember(now) { now - 3 * 365L * 24 * 60 * 60 * 1000L }
+    val fourYearsAgo = remember(now) { now - 4 * 365L * 24 * 60 * 60 * 1000L }
+    val fiveYearsAgo = remember(now) { now - 5 * 365L * 24 * 60 * 60 * 1000L }
+    val tenYearsAgo = remember(now) { now - 10 * 365L * 24 * 60 * 60 * 1000L }
+    val twentyYearsAgo = remember(now) { now - 20 * 365L * 24 * 60 * 60 * 1000L }
 
     // Multi-dimensional Filtering: Source Tag + Time Range + Size/Quality
     val filteredList = remember(items.size, activeFilterTag, activeTimeFilter, activeSizeFilter, customStartMillis, customEndMillis) {
@@ -1126,13 +1402,24 @@ fun RecoverGalleryGridView(
             // Quality / Size Filter
             val passesSize = item.sizeBytes >= activeSizeFilter.minBytes
 
-            // Time / Date Range Filter
+            // Time / Date Range Filter (Supports 1 to 20 years & post-format raw clusters)
             val passesTime = when (activeTimeFilter) {
                 TimeRangeFilter.ALL -> true
+                TimeRangeFilter.POST_FORMAT -> {
+                    item.tier == RecoverTier.POST_FORMAT_RAW ||
+                    item.qualityTag.contains("Post-Format", true) ||
+                    item.sourcePath.contains("LOST.DIR", true) ||
+                    item.sourcePath.contains("Thumbdata", true) ||
+                    item.timestampMillis == 0L ||
+                    item.timestampMillis <= twoYearsAgo
+                }
                 TimeRangeFilter.ONE_YEAR -> item.timestampMillis == 0L || item.timestampMillis >= oneYearAgo
                 TimeRangeFilter.TWO_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= twoYearsAgo
-                TimeRangeFilter.LAST_6_MONTHS -> item.timestampMillis == 0L || item.timestampMillis >= sixMonthsAgo
-                TimeRangeFilter.OLDER_ARCHIVE -> item.timestampMillis in 1L until twoYearsAgo
+                TimeRangeFilter.THREE_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= threeYearsAgo
+                TimeRangeFilter.FOUR_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= fourYearsAgo
+                TimeRangeFilter.FIVE_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= fiveYearsAgo
+                TimeRangeFilter.TEN_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= tenYearsAgo
+                TimeRangeFilter.TWENTY_YEARS -> item.timestampMillis == 0L || item.timestampMillis >= twentyYearsAgo
                 TimeRangeFilter.CUSTOM -> {
                     if (item.timestampMillis == 0L) true
                     else item.timestampMillis in customStartMillis..customEndMillis
@@ -1184,16 +1471,25 @@ fun RecoverGalleryGridView(
                     }
                 }
 
-                // Select All Toggle
-                TextButton(
-                    onClick = { onToggleSelectAll(!allSelected) },
-                    colors = ButtonDefaults.textButtonColors(contentColor = CyanAccent)
-                ) {
-                    Text(
-                        text = if (allSelected) (if (isHindi) "सब हटाएं" else "Deselect All") else (if (isHindi) "सभी चुनें" else "Select All"),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.size(34.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings", tint = CyanAccent, modifier = Modifier.size(20.dp))
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    // Select All Toggle
+                    TextButton(
+                        onClick = { onToggleSelectAll(!allSelected) },
+                        colors = ButtonDefaults.textButtonColors(contentColor = CyanAccent)
+                    ) {
+                        Text(
+                            text = if (allSelected) (if (isHindi) "सब हटाएं" else "Deselect All") else (if (isHindi) "सभी चुनें" else "Select All"),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
             }
 
@@ -1371,8 +1667,8 @@ fun RecoverGalleryGridView(
             }
         }
 
-        // ── STICKY BOTTOM ACTION BAR (RECOVER + DIRECT SHARE) ──
-        if (selectedCount > 0) {
+        // ── STICKY BOTTOM ACTION BAR (1-CLICK RECOVER ALL + DIRECT SHARE) ──
+        if (items.isNotEmpty()) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -1390,14 +1686,22 @@ fun RecoverGalleryGridView(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = if (isHindi) "$selectedCount फाइलें चुनी गईं" else "$selectedCount Selected",
+                            text = if (isHindi) {
+                                if (selectedCount > 0) "$selectedCount फाइलें चुनी गईं" else "सभी ${items.size} फाइलें"
+                            } else {
+                                if (selectedCount > 0) "$selectedCount Selected" else "All ${items.size} Files"
+                            },
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Black,
                                 color = EmeraldAccent
                             )
                         )
                         Text(
-                            text = "Size: %.1f MB".format(Locale.US, totalBytes / 1_000_000f),
+                            text = if (selectedCount > 0) {
+                                "Size: %.1f MB".format(Locale.US, totalBytes / 1_000_000f)
+                            } else {
+                                if (isHindi) "1-क्लिक सभी गैलरी में सेव करें" else "1-Tap Save All to Gallery"
+                            },
                             style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary, fontSize = 11.sp)
                         )
                     }
@@ -1435,7 +1739,11 @@ fun RecoverGalleryGridView(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = if (isHindi) "रिकवर ($selectedCount)" else "RECOVER ($selectedCount)",
+                            text = if (isHindi) {
+                                if (selectedCount > 0) "रिकवर ($selectedCount)" else "सब कुछ रिकवर करें (${items.size})"
+                            } else {
+                                if (selectedCount > 0) "RECOVER ($selectedCount)" else "RECOVER ALL (${items.size})"
+                            },
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Black)
                         )
                     }
@@ -1937,7 +2245,13 @@ fun CustomDateRangeDialog(
 ) {
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     var selectedYear by remember { mutableStateOf(currentYear) }
-    val years = remember { (currentYear downTo currentYear - 5).toList() }
+    val years = remember {
+        listOf(
+            currentYear, currentYear - 1, currentYear - 2, currentYear - 3,
+            currentYear - 4, currentYear - 5, currentYear - 6, currentYear - 7,
+            currentYear - 8, currentYear - 9, currentYear - 10, currentYear - 20
+        )
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -1946,67 +2260,44 @@ fun CustomDateRangeDialog(
                 Icon(Icons.Default.DateRange, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(22.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = if (isHindi) "📅 तारीख या वर्ष चुनें" else "📅 Select Year / Time Range",
+                    text = if (isHindi) "📅 तारीख या वर्ष चुनें (1-20 वर्ष)" else "📅 Select Year Range (1-20 Yrs)",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
         },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = if (isHindi) "त्वरित वर्ष चुनें (Quick Year Filter):" else "Quick Year Filter:",
+                    text = if (isHindi) "त्वरित वर्ष चुनें (1 से 20 वर्ष तक):" else "Quick Year Selection (1 to 20 Years):",
                     style = MaterialTheme.typography.labelMedium.copy(color = TextSecondary, fontWeight = FontWeight.Bold)
                 )
 
-                // 2 Rows of 3 year chips each
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    years.take(3).forEach { year ->
-                        val isSelected = selectedYear == year
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(if (isSelected) CyanAccent else CardDark)
-                                .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
-                                .clickable { selectedYear = year }
-                                .padding(vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "$year",
-                                color = if (isSelected) BgDark else TextPrimary,
-                                fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
-                        }
-                    }
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    years.drop(3).forEach { year ->
-                        val isSelected = selectedYear == year
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(if (isSelected) CyanAccent else CardDark)
-                                .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(10.dp))
-                                .clickable { selectedYear = year }
-                                .padding(vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "$year",
-                                color = if (isSelected) BgDark else TextPrimary,
-                                fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
+                // 3 Rows of 4 year chips each
+                for (chunk in years.chunked(4)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        chunk.forEach { year ->
+                            val isSelected = selectedYear == year
+                            val label = if (year == currentYear - 20) "20 Yr" else "$year"
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isSelected) CyanAccent else CardDark)
+                                    .border(1.dp, if (isSelected) CyanAccent else CardBorder, RoundedCornerShape(8.dp))
+                                    .clickable { selectedYear = year }
+                                    .padding(vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = label,
+                                    color = if (isSelected) BgDark else TextPrimary,
+                                    fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
+                                    fontSize = 11.sp
+                                )
+                            }
                         }
                     }
                 }
@@ -2014,9 +2305,9 @@ fun CustomDateRangeDialog(
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = if (isHindi)
-                        "वर्ष $selectedYear (1 जनवरी - 31 दिसंबर) के दौरान कैप्चर या डिलीट की गई सभी फाइलें फ़िल्टर होंगी।"
+                        "वर्ष $selectedYear के दौरान कैप्चर, फॉर्मेट या डिलीट की गई सभी फाइलें फ़िल्टर होंगी।"
                     else
-                        "Filters all files from Jan 1 to Dec 31 of $selectedYear.",
+                        "Filters all files created, formatted, or deleted in $selectedYear.",
                     style = MaterialTheme.typography.bodySmall.copy(color = TextMuted, fontSize = 11.sp)
                 )
             }
@@ -2035,6 +2326,169 @@ fun CustomDateRangeDialog(
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(text = if (isHindi) "लागू करें" else "Apply Filter", fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = if (isHindi) "रद्द करें" else "Cancel", color = TextSecondary)
+            }
+        },
+        containerColor = Color(0xFF0F172A),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. RECOVERY SETTINGS DIALOG
+// ─────────────────────────────────────────────────────────────────────────────
+
+@Composable
+fun RecoverySettingsDialog(
+    isHindi: Boolean,
+    settings: RecoverSettings,
+    onSettingsChanged: (RecoverSettings) -> Unit,
+    onClearCache: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    var postFormat by remember { mutableStateOf(settings.postFormatDeepScan) }
+    var aggressiveCarving by remember { mutableStateOf(settings.aggressiveByteCarving) }
+    var skipDuplicates by remember { mutableStateOf(settings.autoSkipDuplicates) }
+    var forceScanner by remember { mutableStateOf(settings.forceMediaScannerSync) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Settings, contentDescription = null, tint = CyanAccent, modifier = Modifier.size(24.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isHindi) "⚙️ रिकवरी सेटिंग्स" else "⚙️ Recovery Settings",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black)
+                )
+            }
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                // Post Format Deep Scan
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "फॉर्मेट रिकवरी मोड (1-20 वर्ष)" else "Post-Format Recovery Mode",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                        Text(
+                            text = if (isHindi) "LOST.DIR व अनएलोकेटेड क्लस्टर्स को स्कैन करें" else "Scan LOST.DIR & raw unallocated blocks",
+                            style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary, fontSize = 11.sp)
+                        )
+                    }
+                    Switch(
+                        checked = postFormat,
+                        onCheckedChange = { postFormat = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = EmeraldAccent)
+                    )
+                }
+
+                HorizontalDivider(color = CardBorder)
+
+                // Ultra Deep Byte Carving
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "अल्ट्रा डीप बाइट कार्विंग" else "Ultra Deep Byte Carving",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                        Text(
+                            text = if (isHindi) ".thumbdata से जेपेग/पीएनजी हेडर खोजें" else "Extract headers from raw .thumbdata caches",
+                            style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary, fontSize = 11.sp)
+                        )
+                    }
+                    Switch(
+                        checked = aggressiveCarving,
+                        onCheckedChange = { aggressiveCarving = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = CyanAccent)
+                    )
+                }
+
+                HorizontalDivider(color = CardBorder)
+
+                // Instant MediaScanner
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "गैलरी ऑटो-सिंक (MediaScanner)" else "Instant Gallery MediaScanner",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                        Text(
+                            text = if (isHindi) "रीस्टोर होते ही गैलरी में तुरंत दिखाएं" else "Trigger broadcast so gallery shows files instantly",
+                            style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary, fontSize = 11.sp)
+                        )
+                    }
+                    Switch(
+                        checked = forceScanner,
+                        onCheckedChange = { forceScanner = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = EmeraldAccent)
+                    )
+                }
+
+                HorizontalDivider(color = CardBorder)
+
+                // Destination Folder
+                Column {
+                    Text(
+                        text = if (isHindi) "गैलरी सेव लोकेशन (Album):" else "Gallery Destination Album:",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                    )
+                    Text(
+                        text = "DCIM/SuperTelecom_Recovered",
+                        style = MaterialTheme.typography.bodySmall.copy(color = CyanAccent, fontFamily = FontFamily.Monospace)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Clear Cache Button
+                OutlinedButton(
+                    onClick = onClearCache,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = AmberAccent),
+                    border = BorderStroke(1.dp, AmberAccent)
+                ) {
+                    Icon(Icons.Default.CleaningServices, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = if (isHindi) "इंजन का अस्थायी कैश खाली करें" else "Clear Temporary Engine Cache")
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onSettingsChanged(
+                        settings.copy(
+                            postFormatDeepScan = postFormat,
+                            aggressiveByteCarving = aggressiveCarving,
+                            autoSkipDuplicates = skipDuplicates,
+                            forceMediaScannerSync = forceScanner
+                        )
+                    )
+                    onDismiss()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(text = if (isHindi) "सेव करें" else "Save Settings", fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {
