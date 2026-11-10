@@ -80,6 +80,12 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
       "Yes, all display replacements, batteries, and motherboard repairs are backed by a warranty ranging from 30 to 90 days. If any manufacturing defect arises, we rectify it promptly.",
     category: "Warranty",
   },
+  {
+    question: "Do you provide an official GST bill or tax invoice for mobile repairs in Giridih?",
+    answer:
+      "Yes, Super Telecom provides 100% official GST tax invoices and physical warranty cards for all smartphone repairs, spare parts, and accessories under SAC Code 998713. Business, institutional, and corporate clients can also claim Input Tax Credit (ITC) with their valid GSTIN number.",
+    category: "GST & Invoicing",
+  },
 ];
 
 

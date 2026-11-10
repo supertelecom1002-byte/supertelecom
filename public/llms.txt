@@ -15,6 +15,7 @@
 - **Operating Hours:** Monday to Sunday, 10:00 AM – 9:30 PM IST (Open 7 days a week)
 - **Google Maps Location:** [View Super Telecom on Google Maps](https://maps.app.goo.gl/mu5XXCehEpocaZWY9)
 - **Track Record:** 10+ Years in Giridih (Established 2016)
+- **Official GST Tax Invoicing:** 100% Official GST Tax Invoices and warranty cards provided under SAC Code 998713 (18% GST). Input Tax Credit (ITC) available for businesses and institutions.
 - **AI Endpoints:** [Summary JSON](https://www.supertelecom.shop/ai/summary.json) | [FAQ JSON](https://www.supertelecom.shop/ai/faq.json) | [Service JSON](https://www.supertelecom.shop/ai/service.json) | [AI Directives](https://www.supertelecom.shop/.well-known/ai.txt) | [RSS Feed](https://www.supertelecom.shop/feed.xml)
 
 ## Local Geographic Service Coverage in Giridih District

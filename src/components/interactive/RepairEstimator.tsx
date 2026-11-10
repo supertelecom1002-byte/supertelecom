@@ -106,42 +106,51 @@ export const RepairEstimator: React.FC = () => {
 
   let componentGrade = "OEM-Grade";
   let gradeBadge = "OEM-Grade";
+  let estimatedPrice = "₹899 – ₹2,499";
 
   if (selectedFault === "display") {
     if (brandObj.isApple) {
       componentGrade = "Original Service Pack / Retina OLED";
       gradeBadge = "Original Service Pack";
+      estimatedPrice = "₹3,499 – ₹14,999";
     } else {
       if (selectedPartGrade === "aftermarket") {
         componentGrade = "Compatible Aftermarket (IPS LCD)";
         gradeBadge = "Compatible Aftermarket";
+        estimatedPrice = "₹899 – ₹2,499";
       } else {
         componentGrade = "OEM-Grade (AMOLED / High-Gamut)";
         gradeBadge = "OEM-Grade";
+        estimatedPrice = "₹2,499 – ₹8,999";
       }
     }
   } else if (selectedFault === "battery") {
     if (brandObj.isApple) {
       componentGrade = "Original Service Pack (BMS Reprogrammed)";
       gradeBadge = "Original Service Pack";
+      estimatedPrice = "₹1,899 – ₹4,999";
     } else {
       componentGrade = "OEM-Grade (High-Density Cell)";
       gradeBadge = "OEM-Grade";
+      estimatedPrice = "₹699 – ₹2,499";
     }
   } else if (selectedFault === "motherboard") {
     componentGrade = "Laboratory Level BGA Micro-Soldering";
     gradeBadge = "Original Service Pack";
+    estimatedPrice = "₹899 – ₹5,999";
   } else if (selectedFault === "amoled-line") {
     componentGrade = "Laser Trace Jumper Bypass";
-    gradeBadge = "OEM-Grade";
+    gradeBadge = "Laser Restoration";
+    estimatedPrice = "₹1,499 – ₹3,999";
   } else if (selectedFault === "water") {
     componentGrade = "Ultrasonic De-Oxidation & Chemical Wash";
-    gradeBadge = "OEM-Grade";
+    gradeBadge = "Lab Recovery";
+    estimatedPrice = "₹499 – ₹2,499";
   }
 
   const whatsappUrl = buildConsultationWhatsAppUrl({
     brand: brandObj.name,
-    serviceName: `${faultObj.label} (${gradeBadge})`,
+    serviceName: `${faultObj.label} (${gradeBadge} • ${estimatedPrice})`,
     issue: faultObj.sub,
   });
 
@@ -298,9 +307,12 @@ export const RepairEstimator: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 bg-slate-950/80 px-5 py-3 rounded-2xl border border-slate-800">
-              <span className="text-xs font-mono text-slate-400 uppercase">Service Status:</span>
-              <span className="text-xl sm:text-2xl font-extrabold font-mono text-cyan-400">
-                Consultation Required
+              <span className="text-xs font-mono text-slate-400 uppercase">Estimated Price:</span>
+              <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400">
+                {estimatedPrice}
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/30">
+                Inc. 18% GST (SAC 998713)
               </span>
             </div>
           </div>
@@ -337,12 +349,14 @@ export const RepairEstimator: React.FC = () => {
             </div>
           </div>
 
-          {/* Consultation Note */}
+          {/* Consultation & GST Note */}
           <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-xs text-slate-300 mb-6">
             <HelpCircle className="h-4 w-4 text-cyan-400 flex-none mt-0.5" />
-            <div>
-              <strong className="text-cyan-300 block mb-0.5">Bench Consultation &amp; Physical Inspection:</strong>
-              Final service requirements are confirmed after physical device bench check at our Barganda Road lab before repair work begins.
+            <div className="space-y-1">
+              <strong className="text-cyan-300 block">Official GST Tax Invoice &amp; Transparent Estimates:</strong>
+              <p>
+                All prices are inclusive of 18% GST (SAC Code 998713). Printed GST tax invoice and up to 90 days physical warranty card are issued with every repair. Final service requirements are confirmed after physical device bench check at our Barganda Road lab before repair work begins.
+              </p>
             </div>
           </div>
 

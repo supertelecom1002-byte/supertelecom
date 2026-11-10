@@ -1,6 +1,26 @@
 import React, { Suspense, lazy } from "react";
+import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
 
 const Hero3DCanvas = lazy(() => import("@/components/three/Hero3DCanvas"));
+
+class Hero3DErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any) {
+    console.warn("Hero3DCanvas failed, falling back to 2.5D blueprint:", error);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <Smartphone3DFallback />;
+    }
+    return this.props.children;
+  }
+}
 import { Link } from "@tanstack/react-router";
 import {
   Wrench,
@@ -322,16 +342,18 @@ export const Hero: React.FC = () => {
 
           {/* Right Column: Interactive 3D Smartphone Showcase */}
           <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-            <Suspense
-              fallback={
-                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_35px_rgba(6,182,212,0.15)]">
-                  <div className="h-10 w-10 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mb-3" />
-                  <span className="text-xs font-mono text-cyan-300 font-bold tracking-wider">CALIBRATING 3D LAB BENCH...</span>
-                </div>
-              }
-            >
-              <Hero3DCanvas />
-            </Suspense>
+            <Hero3DErrorBoundary>
+              <Suspense
+                fallback={
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_35px_rgba(6,182,212,0.15)]">
+                    <div className="h-10 w-10 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mb-3" />
+                    <span className="text-xs font-mono text-cyan-300 font-bold tracking-wider">CALIBRATING 3D LAB BENCH...</span>
+                  </div>
+                }
+              >
+                <Hero3DCanvas />
+              </Suspense>
+            </Hero3DErrorBoundary>
           </div>
         </div>
       </div>

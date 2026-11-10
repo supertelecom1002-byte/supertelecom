@@ -45,7 +45,7 @@ export const Immersive3DLoader: React.FC<Immersive3DLoaderProps> = ({
     if (!isVisible) return;
 
     const startTime = performance.now();
-    const duration = 750; // Ultra-snappy 750ms
+    const duration = 220; // Hyper-fast 0.22s load for instant 0.5s total page readiness
 
     const frame = () => {
       const elapsed = performance.now() - startTime;
@@ -63,8 +63,8 @@ export const Immersive3DLoader: React.FC<Immersive3DLoaderProps> = ({
           setTimeout(() => {
             setIsVisible(false);
             if (onComplete) onComplete();
-          }, 350);
-        }, 150);
+          }, 180);
+        }, 50);
       }
     };
 

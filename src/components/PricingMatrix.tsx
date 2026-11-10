@@ -11,31 +11,40 @@ import {
   ArrowRight,
   HelpCircle,
   Phone,
+  Receipt,
+  FileCheck2,
+  Building2,
+  Zap,
+  Droplets,
 } from "lucide-react";
 
 import {
   BUSINESS_MASTER,
   REPAIR_PRICE_DISCLAIMER,
+  buildWhatsAppQuoteUrl,
 } from "@/config/superTelecomConfig";
 import { buildConsultationWhatsAppUrl } from "@/components/consultation/RepairConsultationAction";
 
-interface ConsultationRow {
+interface PricingRow {
   service: string;
   deviceType: string;
   partGrade: string;
+  priceRange: string;
+  gstStatus: string;
+  sacCode: string;
   turnaround: string;
   warranty: string;
 }
 
-interface ConsultationCategory {
+interface PricingCategory {
   id: string;
   name: string;
   icon: React.ReactNode;
   description: string;
-  rows: ConsultationRow[];
+  rows: PricingRow[];
 }
 
-const CONSULTATION_CATEGORIES: ConsultationCategory[] = [
+const PRICING_CATEGORIES: PricingCategory[] = [
   {
     id: "screen",
     name: "Display & Screen Replacement",
@@ -43,45 +52,80 @@ const CONSULTATION_CATEGORIES: ConsultationCategory[] = [
     description: "Original Service Pack, OEM-Grade AMOLED, and Compatible Aftermarket IPS LCD screens.",
     rows: [
       {
-        service: "iPhone Display & Retina OLED",
-        deviceType: "iPhone (11 / 12 / 13 / 14 / 15 Series)",
+        service: "iPhone Retina OLED & Display Assembly",
+        deviceType: "iPhone (11 / 12 / 13 / 14 / 15 / 16 Series)",
         partGrade: "Original Service Pack",
+        priceRange: "₹3,499 – ₹14,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "30–60 Mins",
         warranty: "Up to 90 Days",
       },
       {
-        service: "Android Curved & Flat AMOLED",
-        deviceType: "Samsung, OnePlus, Xiaomi, Vivo, Realme",
-        partGrade: "OEM-Grade",
+        service: "Android Curved & Flat AMOLED Display",
+        deviceType: "Samsung, OnePlus, Xiaomi, Vivo, Realme, OPPO",
+        partGrade: "OEM-Grade AMOLED",
+        priceRange: "₹2,499 – ₹8,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
       },
       {
-        service: "Android IPS LCD Display & Touch Glass",
-        deviceType: "Budget & Mid-Range Android Phones",
+        service: "Android IPS LCD & Touch Glass Assembly",
+        deviceType: "Budget & Mid-Range Android Smartphones",
         partGrade: "Compatible Aftermarket",
+        priceRange: "₹899 – ₹2,499",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
+      },
+      {
+        service: "Outer Touch Glass Only (OCA Lamination)",
+        deviceType: "Display Functional, Only Glass Broken",
+        partGrade: "Factory Grade OCA",
+        priceRange: "₹699 – ₹2,199",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "45–90 Mins",
+        warranty: "Tested on Bench",
       },
     ],
   },
   {
     id: "battery",
-    name: "Battery & Charging Port",
+    name: "Battery & Charging Restoration",
     icon: <BatteryCharging className="h-5 w-5 text-emerald-400" />,
-    description: "High-density battery replacements and OEM-grade Type-C / Lightning port sub-boards.",
+    description: "Certified high-density replacement batteries and OEM fast-charging port sub-boards.",
     rows: [
       {
         service: "High-Capacity Battery Replacement",
-        deviceType: "Android & iPhone Devices",
-        partGrade: "OEM-Grade / Service Pack",
-        turnaround: "20–45 Mins",
+        deviceType: "Android Phones (Samsung, Redmi, Vivo, etc.)",
+        partGrade: "OEM-Grade Li-Polymer",
+        priceRange: "₹699 – ₹2,499",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "20–35 Mins",
+        warranty: "90 Days Warranty",
+      },
+      {
+        service: "iPhone Battery (BMS Health Micro-Welded)",
+        deviceType: "iPhone Models (100% Health Status Maintained)",
+        partGrade: "Original Service Pack",
+        priceRange: "₹1,899 – ₹4,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "45–60 Mins",
         warranty: "90 Days Warranty",
       },
       {
         service: "Type-C & Lightning Port Replacement",
         deviceType: "All Brands (Fast Charging & OTG Verified)",
-        partGrade: "OEM-Grade",
+        partGrade: "OEM Fast-Charge Board",
+        priceRange: "₹349 – ₹1,499",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "20–40 Mins",
         warranty: "30 Days Warranty",
       },
@@ -89,23 +133,67 @@ const CONSULTATION_CATEGORIES: ConsultationCategory[] = [
   },
   {
     id: "motherboard",
-    name: "Motherboard & Chip-Level Repair",
+    name: "Motherboard & Chip-Level BGA Lab",
     icon: <Cpu className="h-5 w-5 text-amber-400" />,
-    description: "Advanced BGA micro-soldering, short-circuit debugging, and dead phone recovery.",
+    description: "Stereomicroscope micro-soldering, short-circuit debugging, PMIC & CPU reballing.",
     rows: [
       {
-        service: "Dead Phone & Motherboard IC Micro-Soldering",
-        deviceType: "All Smartphones (Short Circuit / PMIC / CPU)",
+        service: "Dead Phone & Power IC Micro-Soldering",
+        deviceType: "All Smartphones (Short Circuit / PMIC / Charging IC)",
         partGrade: "Original Service Pack",
+        priceRange: "₹899 – ₹5,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "Same Day / 24–48h",
         warranty: "60 Days Warranty",
       },
       {
-        service: "Water Damage & Liquid Ultrasonic Revival",
-        deviceType: "Ultrasonic Chemical Bath & IC De-Oxidation",
-        partGrade: "OEM-Grade",
+        service: "Dual-Layer Board Splitting & CPU Reballing",
+        deviceType: "High-End Flagships (Snapdragon / Dimensity / Apple A-Series)",
+        partGrade: "Precision BGA Station",
+        priceRange: "₹1,999 – ₹7,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "24–48 Hours",
+        warranty: "60 Days Warranty",
+      },
+      {
+        service: "Network, Wi-Fi & Audio IC Faults",
+        deviceType: "No Service / Greyed-out Wi-Fi / Speaker IC",
+        partGrade: "OEM-Grade IC",
+        priceRange: "₹799 – ₹3,499",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "Same Day / 24h",
+        warranty: "60 Days Warranty",
+      },
+    ],
+  },
+  {
+    id: "laser",
+    name: "AMOLED Laser & Water Damage Revival",
+    icon: <Zap className="h-5 w-5 text-purple-400" />,
+    description: "Laser line healing without screen replacement, plus ultrasonic chemical bath de-oxidation.",
+    rows: [
+      {
+        service: "Green / Pink Vertical Line Laser Repair",
+        deviceType: "Samsung, OnePlus & Vivo AMOLED Panels",
+        partGrade: "Laser Trace Restoration",
+        priceRange: "₹1,499 – ₹3,999",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
+        turnaround: "Same Day / 2–4 Hours",
+        warranty: "60 Days Warranty",
+      },
+      {
+        service: "Water Damage Ultrasonic Chemical Revival",
+        deviceType: "Liquid Dropped Devices & Heavy Oxidation",
+        partGrade: "Ultrasonic Solvent Bath",
+        priceRange: "₹499 – ₹2,499",
+        gstStatus: "18% GST Included",
+        sacCode: "998713",
         turnaround: "2–5 Hours / 24h",
-        warranty: "Tested & Bench Verified",
+        warranty: "Bench Tested",
       },
     ],
   },
@@ -116,12 +204,12 @@ export const PricingMatrix: React.FC = () => {
 
   const displayedCategories =
     activeCategory === "all"
-      ? CONSULTATION_CATEGORIES
-      : CONSULTATION_CATEGORIES.filter((c) => c.id === activeCategory);
+      ? PRICING_CATEGORIES
+      : PRICING_CATEGORIES.filter((c) => c.id === activeCategory);
 
-  const getWhatsAppUrl = (service: string, device: string) => {
+  const getWhatsAppUrl = (service: string, device: string, price: string) => {
     return buildConsultationWhatsAppUrl({
-      serviceName: service,
+      serviceName: `${service} (${price})`,
       model: device,
     });
   };
@@ -129,7 +217,7 @@ export const PricingMatrix: React.FC = () => {
   return (
     <section
       id="pricing-matrix"
-      aria-label="Super Telecom Repair Consultation Directory Giridih"
+      aria-label="Super Telecom Repair Pricing Matrix & GST Table Giridih"
       className="py-8 sm:py-16 md:py-28 bg-slate-950 text-slate-100 relative overflow-hidden border-y border-slate-800/80"
     >
       {/* Background Ambience Glow */}
@@ -137,19 +225,18 @@ export const PricingMatrix: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-[11px] sm:text-xs font-mono font-bold uppercase mb-3 sm:mb-4 shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-            Official Giridih Service Directory · Free Bench Check
+            Official Giridih Repair Price Index · GST Compliant
           </div>
 
           <h2 className="text-xl sm:text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            Smartphone Repair Service Directory
+            Smartphone Repair Price &amp; GST Table
           </h2>
 
           <p className="mt-3 sm:mt-4 text-xs sm:text-base text-slate-300 leading-relaxed">
-            Direct consultation and hardware inspection on Barganda Road, Giridih.
-            Verified OEM parts, backed by formal service warranty.
+            Transparent price estimates on Barganda Road, Giridih. 100% authentic spare parts, official GST tax invoice, and up to 90 days warranty on every hardware repair.
           </p>
 
           {/* Value Badges */}
@@ -161,7 +248,7 @@ export const PricingMatrix: React.FC = () => {
               <ShieldCheck className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> Up to 90 Days Warranty
             </span>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-slate-900 border border-slate-800 text-amber-400 font-medium">
-              <CheckCircle2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> 100% Tested Spare Parts
+              <Receipt className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> 100% GST Tax Invoice (SAC 998713)
             </span>
           </div>
 
@@ -178,7 +265,7 @@ export const PricingMatrix: React.FC = () => {
             >
               All Repairs
             </button>
-            {CONSULTATION_CATEGORIES.map((c) => (
+            {PRICING_CATEGORIES.map((c) => (
               <button
                 key={c.id}
                 type="button"
@@ -192,6 +279,52 @@ export const PricingMatrix: React.FC = () => {
                 {c.name}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* PROMINENT OFFICIAL GST TAX INVOICE & PHRASE BANNER */}
+        <div className="mb-10 rounded-3xl bg-gradient-to-r from-cyan-950/60 via-slate-900 to-emerald-950/60 border border-cyan-500/40 p-5 sm:p-7 backdrop-blur-xl shadow-2xl">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                <FileCheck2 className="h-4 w-4" />
+                <span>OFFICIAL GST COMPLIANCE &amp; TAX INVOICING</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl font-black text-white tracking-tight">
+                Official GST Tax Invoice &amp; Warranty Card Provided
+              </h3>
+              {/* Mandatory Official GST Phrase in English and Hindi */}
+              <p className="text-xs sm:text-sm text-cyan-200 font-medium leading-relaxed">
+                "Super Telecom provides 100% official GST Tax Invoices and physical warranty cards for all smartphone repairs and spare parts. All prices shown in the table below are inclusive of 18% GST under SAC Code 998713. Business and corporate clients can claim full Input Tax Credit (ITC) with their registered GSTIN."
+              </p>
+              <p className="text-xs sm:text-sm text-slate-300 font-hindi leading-relaxed">
+                "सुपर टेलीकॉम गिरिडीह में सभी मोबाइल रिपेयरिंग पर 100% पक्का जीएसटी टैक्स इनवॉइस (GST Bill) और 90 दिन का लिखित वारंटी कार्ड प्रदान किया जाता है। कॉर्पोरेट व बिज़नेस ग्राहकों के लिए इनपुट टैक्स क्रेडिट (ITC) की पूरी सुविधा उपलब्ध है।"
+              </p>
+            </div>
+
+            {/* Quick GST Specifications Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 w-full lg:w-auto shrink-0 font-mono text-xs">
+              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="text-[10px] text-slate-400 uppercase">Service SAC Code</div>
+                <div className="text-sm font-bold text-cyan-400 mt-0.5">998713</div>
+                <div className="text-[9px] text-slate-500 mt-0.5">Mobile Phone Repair</div>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="text-[10px] text-slate-400 uppercase">GST Rate</div>
+                <div className="text-sm font-bold text-emerald-400 mt-0.5">18% GST</div>
+                <div className="text-[9px] text-slate-500 mt-0.5">CGST 9% + SGST 9%</div>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="text-[10px] text-slate-400 uppercase">Tax Invoice</div>
+                <div className="text-xs font-bold text-white mt-0.5">Printed Bill</div>
+                <div className="text-[9px] text-slate-500 mt-0.5">With Warranty Card</div>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80">
+                <div className="text-[10px] text-slate-400 uppercase">ITC Claim</div>
+                <div className="text-xs font-bold text-emerald-300 mt-0.5">Available (B2B)</div>
+                <div className="text-[9px] text-slate-500 mt-0.5">Input Tax Credit</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -214,24 +347,30 @@ export const PricingMatrix: React.FC = () => {
                   </div>
                 </div>
 
-                <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-500/30 self-start sm:self-auto">
-                  Walk-In Bench Inspection
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/30">
+                    GST SAC 998713
+                  </span>
+                  <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/80 px-3 py-1 rounded-full border border-cyan-500/30">
+                    Free Bench Check
+                  </span>
+                </div>
               </div>
 
               {/* Desktop Semantic Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <caption className="sr-only">
-                    {category.name} Consultation &amp; Specifications for Smartphone Repairs at Super Telecom Giridih
+                    {category.name} Pricing &amp; GST Table for Smartphone Repairs at Super Telecom Giridih
                   </caption>
                   <thead>
                     <tr className="border-b border-slate-800/80 bg-slate-950/40 text-slate-400 font-mono uppercase tracking-wider text-[11px]">
-                      <th scope="col" className="py-3.5 px-6">Service Name</th>
+                      <th scope="col" className="py-3.5 px-6">Service Name &amp; Grade</th>
                       <th scope="col" className="py-3.5 px-6">Supported Models</th>
-                      <th scope="col" className="py-3.5 px-6">Service Status</th>
+                      <th scope="col" className="py-3.5 px-6">Estimated Price (₹)</th>
+                      <th scope="col" className="py-3.5 px-6">GST Status &amp; SAC</th>
                       <th scope="col" className="py-3.5 px-6">Turnaround</th>
-                      <th scope="col" className="py-3.5 px-6">Warranty</th>
+                      <th scope="col" className="py-3.5 px-6">Lab Warranty</th>
                       <th scope="col" className="py-3.5 px-6 text-right">Consultation</th>
                     </tr>
                   </thead>
@@ -252,8 +391,14 @@ export const PricingMatrix: React.FC = () => {
                         <td className="py-4 px-6 text-slate-400">
                           {row.deviceType}
                         </td>
-                        <td className="py-4 px-6 font-mono font-bold text-cyan-400 text-xs">
-                          Consultation Required
+                        <td className="py-4 px-6 font-mono font-black text-emerald-400 text-sm">
+                          {row.priceRange}
+                        </td>
+                        <td className="py-4 px-6 font-mono text-slate-300">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-emerald-400 font-bold text-[11px]">{row.gstStatus}</span>
+                            <span className="text-[10px] text-slate-500">SAC: {row.sacCode}</span>
+                          </div>
                         </td>
                         <td className="py-4 px-6 font-mono text-slate-300">
                           {row.turnaround}
@@ -266,7 +411,7 @@ export const PricingMatrix: React.FC = () => {
                         <td className="py-4 px-6 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <a
-                              href={getWhatsAppUrl(row.service, row.deviceType)}
+                              href={getWhatsAppUrl(row.service, row.deviceType, row.priceRange)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 font-bold text-xs transition-all"
@@ -290,53 +435,57 @@ export const PricingMatrix: React.FC = () => {
               </div>
 
               {/* Mobile Compact 2-Column Grid */}
-              <div className="md:hidden grid grid-cols-2 gap-2.5 p-3">
+              <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3">
                 {category.rows.map((row, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col justify-between rounded-2xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2 card-hover-lift"
+                    className="flex flex-col justify-between rounded-2xl bg-slate-950/80 border border-slate-800/90 p-4 space-y-3 card-hover-lift"
                   >
                     <div>
-                      <h4 className="font-bold text-white text-xs leading-tight line-clamp-2">
+                      <h4 className="font-bold text-white text-xs sm:text-sm leading-tight">
                         {row.service}
                       </h4>
-                      <div className="mt-1">
+                      <div className="mt-1 flex flex-wrap gap-1.5">
                         <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-950/70 border border-cyan-800/40 text-cyan-300">
                           {row.partGrade}
                         </span>
-                      </div>
-                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">
-                        {row.deviceType}
-                      </p>
-                      <div className="mt-2">
-                        <span className="font-mono font-bold text-cyan-400 text-[11px] tracking-tight">
-                          Consultation Required
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-950/70 border border-emerald-800/40 text-emerald-300">
+                          {row.gstStatus}
                         </span>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1 text-[10px] text-slate-400 font-mono">
+                      <p className="text-[10px] text-slate-400 mt-1.5 line-clamp-2">
+                        {row.deviceType}
+                      </p>
+                      <div className="mt-2.5 flex items-baseline justify-between bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                        <span className="text-[10px] font-mono text-slate-400">Est. Price:</span>
+                        <span className="font-mono font-black text-emerald-400 text-sm tracking-tight">
+                          {row.priceRange}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-1 text-[10px] text-slate-400 font-mono">
                         <span className="flex items-center gap-0.5 text-slate-300">
-                          <Clock className="h-2.5 w-2.5" /> {row.turnaround}
+                          <Clock className="h-2.5 w-2.5 text-cyan-400" /> {row.turnaround}
                         </span>
                         <span>•</span>
                         <span className="truncate">{row.warranty}</span>
                       </div>
                     </div>
 
-                    <div className="mt-2 flex flex-col gap-1.5">
+                    <div className="mt-2 flex gap-2">
                       <a
-                        href={getWhatsAppUrl(row.service, row.deviceType)}
+                        href={getWhatsAppUrl(row.service, row.deviceType, row.priceRange)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-sm transition-transform active:scale-95"
+                        className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition-transform active:scale-95"
                       >
-                        <MessageCircle className="h-3 w-3 shrink-0" />
+                        <MessageCircle className="h-3.5 w-3.5 shrink-0" />
                         <span>Enquiry</span>
                       </a>
                       <a
                         href={BUSINESS_MASTER.phoneCallHref}
-                        className="w-full inline-flex items-center justify-center gap-1 py-1 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[10px] transition-transform active:scale-95"
+                        className="inline-flex items-center justify-center gap-1 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs transition-transform active:scale-95"
                       >
-                        <Phone className="h-2.5 w-2.5 text-cyan-400 shrink-0" />
+                        <Phone className="h-3 w-3 text-cyan-400 shrink-0" />
                         <span>Call</span>
                       </a>
                     </div>
@@ -351,7 +500,7 @@ export const PricingMatrix: React.FC = () => {
         <div className="mt-8 p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 text-xs text-slate-300 flex items-start gap-3">
           <HelpCircle className="h-5 w-5 text-cyan-400 flex-none mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-white">Bench Consultation &amp; Physical Diagnostics:</strong> {REPAIR_PRICE_DISCLAIMER}
+            <strong className="text-white">Bench Consultation &amp; Physical Diagnostics:</strong> {REPAIR_PRICE_DISCLAIMER} Every completed repair receives an official GST tax invoice and written warranty card for peace of mind.
           </p>
         </div>
       </div>

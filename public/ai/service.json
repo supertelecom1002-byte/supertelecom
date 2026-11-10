@@ -4,7 +4,15 @@
     "name": "Super Telecom",
     "location": "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301",
     "telephone": "+918002903643",
-    "url": "https://www.supertelecom.shop"
+    "url": "https://www.supertelecom.shop",
+    "gstCompliance": {
+      "sacCode": "998713",
+      "gstRate": "18%",
+      "taxInvoiceIncluded": true,
+      "itcEligible": true,
+      "phraseEn": "100% Official GST Tax Invoice & Warranty Card provided for every repair under SAC Code 998713. Business clients can claim full Input Tax Credit (ITC).",
+      "phraseHi": "सभी रिपेयरिंग पर 100% पक्का जीएसटी इनवॉइस (GST Bill) और वारंटी कार्ड उपलब्ध।"
+    }
   },
   "services": [
     {

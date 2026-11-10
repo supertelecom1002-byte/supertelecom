@@ -957,6 +957,22 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         {/* ===================================================== */}
         {activeTab === "shop" && (
           <div className="space-y-3 pb-20 animate-in fade-in duration-200">
+            {/* GST Tax Invoice & Warranty Card Banner */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/40 shadow-md">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
+                  Official GST Compliance
+                </span>
+                <span className="text-[9px] font-mono text-cyan-300 bg-cyan-950 px-2 py-0.5 rounded-full border border-cyan-800">
+                  SAC 998713
+                </span>
+              </div>
+              <h3 className="text-xs font-bold text-white mt-1">100% GST Tax Invoice &amp; Warranty Card</h3>
+              <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">
+                सभी स्पेयर पार्ट्स और रिपेयरिंग पर पक्का जीएसटी बिल व वारंटी कार्ड उपलब्ध। All prices inclusive of 18% GST.
+              </p>
+            </div>
+
             <div className="p-3 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
@@ -976,37 +992,37 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 {
                   title: "Original OLED Display Combos",
                   desc: "Samsung / iPhone / OnePlus OEM panels",
-                  price: "Consultation Required",
+                  price: "₹2,499 – ₹14,999",
                   tag: "Displays",
                 },
                 {
                   title: "High-Capacity Authentic Batteries",
                   desc: "0-Cycle lithium cells with 6M warranty",
-                  price: "Consultation Required",
+                  price: "₹699 – ₹3,499",
                   tag: "Power",
                 },
                 {
                   title: "Fast Chargers (67W / 80W / 120W)",
                   desc: "Type-C GaN flash chargers with cable",
-                  price: "Contact For Details",
+                  price: "₹499 – ₹1,499",
                   tag: "Accessories",
                 },
                 {
                   title: "UV Privacy & 9D Tempered Glass",
                   desc: "Curved edge-to-edge bubble-free install",
-                  price: "Contact For Details",
+                  price: "₹149 – ₹499",
                   tag: "Protection",
                 },
                 {
                   title: "Original Charging Sub-Boards",
                   desc: "Microphone & fast-charge IC restored",
-                  price: "Consultation Required",
+                  price: "₹349 – ₹1,499",
                   tag: "Internal",
                 },
                 {
                   title: "Certified Refurbished Mobiles",
                   desc: "Tested 12-point verified second hand phones",
-                  price: "Inquire Available Stock",
+                  price: "₹4,999 – ₹24,999",
                   tag: "Phones",
                 },
               ].map((item, idx) => (
