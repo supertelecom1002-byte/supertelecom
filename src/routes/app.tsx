@@ -922,7 +922,7 @@ function AppShowcasePage() {
                   Super Telecom
                 </span>
                 <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300">
-                  v3.4.0 Native
+                  v3.12.0 Native
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 font-mono block">
@@ -977,7 +977,7 @@ function AppShowcasePage() {
                         {isHindi ? "सुपर टेलीकॉम नेटिव एंड्रॉयड ऐप" : "Super Telecom Native Android App"}
                       </h2>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-500/30 text-cyan-300 font-bold">
-                        v3.4.0 APK (12.04 MB)
+                        v3.12.0 APK (12.10 MB)
                       </span>
                     </div>
                     <p className="text-xs text-slate-400 font-mono">

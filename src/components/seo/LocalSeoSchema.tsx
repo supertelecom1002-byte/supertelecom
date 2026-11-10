@@ -122,6 +122,23 @@ export function getCombinedLocalSeoSchema() {
           longitude: BUSINESS_MASTER.coordinates.longitude,
         },
         hasMap: "https://maps.app.goo.gl/mu5XXCehEpocaZWY9",
+        sameAs: [
+          "https://maps.app.goo.gl/mu5XXCehEpocaZWY9",
+          "https://en.wikipedia.org/wiki/Giridih",
+          "https://www.wikidata.org/wiki/Q1190627",
+          "https://wa.me/918002903643"
+        ],
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: "4.9",
+          reviewCount: "482",
+          bestRating: "5",
+          worstRating: "1",
+        },
+        speakable: {
+          "@type": "SpeakableSpecification",
+          cssSelector: ["h1", "h2", ".service-answer-block", "#local-faqs"]
+        },
         openingHoursSpecification: [
           {
             "@type": "OpeningHoursSpecification",
@@ -181,12 +198,10 @@ export function getCombinedLocalSeoSchema() {
 export const LocalSeoSchema: React.FC = () => {
   const schemaData = getCombinedLocalSeoSchema();
   return (
-    <div style={{ display: "none" }} aria-hidden="true">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
-    </div>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+    />
   );
 };
 

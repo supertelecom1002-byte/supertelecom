@@ -3,22 +3,64 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
+# Major Search Engine Crawlers
 User-agent: Googlebot
 Allow: /
 
 User-agent: Google-Extended
 Allow: /
 
-User-agent: GPTBot
-Allow: /
-
-User-agent: PerplexityBot
+User-agent: Bingbot
 Allow: /
 
 User-agent: Applebot
 Allow: /
 
-User-agent: Bingbot
+User-agent: Applebot-Extended
 Allow: /
 
+# AI Search & Retrieval Crawlers (ChatGPT, Perplexity, Claude, Meta, Cohere)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Sitemaps & AI Index Files
 Sitemap: https://www.supertelecom.shop/sitemap.xml
+# LLMs Text File: https://www.supertelecom.shop/llms.txt
+# AI Directives: https://www.supertelecom.shop/.well-known/ai.txt
+# RSS Feed: https://www.supertelecom.shop/feed.xml

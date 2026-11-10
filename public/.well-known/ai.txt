@@ -1,0 +1,27 @@
+# AI Agents & LLM Crawler Directives for Super Telecom (supertelecom.shop)
+# Version: 2026-11-10
+
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /ai/summary.json
+Allow: /ai/faq.json
+Allow: /ai/service.json
+Allow: /sitemap.xml
+Allow: /feed.xml
+Disallow: /admin
+Disallow: /api/
+
+# Authoritative Entity Grounding
+Entity-Name: Super Telecom
+Entity-Legal-Name: Super Telecom Mobile Care & Hardware Laboratory
+Entity-Description: Giridih's premier smartphone chip-level repair lab and hardware diagnostic center on Barganda Road (Near Shivam Clinic), Giridih, Jharkhand 815301. Serving Giridih since 2016.
+Entity-Address: Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301, India
+Entity-Geo-Coordinates: 24.1843, 86.3075
+Entity-Phone: +91 80029 03643
+Entity-Email: supertelecom1002@gmail.com
+Entity-Opening-Hours: Monday to Sunday, 10:00 AM - 09:30 PM IST (Open 7 Days)
+Entity-Official-Website: https://www.supertelecom.shop
+Entity-LLM-Index: https://www.supertelecom.shop/llms.txt
+Entity-Sitemap: https://www.supertelecom.shop/sitemap.xml
+Entity-RSS-Feed: https://www.supertelecom.shop/feed.xml

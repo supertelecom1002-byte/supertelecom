@@ -151,15 +151,18 @@ function HeroModelRig({
   mousePos,
   isDragging,
   dragRotation,
+  isAutoRotate,
 }: {
   activeHotspot: Hotspot;
   onSelectHotspot: (h: Hotspot) => void;
   mousePos: { x: number; y: number };
   isDragging: boolean;
   dragRotation: { x: number; y: number };
+  isAutoRotate: boolean;
 }) {
   const gltf = useGLTF("/models/smartphone_teardown.glb");
   const groupRef = useRef<THREE.Group>(null);
+  const autoRotateOffsetRef = useRef(0);
 
   // Deep clone scene and materials to prevent cross-contamination
   const clonedScene = useMemo(() => {
@@ -257,16 +260,24 @@ function HeroModelRig({
     });
   }, [clonedScene, screenTexture, backTexture]);
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     if (!groupRef.current) return;
     const t = clock.getElapsedTime();
 
     // Idle subtle floating bob
     groupRef.current.position.y = Math.sin(t * 1.3) * 0.06;
 
-    // Determine target rotation (either user drag or hotspot target + mouse parallax)
+    if (isAutoRotate && !isDragging) {
+      autoRotateOffsetRef.current += delta * 0.45;
+    }
+
+    // Determine target rotation (user drag OR auto-orbit + hotspot target + mouse parallax)
     const baseRotX = isDragging ? dragRotation.x : activeHotspot.targetRotation[0] + mousePos.y * 0.18;
-    const baseRotY = isDragging ? dragRotation.y : activeHotspot.targetRotation[1] + mousePos.x * 0.35;
+    const baseRotY = isDragging
+      ? dragRotation.y
+      : isAutoRotate
+      ? activeHotspot.targetRotation[1] + autoRotateOffsetRef.current + mousePos.x * 0.25
+      : activeHotspot.targetRotation[1] + mousePos.x * 0.35;
 
     groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, baseRotX, 0.08);
     groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, baseRotY, 0.08);
@@ -327,6 +338,7 @@ export const Hero3DCanvas: React.FC = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [dragRotation, setDragRotation] = useState({ x: 0.08, y: 0.25 });
   const [isDragging, setIsDragging] = useState(false);
+  const [isAutoRotate, setIsAutoRotate] = useState(true);
   const [isInView, setIsInView] = useState(true);
   const dragStartRef = useRef({ x: 0, y: 0, rotX: 0.08, rotY: 0.25 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -479,6 +491,8 @@ export const Hero3DCanvas: React.FC = () => {
             <directionalLight position={[4, 6, 6]} intensity={2.2} color="#ffffff" />
             <directionalLight position={[-5, 2, -3]} intensity={1.0} color="#38bdf8" />
             <directionalLight position={[-2, 3, 2]} intensity={0.7} color="#10b981" />
+            <directionalLight position={[6, 0, -4]} intensity={2.2} color="#06b6d4" />
+            <directionalLight position={[-6, 0, -4]} intensity={1.8} color="#10b981" />
             <spotLight position={[0, 7, 3]} intensity={1.5} angle={0.55} penumbra={0.8} color="#e0f2fe" />
 
             <Suspense fallback={<HeroLoadingHologram />}>
@@ -488,6 +502,7 @@ export const Hero3DCanvas: React.FC = () => {
                 mousePos={mousePos}
                 isDragging={isDragging}
                 dragRotation={dragRotation}
+                isAutoRotate={isAutoRotate}
               />
             </Suspense>
           </Canvas>
@@ -505,10 +520,36 @@ export const Hero3DCanvas: React.FC = () => {
           </span>
         </div>
 
-        {/* Overlaid Top-Right Orbit Controls Hint */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-950/80 border border-slate-700/80 text-[10px] font-mono text-slate-400 pointer-events-none backdrop-blur-md">
-          <RotateCw className="h-3 w-3 text-cyan-400 animate-spin" style={{ animationDuration: "8s" }} />
-          <span>DRAG TO ROTATE</span>
+        {/* Overlaid Top-Right Interactive Controls */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 z-20">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsAutoRotate(!isAutoRotate);
+            }}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border transition-all cursor-pointer backdrop-blur-md ${
+              isAutoRotate
+                ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-sm"
+                : "bg-slate-950/80 border-slate-700 text-slate-400 hover:text-white"
+            }`}
+            title={isAutoRotate ? "Pause 360° Rotation" : "Start 360° Rotation"}
+          >
+            <RotateCw className={`h-3 w-3 text-cyan-400 ${isAutoRotate ? "animate-spin" : ""}`} style={{ animationDuration: "6s" }} />
+            <span>{isAutoRotate ? "AUTO 360°" : "PAUSED"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDragRotation({ x: 0.08, y: 0.25 });
+            }}
+            className="flex items-center justify-center h-6 w-6 rounded-full bg-slate-950/80 border border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer backdrop-blur-md"
+            title="Reset View Angle"
+          >
+            <RotateCcw className="h-3 w-3 text-cyan-400" />
+          </button>
         </div>
 
         {/* Live Active Hotspot Diagnostic HUD (Bottom of 3D Viewport) */}

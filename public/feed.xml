@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Super Telecom — Giridih #1 Smartphone Repair Lab</title>
+    <link>https://www.supertelecom.shop</link>
+    <description>Latest mobile repair guides, motherboard chip-level diagnostic updates, and service availability from Super Telecom, Barganda Road, Giridih, Jharkhand.</description>
+    <language>en-in</language>
+    <lastBuildDate>Tue, 10 Nov 2026 18:20:00 +0530</lastBuildDate>
+    <atom:link href="https://www.supertelecom.shop/feed.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>120Hz AMOLED &amp; Curved Screen Display Replacement in Giridih</title>
+      <link>https://www.supertelecom.shop/services/screen-display-replacement</link>
+      <guid isPermaLink="true">https://www.supertelecom.shop/services/screen-display-replacement</guid>
+      <pubDate>Tue, 10 Nov 2026 18:20:00 +0530</pubDate>
+      <description>Same-day 30-minute display replacement using dust-free OCA vacuum lamination and TrueTone transfer at Barganda Road, Giridih.</description>
+    </item>
+
+    <item>
+      <title>Motherboard Chip-Level Micro-Soldering &amp; CPU Reballing Lab</title>
+      <link>https://www.supertelecom.shop/services/motherboard-ic-repair</link>
+      <guid isPermaLink="true">https://www.supertelecom.shop/services/motherboard-ic-repair</guid>
+      <pubDate>Tue, 10 Nov 2026 18:20:00 +0530</pubDate>
+      <description>Trinocular 45x microscope bench repair for dead phones, Poco X3 Pro CPU reballing, and PMIC short isolation in Giridih.</description>
+    </item>
+
+    <item>
+      <title>Original Mobile Battery Replacement with 6-Month Warranty</title>
+      <link>https://www.supertelecom.shop/services/battery-replacement</link>
+      <guid isPermaLink="true">https://www.supertelecom.shop/services/battery-replacement</guid>
+      <pubDate>Tue, 10 Nov 2026 18:20:00 +0530</pubDate>
+      <description>Genuine zero-cycle high-density lithium-ion battery replacement with official 180-day warranty in Giridih.</description>
+    </item>
+
+    <item>
+      <title>AMOLED Green Line &amp; Pink Line Laser Flex Repair in Giridih</title>
+      <link>https://www.supertelecom.shop/services/green-line-display-fix</link>
+      <guid isPermaLink="true">https://www.supertelecom.shop/services/green-line-display-fix</guid>
+      <pubDate>Tue, 10 Nov 2026 18:20:00 +0530</pubDate>
+      <description>Save up to 70% on OnePlus, Samsung, and Vivo AMOLED screen repairs with laser ITO flex bonding in Giridih.</description>
+    </item>
+
+    <item>
+      <title>Super Telecom Native Android App v3.12.0 Released</title>
+      <link>https://www.supertelecom.shop/app</link>
+      <guid isPermaLink="true">https://www.supertelecom.shop/app</guid>
+      <pubDate>Tue, 10 Nov 2026 18:20:00 +0530</pubDate>
+      <description>Direct download of Super Telecom native Android APK v3.12.0 with forensic JPEG photo recovery, Wi-Fi Direct file transfer, and hardware tools.</description>
+    </item>
+  </channel>
+</rss>

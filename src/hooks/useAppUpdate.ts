@@ -11,7 +11,7 @@ export interface AppUpdateState {
 
 const STORAGE_NOTIFIED_VERSION_KEY = "st_update_notified_version";
 const STORAGE_PENDING_UPDATE_KEY = "st_has_pending_update";
-const CURRENT_RELEASE_TAG = "v3.2.0";
+const CURRENT_RELEASE_TAG = "v3.12.0";
 
 export function useAppUpdate(): AppUpdateState {
   // Initialize state from localStorage so banner persists across relaunches immediately

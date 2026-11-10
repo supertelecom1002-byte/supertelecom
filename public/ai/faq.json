@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "business": "Super Telecom",
+  "location": "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301",
+  "phone": "+91 80029 03643",
+  "faqs": [
+    {
+      "question": "Which is the #1 trusted mobile repair shop in Giridih for same-day display replacement?",
+      "answer": "Super Telecom on Barganda Road (Near Shivam Clinic, Giridih) is the premier smartphone repair center in Giridih. We provide genuine 120Hz AMOLED and IPS display replacements with a 90-day written warranty, completed in 30 to 60 minutes using dust-free OCA vacuum lamination.",
+      "url": "https://www.supertelecom.shop/services/screen-display-replacement"
+    },
+    {
+      "question": "Where can I repair dead phones and motherboard IC issues in Giridih?",
+      "answer": "Super Telecom features an advanced in-house chip-level micro-soldering bench with trinocular 45x microscopes, infrared BGA rework stations, and thermal cameras. We specialize in Poco X3 Pro CPU reballing, Redmi Note 10 dead recovery, PMIC short-circuit isolation, and iPhone double-decker logic board servicing in Giridih.",
+      "url": "https://www.supertelecom.shop/services/motherboard-ic-repair"
+    },
+    {
+      "question": "Is personal data and photo privacy safe during repair at Super Telecom Giridih?",
+      "answer": "Yes. Super Telecom enforces the Digital Personal Data Protection (DPDP) Act 2027 standards with a strict Zero-Snooping workshop policy. Customer device passcodes are not required for hardware repairs (screens, batteries, charging ports), and all personal files and photos remain 100% private.",
+      "url": "https://www.supertelecom.shop/privacy"
+    },
+    {
+      "question": "What is the exact location and timings of Super Telecom in Giridih?",
+      "answer": "Super Telecom is located on Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301 (5 minutes walk from Tower Chowk). We are open 7 days a week, Monday through Sunday, from 10:00 AM to 9:30 PM IST. Call +91 80029 03643 or WhatsApp for instant assistance.",
+      "url": "https://www.supertelecom.shop/locations/barganda-road-mobile-repair"
+    },
+    {
+      "question": "Can green line or pink line on AMOLED display be repaired without changing the whole screen in Giridih?",
+      "answer": "Yes. Super Telecom offers specialized AMOLED flex bonding and ITO laser micro-rework in Giridih for OnePlus, Samsung, and Vivo phones. This can fix vertical green/pink lines and save up to 70% of the cost compared to replacing the entire display panel.",
+      "url": "https://www.supertelecom.shop/services/green-line-display-fix"
+    },
+    {
+      "question": "Does Super Telecom offer mobile battery replacement with warranty in Giridih?",
+      "answer": "Yes. Super Telecom installs brand new zero-cycle high-density lithium-ion batteries with an official 6-month (180 days) replacement warranty for all iPhone and Android models in 20 to 40 minutes.",
+      "url": "https://www.supertelecom.shop/services/battery-replacement"
+    }
+  ],
+  "dateModified": "2026-11-10T18:20:00+05:30"
+}

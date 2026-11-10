@@ -103,12 +103,18 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools. Call +91 80029 03643." },
       { property: "og:url", content: `${SITE_URL}/` },
       { property: "og:type", content: "business.business" },
+      { property: "article:modified_time", content: "2026-11-10T18:20:00+05:30" },
+      { property: "article:published_time", content: "2026-01-01T00:00:00+05:30" },
+      { property: "og:updated_time", content: "2026-11-10T18:20:00+05:30" },
+      { name: "date", content: "2026-11-10" },
+      { name: "DC.date.modified", content: "2026-11-10T18:20:00+05:30" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Super Telecom | Best Mobile Repair in Giridih | Barganda Road Chip-Level Lab" },
       { name: "twitter:description", content: "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools. Call +91 80029 03643." },
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
+      { rel: "alternate", type: "application/rss+xml", title: "Super Telecom Giridih - Updates & Repair Guides", href: `${SITE_URL}/feed.xml` },
     ],
     scripts: [
       {

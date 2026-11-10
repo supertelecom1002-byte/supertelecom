@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "Super Telecom",
+  "legalName": "Super Telecom Mobile Care & Hardware Laboratory",
+  "alternateNames": [
+    "Super Telecom Giridih",
+    "Super Telecom Mobile Repairing Centre",
+    "Super Telecom Chip-Level Hardware Lab"
+  ],
+  "description": "Giridih's #1 smartphone repair center and chip-level micro-soldering laboratory located on Barganda Road (Near Shivam Clinic), Giridih, Jharkhand 815301. Providing same-day 120Hz AMOLED display replacement, iPhone specialist repairs, motherboard IC reballing, battery fixes, water damage revival, and 16+ free hardware diagnostic tools.",
+  "url": "https://www.supertelecom.shop",
+  "telephone": "+918002903643",
+  "whatsapp": "https://wa.me/918002903643",
+  "email": "supertelecom1002@gmail.com",
+  "address": {
+    "streetAddress": "Barganda Road, Near Shivam Clinic",
+    "addressLocality": "Giridih",
+    "addressRegion": "Jharkhand",
+    "postalCode": "815301",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "latitude": 24.1843,
+    "longitude": 86.3075
+  },
+  "openingHours": "Mo-Su 10:00-21:30",
+  "establishedYear": 2016,
+  "serviceLocalities": [
+    "Barganda Road",
+    "Tower Chowk",
+    "Bada Chowk",
+    "Makatpur",
+    "Pachamba",
+    "Station Road",
+    "Beniadih",
+    "Sirsia",
+    "Mohanpur",
+    "Dumri",
+    "Jamua",
+    "Bengabad",
+    "Gandey",
+    "Giridih District"
+  ],
+  "specialties": [
+    "120Hz Super Retina AMOLED Display Replacement",
+    "Motherboard Chip-Level Micro-Soldering (0.02mm Jumper, 350°C BGA)",
+    "Poco X3 Pro / Redmi Note 10 CPU Reballing",
+    "Apple iPhone Specialist Lab & Computerized Laser Back Glass",
+    "Original High-Density Battery Replacement (6 Months Warranty)",
+    "Water Damage Ultrasonic Cleaning Chamber",
+    "AMOLED Green Line / Pink Line Flex Bonding Fix",
+    "Free Hardware Diagnostic Suite (16+ Lab Tools)"
+  ],
+  "dateModified": "2026-11-10T18:20:00+05:30"
+}

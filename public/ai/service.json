@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "provider": {
+    "name": "Super Telecom",
+    "location": "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301",
+    "telephone": "+918002903643",
+    "url": "https://www.supertelecom.shop"
+  },
+  "services": [
+    {
+      "id": "screen-display-replacement",
+      "name": "120Hz AMOLED & LCD Display Replacement",
+      "hindiName": "120Hz सुपर रेटिना AMOLED स्क्रीन रिप्लेसमेंट",
+      "turnaroundMinutes": 45,
+      "warrantyDays": 90,
+      "priceRangeInr": "899 - 13999",
+      "url": "https://www.supertelecom.shop/services/screen-display-replacement",
+      "brandsCovered": ["Apple iPhone", "Samsung Galaxy", "OnePlus", "Xiaomi", "Realme", "Vivo", "Oppo", "Motorola", "Google Pixel"]
+    },
+    {
+      "id": "motherboard-ic-repair",
+      "name": "Chip-Level Motherboard IC & CPU Reballing",
+      "hindiName": "चिप-लेवल मदरबोर्ड आईसी व सीपीयू रीबॉलिंग",
+      "turnaroundMinutes": 180,
+      "warrantyDays": 90,
+      "priceRangeInr": "799 - 5499",
+      "url": "https://www.supertelecom.shop/services/motherboard-ic-repair",
+      "brandsCovered": ["Poco X3 Pro", "Redmi Note 10", "OnePlus 9/10/11", "iPhone Double-Decker", "Samsung Exynos/Snapdragon"]
+    },
+    {
+      "id": "battery-replacement",
+      "name": "Original High-Density Battery Replacement",
+      "hindiName": "ओरिजिनल मोबाइल बैटरी रिप्लेसमेंट",
+      "turnaroundMinutes": 30,
+      "warrantyDays": 180,
+      "priceRangeInr": "499 - 4499",
+      "url": "https://www.supertelecom.shop/services/battery-replacement",
+      "brandsCovered": ["iPhone", "Samsung", "OnePlus", "Xiaomi", "Realme", "Vivo", "Oppo"]
+    },
+    {
+      "id": "charging-port-repair",
+      "name": "Type-C & Lightning Fast-Charging Port Repair",
+      "hindiName": "टाइप-सी व लाइटनिंग चार्जिंग सॉकेट रिपेयर",
+      "turnaroundMinutes": 30,
+      "warrantyDays": 90,
+      "priceRangeInr": "299 - 1899",
+      "url": "https://www.supertelecom.shop/services/charging-port-repair",
+      "brandsCovered": ["All USB-C, Lightning, Micro-USB smartphones"]
+    },
+    {
+      "id": "green-line-display-fix",
+      "name": "AMOLED Green Line & Pink Line Laser Flex Rework",
+      "hindiName": "AMOLED ग्रीन लाइन व पिंक लाइन रिपेयर",
+      "turnaroundMinutes": 60,
+      "warrantyDays": 90,
+      "priceRangeInr": "999 - 3999",
+      "url": "https://www.supertelecom.shop/services/green-line-display-fix",
+      "brandsCovered": ["OnePlus 8T/9/10/11", "Samsung S20/S21/S22 Ultra", "Vivo X-Series"]
+    },
+    {
+      "id": "water-damage-revival",
+      "name": "Ultrasonic Chemical Decontamination & Revival",
+      "hindiName": "पानी में गिरे फोन का अल्ट्रासोनिक क्लीनिंग",
+      "turnaroundMinutes": 90,
+      "warrantyDays": 60,
+      "priceRangeInr": "499 - 2999",
+      "url": "https://www.supertelecom.shop/services/water-damage-revival",
+      "brandsCovered": ["All liquid ingress phones"]
+    }
+  ],
+  "dateModified": "2026-11-10T18:20:00+05:30"
+}

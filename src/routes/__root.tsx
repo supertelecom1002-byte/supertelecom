@@ -215,10 +215,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: SITE_TITLE },
       { name: "twitter:description", content: SITE_DESC },
-
+      { property: "article:modified_time", content: "2026-11-10T18:20:00+05:30" },
+      { property: "og:updated_time", content: "2026-11-10T18:20:00+05:30" },
+      { name: "date", content: "2026-11-10" },
+      { name: "DC.date.modified", content: "2026-11-10T18:20:00+05:30" },
     ],
     links: [
       { rel: "manifest", href: "/manifest.json" },
+      { rel: "alternate", type: "application/rss+xml", title: "Super Telecom Giridih - Updates & Repair Guides", href: `${SITE_URL}/feed.xml` },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/icon-192.png" },
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/icon-192.png" },
