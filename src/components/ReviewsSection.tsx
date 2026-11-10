@@ -292,7 +292,7 @@ export const ReviewsSection: React.FC = () => {
               <a
                 href={BUSINESS_MASTER.googleReviewUrl}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer ugc"
                 className="w-full flex items-center justify-between p-3.5 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 text-foreground transition-all group"
               >
                 <div className="flex items-center gap-3">

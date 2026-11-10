@@ -241,9 +241,9 @@ function HomePage() {
       <Immersive3DLoader />
       <LocalSeoSchema />
       {/* 100% Native Mobile App Experience (md:hidden) */}
-      <div className="md:hidden">
+      <main className="md:hidden">
         <MobileAppShell />
-      </div>
+      </main>
 
       {/* Flagship Enterprise Portal (hidden md:block) */}
       <div className="hidden md:block min-h-screen h-auto w-full max-w-full overflow-x-clip bg-background text-foreground">
