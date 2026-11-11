@@ -608,6 +608,7 @@ class StorageRecoverEngine(private val context: Context) {
                     if (bytesRead < 4) break
 
                     var i = 0
+                    var advancedToCarved = false
                     while (i < bytesRead - 3 && carvedCount < maxToExtract && _isScanning.value) {
                         // Detect SOI: 0xFF, 0xD8, 0xFF
                         if ((buffer[i].toInt() and 0xFF) == 0xFF &&
@@ -650,13 +651,14 @@ class StorageRecoverEngine(private val context: Context) {
                                     carvedCount++
                                     // Advance to end of this JPEG
                                     filePos = endOffset
+                                    advancedToCarved = true
                                     break
                                 }
                             }
                         }
                         i++
                     }
-                    if (filePos < fileLength) {
+                    if (!advancedToCarved && filePos < fileLength) {
                         filePos += (bytesRead - 4).coerceAtLeast(1)
                     }
                 }
@@ -1057,7 +1059,7 @@ class StorageRecoverEngine(private val context: Context) {
                         tier = defaultTier,
                         uri = Uri.fromFile(f),
                         qualityTag = defaultQuality,
-                        isSelected = false,
+                        isSelected = true,
                         isRestorable = true,
                         timestampMillis = f.lastModified()
                     )
@@ -1436,16 +1438,35 @@ class StorageRecoverEngine(private val context: Context) {
 
                 var restoredSuccessfully = false
 
+                // ── STRATEGY 0: Dedicated In-App Vault Write (Guarantees in-app immediate visibility on 100% of Android versions) ──
+                try {
+                    val inAppVaultDir = File(context.getExternalFilesDir(null) ?: context.filesDir, "RecoveredVault").apply {
+                        if (!exists()) mkdirs()
+                    }
+                    val inAppVaultFile = File(inAppVaultDir, destFileName)
+                    inAppVaultFile.outputStream().use { out ->
+                        out.write(finalBytes)
+                        out.flush()
+                    }
+                    restoredSuccessfully = true
+                } catch (_: Exception) {}
+
                 // ── STRATEGY 1: Android 10+ (API 29+) MediaStore Insert (Instant Gallery Visibility) ──
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     try {
+                        val nowSec = System.currentTimeMillis() / 1000
+                        val itemTimeMillis = if (item.timestampMillis > 946684800000L) item.timestampMillis else System.currentTimeMillis()
                         val contentValues = ContentValues().apply {
                             put(MediaStore.MediaColumns.DISPLAY_NAME, destFileName)
                             put(MediaStore.MediaColumns.MIME_TYPE, dest.mimeType)
                             put(MediaStore.MediaColumns.RELATIVE_PATH, "${dest.relFolder}/")
                             put(MediaStore.MediaColumns.IS_PENDING, 1)
-                            put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis() / 1000)
-                            put(MediaStore.MediaColumns.DATE_MODIFIED, System.currentTimeMillis() / 1000)
+                            put(MediaStore.MediaColumns.DATE_ADDED, nowSec)
+                            put(MediaStore.MediaColumns.DATE_MODIFIED, nowSec)
+                            if (dest.collection == MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) ||
+                                dest.collection == MediaStore.Images.Media.EXTERNAL_CONTENT_URI) {
+                                put(MediaStore.Images.Media.DATE_TAKEN, itemTimeMillis)
+                            }
                         }
 
                         val insertUri = context.contentResolver.insert(dest.collection, contentValues)
@@ -1470,62 +1491,58 @@ class StorageRecoverEngine(private val context: Context) {
                 }
 
                 // ── STRATEGY 2: Direct DCIM file write (For Android 9 or SD Card or when direct write allowed) ──
-                if (!restoredSuccessfully) {
-                    try {
-                        val targetDir = File(
-                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                            "SuperTelecom_Recovered"
-                        ).apply { if (!exists()) mkdirs() }
+                try {
+                    val targetDir = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                        "SuperTelecom_Recovered"
+                    ).apply { if (!exists()) mkdirs() }
 
-                        var destFile = File(targetDir, destFileName)
-                        var counter = 1
-                        while (destFile.exists()) {
-                            destFile = File(targetDir, "${cleanBase}_$counter.${dest.cleanExt}")
-                            counter++
-                        }
+                    var destFile = File(targetDir, destFileName)
+                    var counter = 1
+                    while (destFile.exists()) {
+                        destFile = File(targetDir, "${cleanBase}_$counter.${dest.cleanExt}")
+                        counter++
+                    }
 
-                        destFile.outputStream().use { out ->
-                            out.write(finalBytes)
-                            out.flush()
-                        }
+                    destFile.outputStream().use { out ->
+                        out.write(finalBytes)
+                        out.flush()
+                    }
 
-                        if (destFile.exists() && destFile.length() > 0) {
-                            MediaScannerConnection.scanFile(
-                                context,
-                                arrayOf(destFile.absolutePath),
-                                arrayOf(dest.mimeType),
-                                null
-                            )
-                            context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(destFile)))
-                            restoredSuccessfully = true
-                        }
-                    } catch (_: Exception) {}
-                }
+                    if (destFile.exists() && destFile.length() > 0) {
+                        MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(destFile.absolutePath),
+                            arrayOf(dest.mimeType),
+                            null
+                        )
+                        context.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(destFile)))
+                        restoredSuccessfully = true
+                    }
+                } catch (_: Exception) {}
 
                 // ── STRATEGY 3: Pictures folder fallback ──
-                if (!restoredSuccessfully) {
-                    try {
-                        val targetDir = File(
-                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                            "SuperTelecom_Recovered"
-                        ).apply { if (!exists()) mkdirs() }
+                try {
+                    val targetDir = File(
+                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        "SuperTelecom_Recovered"
+                    ).apply { if (!exists()) mkdirs() }
 
-                        val destFile = File(targetDir, destFileName)
-                        destFile.outputStream().use { out ->
-                            out.write(finalBytes)
-                            out.flush()
-                        }
-                        if (destFile.exists() && destFile.length() > 0) {
-                            MediaScannerConnection.scanFile(
-                                context,
-                                arrayOf(destFile.absolutePath),
-                                arrayOf(dest.mimeType),
-                                null
-                            )
-                            restoredSuccessfully = true
-                        }
-                    } catch (_: Exception) {}
-                }
+                    val destFile = File(targetDir, destFileName)
+                    destFile.outputStream().use { out ->
+                        out.write(finalBytes)
+                        out.flush()
+                    }
+                    if (destFile.exists() && destFile.length() > 0) {
+                        MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(destFile.absolutePath),
+                            arrayOf(dest.mimeType),
+                            null
+                        )
+                        restoredSuccessfully = true
+                    }
+                } catch (_: Exception) {}
 
                 if (restoredSuccessfully) {
                     successCount++
@@ -1567,15 +1584,16 @@ class StorageRecoverEngine(private val context: Context) {
     fun openGalleryIntent(): Intent {
         val intents = listOf(
             Intent(Intent.ACTION_VIEW).apply {
-                type = "image/*"
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
             },
             Intent(Intent.ACTION_MAIN).apply {
                 addCategory(Intent.CATEGORY_APP_GALLERY)
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             },
             Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                val dcimDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "SuperTelecom_Recovered")
+                setDataAndType(Uri.fromFile(dcimDir), "resource/folder")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
         )
@@ -1584,8 +1602,7 @@ class StorageRecoverEngine(private val context: Context) {
                 return intent
             }
         }
-        return Intent(Intent.ACTION_VIEW).apply {
-            type = "image/*"
+        return Intent(Intent.ACTION_VIEW, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
     }

@@ -43,6 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.supertelecom.model.RecoverCategory
 import com.supertelecom.model.RecoverItem
 import com.supertelecom.model.RecoverSettings
@@ -151,8 +153,10 @@ fun SuperRecoverScreen(
                 }
                 isOneClickRunning = false
                 restoreResult = result
+                val updatedVault = withContext(Dispatchers.IO) { recoverEngine.scanRecoveredVault() }
                 vaultItems.clear()
-                vaultItems.addAll(recoverEngine.scanRecoveredVault())
+                vaultItems.addAll(updatedVault)
+                screenMode = RecoverScreenMode.VAULT
             } catch (e: Exception) {
                 isOneClickRunning = false
                 Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -296,9 +300,7 @@ fun SuperRecoverScreen(
                     onPreviewItem = { previewItem = it },
                     onBackToDashboard = { screenMode = RecoverScreenMode.DASHBOARD },
                     onRestoreSelected = {
-                        val selectedList = if (discoveredItems.any { it.isSelected }) {
-                            discoveredItems.filter { it.isSelected }
-                        } else {
+                        val selectedList = discoveredItems.filter { it.isSelected && it.isRestorable }.ifEmpty {
                             discoveredItems.filter { it.isRestorable }
                         }
                         if (selectedList.isNotEmpty() && !isRestoring) {
@@ -307,6 +309,10 @@ fun SuperRecoverScreen(
                                 val res = recoverEngine.restoreSelectedItems(selectedList)
                                 isRestoring = false
                                 restoreResult = res
+                                val updatedVault = withContext(Dispatchers.IO) { recoverEngine.scanRecoveredVault() }
+                                vaultItems.clear()
+                                vaultItems.addAll(updatedVault)
+                                screenMode = RecoverScreenMode.VAULT
                             }
                         }
                     },
@@ -331,6 +337,19 @@ fun SuperRecoverScreen(
                     items = vaultItems,
                     onBackToDashboard = { screenMode = RecoverScreenMode.DASHBOARD },
                     onPreviewItem = { previewItem = it },
+                    onOpenGallery = {
+                        try {
+                            context.startActivity(recoverEngine.openGalleryIntent())
+                        } catch (_: Exception) {
+                            Toast.makeText(context, if (isHindi) "गैलरी ऐप नहीं मिला" else "Gallery app not found", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onShareAll = {
+                        val shareIntent = recoverEngine.createShareIntent(vaultItems)
+                        if (shareIntent != null) {
+                            context.startActivity(Intent.createChooser(shareIntent, if (isHindi) "सभी फाइलें शेयर करें" else "Share All Files"))
+                        }
+                    },
                     contentPadding = contentPadding
                 )
             }
@@ -348,6 +367,10 @@ fun SuperRecoverScreen(
                         val res = recoverEngine.restoreSelectedItems(listOf(item))
                         previewItem = null
                         restoreResult = res
+                        val updatedVault = withContext(Dispatchers.IO) { recoverEngine.scanRecoveredVault() }
+                        vaultItems.clear()
+                        vaultItems.addAll(updatedVault)
+                        screenMode = RecoverScreenMode.VAULT
                     }
                 },
                 onShareSingle = {
@@ -1951,6 +1974,8 @@ fun RecoveredVaultView(
     items: List<RecoverItem>,
     onBackToDashboard: () -> Unit,
     onPreviewItem: (RecoverItem) -> Unit,
+    onOpenGallery: () -> Unit,
+    onShareAll: () -> Unit,
     contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
@@ -1971,7 +1996,7 @@ fun RecoveredVaultView(
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             Spacer(modifier = Modifier.width(4.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = if (isHindi) "रिकवर की गई फाइलें (${items.size})" else "Recovered Vault (${items.size})",
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -1980,13 +2005,67 @@ fun RecoveredVaultView(
                     )
                 )
                 Text(
-                    text = "Downloads/SuperTelecom_Recovered",
+                    text = "DCIM/SuperTelecom_Recovered",
                     style = MaterialTheme.typography.labelSmall.copy(
                         color = TextSecondary,
                         fontSize = 10.sp,
                         fontFamily = FontFamily.Monospace
                     )
                 )
+            }
+
+            if (items.isNotEmpty()) {
+                IconButton(onClick = onOpenGallery) {
+                    Icon(imageVector = Icons.Default.PhotoLibrary, contentDescription = "Gallery", tint = CyanAccent)
+                }
+                IconButton(onClick = onShareAll) {
+                    Icon(imageVector = Icons.Default.Share, contentDescription = "Share", tint = EmeraldAccent)
+                }
+            }
+        }
+
+        if (items.isNotEmpty()) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                color = CardDark,
+                shape = RoundedCornerShape(12.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldAccent.copy(alpha = 0.3f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = EmeraldAccent,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "✅ सभी फाइलें सफलतापूर्वक रीस्टोर हो गईं!" else "✅ Files Successfully Restored!",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        )
+                        Text(
+                            text = if (isHindi) "ये फाइलें आपके फोन की गैलरी (DCIM) में सेव हैं।" else "These photos are now in your device Gallery.",
+                            style = MaterialTheme.typography.labelSmall.copy(color = TextSecondary)
+                        )
+                    }
+                    Button(
+                        onClick = onOpenGallery,
+                        colors = ButtonDefaults.buttonColors(containerColor = CyanAccent, contentColor = BgDark),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = if (isHindi) "गैलरी" else "Gallery",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
             }
         }
 

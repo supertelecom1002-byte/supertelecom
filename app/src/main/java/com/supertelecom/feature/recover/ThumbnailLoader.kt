@@ -74,7 +74,7 @@ object ThumbnailLoader {
                         BitmapFactory.decodeStream(stream, null, options)
                         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
                         options.inJustDecodeBounds = false
-                        options.inPreferredConfig = Bitmap.Config.RGB_565
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888
 
                         context.contentResolver.openInputStream(item.uri)?.use { s2 ->
                             bitmap = BitmapFactory.decodeStream(s2, null, options)
@@ -96,7 +96,7 @@ object ThumbnailLoader {
                         BitmapFactory.decodeFile(directFile.absolutePath, options)
                         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
                         options.inJustDecodeBounds = false
-                        options.inPreferredConfig = Bitmap.Config.RGB_565
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888
                         bitmap = BitmapFactory.decodeFile(directFile.absolutePath, options)
                     } catch (_: Exception) {}
                 }
@@ -107,12 +107,17 @@ object ThumbnailLoader {
                 try {
                     val rawId = item.id.removePrefix("orphan_thumb_").toLongOrNull()
                     if (rawId != null) {
-                        bitmap = MediaStore.Images.Thumbnails.getThumbnail(
-                            context.contentResolver,
-                            rawId,
-                            MediaStore.Images.Thumbnails.MINI_KIND,
-                            null
-                        )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val contentUri = android.content.ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, rawId)
+                            bitmap = context.contentResolver.loadThumbnail(contentUri, Size(reqWidth, reqHeight), null)
+                        } else {
+                            bitmap = MediaStore.Images.Thumbnails.getThumbnail(
+                                context.contentResolver,
+                                rawId,
+                                MediaStore.Images.Thumbnails.MINI_KIND,
+                                null
+                            )
+                        }
                     }
                 } catch (_: Exception) {}
             }
@@ -121,12 +126,17 @@ object ThumbnailLoader {
                 try {
                     val rawId = item.id.removePrefix("orphan_vid_thumb_").toLongOrNull()
                     if (rawId != null) {
-                        bitmap = MediaStore.Video.Thumbnails.getThumbnail(
-                            context.contentResolver,
-                            rawId,
-                            MediaStore.Video.Thumbnails.MINI_KIND,
-                            null
-                        )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val contentUri = android.content.ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, rawId)
+                            bitmap = context.contentResolver.loadThumbnail(contentUri, Size(reqWidth, reqHeight), null)
+                        } else {
+                            bitmap = MediaStore.Video.Thumbnails.getThumbnail(
+                                context.contentResolver,
+                                rawId,
+                                MediaStore.Video.Thumbnails.MINI_KIND,
+                                null
+                            )
+                        }
                     }
                 } catch (_: Exception) {}
             }

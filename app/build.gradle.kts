@@ -14,8 +14,8 @@ android {
         applicationId = "com.supertelecom.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 42
-        versionName = "3.12.0"
+        versionCode = 43
+        versionName = "3.13.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

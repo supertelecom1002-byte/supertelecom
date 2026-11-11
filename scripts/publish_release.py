@@ -36,12 +36,27 @@ def main():
     with open(release_json_path, "r", encoding="utf-8") as f:
         rel_data = json.load(f)
         
-    rel_data["versionName"] = "2.8.0"
-    rel_data["versionCode"] = 28
+    # Read version info from app/build.gradle.kts
+    gradle_path = os.path.join("app", "build.gradle.kts")
+    version_name = "3.13.0"
+    version_code = 43
+    if os.path.exists(gradle_path):
+        import re
+        with open(gradle_path, "r", encoding="utf-8") as gf:
+            gc = gf.read()
+            m_name = re.search(r'versionName\s*=\s*"([^"]+)"', gc)
+            m_code = re.search(r'versionCode\s*=\s*(\d+)', gc)
+            if m_name:
+                version_name = m_name.group(1)
+            if m_code:
+                version_code = int(m_code.group(1))
+
+    rel_data["versionName"] = version_name
+    rel_data["versionCode"] = version_code
     rel_data["fileSize"] = file_size
     rel_data["fileSizeHuman"] = size_human
     rel_data["sha256"] = sha256_hash
-    rel_data["releaseDate"] = "2026-11-04"
+    rel_data["releaseDate"] = "2026-11-11"
     rel_data["compliance"] = "Privacy & Your Data"
     
     with open(release_json_path, "w", encoding="utf-8") as f:
@@ -54,12 +69,12 @@ def main():
         content = f.read()
         
     import re
-    content = re.sub(r'versionName:\s*"[^"]+"', 'versionName: "2.8.0"', content)
-    content = re.sub(r'versionCode:\s*\d+', 'versionCode: 28', content)
+    content = re.sub(r'versionName:\s*"[^"]+"', f'versionName: "{version_name}"', content)
+    content = re.sub(r'versionCode:\s*\d+', f'versionCode: {version_code}', content)
     content = re.sub(r'fileSize:\s*\d+', f'fileSize: {file_size}', content)
     content = re.sub(r'fileSizeHuman:\s*"[^"]+"', f'fileSizeHuman: "{size_human}"', content)
     content = re.sub(r'sha256:\s*"[^"]+"', f'sha256: "{sha256_hash}"', content)
-    content = re.sub(r'releaseDate:\s*"[^"]+"', 'releaseDate: "2026-11-04"', content)
+    content = re.sub(r'releaseDate:\s*"[^"]+"', 'releaseDate: "2026-11-11"', content)
     
     with open(manager_path, "w", encoding="utf-8") as f:
         f.write(content)
