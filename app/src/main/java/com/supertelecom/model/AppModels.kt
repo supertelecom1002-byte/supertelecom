@@ -162,7 +162,8 @@ data class RecoverSettings(
     val autoSkipDuplicates: Boolean = true,
     val forceMediaScannerSync: Boolean = true,
     val gallerySaveDestination: String = "DCIM/SuperTelecom_Recovered",
-    val minFileSizeBytes: Long = 1024L
+    val minFileSizeBytes: Long = 1024L,
+    val excludeExistingGalleryMedia: Boolean = true
 )
 
 data class RecoverItem(

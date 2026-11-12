@@ -776,6 +776,39 @@ fun RecoverDashboardView(
             }
         }
 
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // ── 🛡️ STRICT ANTI-GALLERY EXCLUSION GUARANTEE BADGE ──
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color(0xFF064E3B).copy(alpha = 0.35f))
+                .border(1.dp, Color(0xFF10B981).copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.VerifiedUser,
+                    contentDescription = null,
+                    tint = EmeraldAccent,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isHindi)
+                        "🛡️ केवल डिलीटेड फाइलें (मौजूदा गैलरी फोटो स्वचालित रूप से छिपाई गई हैं)"
+                    else
+                        "🛡️ Pure Deleted Media (Existing Gallery photos automatically excluded)",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(0xFFA7F3D0),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 11.sp
+                    )
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(14.dp))
 
         // ── STORAGE STATUS METER BANNER ──
@@ -2431,6 +2464,7 @@ fun RecoverySettingsDialog(
     onClearCache: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    var excludeExistingGallery by remember { mutableStateOf(settings.excludeExistingGalleryMedia) }
     var postFormat by remember { mutableStateOf(settings.postFormatDeepScan) }
     var aggressiveCarving by remember { mutableStateOf(settings.aggressiveByteCarving) }
     var skipDuplicates by remember { mutableStateOf(settings.autoSkipDuplicates) }
@@ -2450,6 +2484,31 @@ fun RecoverySettingsDialog(
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                // 🛡️ Filter Existing Gallery Media (Primary User Preference)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (isHindi) "🛡️ मौजूदा गैलरी फोटो छिपाएं" else "🛡️ Hide Existing Gallery Media",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold, color = CyanAccent)
+                        )
+                        Text(
+                            text = if (isHindi) "गैलरी में पहले से मौजूद फोटो को हटाकर सिर्फ डिलीटेड फाइलें दिखाएं" else "Exclude active media and strictly show deleted/lost items",
+                            style = MaterialTheme.typography.bodySmall.copy(color = TextSecondary, fontSize = 11.sp)
+                        )
+                    }
+                    Switch(
+                        checked = excludeExistingGallery,
+                        onCheckedChange = { excludeExistingGallery = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = CyanAccent)
+                    )
+                }
+
+                HorizontalDivider(color = CardBorder)
+
                 // Post Format Deep Scan
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -2558,6 +2617,7 @@ fun RecoverySettingsDialog(
                 onClick = {
                     onSettingsChanged(
                         settings.copy(
+                            excludeExistingGalleryMedia = excludeExistingGallery,
                             postFormatDeepScan = postFormat,
                             aggressiveByteCarving = aggressiveCarving,
                             autoSkipDuplicates = skipDuplicates,

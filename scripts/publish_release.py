@@ -56,7 +56,7 @@ def main():
     rel_data["fileSize"] = file_size
     rel_data["fileSizeHuman"] = size_human
     rel_data["sha256"] = sha256_hash
-    rel_data["releaseDate"] = "2026-11-11"
+    rel_data["releaseDate"] = "2026-11-12"
     rel_data["compliance"] = "Privacy & Your Data"
     
     with open(release_json_path, "w", encoding="utf-8") as f:
@@ -74,7 +74,7 @@ def main():
     content = re.sub(r'fileSize:\s*\d+', f'fileSize: {file_size}', content)
     content = re.sub(r'fileSizeHuman:\s*"[^"]+"', f'fileSizeHuman: "{size_human}"', content)
     content = re.sub(r'sha256:\s*"[^"]+"', f'sha256: "{sha256_hash}"', content)
-    content = re.sub(r'releaseDate:\s*"[^"]+"', 'releaseDate: "2026-11-11"', content)
+    content = re.sub(r'releaseDate:\s*"[^"]+"', 'releaseDate: "2026-11-12"', content)
     
     with open(manager_path, "w", encoding="utf-8") as f:
         f.write(content)

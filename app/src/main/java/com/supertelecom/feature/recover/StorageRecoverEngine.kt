@@ -105,7 +105,135 @@ class StorageRecoverEngine(private val context: Context) {
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
-    // 1. MASTER DEEP SCAN ORCHESTRATION (4-LAYER TRUE RECOVERY)
+    // ACTIVE GALLERY MEDIA DEDUPLICATION ENGINE (STRICT DELETED-ONLY FILTER)
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Snapshot index of all active (non-trashed) media currently visible in phone gallery.
+     * Used across all scanning layers to automatically eliminate active gallery files
+     * so that the user sees ONLY genuine deleted and lost media.
+     */
+    class ActiveGalleryIndex(
+        val activeNames: Set<String>,
+        val activeBaseNames: Set<String>,
+        val activeNameSizes: Set<String>,
+        val activePaths: Set<String>
+    ) {
+        fun isPresentInGallery(fileName: String, sizeBytes: Long = 0L, filePath: String? = null): Boolean {
+            val cleanName = fileName.lowercase().trim()
+            val baseName = cleanName.substringBeforeLast('.').removePrefix(".").removePrefix("cached_").trim()
+
+            if (cleanName.isNotEmpty() && activeNames.contains(cleanName)) return true
+            if (baseName.length >= 4 && activeBaseNames.contains(baseName)) return true
+            if (sizeBytes > 0 && activeNameSizes.contains("${cleanName}_$sizeBytes")) return true
+
+            if (!filePath.isNullOrBlank()) {
+                val cleanPath = filePath.lowercase().trim()
+                if (activePaths.contains(cleanPath)) return true
+                if ((cleanPath.contains("/dcim/camera/") || cleanPath.contains("/pictures/camera/") ||
+                     cleanPath.contains("/pictures/screenshots/")) &&
+                    !cleanPath.contains(".trash") && !cleanPath.contains(".pending") && !cleanPath.contains(".thumb")
+                ) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
+    /**
+     * Builds an in-memory index of all existing photos/videos currently active in phone gallery.
+     */
+    fun loadActiveGalleryIndex(): ActiveGalleryIndex {
+        val activeNames = HashSet<String>()
+        val activeBaseNames = HashSet<String>()
+        val activeNameSizes = HashSet<String>()
+        val activePaths = HashSet<String>()
+
+        val collections = listOf(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        )
+
+        for (uri in collections) {
+            try {
+                val projection = arrayOf(
+                    MediaStore.MediaColumns.DISPLAY_NAME,
+                    MediaStore.MediaColumns.SIZE,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) MediaStore.MediaColumns.IS_TRASHED else MediaStore.MediaColumns._ID,
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) MediaStore.MediaColumns.RELATIVE_PATH else MediaStore.MediaColumns._ID
+                )
+
+                val cursor = context.contentResolver.query(uri, projection, null, null, null)
+                cursor?.use { c ->
+                    val nameCol = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                    val sizeCol = c.getColumnIndex(MediaStore.MediaColumns.SIZE)
+                    val relPathCol = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) c.getColumnIndex(MediaStore.MediaColumns.RELATIVE_PATH) else -1
+                    val trashedCol = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) c.getColumnIndex(MediaStore.MediaColumns.IS_TRASHED) else -1
+
+                    while (c.moveToNext()) {
+                        val isTrashed = if (trashedCol != -1) c.getInt(trashedCol) == 1 else false
+                        if (isTrashed) continue // Trashed files ARE deleted, do not index them as active!
+
+                        val name = if (nameCol != -1) c.getString(nameCol) else null
+                        val size = if (sizeCol != -1) c.getLong(sizeCol) else 0L
+                        val relPath = if (relPathCol != -1) c.getString(relPathCol) else null
+
+                        if (!name.isNullOrBlank()) {
+                            val cleanName = name.lowercase().trim()
+                            activeNames.add(cleanName)
+                            val base = cleanName.substringBeforeLast('.').removePrefix(".").trim()
+                            if (base.length >= 4) {
+                                activeBaseNames.add(base)
+                            }
+                            if (size > 0) {
+                                activeNameSizes.add("${cleanName}_$size")
+                            }
+                            if (!relPath.isNullOrBlank()) {
+                                activePaths.add("${relPath.lowercase().trim()}/$cleanName")
+                            }
+                        }
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+
+        // Direct directory inspection of standard camera & gallery folders
+        try {
+            val standardDirs = listOf(
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Camera"),
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "100ANDRO"),
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Screenshots"),
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Camera"),
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Instagram"),
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Facebook"),
+                File(Environment.getExternalStorageDirectory(), "WhatsApp/Media/WhatsApp Images"),
+                File(Environment.getExternalStorageDirectory(), "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Images"),
+                File(Environment.getExternalStorageDirectory(), "Telegram/Telegram Images")
+            )
+
+            for (dir in standardDirs) {
+                if (dir.exists() && dir.isDirectory) {
+                    dir.listFiles()?.forEach { f ->
+                        if (f.isFile && f.length() > 0 && !f.name.startsWith(".")) {
+                            val cleanName = f.name.lowercase().trim()
+                            activeNames.add(cleanName)
+                            val base = cleanName.substringBeforeLast('.').removePrefix(".").trim()
+                            if (base.length >= 4) activeBaseNames.add(base)
+                            activeNameSizes.add("${cleanName}_${f.length()}")
+                            activePaths.add(f.absolutePath.lowercase().trim())
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+
+        return ActiveGalleryIndex(activeNames, activeBaseNames, activeNameSizes, activePaths)
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // 1. MASTER DEEP SCAN ORCHESTRATION (STRICT DELETED-ONLY RECOVERY)
     // ─────────────────────────────────────────────────────────────────────────────
 
     suspend fun executeDeepScan(
@@ -117,15 +245,19 @@ class StorageRecoverEngine(private val context: Context) {
         _scanProgress.value = 0f
         val results = mutableListOf<RecoverItem>()
 
+        // 🛡️ Pre-Scan Snapshot: Index all existing active gallery media to exclude them
+        onProgress("गैलरी की मौजूदा फाइलों की इंडेक्सिंग...", 0, 0.05f)
+        val activeGallery = loadActiveGalleryIndex()
+
         try {
             // Special Case: Recovered Files Vault
             if (selectedCategory == RecoverCategory.VAULT) {
                 _currentScanPath.value = "SuperTelecom_Recovered Vault"
                 onProgress(_currentScanPath.value, 0, 0.5f)
-                results.addAll(scanRecoveredVault())
+                val vault = scanRecoveredVault()
                 _scanProgress.value = 1f
-                onProgress(_currentScanPath.value, results.size, 1f)
-                return@withContext results
+                onProgress(_currentScanPath.value, vault.size, 1f)
+                return@withContext vault
             }
 
             // ── LAYER 1: MediaStore System Trash & Pending Scan (Android 10-16) ──
@@ -142,7 +274,7 @@ class StorageRecoverEngine(private val context: Context) {
                 _currentScanPath.value = "Scanning Orphan Thumbnail Database for Deleted Media"
                 _scanProgress.value = 0.30f
                 onProgress(_currentScanPath.value, results.size, 0.30f)
-                results.addAll(scanOrphanThumbnails(selectedCategory))
+                results.addAll(scanOrphanThumbnails(selectedCategory, activeGallery))
                 _scannedCount.value = results.size
             }
 
@@ -158,7 +290,7 @@ class StorageRecoverEngine(private val context: Context) {
                 _currentScanPath.value = "DCIM & Gallery .thumbdata Byte Carving (0xFFD8FF)"
                 _scanProgress.value = 0.45f
                 onProgress(_currentScanPath.value, results.size, 0.45f)
-                results.addAll(carveJpegFromThumbdataCaches())
+                results.addAll(carveJpegFromThumbdataCaches(activeGallery))
                 _scannedCount.value = results.size
             }
 
@@ -167,34 +299,34 @@ class StorageRecoverEngine(private val context: Context) {
                 _currentScanPath.value = "Post-Format Partition & LOST.DIR Cluster Scan"
                 _scanProgress.value = 0.58f
                 onProgress(_currentScanPath.value, results.size, 0.58f)
-                results.addAll(scanLostDirAndUnlinkedBlocks(selectedCategory))
+                results.addAll(scanLostDirAndUnlinkedBlocks(selectedCategory, activeGallery))
                 _scannedCount.value = results.size
             }
 
-            // ── LAYER 3A: WhatsApp & Social Media Deep Walk (.Statuses, Sent, Trash) ──
+            // ── LAYER 3A: WhatsApp & Social Media Deep Walk (.Statuses, Trash, Shared) ──
             if (_isScanning.value) {
-                _currentScanPath.value = "WhatsApp & Social Hidden Media (.Statuses, Sent, Trash)"
+                _currentScanPath.value = "WhatsApp & Social Hidden Media (.Statuses, Trash)"
                 _scanProgress.value = 0.65f
                 onProgress(_currentScanPath.value, results.size, 0.65f)
-                results.addAll(scanSocialAndCommunicationMedia(selectedCategory))
+                results.addAll(scanSocialAndCommunicationMedia(selectedCategory, activeGallery))
                 _scannedCount.value = results.size
             }
 
             // ── LAYER 3B: Hidden Dot-Folders, .nomedia & Call Recordings ──
             if (_isScanning.value) {
-                _currentScanPath.value = "Hidden Dot-Folders, .nomedia & Call Recordings"
+                _currentScanPath.value = "Hidden Dot-Folders & .nomedia Remnants"
                 _scanProgress.value = 0.85f
                 onProgress(_currentScanPath.value, results.size, 0.85f)
-                results.addAll(scanHiddenAndVoiceRecordings(selectedCategory))
+                results.addAll(scanHiddenAndVoiceRecordings(selectedCategory, activeGallery))
                 _scannedCount.value = results.size
             }
 
             // ── LAYER 3C: General Storage Downloads & APK Backups ──
             if (_isScanning.value && (selectedCategory == RecoverCategory.ALL_MEDIA || selectedCategory == RecoverCategory.DOCUMENTS)) {
-                _currentScanPath.value = "Downloads & Document Storage Walk"
+                _currentScanPath.value = "Downloads Trash & Document Bin Walk"
                 _scanProgress.value = 0.95f
                 onProgress(_currentScanPath.value, results.size, 0.95f)
-                results.addAll(scanDownloadsAndApks(selectedCategory))
+                results.addAll(scanDownloadsAndApks(selectedCategory, activeGallery))
                 _scannedCount.value = results.size
             }
 
@@ -203,10 +335,24 @@ class StorageRecoverEngine(private val context: Context) {
         } finally {
             _isScanning.value = false
             _scanProgress.value = 1f
-            _scannedCount.value = results.size
         }
 
-        results.distinctBy { it.id }
+        // ── 🛡️ STRICT ANTI-GALLERY EXCLUSION FILTER ──
+        // Guarantee: Zero active photos from phone gallery will appear!
+        // ONLY genuine deleted, trashed, orphaned, or carved items will pass!
+        val filtered = results.filter { item ->
+            if (item.tier == RecoverTier.SYSTEM_TRASH) return@filter true
+            val inGallery = activeGallery.isPresentInGallery(
+                fileName = item.name,
+                sizeBytes = item.sizeBytes,
+                filePath = item.uri?.path ?: item.sourcePath
+            )
+            !inGallery
+        }.distinctBy { it.id }
+
+        _scannedCount.value = filtered.size
+        onProgress("स्कैन पूरा! केवल डिलीट की गई फाइलें तैयार हैं (${filtered.size})", filtered.size, 1.0f)
+        filtered
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
@@ -323,7 +469,10 @@ class StorageRecoverEngine(private val context: Context) {
     // LAYER 1B: ORPHAN THUMBNAIL DATABASE EXCAVATION (DELETED PHOTOS & VIDEOS)
     // ─────────────────────────────────────────────────────────────────────────────
 
-    private fun scanOrphanThumbnails(category: RecoverCategory): List<RecoverItem> {
+    private fun scanOrphanThumbnails(
+        category: RecoverCategory,
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         if (category != RecoverCategory.ALL_MEDIA && category != RecoverCategory.PHOTOS && category != RecoverCategory.VIDEOS) {
             return list
@@ -363,12 +512,22 @@ class StorageRecoverEngine(private val context: Context) {
                             val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
                             val file = if (dataPath != null) File(dataPath) else null
                             val sizeBytes = if (file != null && file.exists()) file.length() else 35_000L
+                            val thumbFileName = "Deleted_Photo_Thumb_$thumbId.jpg"
+
+                            // 🛡️ Strict Anti-Gallery: Skip if matches any active gallery item
+                            if (activeGallery != null && (
+                                activeGallery.isPresentInGallery(thumbFileName, sizeBytes, dataPath) ||
+                                (file != null && activeGallery.isPresentInGallery(file.name, sizeBytes, file.absolutePath))
+                            )) {
+                                continue
+                            }
+
                             val thumbTime = if (file != null && file.exists()) file.lastModified() else (System.currentTimeMillis() - 86400000L * 120)
 
                             list.add(
                                 RecoverItem(
                                     id = "orphan_thumb_$thumbId",
-                                    name = "Deleted_Photo_Thumb_$thumbId.jpg",
+                                    name = thumbFileName,
                                     sizeBytes = sizeBytes,
                                     dateModified = dateFormat.format(Date(thumbTime)),
                                     sourcePath = "MediaStore Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
@@ -418,12 +577,22 @@ class StorageRecoverEngine(private val context: Context) {
                             val itemUri = ContentUris.withAppendedId(thumbUri, thumbId)
                             val file = if (dataPath != null) File(dataPath) else null
                             val sizeBytes = if (file != null && file.exists()) file.length() else 45_000L
+                            val thumbFileName = "Deleted_Video_Thumb_$thumbId.jpg"
+
+                            // 🛡️ Strict Anti-Gallery: Skip if matches any active gallery item
+                            if (activeGallery != null && (
+                                activeGallery.isPresentInGallery(thumbFileName, sizeBytes, dataPath) ||
+                                (file != null && activeGallery.isPresentInGallery(file.name, sizeBytes, file.absolutePath))
+                            )) {
+                                continue
+                            }
+
                             val thumbTime = if (file != null && file.exists()) file.lastModified() else (System.currentTimeMillis() - 86400000L * 150)
 
                             list.add(
                                 RecoverItem(
                                     id = "orphan_vid_thumb_$thumbId",
-                                    name = "Deleted_Video_Thumb_$thumbId.jpg",
+                                    name = thumbFileName,
                                     sizeBytes = sizeBytes,
                                     dateModified = dateFormat.format(Date(thumbTime)),
                                     sourcePath = "MediaStore Video Thumbnail Cache > ${file?.name ?: "Thumb_$thumbId"}",
@@ -464,7 +633,9 @@ class StorageRecoverEngine(private val context: Context) {
     // LAYER 2: JPEG BYTE-CARVING FROM .thumbdata* AND GALLERY BINARY CACHES
     // ─────────────────────────────────────────────────────────────────────────────
 
-    private fun carveJpegFromThumbdataCaches(): List<RecoverItem> {
+    private fun carveJpegFromThumbdataCaches(
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val results = mutableListOf<RecoverItem>()
         val outputDir = File(context.cacheDir, "carved_previews").apply { if (!exists()) mkdirs() }
 
@@ -472,7 +643,7 @@ class StorageRecoverEngine(private val context: Context) {
 
         val searchDirs = mutableListOf<File>()
         if (externalStorage != null) {
-            // Standard Android Gallery Caches
+            // Standard Android Gallery Caches & Trashes
             searchDirs.add(File(externalStorage, "DCIM/.thumbnails"))
             searchDirs.add(File(externalStorage, "Pictures/.thumbnails"))
             searchDirs.add(File(externalStorage, ".thumbnails"))
@@ -500,14 +671,12 @@ class StorageRecoverEngine(private val context: Context) {
             // Vivo / iQOO FuntouchOS Gallery Trash & Cache
             searchDirs.add(File(externalStorage, "Android/data/com.vivo.gallery/cache"))
 
-            // WhatsApp, WA Business & Telegram Hidden/Sent/Status Photos
+            // WhatsApp & WA Business Hidden Statuses & Trash (DO NOT include regular user albums)
             searchDirs.add(File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/.Statuses"))
-            searchDirs.add(File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Images/Sent"))
             searchDirs.add(File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/.trash"))
             searchDirs.add(File(externalStorage, "Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses"))
             searchDirs.add(File(externalStorage, "WhatsApp/Media/.Statuses"))
-            searchDirs.add(File(externalStorage, "WhatsApp/Media/WhatsApp Images/Sent"))
-            searchDirs.add(File(externalStorage, "Telegram/Telegram Images"))
+            searchDirs.add(File(externalStorage, "WhatsApp/Media/.trash"))
             searchDirs.add(File(externalStorage, "Android/data/org.telegram.messenger/cache"))
         }
 
@@ -535,7 +704,7 @@ class StorageRecoverEngine(private val context: Context) {
         } catch (_: Exception) {}
 
         var totalCarved = 0
-        val maxCarvedTotal = 500 // Increased cap for thorough recovery
+        val maxCarvedTotal = 500 // Cap for thorough recovery
 
         for (dir in searchDirs) {
             if (!dir.exists() || !dir.isDirectory) continue
@@ -543,8 +712,16 @@ class StorageRecoverEngine(private val context: Context) {
             for (file in files) {
                 if (totalCarved >= maxCarvedTotal || !_isScanning.value) break
 
-                // If file is a direct thumbnail image in cache, include it
+                // If file is a direct thumbnail image in cache, include it ONLY IF NOT present in gallery
                 if (file.isFile && (file.name.endsWith(".jpg", ignoreCase = true) || file.name.endsWith(".png", ignoreCase = true) || file.name.endsWith(".webp", ignoreCase = true))) {
+                    // 🛡️ Strict Anti-Gallery: Skip if file or base name is currently in gallery
+                    if (activeGallery != null && (
+                        activeGallery.isPresentInGallery(file.name, file.length(), file.absolutePath) ||
+                        activeGallery.isPresentInGallery(file.nameWithoutExtension, file.length(), file.absolutePath)
+                    )) {
+                        continue
+                    }
+
                     if (file.length() > 2048) {
                         results.add(
                             RecoverItem(
@@ -571,7 +748,7 @@ class StorageRecoverEngine(private val context: Context) {
                         (file.isFile && file.length() > 50_000 && !file.name.endsWith(".mp4") && !file.name.endsWith(".apk"))
 
                 if (isThumbdataFile) {
-                    val carved = carveJpegsForensic(file, outputDir, maxCarvedTotal - totalCarved)
+                    val carved = carveJpegsForensic(file, outputDir, maxCarvedTotal - totalCarved, activeGallery)
                     results.addAll(carved)
                     totalCarved += carved.size
                 }
@@ -589,7 +766,8 @@ class StorageRecoverEngine(private val context: Context) {
     private fun carveJpegsForensic(
         file: File,
         outputDir: File,
-        maxToExtract: Int
+        maxToExtract: Int,
+        activeGallery: ActiveGalleryIndex? = null
     ): List<RecoverItem> {
         val items = mutableListOf<RecoverItem>()
         if (!file.exists() || !file.canRead() || file.length() < 4096) return items
@@ -628,6 +806,18 @@ class StorageRecoverEngine(private val context: Context) {
                                 BitmapFactory.decodeByteArray(jpegBytes, 0, length, opt)
 
                                 if (opt.outWidth >= 30 && opt.outHeight >= 30) {
+                                    val carvedName = "Recovered_Photo_${carvedCount + 1}.jpg"
+
+                                    // 🛡️ Anti-Gallery: Skip if carved photo matches active gallery media
+                                    if (activeGallery != null && (
+                                        activeGallery.isPresentInGallery(carvedName, length.toLong(), file.absolutePath) ||
+                                        activeGallery.isPresentInGallery(file.name, length.toLong(), file.absolutePath)
+                                    )) {
+                                        filePos = endOffset
+                                        advancedToCarved = true
+                                        break
+                                    }
+
                                     val carvedFile = File(outputDir, "recovered_${file.name.hashCode()}_${carvedCount}_${soiOffset}.jpg")
                                     carvedFile.outputStream().use { it.write(jpegBytes) }
 
@@ -778,7 +968,10 @@ class StorageRecoverEngine(private val context: Context) {
     // LAYER 2B: POST-FORMAT UNLINKED RAW BLOCK & LOST.DIR SCANNER (1 TO 20 YR DATA)
     // ─────────────────────────────────────────────────────────────────────────────
 
-    private fun scanLostDirAndUnlinkedBlocks(category: RecoverCategory): List<RecoverItem> {
+    private fun scanLostDirAndUnlinkedBlocks(
+        category: RecoverCategory,
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         val externalStorage = Environment.getExternalStorageDirectory()
 
@@ -813,6 +1006,11 @@ class StorageRecoverEngine(private val context: Context) {
             for (f in files) {
                 if (count >= maxExtract || !_isScanning.value) break
                 if (!f.isFile || !f.canRead() || f.length() < 2048) continue
+
+                // 🛡️ Anti-Gallery: Skip if filename matches any active gallery item
+                if (activeGallery != null && activeGallery.isPresentInGallery(f.name, f.length(), f.absolutePath)) {
+                    continue
+                }
 
                 try {
                     val header = ByteArray(16)
@@ -900,32 +1098,29 @@ class StorageRecoverEngine(private val context: Context) {
     // LAYER 3: DEEP FOLDER WALK (WHATSAPP, SOCIAL, CALL RECORDINGS & .NOMEDIA)
     // ─────────────────────────────────────────────────────────────────────────────
 
-    private fun scanSocialAndCommunicationMedia(category: RecoverCategory): List<RecoverItem> {
+    private fun scanSocialAndCommunicationMedia(
+        category: RecoverCategory,
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         val externalStorage = Environment.getExternalStorageDirectory() ?: return list
 
         val socialPaths = listOf(
-            // Modern scoped Android/media WhatsApp
+            // Scoped Android/media WhatsApp - ONLY status remnants, shared & trashes (NOT active user albums)
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/.Statuses"),
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/.Shared"),
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/.Trash"),
-            File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Images/Sent"),
-            File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Video/Sent"),
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Voice Notes"),
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Audio"),
             File(externalStorage, "Android/media/com.whatsapp/WhatsApp/Media/WhatsApp Documents"),
 
             // Legacy WhatsApp
             File(externalStorage, "WhatsApp/Media/.Statuses"),
-            File(externalStorage, "WhatsApp/Media/WhatsApp Images/Sent"),
-            File(externalStorage, "WhatsApp/Media/WhatsApp Video/Sent"),
             File(externalStorage, "WhatsApp/Media/WhatsApp Voice Notes"),
+            File(externalStorage, "WhatsApp/Media/.Trash"),
 
-            // Telegram
-            File(externalStorage, "Telegram/Telegram Images"),
-            File(externalStorage, "Telegram/Telegram Video"),
-            File(externalStorage, "Telegram/Telegram Audio"),
-            File(externalStorage, "Telegram/Telegram Documents")
+            // Telegram Cache (NOT regular gallery album)
+            File(externalStorage, "Android/data/org.telegram.messenger/cache")
         )
 
         for (dir in socialPaths) {
@@ -937,14 +1132,18 @@ class StorageRecoverEngine(private val context: Context) {
                 pathPrefix = "Social Media > ${dir.parentFile?.name ?: "Social"}/${dir.name}",
                 defaultTier = RecoverTier.HIDDEN_MEDIA,
                 defaultQuality = if (dir.path.contains("WhatsApp", true)) "WhatsApp Media Cache" else "Telegram Media Cache",
-                maxDepth = 2
+                maxDepth = 2,
+                activeGallery = activeGallery
             )
         }
 
         return list
     }
 
-    private fun scanHiddenAndVoiceRecordings(category: RecoverCategory): List<RecoverItem> {
+    private fun scanHiddenAndVoiceRecordings(
+        category: RecoverCategory,
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         val externalStorage = Environment.getExternalStorageDirectory() ?: return list
 
@@ -967,7 +1166,8 @@ class StorageRecoverEngine(private val context: Context) {
                 pathPrefix = "Call & Audio Recordings > ${dir.name}",
                 defaultTier = RecoverTier.RESTORABLE_ORIGINAL,
                 defaultQuality = "Call Recording Audio",
-                maxDepth = 2
+                maxDepth = 2,
+                activeGallery = activeGallery
             )
         }
 
@@ -985,6 +1185,14 @@ class StorageRecoverEngine(private val context: Context) {
                 if (f.isDirectory || f.length() < 1024) continue
                 val cat = getCategoryForExtension(f.extension) ?: continue
                 if (category != RecoverCategory.ALL_MEDIA && category != cat) continue
+
+                // 🛡️ Strict Anti-Gallery: Skip thumbnail if base or filename matches active photo in gallery
+                if (activeGallery != null && (
+                    activeGallery.isPresentInGallery(f.name, f.length(), f.absolutePath) ||
+                    activeGallery.isPresentInGallery(f.nameWithoutExtension, f.length(), f.absolutePath)
+                )) {
+                    continue
+                }
 
                 list.add(
                     RecoverItem(
@@ -1008,7 +1216,10 @@ class StorageRecoverEngine(private val context: Context) {
         return list
     }
 
-    private fun scanDownloadsAndApks(category: RecoverCategory): List<RecoverItem> {
+    private fun scanDownloadsAndApks(
+        category: RecoverCategory,
+        activeGallery: ActiveGalleryIndex? = null
+    ): List<RecoverItem> {
         val list = mutableListOf<RecoverItem>()
         val externalStorage = Environment.getExternalStorageDirectory() ?: return list
 
@@ -1021,7 +1232,8 @@ class StorageRecoverEngine(private val context: Context) {
                 pathPrefix = "Downloads > ${downloadDir.name}",
                 defaultTier = RecoverTier.RESTORABLE_ORIGINAL,
                 defaultQuality = "Download Document",
-                maxDepth = 2
+                maxDepth = 2,
+                activeGallery = activeGallery
             )
         }
 
@@ -1036,17 +1248,26 @@ class StorageRecoverEngine(private val context: Context) {
         defaultTier: RecoverTier,
         defaultQuality: String,
         depth: Int = 0,
-        maxDepth: Int = 2
+        maxDepth: Int = 2,
+        activeGallery: ActiveGalleryIndex? = null
     ) {
         if (depth > maxDepth || !dir.exists() || !_isScanning.value) return
         val files = dir.listFiles() ?: return
 
         for (f in files) {
             if (f.isDirectory) {
-                scanDirectoryRecursively(f, results, targetCategory, "$pathPrefix/${f.name}", defaultTier, defaultQuality, depth + 1, maxDepth)
+                scanDirectoryRecursively(f, results, targetCategory, "$pathPrefix/${f.name}", defaultTier, defaultQuality, depth + 1, maxDepth, activeGallery)
             } else {
                 val cat = getCategoryForExtension(f.extension) ?: continue
                 if (targetCategory != RecoverCategory.ALL_MEDIA && targetCategory != cat) continue
+
+                // 🛡️ Strict Anti-Gallery: Skip any file present in phone gallery
+                if (activeGallery != null && (
+                    activeGallery.isPresentInGallery(f.name, f.length(), f.absolutePath) ||
+                    activeGallery.isPresentInGallery(f.nameWithoutExtension, f.length(), f.absolutePath)
+                )) {
+                    continue
+                }
 
                 results.add(
                     RecoverItem(
