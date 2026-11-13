@@ -14,15 +14,18 @@ const STORAGE_PENDING_UPDATE_KEY = "st_has_pending_update";
 const CURRENT_RELEASE_TAG = "v3.12.0";
 
 export function useAppUpdate(): AppUpdateState {
-  // Initialize state from localStorage so banner persists across relaunches immediately
-  const [isUpdateAvailable, setIsUpdateAvailable] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
+  // Starts false for identical SSR and initial client hydration
+  const [isUpdateAvailable, setIsUpdateAvailable] = useState<boolean>(false);
+
+  useEffect(() => {
     try {
-      return localStorage.getItem(STORAGE_PENDING_UPDATE_KEY) === "true";
+      if (localStorage.getItem(STORAGE_PENDING_UPDATE_KEY) === "true") {
+        setIsUpdateAvailable(true);
+      }
     } catch {
-      return false;
+      // ignore
     }
-  });
+  }, []);
 
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const registrationRef = useRef<ServiceWorkerRegistration | null>(null);

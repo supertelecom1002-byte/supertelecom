@@ -462,22 +462,15 @@ const extensionShieldScript = `(function(){if(typeof window==='undefined')return
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark w-full max-w-full overflow-x-clip overflow-y-auto">
+    <html lang="en" className="dark w-full max-w-full overflow-x-clip overflow-y-auto" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-        <meta name="theme-color" content="#020617" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="google-site-verification" content="htat_gsc_wwwsuperte_bagd36tlh1" />
-        <meta name="google-site-verification" content="htat_gsc_supertelec_mrm60cg0mv" />
-        <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: globalCacheBusterScript }} />
         <script dangerouslySetInnerHTML={{ __html: extensionShieldScript }} />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: swRegisterScript }} />
         <HeadContent />
       </head>
-      <body className="pb-20 md:pb-0 min-h-screen h-auto w-full max-w-full overflow-x-clip overflow-y-auto relative">
+      <body className="pb-20 md:pb-0 min-h-screen h-auto w-full max-w-full overflow-x-clip overflow-y-auto relative" suppressHydrationWarning>
         {children}
         <Scripts />
       </body>

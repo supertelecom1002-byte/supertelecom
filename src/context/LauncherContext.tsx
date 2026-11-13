@@ -14,15 +14,18 @@ const LauncherContext = createContext<LauncherContextType | undefined>(undefined
 const STORAGE_KEY = "st_cyber_os_enabled";
 
 export const LauncherProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Opt-in by default: false unless explicitly enabled in localStorage
-  const [isCyberOsActive, setIsCyberOsActive] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
+  // Opt-in by default: starts false for identical SSR and initial client hydration
+  const [isCyberOsActive, setIsCyberOsActive] = useState<boolean>(false);
+
+  useEffect(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) === "true";
+      if (localStorage.getItem(STORAGE_KEY) === "true") {
+        setIsCyberOsActive(true);
+      }
     } catch {
-      return false;
+      // ignore
     }
-  });
+  }, []);
 
   const triggerHaptic = (pattern: number | number[] = [30, 20, 50]) => {
     safeVibrate(pattern);

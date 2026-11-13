@@ -27,10 +27,15 @@ export const LiveEditorBar: React.FC = () => {
   } = useVisualEditor();
 
   const [publishSuccess, setPublishSuccess] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Do not render anything if the user is not a verified admin
-  if (!isAdmin) {
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Do not render anything during SSR or initial hydration, or if the user is not a verified admin
+  if (!isMounted || !isAdmin) {
     return null;
   }
 

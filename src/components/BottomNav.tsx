@@ -52,8 +52,8 @@ export const BottomNav: React.FC = () => {
     return () => window.removeEventListener("st:chat-toggle", onChatToggle);
   }, []);
 
-  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), when AI chat is open, or when Cyber-OS / Gaming Console is active
-  if (isGamingModeActive || isCyberOsActive || pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "") {
+  // Hide on admin routes, homepage (MobileAppShell handles its own native bottom bar), dedicated service detail pages (which have their own sticky action bar), when AI chat is open, or when Cyber-OS / Gaming Console is active
+  if (isGamingModeActive || isCyberOsActive || pathname.startsWith("/admin") || chatOpen || pathname === "/" || pathname === "" || /^\/services\/.+/.test(pathname)) {
     return null;
   }
 

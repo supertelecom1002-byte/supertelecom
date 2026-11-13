@@ -42,7 +42,7 @@ import { SITE_URL } from "@/data/site";
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
-import { ServicePageSeo } from "@/components/seo/ServicePageSeo";
+import { ServicePageSeo, getServiceSchemaGraph } from "@/components/seo/ServicePageSeo";
 
 const PHONE = BUSINESS_MASTER.phoneRaw;
 const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
@@ -119,6 +119,12 @@ export const Route = createFileRoute("/services/$slug")({
           { name: "geo.placename", content: "Giridih" },
         ],
         links: [{ rel: "canonical", href: `${SITE_URL}/services/${s.slug}` }],
+        scripts: [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify(getServiceSchemaGraph(s)),
+          },
+        ],
       };
     } else {
       const s = service as ServiceInfo;
@@ -187,9 +193,6 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-clip bg-slate-950 text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-slate-950 pb-20 md:pb-0">
-      {/* Inject Rich JSON-LD Graph (Service, RepairShop, FAQPage, BreadcrumbList, Offer) */}
-      <ServicePageSeo service={service} />
-
       {/* Ambient background glows */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[140px]" />
@@ -785,5 +788,3 @@ function LegacyServicePage({ service }: { service: ServiceInfo }) {
     </div>
   );
 }
-
-export default ServiceRouteComponent;

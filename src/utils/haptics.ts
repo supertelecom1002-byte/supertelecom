@@ -22,7 +22,8 @@ export const safeVibrate = (pattern: number | number[] = 15): boolean => {
     // Only attempt vibration if user has interacted with the document
     if (
       typeof document !== "undefined" &&
-      (document.hasStorageAccess || document.hasFocus())
+      typeof document.hasFocus === "function" &&
+      document.hasFocus()
     ) {
       return navigator.vibrate(pattern);
     }

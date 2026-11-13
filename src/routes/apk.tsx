@@ -23,7 +23,7 @@ export const Route = createFileRoute("/apk")({
   component: ApkDirectDownloadPage,
 });
 
-export function ApkDirectDownloadPage() {
+function ApkDirectDownloadPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const link = document.createElement("a");

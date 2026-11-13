@@ -7,11 +7,11 @@ interface ServicePageSeoProps {
   service: DedicatedServiceData;
 }
 
-export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
+export function getServiceSchemaGraph(service: DedicatedServiceData) {
   const canonicalUrl = `${SITE_URL}/services/${service.slug}`;
   const ogImage = service.authenticVisual?.image || `${SITE_URL}/super-telecom-logo.png`;
 
-  const schemaGraph = {
+  return {
     "@context": "https://schema.org",
     "@graph": [
       {
@@ -129,6 +129,10 @@ export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
       },
     ],
   };
+}
+
+export const ServicePageSeo: React.FC<ServicePageSeoProps> = ({ service }) => {
+  const schemaGraph = getServiceSchemaGraph(service);
 
   return (
     <script

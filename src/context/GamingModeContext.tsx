@@ -38,24 +38,23 @@ const DEFAULT_CROSSHAIR: CrosshairConfig = {
 };
 
 export const GamingModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isGamingModeActive, setIsGamingModeActive] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return localStorage.getItem(STORAGE_KEY) === "true";
-    } catch {
-      return false;
-    }
-  });
+  // Opt-in by default: starts false for identical SSR and initial client hydration
+  const [isGamingModeActive, setIsGamingModeActive] = useState<boolean>(false);
+  const [crosshairConfig, setCrosshairConfigState] = useState<CrosshairConfig>(DEFAULT_CROSSHAIR);
 
-  const [crosshairConfig, setCrosshairConfigState] = useState<CrosshairConfig>(() => {
-    if (typeof window === "undefined") return DEFAULT_CROSSHAIR;
+  useEffect(() => {
     try {
+      if (localStorage.getItem(STORAGE_KEY) === "true") {
+        setIsGamingModeActive(true);
+      }
       const saved = localStorage.getItem(CROSSHAIR_STORAGE_KEY);
-      return saved ? { ...DEFAULT_CROSSHAIR, ...JSON.parse(saved) } : DEFAULT_CROSSHAIR;
+      if (saved) {
+        setCrosshairConfigState({ ...DEFAULT_CROSSHAIR, ...JSON.parse(saved) });
+      }
     } catch {
-      return DEFAULT_CROSSHAIR;
+      // ignore
     }
-  });
+  }, []);
 
   const [footstepBoostActive, setFootstepBoostActive] = useState<boolean>(false);
   const [touchBoosterActive, setTouchBoosterActive] = useState<boolean>(false);

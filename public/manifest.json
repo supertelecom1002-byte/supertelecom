@@ -1,7 +1,9 @@
 {
+  "id": "/",
   "name": "Super Telecom",
   "short_name": "Super Telecom",
   "description": "Giridih flagship smartphone and chip-level micro soldering repair lab.",
+  "categories": ["utilities", "business", "shopping"],
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

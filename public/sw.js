@@ -151,9 +151,10 @@ self.addEventListener("fetch", (event) => {
           }
           return networkResponse;
         })
-        .catch(() => {
+        .catch(async () => {
           // Fall back to cache only when offline
-          return caches.match(event.request);
+          const cached = await caches.match(event.request);
+          return cached || new Response("/* Asset unavailable offline */", { status: 503, headers: { "Content-Type": "text/javascript" } });
         })
     );
     return;
@@ -205,6 +206,9 @@ self.addEventListener("fetch", (event) => {
         }
         return networkResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        return cached || Response.error();
+      })
   );
 });

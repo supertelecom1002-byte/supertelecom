@@ -36,7 +36,7 @@ import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
 import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
-import { LocalSeoSchema } from "@/components/seo/LocalSeoSchema";
+import { getCombinedLocalSeoSchema } from "@/components/seo/LocalSeoSchema";
 import { DpdpConsentCheckbox } from "@/components/compliance/DpdpComplianceHub";
 import React from "react";
 
@@ -117,6 +117,10 @@ export const Route = createFileRoute("/")({
       { rel: "alternate", type: "application/rss+xml", title: "Super Telecom Giridih - Updates & Repair Guides", href: `${SITE_URL}/feed.xml` },
     ],
     scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(getCombinedLocalSeoSchema()),
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -239,7 +243,6 @@ function HomePage() {
   return (
     <>
       <Immersive3DLoader />
-      <LocalSeoSchema />
       {/* 100% Native Mobile App Experience (md:hidden) */}
       <main className="md:hidden">
         <MobileAppShell />
