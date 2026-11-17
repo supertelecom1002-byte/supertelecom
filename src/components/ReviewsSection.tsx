@@ -116,7 +116,7 @@ export class ReviewsErrorBoundary extends React.Component<ErrorBoundaryProps, Er
                   </div>
                   <div>
                     <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
-                      <span>Verified Google Reviews</span>
+                      <span>Customer Feedback &amp; Experiences</span>
                       <span className="text-muted-foreground">•</span>
                       <span className="text-xs sm:text-sm text-muted-foreground font-normal">Super Telecom Giridih</span>
                     </div>
@@ -190,7 +190,7 @@ export const ReviewsSection: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 font-semibold text-sm sm:text-base text-foreground">
-                <span>Verified Google Reviews</span>
+                <span>Customer Feedback &amp; Experiences</span>
                 <span className="text-muted-foreground">•</span>
                 <span className="text-xs sm:text-sm text-muted-foreground font-normal">Super Telecom Giridih</span>
               </div>
@@ -200,14 +200,23 @@ export const ReviewsSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+            <a
+              href={BUSINESS_MASTER.googleReviewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 hover:bg-slate-800 transition-colors"
+            >
+              <ExternalLink className="h-4 w-4 text-amber-400" />
+              <span>Read on Google Maps</span>
+            </a>
             <button
               type="button"
               onClick={() => setReviewModalOpen(true)}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-brand px-5 py-2.5 text-xs sm:text-sm font-bold text-primary-foreground shadow-brand transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
               <PenLine className="h-4 w-4" />
-              <span>Write a Google Review / Give Feedback</span>
+              <span>Write a Review / Feedback</span>
             </button>
           </div>
         </div>

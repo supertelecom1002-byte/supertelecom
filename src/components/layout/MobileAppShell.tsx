@@ -642,7 +642,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <Link
-                  to="/services/screen-replacement"
+                  to="/services/screen-display-replacement"
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >
@@ -676,7 +676,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 </Link>
 
                 <Link
-                  to="/services/motherboard-repair"
+                  to="/services/motherboard-ic-repair"
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >
@@ -705,7 +705,7 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                     Original capacity high-grade lithium cells &amp; Type-C ports.
                   </p>
                   <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 block pt-1">
-                    30 Min Swap &bull; 6M Wty
+                    Express Swap &bull; 90D Wty
                   </span>
                 </Link>
               </div>

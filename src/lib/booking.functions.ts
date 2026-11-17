@@ -13,7 +13,7 @@ const bookingSchema = z.object({
 });
 
 export const submitBooking = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => bookingSchema.parse(input))
+  .validator((input: unknown) => bookingSchema.parse(input))
   .handler(async ({ data }) => {
     const lovableKey = process.env["LOVABLE_API_KEY"];
     const sheetsKey = process.env["GOOGLE_SHEETS_API_KEY"];

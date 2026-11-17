@@ -35,8 +35,8 @@ export const SERVICES: ServiceInfo[] = [
     ],
     benefits: [
       "Same-day screen replacement for most models",
-      "Genuine OEM & tested premium displays",
-      "Up to 6-month warranty on parts and labour",
+      "Tested OEM-grade and premium replacement displays",
+      "Up to 90-day warranty on parts and labour",
       "Transparent pricing — no hidden charges",
       "Free diagnosis at our Giridih store",
     ],
@@ -51,7 +51,7 @@ export const SERVICES: ServiceInfo[] = [
     faqs: [
       ["How much does screen replacement cost in Giridih?", "Cost depends on brand, model, and display technology (IPS LCD, AMOLED, or Original Service Pack). Contact Super Telecom or visit our Barganda Road shop for an exact bench consultation."],
       ["How long does a screen replacement take?", "Most screen replacements at Super Telecom Giridih are completed within 30 to 60 minutes."],
-      ["Do you offer warranty on the new screen?", "Yes — every replacement screen comes with a 30-day to 6-month warranty depending on the part."],
+      ["Do you offer warranty on the new screen?", "Yes — replacement screens come with a 30-day to 90-day lab warranty depending on the part (confirmed on job sheet before repair)."],
     ],
     priceRange: "Consultation Required",
     duration: "30-60 minutes",

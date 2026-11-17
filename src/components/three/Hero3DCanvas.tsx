@@ -603,8 +603,8 @@ export const Hero3DCanvas: React.FC = () => {
             <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Screen Swap</div>
           </div>
           <div className="rounded-xl bg-slate-950/70 border border-slate-800/70 p-2.5">
-            <div className="text-sm sm:text-base font-bold font-mono text-amber-400">No Wipe</div>
-            <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Data Safe</div>
+            <div className="text-sm sm:text-base font-bold font-mono text-amber-400">Strict</div>
+            <div className="text-[10px] font-mono text-slate-400 uppercase mt-0.5">Data Privacy</div>
           </div>
         </div>
 

@@ -67,14 +67,14 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     slug: "screen-display-replacement",
     title: "Screen & 120Hz AMOLED Display Replacement in Giridih",
     hindiTitle: "मोबाइल स्क्रीन व 120Hz AMOLED डिस्प्ले रिप्लेसमेंट",
-    shortTagline: "30–60 Min Express Fit • 90 Days Warranty • 100% Data Safe",
+    shortTagline: "30–60 Min Express Fit • 90 Days Warranty • Data Privacy Protocol",
     heroSummary:
-      "Super Telecom Giridih replaces broken, flickering, or green-line smartphone screens in 30–60 minutes on Barganda Road. We stock genuine OEM and tested AMOLED/LCD panels for iPhone, Samsung, OnePlus, Xiaomi, and Vivo with written 90-day warranty and zero data loss.",
+      "Super Telecom Giridih replaces broken, flickering, or green-line smartphone screens in 30–60 minutes on Barganda Road. We stock tested AMOLED and LCD panels for iPhone, Samsung, OnePlus, Xiaomi, and Vivo with written up to 90-day warranty and device backup advisory.",
     priceRangeInr: "Consultation Required",
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "90 Days Written Warranty",
-    dataSafetyGuarantee: "100% Data Safe — No Factory Reset Required",
+    dataSafetyGuarantee: "Data Privacy Protocol — Hardware service preserves user storage",
     iconName: "Smartphone",
     badge: "Most Requested Service",
     metaDescription:
@@ -93,7 +93,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       "फोन में घंटी बजती है पर डिस्प्ले पूरी तरह ब्लैक है (Blank Screen with Active Ringing)",
     ],
     customerGuidelines: [
-      "दुकान आने से पहले फोन को रीसेट करने की जरूरत नहीं है; आपका फोटो, व्हाट्सएप और डेटा 100% सुरक्षित रहता है।",
+      "दुकान आने से पहले फोन को रीसेट करने की आवश्यकता नहीं होती; हार्डवेयर रिपेयर के दौरान आपका डेटा सुरक्षित रखने का पूरा प्रोटोकॉल अपनाया जाता है। फिर भी सावधानी के तौर पर बैकअप रखने की सलाह दी जाती है।",
       "टूटे ग्लास को दबाएं नहीं, क्योंकि दबाव से अंदर का नाज़ुक AMOLED पैनल भी फूट सकता है।",
       "सुपर टेलीकॉम लैब में आपके सामने पारदर्शी तरीके से डिस्प्ले फिट और टेस्ट किया जाता है।",
       "रिपेयर के बाद 10x15 टच ग्रिड और ऑटो-ब्राइटनेस सेंसर की पूरी जांच करके लिखित वारंटी कार्ड दिया जाता है।",
@@ -182,18 +182,18 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     slug: "battery-replacement",
     title: "Original Mobile Battery Replacement in Giridih",
     hindiTitle: "ओरिजिनल मोबाइल बैटरी रिप्लेसमेंट",
-    shortTagline: "High-Backup Zero-Cycle Cell • 180 Days Warranty • 20–40 Mins",
+    shortTagline: "High-Backup Zero-Cycle Cell • Up to 90 Days Warranty • 20–40 Mins",
     heroSummary:
-      "Struggling with fast battery drain, random shutdowns, or swollen phone panels? Super Telecom on Barganda Road, Giridih provides certified high-capacity zero-cycle battery replacements for iPhone, Samsung, Xiaomi, and OnePlus with up to 180 days written replacement warranty.",
+      "Struggling with fast battery drain, random shutdowns, or swollen phone panels? Super Telecom on Barganda Road, Giridih provides certified high-capacity zero-cycle battery replacements for iPhone, Samsung, Xiaomi, and OnePlus with up to 90 days written replacement warranty.",
     priceRangeInr: "Consultation Required",
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
-    warrantyPeriod: "180 Days Replacement Warranty",
-    dataSafetyGuarantee: "100% Safe — Zero Data Loss Guaranteed",
+    warrantyPeriod: "Up to 90 Days Written Warranty",
+    dataSafetyGuarantee: "Data Privacy Protocol — User data unaltered during battery install",
     iconName: "BatteryCharging",
     badge: "Fast Turnaround",
     metaDescription:
-      "Original mobile battery replacement in Giridih at Super Telecom, Barganda Road. Tested Li-ion batteries for iPhone, Samsung, Redmi, Vivo with 6-month warranty in 30 mins.",
+      "Original mobile battery replacement in Giridih at Super Telecom, Barganda Road. Tested Li-ion batteries for iPhone, Samsung, Redmi, Vivo with up to 90-day warranty in 30 mins.",
     keywords: [
       "Mobile battery replacement Giridih",
       "iPhone battery change Giridih",
@@ -242,7 +242,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
         priceRange: "Consultation Required",
         startingPrice: 0,
         turnaroundTime: "20–30 Mins",
-        warranty: "180 Days Warranty",
+        warranty: "Up to 90 Days Warranty",
       },
       {
         category: "Android Flagship & Curved",
@@ -250,7 +250,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
         priceRange: "Consultation Required",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
-        warranty: "180 Days Warranty",
+        warranty: "Up to 90 Days Warranty",
       },
       {
         category: "Apple iPhone",
@@ -258,7 +258,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
         priceRange: "Consultation Required",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
-        warranty: "180 Days Warranty",
+        warranty: "Up to 90 Days Warranty",
       },
     ],
     localAreasServed: [...GIRIDIH_AREAS_SERVED],
@@ -299,7 +299,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "25–45 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Zap",
     badge: "30-Min Service",
     metaDescription:
@@ -630,7 +630,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Activity",
     badge: "Cost-Saving Innovation",
     metaDescription:
@@ -740,7 +740,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Camera",
     badge: "Crystal Clear Quality",
     metaDescription:
@@ -850,7 +850,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Volume2",
     badge: "Fast Audio Fix",
     metaDescription:
@@ -960,7 +960,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Mic",
     badge: "Crystal Voice",
     metaDescription:
@@ -1070,7 +1070,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "1–3 Hours",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Wifi",
     badge: "RF Specialist",
     metaDescription:
@@ -1290,7 +1290,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Fingerprint",
     badge: "Biometric Precision",
     metaDescription:
@@ -1400,7 +1400,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "20–35 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "ToggleLeft",
     badge: "Quick 20-Min Fix",
     metaDescription:
@@ -1509,7 +1509,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     priceRangeInr: "Consultation Required",
     startingPrice: 0,
     turnaroundTime: "2–6 Hours / Same Day",
-    warrantyPeriod: "100% Privacy Guarantee",
+    warrantyPeriod: "Strict Privacy Protocol",
     dataSafetyGuarantee: "Hardware Repair — Stored Data Preserved",
     iconName: "HardDrive",
     badge: "100% Confidential",
@@ -1620,7 +1620,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "60 Days Service Warranty",
-    dataSafetyGuarantee: "100% Data Safe — No Reset Required",
+    dataSafetyGuarantee: "Data Privacy Protocol — User storage preserved",
     iconName: "Flame",
     badge: "Speed Booster",
     metaDescription:
@@ -1730,7 +1730,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
-    dataSafetyGuarantee: "100% Data Safe — No Internal Disassembly Needed",
+    dataSafetyGuarantee: "Data Privacy Protocol Followed",
     iconName: "Shield",
     badge: "Laser Technology",
     metaDescription:

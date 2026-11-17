@@ -65,11 +65,11 @@ function NotFoundComponent() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             {[
-              { title: "Screen & OLED Replacement", href: "/services/screen-replacement" },
+              { title: "Screen & OLED Replacement", href: "/services/screen-display-replacement" },
               { title: "Battery & Charging Port Repair", href: "/services/battery-replacement" },
-              { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-repair" },
-              { title: "Water Damage Revival", href: "/services/water-damage-repair" },
-              { title: "Apple iPhone Specialist Lab", href: "/services/iphone-repair" },
+              { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-ic-repair" },
+              { title: "Water Damage Revival", href: "/services/water-damage-revival" },
+              { title: "Apple iPhone Specialist Lab", href: "/services/iphone-back-glass-repair" },
               { title: "Certified Second-Hand Phones", href: "/services/second-hand-mobile" },
             ].map((item) => (
               <Link

@@ -42,7 +42,7 @@ function formatCell(value: string): string {
 }
 
 export const lookupRepairStatus = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => querySchema.parse(input))
+  .validator((input: unknown) => querySchema.parse(input))
   .handler(async ({ data }) => {
     const digits = data.query;
     // Require a full 10-digit phone number or a full IMEI (>=14 digits).

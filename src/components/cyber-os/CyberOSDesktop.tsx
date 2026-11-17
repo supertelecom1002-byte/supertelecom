@@ -807,7 +807,7 @@ export const CyberOSDesktop: React.FC = () => {
             <div className="flex-1 overflow-y-auto no-scrollbar py-3 space-y-2">
               {[
                 { title: "OEM OLED Display Combos", price: "Consultation Required", desc: "Samsung / iPhone / OnePlus" },
-                { title: "High-Capacity 0-Cycle Battery", price: "Consultation Required", desc: "6-Month Lab Warranty" },
+                { title: "High-Capacity 0-Cycle Battery", price: "Consultation Required", desc: "Up to 90 Days Lab Warranty" },
                 { title: "GaN Flash Fast Chargers", price: "Contact For Details", desc: "67W / 80W / 120W Type-C" },
                 { title: "UV Curved Tempered Glass", price: "Contact For Details", desc: "Bubble-free installation" },
               ].map((item, idx) => (

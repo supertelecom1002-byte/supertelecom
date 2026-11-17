@@ -18,7 +18,7 @@ export const Route = createFileRoute("/download")({
   component: CanonicalDownloadPage,
 });
 
-export function CanonicalDownloadPage() {
+function CanonicalDownloadPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 text-center select-none">
       <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-slate-900 border border-cyan-500/30 space-y-5 shadow-2xl backdrop-blur-xl">

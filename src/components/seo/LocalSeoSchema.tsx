@@ -33,7 +33,7 @@ export const LOCAL_SERVICES_OFFERINGS = [
   },
   {
     name: "Original Phone Battery Replacement Giridih",
-    description: "High-backup Li-ion/Li-Po battery installation with 6-month warranty. Solves rapid battery drain, sudden 40% drops, and swelling.",
+    description: "High-backup Li-ion/Li-Po battery installation with up to 90 days warranty. Solves rapid battery drain, sudden 40% drops, and swelling.",
     minPrice: "499",
     maxPrice: "4499",
     url: `${SITE_URL}/services/battery-replacement`,

@@ -131,7 +131,7 @@ export const BargandaRoadPage: React.FC = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed mb-8">
-              Super Telecom is Giridih&apos;s leading smartphone repair workshop located on prime Barganda Road, right near Shivam Clinic. Equipped with high-end optical microscopes, laser back glass separators, and BGA soldering stations, we solve complex smartphone issues in 30 minutes while you wait.
+              Super Telecom is Giridih&apos;s leading smartphone repair workshop located on prime Barganda Road, right near Shivam Clinic. Equipped with high-end optical microscopes, laser back glass separators, and BGA soldering stations, most screen and battery replacements are completed in 30–60 minutes, while complex motherboard IC diagnostics typically take 24–48 hours after bench inspection.
             </p>
 
             {/* Quick Information Cards */}

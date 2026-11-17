@@ -85,5 +85,3 @@ function ApkDirectDownloadPage() {
     </div>
   );
 }
-
-export default ApkDirectDownloadPage;

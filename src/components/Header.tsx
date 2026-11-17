@@ -385,11 +385,11 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
                 </span>
                 <div className="grid grid-cols-1 gap-1.5">
                   {[
-                    { title: "Screen & OLED Replacement", href: "/services/screen-replacement", icon: Smartphone },
-                    { title: "iPhone Specialist Care", href: "/services/iphone-repair", icon: ShieldCheck },
-                    { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-repair", icon: Cpu },
+                    { title: "Screen & OLED Replacement", href: "/services/screen-display-replacement", icon: Smartphone },
+                    { title: "iPhone Specialist Care", href: "/services/iphone-back-glass-repair", icon: ShieldCheck },
+                    { title: "Motherboard & IC Micro-Soldering", href: "/services/motherboard-ic-repair", icon: Cpu },
                     { title: "Battery & Fast Charging Fix", href: "/services/battery-replacement", icon: Battery },
-                    { title: "Water Damage Revival", href: "/services/water-damage-repair", icon: Droplet },
+                    { title: "Water Damage Revival", href: "/services/water-damage-revival", icon: Droplet },
                   ].map((silo) => (
                     <Link
                       key={silo.href}

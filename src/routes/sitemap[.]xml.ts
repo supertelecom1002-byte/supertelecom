@@ -39,8 +39,13 @@ export function buildSitemapXml(): string {
       lastmod: "2026-11-02",
     })),
 
-    // Legacy Service URLs (only included if not already covered by silo pages)
-    ...SERVICES.map((s) => ({
+    // Legacy Service URLs (only included if not covered by silo pages or aliases)
+    ...SERVICES.filter((legacy) => {
+      const isCoveredBySilo = REPAIR_SERVICES_SILO_DATA.some(
+        (silo) => silo.slug === legacy.slug || silo.aliases.includes(legacy.slug)
+      );
+      return !isCoveredBySilo;
+    }).map((s) => ({
       path: `/services/${s.slug}`,
       changefreq: "monthly",
       priority: "0.8",

@@ -29,21 +29,21 @@ const SOCIALS = [
 ];
 
 const SERVICE_LINKS: { label: string; to: string }[] = [
-  { label: "Screen Replacement Giridih", to: "/services/screen-replacement" },
-  { label: "Display Replacement Giridih", to: "/services/display-replacement" },
-  { label: "Touch Glass Repair", to: "/services/touch-glass-replacement" },
+  { label: "Screen Replacement Giridih", to: "/services/screen-display-replacement" },
+  { label: "Display Replacement Giridih", to: "/services/screen-display-replacement" },
+  { label: "Touch Glass Repair", to: "/services/screen-display-replacement" },
   { label: "Battery Replacement Giridih", to: "/services/battery-replacement" },
   { label: "Charging Port Repair Giridih", to: "/services/charging-port-repair" },
-  { label: "Motherboard Repair Giridih", to: "/services/motherboard-repair" },
-  { label: "Camera Repair", to: "/services/camera-repair" },
-  { label: "Speaker & Mic Repair", to: "/services/speaker-mic-repair" },
-  { label: "Water Damage Repair", to: "/services/water-damage-repair" },
-  { label: "Dead Phone Repair", to: "/services/dead-phone-repair" },
-  { label: "Software Flashing & Bootloop", to: "/services/software-repair" },
-  { label: "Network & FRP Unlock", to: "/services/frp-unlock" },
-  { label: "Data Recovery", to: "/services/data-recovery" },
-  { label: "iPhone Repair Giridih", to: "/services/iphone-repair" },
-  { label: "Android Repair Giridih", to: "/services/android-repair" },
+  { label: "Motherboard Repair Giridih", to: "/services/motherboard-ic-repair" },
+  { label: "Camera Repair", to: "/services/camera-lens-repair" },
+  { label: "Speaker & Mic Repair", to: "/services/speaker-sound-repair" },
+  { label: "Water Damage Repair", to: "/services/water-damage-revival" },
+  { label: "Dead Phone Repair", to: "/services/motherboard-ic-repair" },
+  { label: "Software Flashing & Bootloop", to: "/services/software-flashing-unlock" },
+  { label: "Network & 5G Signal", to: "/services/network-5g-signal-repair" },
+  { label: "Data Recovery", to: "/services/mobile-data-recovery" },
+  { label: "iPhone Repair Giridih", to: "/services/iphone-back-glass-repair" },
+  { label: "Android Repair Giridih", to: "/services/screen-display-replacement" },
 ];
 
 const BRAND_LINKS: { label: string; to: string }[] = [
@@ -102,11 +102,11 @@ const LEGAL_COMPLIANCE_LINKS: { label: string; to: string }[] = [
 
 const CORE_SERVICES_LINKS: { label: string; to: string }[] = [
   { label: "iPhone Lab Specialist", to: "/brands/iphone" },
-  { label: "Chip-Level IC & Motherboard", to: "/services/motherboard-repair" },
-  { label: "Screen & OLED Restoration", to: "/services/screen-replacement" },
+  { label: "Chip-Level IC & Motherboard", to: "/services/motherboard-ic-repair" },
+  { label: "Screen & OLED Restoration", to: "/services/screen-display-replacement" },
   { label: "High-Density Battery Swap", to: "/services/battery-replacement" },
   { label: "Charging Port & Audio Repair", to: "/services/charging-port-repair" },
-  { label: "Water Damage Revival", to: "/services/water-damage-repair" },
+  { label: "Water Damage Revival", to: "/services/water-damage-revival" },
   { label: "16-in-1 Offline Lab Tools", to: "/app" },
   { label: "Certified Pre-Owned Phones", to: "/services/second-hand-mobile" },
 ];
@@ -114,7 +114,7 @@ const CORE_SERVICES_LINKS: { label: string; to: string }[] = [
 const FOOTER_FAQS: [string, string][] = [
   ["How long does display replacement take?", "Most display and screen replacements are completed the same day — usually within 30 to 60 minutes, depending on parts availability for your model."],
   ["Do you repair iPhones in Giridih?", "Yes. We repair all iPhone models — screen, battery, charging port, camera, face ID and motherboard level faults — at our Barganda Road store in Giridih."],
-  ["Do you provide warranty on repairs?", "Yes. Every repair carries a warranty from 30 days up to 6 months depending on the part, and second-hand phones are sold with warranty too."],
+  ["Do you provide warranty on repairs?", "Yes. Every hardware repair carries a warranty of up to 90 days depending on the part (confirmed on job sheet before repair), and second-hand phones are sold with warranty too."],
   ["Do you buy and sell second-hand phones?", "Yes. We buy old phones, offer exchange on upgrades, and sell fully tested second-hand iPhone, Samsung, Vivo, Oppo and Realme handsets."],
   ["What payment methods do you accept?", "UPI (PhonePe, Google Pay, Paytm), Visa and MasterCard debit/credit cards, and cash."],
 ];

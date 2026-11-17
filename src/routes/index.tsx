@@ -433,7 +433,7 @@ function About() {
             {[
               ["10+ Yrs", "In Giridih (Established 2016)"],
               ["16+", "Dedicated Hardware Repair Silos"],
-              ["100%", "Data Privacy Privacy Compliant Lab"],
+              ["100%", "Data Privacy Compliant Lab"],
               ["90 Days", "Parts & Micro-Soldering Warranty"],
             ].map(([n, l]) => (
               <div key={l} className="rounded-3xl glass p-8 shadow-elegant">
@@ -450,7 +450,7 @@ function About() {
 
 const REPAIR_SERVICES: Array<[any, string, string, string, string, string]> = [
   [Smartphone, "Screen & AMOLED Display", "120Hz AMOLED & LCD display replacement, glass separation & green line recovery.", "screen", "screen-display-replacement", "30 – 60 min"],
-  [Battery, "Original Battery Replacement", "Genuine high-backup zero-cycle batteries with 180 days written replacement warranty.", "battery", "battery-replacement", "20 – 40 min"],
+  [Battery, "Original Battery Replacement", "Certified high-backup zero-cycle batteries with up to 90 days written replacement warranty.", "battery", "battery-replacement", "20 – 40 min"],
   [Zap, "Charging Port & Jack", "Type-C, Lightning & micro-USB port repair, moisture bypass & fast-charge restoration.", "battery", "charging-port-repair", "25 – 45 min"],
   [Cpu, "Motherboard & CPU Reballing", "45x trinocular chip-level micro-soldering, dead phone recovery & Poco CPU reballing.", "motherboard", "motherboard-ic-repair", "2 – 6 hours"],
   [Droplet, "Water Damage Revival", "Emergency ultrasonic chemical decontamination bath, liquid corrosion removal & revival.", "water", "water-damage-revival", "1 – 3 hours"],
@@ -733,6 +733,13 @@ function Contact() {
   const [booking, setBooking] = useState<BookingSummary | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedDraft, setFailedDraft] = useState<{
+    name: string;
+    phone: string;
+    model: string;
+    service: string;
+    message: string;
+  } | null>(null);
   const [dpdpConsent, setDpdpConsent] = useState(false);
   const sendBooking = useServerFn(submitBooking);
 
@@ -750,15 +757,17 @@ function Contact() {
     const sanitize = (val: FormDataEntryValue | null) =>
       String(val ?? "").replace(/<[^>]*>?/gm, "").trim().slice(0, 500);
 
+    const draftData = {
+      name: sanitize(fd.get("name")),
+      phone: sanitize(fd.get("phone")),
+      model: sanitize(fd.get("model")),
+      service: sanitize(fd.get("service")),
+      message: sanitize(fd.get("message")),
+    };
+
     try {
       const res = await sendBooking({
-        data: {
-          name: sanitize(fd.get("name")),
-          phone: sanitize(fd.get("phone")),
-          model: sanitize(fd.get("model")),
-          service: sanitize(fd.get("service")),
-          message: sanitize(fd.get("message")),
-        },
+        data: draftData,
       });
       const summary: BookingSummary = {
         timestamp: res.timestamp,
@@ -773,6 +782,7 @@ function Contact() {
       // Auto-open WhatsApp confirmation chat (button fallback stays visible)
       window.open(buildWhatsAppUrl(summary), "_blank", "noopener,noreferrer");
     } catch (err) {
+      setFailedDraft(draftData);
       setError(err instanceof Error ? err.message : "Something went wrong. Please call or WhatsApp us.");
     } finally {
       setSubmitting(false);
@@ -831,7 +841,24 @@ function Contact() {
               />
             </div>
             {error && (
-              <p className="mt-3 text-xs text-rose-400 font-semibold">{error}</p>
+              <div className="mt-4 rounded-2xl border border-rose-500/30 bg-rose-950/20 p-4 space-y-2.5">
+                <p className="text-xs text-rose-400 font-semibold">{error}</p>
+                <div className="pt-1">
+                  <a
+                    href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
+                      failedDraft
+                        ? `Namaste Super Telecom! I would like to book a repair:\n• Name: ${failedDraft.name}\n• Phone: ${failedDraft.phone}\n• Model: ${failedDraft.model || "Not specified"}\n• Service: ${failedDraft.service}\n• Issue: ${failedDraft.message || "None"}`
+                        : `Namaste Super Telecom! I want to book a mobile repair on Barganda Road, Giridih.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2.5 text-xs font-bold text-slate-950 shadow-md shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>WhatsApp पर भेजें (Send via WhatsApp)</span>
+                  </a>
+                </div>
+              </div>
             )}
             <button
               type="submit"

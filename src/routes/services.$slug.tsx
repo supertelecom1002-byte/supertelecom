@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import {
   Phone,
   MessageCircle,
@@ -75,6 +75,13 @@ export const Route = createFileRoute("/services/$slug")({
     // 1. Try modern 16 dedicated service silo
     const siloService = getServiceBySlugOrAlias(params.slug);
     if (siloService) {
+      if (params.slug !== siloService.slug) {
+        throw redirect({
+          to: "/services/$slug",
+          params: { slug: siloService.slug },
+          statusCode: 301,
+        });
+      }
       return { service: siloService, isSilo: true as const };
     }
 
@@ -333,10 +340,10 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                   </span>
                   <div className="text-sm sm:text-base font-bold text-cyan-400 font-display flex items-center gap-1.5">
                     <CheckCircle2 className="h-4 w-4 text-cyan-400 shrink-0" />
-                    <span>100% Data Safe</span>
+                    <span>Data Privacy Protocol</span>
                   </div>
                   <span className="text-[10px] text-slate-400 block">
-                    No Reset Required
+                    Backup Recommended
                   </span>
                 </div>
               </div>
@@ -663,7 +670,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                       {rel.title}
                     </span>
                     <span className="text-[11px] text-slate-400 block mt-1">
-                      ₹{rel.startingPrice} से शुरू • {rel.turnaroundTime}
+                      परामर्श आवश्यक (Consultation Required) • {rel.turnaroundTime}
                     </span>
                   </Link>
                 ))}
