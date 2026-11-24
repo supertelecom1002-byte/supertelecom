@@ -72,11 +72,11 @@ export const Route = createFileRoute("/blog/$slug")({
       </div>
     </div>
   ),
-  errorComponent: ({ error, reset }) => (
+  errorComponent: ({ error, reset }: { error: any; reset: () => void }) => (
     <div className="flex min-h-screen items-center justify-center p-4 text-center">
       <div>
         <h1 className="text-2xl font-bold">Something went wrong</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{error?.message || "An unexpected error occurred"}</p>
         <button onClick={reset} className="mt-6 rounded-md bg-gradient-brand px-5 py-2.5 text-sm font-medium text-primary-foreground">Try again</button>
       </div>
     </div>

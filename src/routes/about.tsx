@@ -26,6 +26,7 @@ const PHONE = BUSINESS_MASTER.phoneRaw;
 const PHONE_DISPLAY = BUSINESS_MASTER.phoneDisplay;
 const WHATSAPP = BUSINESS_MASTER.whatsappNumber;
 const MAPS = BUSINESS_MASTER.mapsUrl;
+const STORE_STREET_ADDRESS = BUSINESS_MASTER.streetAddress;
 
 const TITLE = "About Super Telecom — Premier Mobile Hardware Lab in Giridih";
 const DESC =

@@ -30,6 +30,7 @@ import { safeVibrate } from "@/utils/safeVibrate";
 interface DoctorDiagnosticModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialTab?: "ampere" | "doctor" | "stethoscope" | "prescription";
 }
 
 interface AmpereProfile {

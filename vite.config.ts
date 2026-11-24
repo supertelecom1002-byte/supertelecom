@@ -18,8 +18,8 @@ export default defineConfig({
   },
   nitro: {
     // Prevent Nitro from treating root index.html as a static template and bypassing TanStack Start SSR
-    renderer: false,
-  },
+    renderer: false as any,
+  } as any,
   vite: {
     plugins: [],
     resolve: {

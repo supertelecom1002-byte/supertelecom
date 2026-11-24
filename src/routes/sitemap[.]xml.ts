@@ -15,8 +15,9 @@ interface SitemapEntry {
 
 export function buildSitemapXml(): string {
   const rawEntries: SitemapEntry[] = [
-    { path: "/", changefreq: "weekly", priority: "1.0", lastmod: "2026-11-02" },
-    { path: "/app", changefreq: "weekly", priority: "0.9", lastmod: "2026-11-02" },
+    { path: "/", changefreq: "weekly", priority: "1.0", lastmod: "2026-11-24" },
+    { path: "/download", changefreq: "weekly", priority: "0.95", lastmod: "2026-11-24" },
+    { path: "/app", changefreq: "weekly", priority: "0.9", lastmod: "2026-11-24" },
     { path: "/pricing", changefreq: "monthly", priority: "0.8", lastmod: "2026-10-28" },
     { path: "/services", changefreq: "weekly", priority: "0.85", lastmod: "2026-11-02" },
     { path: "/brands", changefreq: "monthly", priority: "0.8", lastmod: "2026-10-20" },

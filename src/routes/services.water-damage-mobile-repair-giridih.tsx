@@ -4,7 +4,7 @@ export const Route = createFileRoute("/services/water-damage-mobile-repair-girid
   beforeLoad: () => {
     throw redirect({
       to: "/services/$slug",
-      params: { slug: "water-damage-repair" },
+      params: { slug: "water-damage-revival" },
       statusCode: 301,
     });
   },

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect, useRef } from "react";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
 
 const Hero3DCanvas = lazy(() => import("@/components/three/Hero3DCanvas"));
@@ -20,6 +20,48 @@ class Hero3DErrorBoundary extends React.Component<
     }
     return this.props.children;
   }
+}
+
+function Desktop3DViewport() {
+  const [load3D, setLoad3D] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 1024) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    if ("IntersectionObserver" in window && containerRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setLoad3D(true);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: "150px" }
+      );
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    } else {
+      setLoad3D(true);
+    }
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      <Hero3DErrorBoundary>
+        {load3D ? (
+          <Suspense fallback={<Smartphone3DFallback />}>
+            <Hero3DCanvas />
+          </Suspense>
+        ) : (
+          <Smartphone3DFallback />
+        )}
+      </Hero3DErrorBoundary>
+    </div>
+  );
 }
 import { Link } from "@tanstack/react-router";
 import {
@@ -147,36 +189,29 @@ export const Hero: React.FC = () => {
             <ChevronRight className="h-3.5 w-3.5 text-cyan-400" />
           </a>
 
-          {/* Primary App Suite & Native APK Action Strip */}
-          <div className="space-y-2 pt-1 w-full">
-            <Link
-              to="/app"
-              className="w-full py-3 px-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 text-slate-950 font-black flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.35)] active:scale-95 transition-all text-xs"
-            >
-              <Rocket className="h-4 w-4" />
-              <span>🚀 Open Super Telecom Suite (Transfer • Recover • Launcher)</span>
-            </Link>
-
-            <a
-              href="/SuperTelecom.apk"
-              download="SuperTelecom-Release.apk"
-              className="w-full py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-850 text-cyan-300 font-bold flex items-center justify-center gap-2 text-xs active:scale-95 transition-all"
-            >
-              <Download className="h-3.5 w-3.5 text-cyan-400" />
-              <span>📲 Download Native Android APK</span>
-            </a>
-
-            {/* Old App vs New Native App Notice */}
-            <div className="rounded-xl border border-cyan-500/30 bg-slate-900/90 p-3 text-[11px] text-slate-300 flex items-start gap-2.5">
-              <Info className="h-4 w-4 text-cyan-400 shrink-0 mt-0.5" />
-              <div className="space-y-0.5 leading-snug">
-                <p className="font-bold text-white">Notice: Old App vs New Native App</p>
-                <p className="text-slate-400">
-                  यदि फोन में पुराना TWA ब्राउज़र ऐप (<code>shop.supertelecom.www.twa</code>) है, तो उसे अनइन्स्टॉल करके नया <code>com.supertelecom.app</code> इनस्टॉल करें, या ऊपर दिया गया <strong>Open Super Telecom Suite</strong> बटन दबाएं।
-                </p>
+          {/* Prominent Official Android APK Download Banner (Pointing strictly to /download) */}
+          <Link
+            to="/download"
+            aria-label="Download Super Telecom Android App APK"
+            className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-cyan-950/90 via-slate-900 to-emerald-950/90 border border-cyan-500/40 text-white flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(6,182,212,0.2)] active:scale-[0.98] transition-all"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-500 flex items-center justify-center text-slate-950 shrink-0 shadow-md shadow-cyan-500/25">
+                <Download className="h-5 w-5 stroke-[2.5]" />
+              </div>
+              <div className="min-w-0 text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-xs text-white">Super Telecom Official App</span>
+                  <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[9px] font-bold">v3.2 APK</span>
+                </div>
+                <p className="text-[11px] text-slate-300 truncate">Fast Wi-Fi Direct Transfer &amp; Recovery</p>
               </div>
             </div>
-          </div>
+            <span className="text-xs font-bold text-cyan-400 whitespace-nowrap flex items-center gap-0.5">
+              <span>Get App</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </span>
+          </Link>
 
           {/* Primary Store Actions (Full width, easy thumb reach) */}
           <div className="grid grid-cols-2 gap-2 w-full">
@@ -271,38 +306,7 @@ export const Hero: React.FC = () => {
               </span>
             </div>
 
-            {/* Primary App Suite & Native APK Action Strip */}
-            <div className="mt-7 flex flex-wrap items-center gap-3 w-full">
-              <Link
-                to="/app"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 text-slate-950 px-6 py-4 text-sm font-black shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all hover:scale-[1.02] active:scale-95 min-h-[52px]"
-              >
-                <Rocket className="h-5 w-5" />
-                <span>🚀 Open Super Telecom Suite (Transfer • Recover • Launcher)</span>
-              </Link>
-
-              <a
-                href="/SuperTelecom.apk"
-                download="SuperTelecom-Release.apk"
-                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 text-cyan-300 px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-400 active:scale-95 min-h-[52px]"
-              >
-                <Download className="h-4 w-4 text-cyan-400" />
-                <span>📲 Download Native Android APK</span>
-              </a>
-            </div>
-
-            {/* Old App vs New Native App Notice */}
-            <div className="mt-3.5 rounded-2xl border border-cyan-500/30 bg-slate-900/80 p-4 text-xs text-slate-300 flex items-start gap-3 backdrop-blur-xl max-w-2xl">
-              <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <p className="font-bold text-white text-xs">Old App vs New Native App Notice:</p>
-                <p className="text-slate-400 leading-relaxed text-[11px]">
-                  यदि आपके फोन में पुराना TWA ब्राउज़र-आधारित ऐप (<code>shop.supertelecom.www.twa</code>) इन्स्टॉल है, तो उसे अनइन्स्टॉल करके नया <code>com.supertelecom.app</code> इनस्टॉल करें, या ऊपर दिए गए <strong>Open Super Telecom Suite</strong> बटन से सीधे सभी फीचर्स इस्तेमाल करें।
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
+            {/* Primary Action Buttons */}
             <div className="mt-8 flex flex-wrap items-center gap-3 w-full sm:w-auto">
               <a
                 href="#repair-calculator"
@@ -321,6 +325,14 @@ export const Hero: React.FC = () => {
                 <Phone className="h-4 w-4 text-cyan-400" />
                 <span>Direct Engineer Call</span>
               </a>
+
+              <Link
+                to="/download"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-cyan-500/40 bg-slate-900/90 hover:bg-slate-800 text-cyan-300 px-6 py-4 text-sm font-bold backdrop-blur-md transition-all hover:border-cyan-400 active:scale-95 min-h-[48px]"
+              >
+                <Download className="h-4 w-4 text-cyan-400" />
+                <span>Download Android App (APK)</span>
+              </Link>
             </div>
 
             {/* Social Proof Strip */}
@@ -340,20 +352,9 @@ export const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Interactive 3D Smartphone Showcase */}
+          {/* Right Column: Interactive 3D Smartphone Showcase (Deferred Load) */}
           <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-            <Hero3DErrorBoundary>
-              <Suspense
-                fallback={
-                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-cyan-500/30 bg-slate-950 p-6 flex flex-col items-center justify-center text-center shadow-[0_0_35px_rgba(6,182,212,0.15)]">
-                    <div className="h-10 w-10 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin mb-3" />
-                    <span className="text-xs font-mono text-cyan-300 font-bold tracking-wider">CALIBRATING 3D LAB BENCH...</span>
-                  </div>
-                }
-              >
-                <Hero3DCanvas />
-              </Suspense>
-            </Hero3DErrorBoundary>
+            <Desktop3DViewport />
           </div>
         </div>
       </div>

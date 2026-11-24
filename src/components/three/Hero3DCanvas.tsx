@@ -10,7 +10,6 @@ import {
   Eye,
   Activity,
   RotateCw,
-  RotateCcw,
   ChevronDown,
   Wrench,
   ShieldCheck,
@@ -168,11 +167,11 @@ function HeroModelRig({
   // Deep clone scene and materials to prevent cross-contamination
   const clonedScene = useMemo(() => {
     const c = gltf.scene.clone(true);
-    c.traverse((node) => {
+    c.traverse((node: any) => {
       if ((node as THREE.Mesh).isMesh) {
         const mesh = node as THREE.Mesh;
         if (Array.isArray(mesh.material)) {
-          mesh.material = mesh.material.map((m) => m.clone());
+          mesh.material = mesh.material.map((m: any) => m.clone());
         } else if (mesh.material) {
           mesh.material = mesh.material.clone();
         }
@@ -187,7 +186,7 @@ function HeroModelRig({
 
   // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
-    clonedScene.traverse((child) => {
+    clonedScene.traverse((child: any) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
@@ -296,7 +295,7 @@ function HeroModelRig({
           <group key={spot.id} position={spot.position}>
             {/* Outer Pulsing Ring */}
             <mesh
-              onClick={(e) => {
+              onClick={(e: any) => {
                 e.stopPropagation();
                 onSelectHotspot(spot);
               }}
@@ -311,7 +310,7 @@ function HeroModelRig({
             </mesh>
             {/* Core Glow Dot */}
             <mesh
-              onClick={(e) => {
+              onClick={(e: any) => {
                 e.stopPropagation();
                 onSelectHotspot(spot);
               }}
@@ -481,7 +480,7 @@ export const Hero3DCanvas: React.FC = () => {
               powerPreference: "high-performance",
             }}
             onCreated={({ gl }) => {
-              gl.domElement.addEventListener("webglcontextlost", (e) => {
+              gl.domElement.addEventListener("webglcontextlost", (e: any) => {
                 e.preventDefault();
                 console.warn("Hero3DCanvas WebGL context lost - prevented browser crash");
               }, false);
@@ -549,7 +548,17 @@ export const Hero3DCanvas: React.FC = () => {
             className="flex items-center justify-center h-6 w-6 rounded-full bg-slate-950/80 border border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer backdrop-blur-md"
             title="Reset View Angle"
           >
-            <RotateCcw className="h-3 w-3 text-cyan-400" />
+            <svg
+              className="h-3 w-3 text-cyan-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.2}
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v5h5" />
+            </svg>
           </button>
         </div>
 

@@ -16,7 +16,7 @@ interface EditableBlockProps {
   defaultValue: string;
   type?: "text" | "image" | "textarea";
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: any;
   imageAlt?: string;
   children?: React.ReactNode;
 }
@@ -30,6 +30,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({
   imageAlt = "Super Telecom",
   children,
 }) => {
+  const Comp = Component as any;
   const { isEditMode, getField, updateField, pendingChanges } = useVisualEditor();
   const currentValue = getField(contentKey, defaultValue);
   const isDirty = contentKey in pendingChanges;
@@ -48,7 +49,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({
     if (type === "image") {
       return <img src={currentValue} alt={imageAlt} className={className} />;
     }
-    return <Component className={className}>{currentValue || children}</Component>;
+    return <Comp className={className}>{currentValue || children}</Comp>;
   }
 
   const handleStartEdit = (e: React.MouseEvent) => {
@@ -116,7 +117,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({
         {type === "image" ? (
           <img src={currentValue} alt={imageAlt} className={className} />
         ) : (
-          <Component className={className}>{currentValue || children}</Component>
+          <Comp className={className}>{currentValue || children}</Comp>
         )}
 
         {/* Floating Edit Badge on Hover */}

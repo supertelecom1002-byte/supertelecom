@@ -1,7 +1,7 @@
-// Super Telecom Cyber-Lab Service Worker v5.0 (Strict Network-First Code Delivery Engine)
+// Super Telecom Cyber-Lab Service Worker v5.1 (Strict Network-First Code Delivery Engine)
 // 100% Client-Side Hardware Diagnostics • Immediate Hot-Fix Ingestion • Auto-Cache Invalidation
 
-const CACHE_NAME = "supertelecom-offline-v5.0";
+const CACHE_NAME = "supertelecom-offline-v5.1";
 
 // Core App Shell & Offline Hubs to Pre-Cache
 const PRECACHE_ASSETS = [

@@ -1,8 +1,36 @@
-# Static Android APK Binaries - Served before SPA Fallback
+# Static Android APK Binaries
 /SuperTelecom.apk       /SuperTelecom.apk       200
 /Super%20Telecom.apk    /SuperTelecom.apk       301
 /Super+Telecom.apk      /SuperTelecom.apk       301
 /supertelecom.apk       /SuperTelecom.apk       200
-/apk                    /SuperTelecom.apk       302
+
+# APK Alias Redirects
+/apk                    /download               301
 /download/android       /SuperTelecom.apk       302
-/download               /app                    301
+/download/apk           /SuperTelecom.apk       302
+
+# Legacy Hardcoded Giridih Service 301 Redirects to Primary Canonical Silos
+/services/display-replacement-giridih                /services/screen-display-replacement       301
+/services/iphone-repair-specialist-giridih           /services/iphone-back-glass-repair         301
+/services/motherboard-chip-level-repair-giridih      /services/motherboard-ic-repair            301
+/services/battery-charging-port-repair-giridih       /services/battery-replacement              301
+/services/water-damage-mobile-repair-giridih         /services/water-damage-revival             301
+
+# Legacy Alias 301 Redirects to Canonical Service Silos
+/services/network-repair                             /services/network-5g-signal-repair         301
+/services/camera-repair                              /services/camera-lens-repair               301
+/services/speaker-repair                             /services/speaker-sound-repair             301
+/services/mic-repair                                 /services/microphone-repair                301
+/services/software-repair                            /services/software-flashing-unlock         301
+/services/face-id-repair                             /services/fingerprint-face-id-repair       301
+/services/button-repair                              /services/power-volume-button-repair       301
+/services/data-recovery                              /services/mobile-data-recovery             301
+/services/back-glass-repair                          /services/iphone-back-glass-repair         301
+/services/green-line-repair                          /services/green-line-display-fix           301
+/services/display-replacement                        /services/screen-display-replacement       301
+/services/screen-replacement                         /services/screen-display-replacement       301
+/services/battery-repair                             /services/battery-replacement              301
+/services/type-c-repair                              /services/charging-port-repair             301
+/services/charging-jack                              /services/charging-port-repair             301
+/services/motherboard-repair                         /services/motherboard-ic-repair            301
+/services/water-damage-repair                        /services/water-damage-revival             301

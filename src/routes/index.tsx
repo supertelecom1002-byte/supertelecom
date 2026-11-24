@@ -1,4 +1,3 @@
-import { Immersive3DLoader } from "@/components/three/Immersive3DLoader";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { submitBooking } from "@/lib/booking.functions";
@@ -28,10 +27,6 @@ import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import { ServiceChips } from "@/components/mobile/ServiceChips";
 import { Header } from "@/components/Header";
 import { SafeReviewsSection } from "@/components/ReviewsSection";
-import { MobileAppShell } from "@/components/layout/MobileAppShell";
-import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
-import { TurboCleanModal } from "@/components/dashboard/TurboCleanModal";
-import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
 import { SmoothSectionReveal } from "@/components/ui/SmoothSectionReveal";
 import { VisualFaultFinder } from "@/components/repair/VisualFaultFinder";
 import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
@@ -214,23 +209,6 @@ const FAQS: [string, string][] = [
 
 function HomePage() {
   const [serviceCategory, setServiceCategory] = useState<string>("all");
-  const [desktopScannerOpen, setDesktopScannerOpen] = useState(false);
-  const [desktopCleanOpen, setDesktopCleanOpen] = useState(false);
-  const [desktopDoctorOpen, setDesktopDoctorOpen] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const action = params.get("action");
-      if (action === "scan") {
-        setDesktopScannerOpen(true);
-      } else if (action === "clean") {
-        setDesktopCleanOpen(true);
-      } else if (action === "doctor" || action === "ampere") {
-        setDesktopDoctorOpen(true);
-      }
-    }
-  }, []);
 
   const handleSelectCategory = (cat: string) => {
     setServiceCategory(cat);
@@ -241,18 +219,10 @@ function HomePage() {
   };
 
   return (
-    <>
-      <Immersive3DLoader />
-      {/* 100% Native Mobile App Experience (md:hidden) */}
-      <main className="md:hidden">
-        <MobileAppShell />
-      </main>
-
-      {/* Flagship Enterprise Portal (hidden md:block) */}
-      <div className="hidden md:block min-h-screen h-auto w-full max-w-full overflow-x-clip bg-background text-foreground">
-        <BackgroundFX />
-        <Header isHomePage={true} />
-        <main id="main" className="w-full max-w-full overflow-x-clip overflow-y-visible">
+    <div className="min-h-screen h-auto w-full max-w-full overflow-x-clip bg-background text-foreground">
+      <BackgroundFX />
+      <Header isHomePage={true} />
+      <main id="main" className="w-full max-w-full overflow-x-clip overflow-y-visible">
           <SmoothSectionReveal delayMs={0}>
             <Hero />
           </SmoothSectionReveal>
@@ -324,23 +294,7 @@ function HomePage() {
 
         <SiteFooter />
         <FloatingActions />
-
-        <DeepScanEngine
-          isOpen={desktopScannerOpen}
-          onClose={() => setDesktopScannerOpen(false)}
-        />
-
-        <TurboCleanModal
-          isOpen={desktopCleanOpen}
-          onClose={() => setDesktopCleanOpen(false)}
-        />
-
-        <DoctorDiagnosticModal
-          isOpen={desktopDoctorOpen}
-          onClose={() => setDesktopDoctorOpen(false)}
-        />
       </div>
-    </>
   );
 }
 

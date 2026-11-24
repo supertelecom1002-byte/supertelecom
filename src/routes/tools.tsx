@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
-import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import {
   TOOLS,
   type ToolId,
@@ -111,23 +110,8 @@ function ToolsPage() {
   });
 
   return (
-    <>
-      {/* Mobile Native Shell View */}
-      <div className="md:hidden">
-        <MobileAppShell
-          initialTab="tools"
-          initialTool={
-            search.tool === "speaker"
-              ? "speaker_cleaner"
-              : (search.tool as ToolId | undefined)
-          }
-          initialAction={search.action}
-        />
-      </div>
-
-      {/* Desktop Enterprise View */}
-      <div className="hidden md:block min-h-screen bg-background text-foreground">
-        <Header />
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10">
           {/* Hero Section */}
@@ -234,7 +218,6 @@ function ToolsPage() {
         </main>
 
         <SiteFooter />
-      </div>
 
       {/* Diagnostic Modals */}
       <SpeakerCleanerModal
@@ -320,6 +303,6 @@ function ToolsPage() {
         isOpen={scannerOpen}
         onClose={() => setScannerOpen(false)}
       />
-    </>
+    </div>
   );
 }

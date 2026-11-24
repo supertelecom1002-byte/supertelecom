@@ -257,6 +257,123 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/apk",
+      "destination": "/download",
+      "permanent": true
+    },
+    {
+      "source": "/services/display-replacement-giridih",
+      "destination": "/services/screen-display-replacement",
+      "permanent": true
+    },
+    {
+      "source": "/services/iphone-repair-specialist-giridih",
+      "destination": "/services/iphone-back-glass-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/motherboard-chip-level-repair-giridih",
+      "destination": "/services/motherboard-ic-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/battery-charging-port-repair-giridih",
+      "destination": "/services/battery-replacement",
+      "permanent": true
+    },
+    {
+      "source": "/services/water-damage-mobile-repair-giridih",
+      "destination": "/services/water-damage-revival",
+      "permanent": true
+    },
+    {
+      "source": "/services/network-repair",
+      "destination": "/services/network-5g-signal-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/camera-repair",
+      "destination": "/services/camera-lens-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/speaker-repair",
+      "destination": "/services/speaker-sound-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/mic-repair",
+      "destination": "/services/microphone-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/software-repair",
+      "destination": "/services/software-flashing-unlock",
+      "permanent": true
+    },
+    {
+      "source": "/services/face-id-repair",
+      "destination": "/services/fingerprint-face-id-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/button-repair",
+      "destination": "/services/power-volume-button-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/data-recovery",
+      "destination": "/services/mobile-data-recovery",
+      "permanent": true
+    },
+    {
+      "source": "/services/back-glass-repair",
+      "destination": "/services/iphone-back-glass-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/green-line-repair",
+      "destination": "/services/green-line-display-fix",
+      "permanent": true
+    },
+    {
+      "source": "/services/display-replacement",
+      "destination": "/services/screen-display-replacement",
+      "permanent": true
+    },
+    {
+      "source": "/services/screen-replacement",
+      "destination": "/services/screen-display-replacement",
+      "permanent": true
+    },
+    {
+      "source": "/services/battery-repair",
+      "destination": "/services/battery-replacement",
+      "permanent": true
+    },
+    {
+      "source": "/services/type-c-repair",
+      "destination": "/services/charging-port-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/charging-jack",
+      "destination": "/services/charging-port-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/motherboard-repair",
+      "destination": "/services/motherboard-ic-repair",
+      "permanent": true
+    },
+    {
+      "source": "/services/water-damage-repair",
+      "destination": "/services/water-damage-revival",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/download/android",
@@ -280,10 +397,6 @@
     },
     {
       "source": "/Super%20Telecom.apk",
-      "destination": "/SuperTelecom.apk"
-    },
-    {
-      "source": "/apk",
       "destination": "/SuperTelecom.apk"
     }
   ]

@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
   const labStatus = isLabOpenNow(appConfig?.lab_status_override || "auto");
 
-  const navLinks: Array<{ label: string; to: string }> = [
+  const navLinks: Array<{ label: string; to?: string; onClick?: () => void }> = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },
     { label: "SmartFinder AI", to: isHomePage ? "#smartfinder" : "/smartfinder" },
     { label: "iPhone Lab", to: "/services/iphone-repair" },
@@ -454,7 +454,7 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
             <div className="mt-5 pt-4 border-t border-slate-800 space-y-2.5">
               <Link
                 to="/app"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => setOpen(false)}
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 text-slate-950 font-black text-xs shadow-md shadow-cyan-500/20 active:scale-95 transition-all"
               >
                 <Rocket className="h-4 w-4" />
@@ -463,8 +463,8 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
 
               {!isStandalone && (
                 <Link
-                  to="/app"
-                  onClick={() => setMobileMenuOpen(false)}
+                  to="/download"
+                  onClick={() => setOpen(false)}
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-cyan-500/40 bg-slate-900 text-cyan-300 font-bold text-xs shadow-md active:scale-95 transition-all"
                 >
                   <Download className="h-4 w-4" />

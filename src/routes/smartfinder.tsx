@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import React, { Suspense } from "react";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
-import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
 import { SITE_URL } from "@/data/site";
 import { Sparkles, Shield, ArrowLeft } from "lucide-react";
@@ -138,42 +137,34 @@ class SmartFinderErrorBoundary extends React.Component<
 
 export function SmartFinderPage() {
   return (
-    <>
-      {/* Mobile App Shell (md:hidden) */}
-      <div className="md:hidden">
-        <MobileAppShell />
-      </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      <Header isHomePage={false} />
 
-      {/* Desktop / Tablet Web Experience */}
-      <div className="hidden md:block min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-        <Header isHomePage={false} />
+      <main className="flex-1 w-full pt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-cyan-400 transition mb-2"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Super Telecom Home
+          </Link>
+        </div>
 
-        <main className="flex-1 w-full pt-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-cyan-400 transition mb-2"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" /> Back to Super Telecom Home
-            </Link>
-          </div>
+        <SmartFinderErrorBoundary>
+          <Suspense
+            fallback={
+              <div className="min-h-[600px] flex items-center justify-center text-cyan-400 bg-slate-950 font-mono text-sm">
+                Loading Super Telecom SmartFinder AI Engines...
+              </div>
+            }
+          >
+            <SmartFinderPlatform />
+          </Suspense>
+        </SmartFinderErrorBoundary>
+      </main>
 
-          <SmartFinderErrorBoundary>
-            <Suspense
-              fallback={
-                <div className="min-h-[600px] flex items-center justify-center text-cyan-400 bg-slate-950 font-mono text-sm">
-                  Loading Super Telecom SmartFinder AI Engines...
-                </div>
-              }
-            >
-              <SmartFinderPlatform />
-            </Suspense>
-          </SmartFinderErrorBoundary>
-        </main>
-
-        <SiteFooter />
-      </div>
-    </>
+      <SiteFooter />
+    </div>
   );
 }
 

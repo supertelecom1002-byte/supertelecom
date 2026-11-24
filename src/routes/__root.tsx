@@ -88,7 +88,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   console.error("TanStack Root Error Component:", error);
   const router = useRouter();
 
@@ -115,11 +115,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
                 regs.forEach((r) => r.unregister());
               });
             }
-            window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + now);
+            (window as any).location.replace((window as any).location.origin + (window as any).location.pathname + "?_fresh=" + now);
           });
         });
       } else {
-        window.location.replace(window.location.origin + window.location.pathname + "?_fresh=" + now);
+        (window as any).location.replace((window as any).location.origin + (window as any).location.pathname + "?_fresh=" + now);
       }
     }
   }, [error]);
@@ -184,6 +184,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 const SITE_TITLE = "Super Telecom | Mobile Repair Shop in Giridih, Jharkhand";
 const SITE_DESC = "Trusted mobile repair shop on Barganda Road, Giridih, Jharkhand. Same-day screen replacement, battery replacement, motherboard chip-level repair, and quality mobile accessories.";
 
+const globalCacheBusterScript = `(function(){if(typeof window==='undefined')return;var VER='st_v5_1';try{if(localStorage.getItem('st_cache_gen')!==VER){localStorage.setItem('st_cache_gen',VER);if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){if(k!=='supertelecom-offline-v5.1'){caches.delete(k);}});});}}}catch(e){}window.addEventListener('error',function(e){var msg=(e&&(e.message||(e.error&&e.error.message)))||'';if(typeof msg==='string'&&(msg.indexOf('inView')!==-1||msg.indexOf('routes-')!==-1||msg.indexOf('Loading chunk')!==-1||msg.indexOf('is not defined')!==-1)){var key='st_auto_wipe_ts';var last=parseInt(sessionStorage.getItem(key)||'0',10);var now=Date.now();if(now-last>10000){sessionStorage.setItem(key,String(now));if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}if('caches' in window){caches.keys().then(function(keys){Promise.all(keys.map(function(k){return caches.delete(k);})).finally(function(){window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);});});}else{window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);}}}});})();`;
+const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';if(t==='light'){document.documentElement.classList.remove('dark');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#ffffff');}}catch(e){}})();`;
+const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){if(reg){reg.update();reg.onupdatefound=function(){var ins=reg.installing;if(ins){ins.onstatechange=function(){if(ins.state==='installed'&&navigator.serviceWorker.controller){ins.postMessage({type:'SKIP_WAITING'});}};}};}}).catch(function(){});});}`;
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -238,6 +243,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         children: `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-XVFRCP22VR');`,
+      },
+      {
+        children: globalCacheBusterScript,
+      },
+      {
+        children: extensionShieldScript,
+      },
+      {
+        children: themeInitScript,
+      },
+      {
+        children: swRegisterScript,
       },
       {
         type: "application/ld+json",
@@ -455,19 +472,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const globalCacheBusterScript = `(function(){if(typeof window==='undefined')return;var VER='st_v5_0';try{if(localStorage.getItem('st_cache_gen')!==VER){localStorage.setItem('st_cache_gen',VER);if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){if(k!=='supertelecom-offline-v5.0'){caches.delete(k);}});});}}}catch(e){}window.addEventListener('error',function(e){var msg=(e&&(e.message||(e.error&&e.error.message)))||'';if(typeof msg==='string'&&(msg.indexOf('inView')!==-1||msg.indexOf('routes-')!==-1||msg.indexOf('Loading chunk')!==-1||msg.indexOf('is not defined')!==-1)){var key='st_auto_wipe_ts';var last=parseInt(sessionStorage.getItem(key)||'0',10);var now=Date.now();if(now-last>10000){sessionStorage.setItem(key,String(now));if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}if('caches' in window){caches.keys().then(function(keys){Promise.all(keys.map(function(k){return caches.delete(k);})).finally(function(){window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);});});}else{window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);}}}});})();`;
-const themeInitScript = `(function(){try{var t=localStorage.getItem('st-theme')||'dark';var isD=t==='dark';document.documentElement.classList.toggle('dark',isD);var m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m);}m.setAttribute('content',isD?'#020617':'#ffffff');}catch(e){}})();`;
-const swRegisterScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(reg){if(reg){reg.update();reg.onupdatefound=function(){var ins=reg.installing;if(ins){ins.onstatechange=function(){if(ins.state==='installed'&&navigator.serviceWorker.controller){ins.postMessage({type:'SKIP_WAITING'});}};}};}}).catch(function(){});});}`;
-const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;
-
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark w-full max-w-full overflow-x-clip overflow-y-auto" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: globalCacheBusterScript }} />
-        <script dangerouslySetInnerHTML={{ __html: extensionShieldScript }} />
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <script dangerouslySetInnerHTML={{ __html: swRegisterScript }} />
         <HeadContent />
       </head>
       <body className="pb-20 md:pb-0 min-h-screen h-auto w-full max-w-full overflow-x-clip overflow-y-auto relative" suppressHydrationWarning>

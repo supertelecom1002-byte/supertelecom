@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
-import { MobileAppShell } from "@/components/layout/MobileAppShell";
 import {
   findRepairJobSecure,
   maskCustomerPhone,
@@ -94,15 +93,8 @@ function TrackPage() {
   };
 
   return (
-    <>
-      {/* Mobile Native Shell View */}
-      <div className="md:hidden">
-        <MobileAppShell initialTab="track" />
-      </div>
-
-      {/* Desktop Enterprise View */}
-      <div className="hidden md:block min-h-screen bg-background text-foreground">
-        <Header />
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-10">
           {/* Hero */}
@@ -296,6 +288,5 @@ function TrackPage() {
 
         <SiteFooter />
       </div>
-    </>
   );
 }

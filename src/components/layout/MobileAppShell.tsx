@@ -419,7 +419,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         </button>
 
         <Link
-          to="/services/screen-replacement"
+          to="/services/$slug"
+          params={{ slug: "screen-display-replacement" }}
           onClick={() => triggerVibration(15)}
           className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold flex items-center gap-1 whitespace-nowrap active:scale-95 transition-transform"
         >
@@ -428,7 +429,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         </Link>
 
         <Link
-          to="/services/motherboard-repair"
+          to="/services/$slug"
+          params={{ slug: "motherboard-ic-repair" }}
           onClick={() => triggerVibration(15)}
           className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-500/40 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold flex items-center gap-1 whitespace-nowrap active:scale-95 transition-transform"
         >
@@ -437,7 +439,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
         </Link>
 
         <Link
-          to="/services/battery-replacement"
+          to="/services/$slug"
+          params={{ slug: "battery-replacement" }}
           onClick={() => triggerVibration(15)}
           className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold flex items-center gap-1 whitespace-nowrap active:scale-95 transition-transform"
         >
@@ -642,7 +645,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
 
               <div className="grid grid-cols-2 gap-2">
                 <Link
-                  to="/services/screen-display-replacement"
+                  to="/services/$slug"
+                  params={{ slug: "screen-display-replacement" }}
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >
@@ -659,7 +663,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 </Link>
 
                 <Link
-                  to="/services/iphone-repair"
+                  to="/services/$slug"
+                  params={{ slug: "iphone-back-glass-repair" }}
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >
@@ -676,7 +681,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 </Link>
 
                 <Link
-                  to="/services/motherboard-ic-repair"
+                  to="/services/$slug"
+                  params={{ slug: "motherboard-ic-repair" }}
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >
@@ -693,7 +699,8 @@ export const MobileAppShell: React.FC<MobileAppShellProps> = ({
                 </Link>
 
                 <Link
-                  to="/services/battery-replacement"
+                  to="/services/$slug"
+                  params={{ slug: "battery-replacement" }}
                   onClick={() => triggerVibration(15)}
                   className="p-3 rounded-2xl bg-white dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200 dark:border-slate-800/80 hover:border-cyan-500/40 active:scale-95 transition-all shadow-sm space-y-1"
                 >

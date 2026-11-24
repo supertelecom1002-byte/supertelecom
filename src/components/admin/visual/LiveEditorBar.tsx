@@ -3,13 +3,14 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Sparkles,
   Check,
-  RotateCcw,
   UploadCloud,
   LayoutDashboard,
   Eye,
   Edit3,
   Loader2,
   CheckCircle2,
+  Minimize2,
+  Maximize2,
 } from "lucide-react";
 import { useAdminAuth } from "@/context/AdminAuthContext";
 import { useVisualEditor } from "@/context/VisualEditorContext";
@@ -28,6 +29,7 @@ export const LiveEditorBar: React.FC = () => {
 
   const [publishSuccess, setPublishSuccess] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -47,9 +49,25 @@ export const LiveEditorBar: React.FC = () => {
     }
   };
 
+  if (isCollapsed) {
+    return (
+      <div className="fixed bottom-20 right-4 z-50">
+        <button
+          type="button"
+          onClick={() => setIsCollapsed(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 border border-cyan-500/50 text-cyan-400 hover:text-white text-xs font-semibold shadow-lg backdrop-blur-md transition-all cursor-pointer"
+          title="Open Visual Website Editor"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Editor</span>
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-up">
-      <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-900/95 border border-cyan-500/40 shadow-[0_10px_35px_rgba(6,182,212,0.25)] backdrop-blur-xl text-white text-xs font-medium transition-all">
+    <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-up max-w-[95vw]">
+      <div className="flex items-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-slate-900/95 border border-cyan-500/40 shadow-[0_10px_35px_rgba(6,182,212,0.25)] backdrop-blur-xl text-white text-xs font-medium transition-all">
         {/* Brand / Mode Indicator */}
         <div className="flex items-center gap-2 pr-2 border-r border-slate-700/80">
           <span className="p-1 rounded-lg bg-cyan-950 border border-cyan-500/30 text-cyan-400">
@@ -63,7 +81,7 @@ export const LiveEditorBar: React.FC = () => {
           <button
             type="button"
             onClick={toggleEditMode}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none cursor-pointer ${
               isEditMode ? "bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.6)]" : "bg-slate-800"
             }`}
             aria-label="Toggle Visual Edit Mode"
@@ -99,10 +117,13 @@ export const LiveEditorBar: React.FC = () => {
               type="button"
               onClick={discardChanges}
               disabled={isSaving}
-              className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+              className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
               title="Discard all pending changes"
             >
-              <RotateCcw className="h-3.5 w-3.5" />
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v5h5" />
+              </svg>
             </button>
           </div>
         )}
@@ -113,7 +134,7 @@ export const LiveEditorBar: React.FC = () => {
             type="button"
             onClick={handlePublish}
             disabled={isSaving}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-lg transition-all active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs shadow-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {isSaving ? (
               <>
@@ -135,7 +156,7 @@ export const LiveEditorBar: React.FC = () => {
         )}
 
         {/* Exit to Dashboard */}
-        <div className="pl-2 border-l border-slate-700/80">
+        <div className="pl-2 border-l border-slate-700/80 flex items-center gap-1.5">
           <Link
             to="/admin"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors text-xs font-semibold"
@@ -143,6 +164,15 @@ export const LiveEditorBar: React.FC = () => {
             <LayoutDashboard className="h-3 w-3" />
             <span className="hidden sm:inline">Admin Dashboard</span>
           </Link>
+
+          <button
+            type="button"
+            onClick={() => setIsCollapsed(true)}
+            className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Minimize Bar"
+          >
+            <Minimize2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>

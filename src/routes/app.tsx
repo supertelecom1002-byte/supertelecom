@@ -42,6 +42,7 @@ import {
   CheckSquare,
   Square,
   HardDrive,
+  Sparkles,
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -327,7 +328,7 @@ function AppShowcasePage() {
 
     setTransferQueue((prev) =>
       prev.map((item) =>
-        item.status === "completed" ? item : { ...item, status: "transferring", speedMbps: 38.4 }
+        item.status === "completed" ? item : { ...item, status: "transferring" as const, speedMbps: 38.4 }
       )
     );
 
@@ -350,7 +351,7 @@ function AppShowcasePage() {
                 type: "transfer_sent",
                 statusText: isHindi ? "100% सत्यापित (SHA-256)" : "100% Complete (SHA-256)",
               });
-              return { ...item, progress: 100, speedMbps: 0, status: "completed" };
+              return { ...item, progress: 100, speedMbps: 0, status: "completed" as const };
             }
           }
           return item;

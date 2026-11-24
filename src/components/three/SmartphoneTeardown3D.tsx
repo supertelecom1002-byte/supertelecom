@@ -262,11 +262,11 @@ function SmartphoneGLBRig({
   // Deep clone scene and materials to prevent cross-contamination
   const scene = useMemo(() => {
     const c = gltf.scene.clone(true);
-    c.traverse((node) => {
+    c.traverse((node: any) => {
       if ((node as THREE.Mesh).isMesh) {
         const mesh = node as THREE.Mesh;
         if (Array.isArray(mesh.material)) {
-          mesh.material = mesh.material.map((m) => m.clone());
+          mesh.material = mesh.material.map((m: any) => m.clone());
         } else if (mesh.material) {
           mesh.material = mesh.material.clone();
         }
@@ -282,7 +282,7 @@ function SmartphoneGLBRig({
   // Map nodes by name for fast lookup in useFrame
   const nodeMap = useMemo(() => {
     const map = new Map<string, THREE.Object3D>();
-    scene.traverse((child) => {
+    scene.traverse((child: any) => {
       if (child.name) {
         map.set(child.name, child);
       }
@@ -292,7 +292,7 @@ function SmartphoneGLBRig({
 
   // Enhance materials on mount: ensure realistic glass, OLED black, and metallic frame
   useEffect(() => {
-    scene.traverse((child) => {
+    scene.traverse((child: any) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         const mat = mesh.material as THREE.MeshStandardMaterial;
@@ -573,7 +573,7 @@ function SmartphoneGLBRig({
           <group key={callout.id} position={callout.position3D}>
             {/* Outer Interactive Glow Ring */}
             <mesh
-              onClick={(e) => {
+              onClick={(e: any) => {
                 e.stopPropagation();
                 onSelectCallout(callout.id);
               }}
@@ -588,7 +588,7 @@ function SmartphoneGLBRig({
             </mesh>
             {/* Center Core Dot */}
             <mesh
-              onClick={(e) => {
+              onClick={(e: any) => {
                 e.stopPropagation();
                 onSelectCallout(callout.id);
               }}
@@ -955,7 +955,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
                   dpr={[1, isMobile ? 1.2 : 1.5]}
                   className="w-full h-full"
                   onCreated={({ gl }) => {
-                    gl.domElement.addEventListener("webglcontextlost", (e) => {
+                    gl.domElement.addEventListener("webglcontextlost", (e: any) => {
                       e.preventDefault();
                       console.warn("SmartphoneTeardown3D WebGL context lost - prevented browser crash");
                     }, false);
