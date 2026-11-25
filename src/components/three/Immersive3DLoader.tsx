@@ -24,18 +24,13 @@ export const Immersive3DLoader: React.FC<Immersive3DLoaderProps> = ({
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // SSR hydration safety: mount only on client
+  // SSR & Mobile safety: NEVER block first paint (FCP/LCP) on `/` or mobile devices
   useEffect(() => {
     setMounted(true);
-    if (!forceShow) {
-      try {
-        const hasSeen = sessionStorage.getItem("st_loader_seen");
-        if (hasSeen === "true") {
-          setIsVisible(false);
-          if (onComplete) onComplete();
-          return;
-        }
-      } catch {}
+    if (!forceShow || (typeof window !== "undefined" && window.innerWidth < 1024)) {
+      setIsVisible(false);
+      if (onComplete) onComplete();
+      return;
     }
     setIsVisible(true);
   }, [forceShow, onComplete]);
@@ -177,8 +172,11 @@ export const Immersive3DLoader: React.FC<Immersive3DLoaderProps> = ({
           <div className="relative h-44 w-44 sm:h-52 sm:w-52 rounded-3xl border border-cyan-400/40 bg-slate-900/90 p-4 shadow-[0_0_60px_rgba(6,182,212,0.35)] backdrop-blur-2xl flex flex-col items-center justify-center overflow-hidden group">
             {/* Real Official Super Telecom Logo */}
             <img
-              src="/logo.png"
-              alt="Super Telecom Official Logo"
+              src="/logo.webp"
+              alt="Super Telecom Official Logo — Giridih Hardware Lab"
+              width={144}
+              height={144}
+              decoding="async"
               className="h-28 w-28 sm:h-36 sm:w-36 object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-transform duration-300 group-hover:scale-105"
             />
 

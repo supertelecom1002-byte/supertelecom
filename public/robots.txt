@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
+Allow: /download
+Allow: /SuperTelecom.apk
 Disallow: /admin
+Disallow: /admin/
 Disallow: /api/
 
 # Major Search Engine Crawlers

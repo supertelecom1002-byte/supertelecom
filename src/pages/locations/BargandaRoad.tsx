@@ -50,28 +50,28 @@ export const BargandaRoadPage: React.FC = () => {
       title: "Mobile Screen & OLED Replacement",
       time: "30 Mins",
       price: "Consultation Required",
-      href: "/services/display-replacement-giridih",
+      slug: "screen-display-replacement",
       icon: Smartphone,
     },
     {
       title: "iPhone Specialist Service & Back Glass",
       time: "45 Mins",
       price: "Consultation Required",
-      href: "/services/iphone-repair-specialist-giridih",
+      slug: "iphone-back-glass-repair",
       icon: Apple,
     },
     {
       title: "Motherboard BGA & IC Micro-soldering",
       time: "Same Day",
       price: "Consultation Required",
-      href: "/services/motherboard-chip-level-repair-giridih",
+      slug: "motherboard-ic-repair",
       icon: Cpu,
     },
     {
       title: "Battery & Charging Port Replacement",
       time: "20 Mins",
       price: "Consultation Required",
-      href: "/services/battery-charging-port-repair-giridih",
+      slug: "battery-replacement",
       icon: Battery,
     },
   ];
@@ -244,24 +244,37 @@ export const BargandaRoadPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Google Map Iframe Placeholder / Direction Box */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-              <div>
-                <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block mb-1">Live Map Navigation</span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Looking for live GPS directions to our store?</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-                  Click the navigation button to open Google Maps directly on your smartphone for turn-by-turn routing to Super Telecom, Barganda Road, Giridih.
-                </p>
+            {/* Lab Visual & Live Map Navigation */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 grid grid-cols-1 md:grid-cols-12 items-center gap-6 shadow-sm">
+              <div className="md:col-span-5 aspect-[16/10] w-full overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-950">
+                <img
+                  src="/images/hero-repair.webp"
+                  alt="Technician performing precision micro-soldering at Super Telecom Barganda Road, Giridih"
+                  width={800}
+                  height={500}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
               </div>
-              <a
-                href={MAPS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-3 text-xs transition-colors"
-              >
-                <Navigation className="h-4 w-4" />
-                <span>Open Google Maps</span>
-              </a>
+              <div className="md:col-span-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block mb-1">Live Map Navigation</span>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Looking for live GPS directions to our store?</h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                    Click the navigation button to open Google Maps directly on your smartphone for turn-by-turn routing to Super Telecom, Barganda Road, Giridih.
+                  </p>
+                </div>
+                <a
+                  href={MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-3 text-xs transition-colors"
+                >
+                  <Navigation className="h-4 w-4" />
+                  <span>Open Google Maps</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -284,7 +297,8 @@ export const BargandaRoadPage: React.FC = () => {
                 return (
                   <Link
                     key={idx}
-                    to={srv.href}
+                    to="/services/$slug"
+                    params={{ slug: srv.slug }}
                     className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-cyan-500/40 transition-all group flex flex-col justify-between"
                   >
                     <div>

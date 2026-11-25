@@ -12,7 +12,6 @@ import {
   Layers,
   Smartphone,
   Sparkles,
-  RotateCcw,
   Play,
   Pause,
   MessageCircle,
@@ -229,10 +228,7 @@ export const STEPPER_STAGES: StepperStage[] = [
   },
 ];
 
-// Preload the GLB model asset
-if (typeof window !== "undefined") {
-  useGLTF.preload("/models/smartphone_teardown.glb");
-}
+// Preload is deferred until component mounts on desktop hardware viewports
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GLB MODEL RIG (19 SUB-ASSEMBLIES INTERPOLATED IN useFrame)
@@ -864,7 +860,17 @@ export const SmartphoneTeardown3D: React.FC = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
               title="मूल स्थिति में लाएं (Reset View)"
             >
-              <RotateCcw className="h-3.5 w-3.5 text-cyan-400" />
+              <svg
+                className="h-3.5 w-3.5 text-cyan-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.2}
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v5h5" />
+              </svg>
               <span>Reset View</span>
             </button>
           </div>

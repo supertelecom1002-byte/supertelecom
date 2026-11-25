@@ -1,81 +1,95 @@
 import React, { useEffect, useRef } from "react";
-import Lenis from "lenis";
 import { useRouterState } from "@tanstack/react-router";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-// Register ScrollTrigger plugin safely
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface SmoothScrollProviderProps {
   children: React.ReactNode;
 }
 
 const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children }) => {
-  const lenisRef = useRef<Lenis | null>(null);
+  const lenisRef = useRef<any>(null);
+  const scrollTriggerRef = useRef<any>(null);
   const routerState = useRouterState();
   const pathname = routerState?.location?.pathname || "/";
 
   useEffect(() => {
     if (typeof window === "undefined" || typeof document === "undefined") return;
 
-    // Check user preference for reduced motion
+    // Skip heavy smooth-scroll / GSAP runtime on mobile viewports & reduced-motion users
+    const isDesktop = window.innerWidth >= 1024;
     const prefersReducedMotion =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (prefersReducedMotion) return;
+    if (!isDesktop || prefersReducedMotion) return;
 
-    let lenis: Lenis | null = null;
+    let cancelled = false;
+    let lenis: any = null;
+    let gsapInstance: any = null;
+    let ScrollTriggerInstance: any = null;
     let tickerCb: ((time: number) => void) | null = null;
-    let refreshTimer: any = null;
+    let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
-    try {
-      // Initialize Lenis with safe window / document references
-      lenis = new Lenis({
-        wrapper: window,
-        content: document.documentElement,
-        lerp: 0.08,             // Buttery smooth momentum damping
-        duration: 1.2,          // Inertial duration
-        smoothWheel: true,
-        wheelMultiplier: 0.9,   // Controlled wheel response
-        touchMultiplier: 1.5,   // Fluid touch response
-        autoRaf: false,         // Managed via GSAP ticker
-      });
+    const init = async () => {
+      try {
+        const [{ default: Lenis }, { default: gsap }, { ScrollTrigger }] = await Promise.all([
+          import("lenis"),
+          import("gsap"),
+          import("gsap/ScrollTrigger"),
+        ]);
 
-      lenisRef.current = lenis;
+        if (cancelled) return;
 
-      // Synchronize Lenis with GSAP ScrollTrigger
-      lenis.on("scroll", ScrollTrigger.update);
+        gsap.registerPlugin(ScrollTrigger);
+        gsapInstance = gsap;
+        ScrollTriggerInstance = ScrollTrigger;
+        scrollTriggerRef.current = ScrollTrigger;
 
-      tickerCb = (time: number) => {
-        lenis?.raf(time * 1000);
-      };
+        lenis = new Lenis({
+          wrapper: window,
+          content: document.documentElement,
+          lerp: 0.08,
+          duration: 1.2,
+          smoothWheel: true,
+          wheelMultiplier: 0.9,
+          touchMultiplier: 1.5,
+          autoRaf: false,
+        });
 
-      gsap.ticker.add(tickerCb);
-      gsap.ticker.lagSmoothing(0);
+        lenisRef.current = lenis;
+        lenis.on("scroll", ScrollTrigger.update);
 
-      refreshTimer = setTimeout(() => {
-        try {
-          ScrollTrigger.refresh();
-        } catch {}
-      }, 200);
-    } catch (err) {
-      console.warn("[SmoothScrollProvider] Lenis init failed, using native scroll:", err);
-    }
+        tickerCb = (time: number) => {
+          lenis?.raf(time * 1000);
+        };
+
+        gsap.ticker.add(tickerCb);
+        gsap.ticker.lagSmoothing(0);
+
+        refreshTimer = setTimeout(() => {
+          try {
+            ScrollTrigger.refresh();
+          } catch {}
+        }, 200);
+      } catch (err) {
+        console.warn("[SmoothScrollProvider] Deferred smooth-scroll init skipped:", err);
+      }
+    };
+
+    init();
 
     return () => {
+      cancelled = true;
       if (refreshTimer) clearTimeout(refreshTimer);
-      if (tickerCb) {
+      if (tickerCb && gsapInstance) {
         try {
-          gsap.ticker.remove(tickerCb);
+          gsapInstance.ticker.remove(tickerCb);
         } catch {}
       }
       if (lenis) {
-        try {
-          lenis.off("scroll", ScrollTrigger.update);
-        } catch {}
+        if (ScrollTriggerInstance) {
+          try {
+            lenis.off("scroll", ScrollTriggerInstance.update);
+          } catch {}
+        }
         try {
           lenis.destroy();
         } catch (err) {
@@ -86,7 +100,7 @@ const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children })
     };
   }, []);
 
-  // Instant scroll-to-top on route navigation and refresh ScrollTrigger pinned triggers
+  // Instant scroll-to-top on route navigation and refresh ScrollTrigger pinned triggers if loaded
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
@@ -94,9 +108,10 @@ const SmoothScrollProvider: React.FC<SmoothScrollProviderProps> = ({ children })
         lenisRef.current.scrollTo(0, { immediate: true });
       }
     } catch {}
+    if (!scrollTriggerRef.current) return;
     const timer = setTimeout(() => {
       try {
-        ScrollTrigger.refresh();
+        scrollTriggerRef.current?.refresh();
       } catch {}
     }, 120);
     return () => clearTimeout(timer);

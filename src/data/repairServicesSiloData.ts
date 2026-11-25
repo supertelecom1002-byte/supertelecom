@@ -170,12 +170,12 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
           "हाँ, हमारी प्रत्येक डिस्प्ले रिप्लेसमेंट पर 90 दिन की लिखित स्टोर वारंटी दी जाती है, जिसमें टच रिस्पॉन्स और डिस्प्ले क्वालिटी कवर होती है।",
       },
     ],
-    aliases: ["screen-replacement", "display-replacement", "touch-glass-replacement", "display-repair"],
+    aliases: ["screen-replacement", "display-replacement", "touch-glass-replacement", "display-repair", "android-repair", "tempered-glass"],
     relatedSlugs: ["green-line-display-fix", "battery-replacement", "charging-port-repair", "iphone-back-glass-repair"],
     authenticVisual: {
       badgeText: "AMOLED Precision Assembly",
       caption: "Clean-room screen separation and zero-bubble vacuum frame alignment in Giridih workshop",
-      image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/display-amoled-repair.webp",
     },
   },
   {
@@ -285,7 +285,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Zero-Cycle Certified",
       caption: "Precision battery adhesive pull-tab installation on ESD-safe grounding mat",
-      image: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/battery-replacement.webp",
     },
   },
   {
@@ -395,7 +395,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "High-Amp Fast Charge Ready",
       caption: "Type-C 24-pin connector microscopic reflow soldering with silver solder paste",
-      image: "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/charging-port-repair.webp",
     },
   },
   {
@@ -506,7 +506,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Stereo Microscope Bench",
       caption: "BGA chip alignment under trinocular 45x optical bench on Barganda Road",
-      image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/motherboard-bga-repair.webp",
     },
   },
   {
@@ -616,7 +616,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Ultrasonic PCB Bath",
       caption: "High-frequency ultrasonic chemical decontamination tank at Barganda Road laboratory",
-      image: "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/water-damage-revival.webp",
     },
   },
   {
@@ -726,7 +726,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "COF Trace Restoration",
       caption: "High-magnification AMOLED flex trace repair station at Super Telecom Giridih",
-      image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/display-amoled-repair.webp",
     },
   },
   {
@@ -836,7 +836,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Dust-Free Camera Assembly",
       caption: "Precision optical lens alignment under clean bench at Super Telecom Giridih",
-      image: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/camera-audio-repair.webp",
     },
   },
   {
@@ -946,7 +946,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Acoustic Chamber Test",
       caption: "Stereo speaker enclosure and acoustic mesh cleaning on Barganda Road",
-      image: "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/camera-audio-repair.webp",
     },
   },
   {
@@ -1056,7 +1056,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "MEMS Silicon Microphone",
       caption: "Digital noise-cancelling MEMS microphone hot-air rework on Barganda Road",
-      image: "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/charging-port-repair.webp",
     },
   },
   {
@@ -1166,7 +1166,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "RF Spectrum Testing",
       caption: "5G RF transceiver chip rework and coaxial antenna continuity testing on Barganda Road",
-      image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/motherboard-bga-repair.webp",
     },
   },
   {
@@ -1276,7 +1276,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Direct EDL Mode Flash",
       caption: "High-speed USB EDL programming and authorized stock partition recovery at Super Telecom",
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/charging-port-repair.webp",
     },
   },
   {
@@ -1386,7 +1386,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Dot Projector Bench",
       caption: "TrueDepth infrared prism alignment and micro-soldering at Super Telecom Giridih",
-      image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/display-amoled-repair.webp",
     },
   },
   {
@@ -1496,7 +1496,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "Tactile Dome Switches",
       caption: "Precision internal side button flex cable installation on Barganda Road",
-      image: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/battery-replacement.webp",
     },
   },
   {
@@ -1606,7 +1606,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "High-Security Data Lab",
       caption: "Direct eMMC/UFS memory read and emergency data recovery workstation on Barganda Road",
-      image: "https://images.unsplash.com/photo-1562408590-e32931084e23?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/water-damage-revival.webp",
     },
   },
   {
@@ -1716,7 +1716,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     authenticVisual: {
       badgeText: "High-Conductivity Thermal Gel",
       caption: "CPU copper heat-pipe cleaning and high-performance thermal pad installation in Giridih",
-      image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/motherboard-bga-repair.webp",
     },
   },
   {
@@ -1821,13 +1821,90 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
         answer: "आईफोन 11 से लेकर आईफोन 16 प्रो मैक्स तक का खर्च मॉडल के आधार पर मॉडल अनुसार के बीच आता है।",
       },
     ],
-    aliases: ["back-glass-repair", "iphone-glass-back", "rear-glass-repair", "iphone-repair-specialist-giridih"],
+    aliases: ["back-glass-repair", "iphone-glass-back", "rear-glass-repair", "iphone-repair-specialist-giridih", "iphone-repair"],
     relatedSlugs: ["camera-lens-repair", "screen-display-replacement", "battery-replacement"],
     authenticVisual: {
       badgeText: "Laser Glue Disintegration",
       caption: "Precision laser back glass separation ensuring zero scratches on titanium chassis",
-      image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+      image: "/images/services/screen-after-restored.webp",
     },
+  },
+];
+
+export interface ServiceInfo {
+  slug: string;
+  name: string;
+  h1: string;
+  title: string;
+  description: string;
+  keywords: string;
+  short: string;
+  intro: string;
+  benefits: string[];
+  commonSymptoms?: string[];
+  process: string[];
+  brands: string[];
+  faqs: [string, string][];
+  priceRange: string;
+  duration: string;
+}
+
+export const STORE_RETAIL_SERVICES: ServiceInfo[] = [
+  {
+    slug: "second-hand-mobile",
+    name: "Second Hand Mobiles",
+    h1: "Second Hand Mobile Shop in Giridih",
+    title: "Second Hand Mobile in Giridih | Refurbished Phones with Warranty",
+    description: "Buy quality-tested second hand & refurbished smartphones in Giridih at Super Telecom. iPhone, Samsung, Xiaomi & more — all with warranty and bill.",
+    keywords: "Second Hand Mobile Giridih, Used Mobile Shop Giridih, Refurbished Phones Giridih, Old iPhone Giridih",
+    short: "Tested refurbished phones with 30-point lab QC & store warranty.",
+    intro:
+      "Super Telecom on Barganda Road, Giridih stocks tested, 30-point verified second-hand iPhone, Samsung, OnePlus, Xiaomi, Realme, Vivo, and OPPO smartphones with invoice and store warranty.",
+    benefits: [
+      "Every phone tested on 30+ hardware points",
+      "Battery health, TrueTone & network verified",
+      "Written warranty and GST bill included",
+      "Fair exchange evaluation for your existing phone",
+    ],
+    process: [
+      "Browse live verified stock at Barganda Road, Giridih",
+      "Test display, battery health, cameras & 5G network hands-on",
+      "Optional trade-in evaluation and free data transfer",
+    ],
+    brands: ["iPhone", "Samsung", "OnePlus", "Xiaomi / Redmi", "Realme", "Vivo", "OPPO"],
+    faqs: [
+      ["Are your second hand phones original?", "100% original verified devices with bill and warranty — never fake or replica handsets."],
+      ["Do second hand iPhones come with warranty?", "Yes, every pre-owned smartphone from Super Telecom Giridih includes a written store warranty."],
+    ],
+    priceRange: "Consultation Required",
+    duration: "Same day",
+  },
+  {
+    slug: "mobile-accessories",
+    name: "Mobile Accessories",
+    h1: "Mobile Accessories Shop in Giridih",
+    title: "Mobile Accessories in Giridih | Chargers, Covers, Earphones & More",
+    description: "Genuine fast chargers, USB cables, power banks, earphones, smartwatches, covers & UV tempered glass in Giridih at Super Telecom.",
+    keywords: "Mobile Accessories Giridih, Phone Charger Giridih, Tempered Glass Giridih, Back Cover Giridih",
+    short: "Branded fast chargers, cables, cases & UV tempered glass fitting.",
+    intro:
+      "Super Telecom on Barganda Road stocks genuine PD fast chargers, braided cables, power banks, wireless earbuds, protective covers, and dust-free 9D/UV tempered glass fitting.",
+    benefits: [
+      "Genuine branded adapters, cables & audio gear",
+      "Complimentary bubble-free UV tempered glass installation",
+      "Brand warranty on eligible electronics",
+    ],
+    process: [
+      "Visit Barganda Road store with your phone model",
+      "Select verified charger, cover, or UV screen guard",
+      "Complimentary dust-free fitting before handover",
+    ],
+    brands: ["Samsung", "Apple", "OnePlus", "Boat", "Portronics", "Xiaomi"],
+    faqs: [
+      ["Do you install tempered glass for free?", "Yes, bubble-free installation is complimentary with every purchase at our Giridih workshop."],
+    ],
+    priceRange: "Consultation Required",
+    duration: "In-store",
   },
 ];
 
@@ -1837,4 +1914,26 @@ export function getServiceBySlugOrAlias(slug: string): DedicatedServiceData | un
   return REPAIR_SERVICES_SILO_DATA.find(
     (s) => s.slug === normalized || s.aliases.includes(normalized)
   );
+}
+
+// Single derived adapter mapping the 16 canonical silos + store retail offerings to ServiceInfo
+export function getLegacyCompatibleServices(): ServiceInfo[] {
+  const siloMapped: ServiceInfo[] = REPAIR_SERVICES_SILO_DATA.map((s) => ({
+    slug: s.slug,
+    name: s.title.replace(/ in Giridih$/i, ""),
+    h1: s.title,
+    title: `${s.title} | Super Telecom`,
+    description: s.metaDescription,
+    keywords: s.keywords.join(", "),
+    short: s.shortTagline,
+    intro: s.heroSummary,
+    benefits: s.customerGuidelines,
+    commonSymptoms: s.symptoms,
+    process: s.labSteps.map((step) => `${step.title}: ${step.description}`),
+    brands: s.brandPricingTable.map((b) => b.modelsExample),
+    faqs: s.faqs.map((f) => [f.question, f.answer]),
+    priceRange: s.priceRangeInr,
+    duration: s.turnaroundTime,
+  }));
+  return [...siloMapped, ...STORE_RETAIL_SERVICES];
 }

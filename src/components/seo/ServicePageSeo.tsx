@@ -9,7 +9,8 @@ interface ServicePageSeoProps {
 
 export function getServiceSchemaGraph(service: DedicatedServiceData) {
   const canonicalUrl = `${SITE_URL}/services/${service.slug}`;
-  const ogImage = service.authenticVisual?.image || `${SITE_URL}/super-telecom-logo.png`;
+  const rawImage = service.authenticVisual?.image || "/logo.webp";
+  const ogImage = rawImage.startsWith("http") ? rawImage : `${SITE_URL}${rawImage}`;
 
   return {
     "@context": "https://schema.org",
@@ -23,7 +24,7 @@ export function getServiceSchemaGraph(service: DedicatedServiceData) {
           "Giridih's premier smartphone and iPhone repair laboratory with 10+ years experience, 45X optical stereo soldering workstations, strict customer data privacy protection, and same-day service.",
         url: SITE_URL,
         telephone: BUSINESS_MASTER.phoneRaw,
-        image: `${SITE_URL}/super-telecom-logo.png`,
+        image: `${SITE_URL}/logo.webp`,
         priceRange: "$$",
         hasMap: BUSINESS_MASTER.mapsUrl,
         address: {

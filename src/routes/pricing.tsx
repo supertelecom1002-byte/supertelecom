@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SERVICES } from "@/data/services";
+import { getLegacyCompatibleServices } from "@/data/repairServicesSiloData";
 import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 import { REPAIR_PRICE_DISCLAIMER } from "@/config/superTelecomConfig";
 import { ChevronRight, Phone, MessageCircle, MapPin, AlertCircle, ArrowRight, ShieldCheck, Clock } from "lucide-react";
@@ -28,34 +28,34 @@ const BRAND_SERVICES: { brand: string; screen: string; battery: string; charging
 
 const SERVICE_CLUSTERS = [
   {
-    category: "Display & Touch Glass Repairs",
-    slugs: ["display-replacement", "screen-replacement", "touch-glass-replacement"],
-    description: "Original AMOLED, OLED, and IPS LCD screens, plus OCA outer glass lamination preserving authentic panels.",
+    category: "Display, Glass & Biometric Repairs",
+    slugs: ["screen-display-replacement", "green-line-display-fix", "fingerprint-face-id-repair"],
+    description: "Original AMOLED, OLED, and IPS LCD screens, COF flex laser bonding, and biometric sensor repair.",
   },
   {
-    category: "Power, Battery & Charging Repairs",
-    slugs: ["battery-replacement", "charging-port-repair", "button-repair"],
-    description: "Certified high-backup batteries, fast-charge Type-C daughterboards, and tactile micro-switch buttons.",
+    category: "Power, Battery, Charging & Keys",
+    slugs: ["battery-replacement", "charging-port-repair", "power-volume-button-repair"],
+    description: "Zero-cycle high-density batteries, fast-charge Type-C daughterboards, and tactile switch flexes.",
   },
   {
-    category: "Motherboard, IC & Micro-Soldering",
-    slugs: ["motherboard-repair", "ic-chip-level-repair", "dead-phone-repair", "water-damage-repair"],
-    description: "Advanced BGA reballing, sandwich motherboard splitting, power management IC, and ultrasonic liquid recovery.",
+    category: "Motherboard, IC & Water Damage",
+    slugs: ["motherboard-ic-repair", "water-damage-revival", "phone-hanging-performance-fix"],
+    description: "45X trinocular BGA reballing, sandwich motherboard CPU rework, PMIC repair, and ultrasonic revival.",
   },
   {
-    category: "Audio & Optics Repairs",
-    slugs: ["camera-repair", "speaker-repair", "microphone-repair"],
-    description: "Lens glass, optical image stabilization modules, loud speakers, earpieces, and noise-cancelling mics.",
+    category: "Camera, Optics & Audio Repairs",
+    slugs: ["camera-lens-repair", "speaker-sound-repair", "microphone-repair"],
+    description: "Sapphire camera glass, OIS optical camera modules, loudspeakers, earpieces, and MEMS microphones.",
   },
   {
-    category: "Software, Security & Data Services",
-    slugs: ["software-repair", "frp-unlock", "network-repair", "flashing", "data-recovery"],
-    description: "Bootloop resolution, official firmware flashing, baseband network troubleshooting, and data backup.",
+    category: "Software, 5G Signal & Data Recovery",
+    slugs: ["software-flashing-unlock", "network-5g-signal-repair", "mobile-data-recovery"],
+    description: "Bootloop resolution, EDL stock firmware flashing, baseband 5G IC repair, and dead-phone data recovery.",
   },
   {
-    category: "Second-Hand Phones & Protection",
-    slugs: ["second-hand-phones", "second-hand-mobile", "mobile-accessories", "tempered-glass"],
-    description: "Verified pre-owned handsets with store warranty, UV tempered glass, and premium fast chargers.",
+    category: "Flagship Back Glass, Phones & Accessories",
+    slugs: ["iphone-back-glass-repair", "second-hand-mobile", "mobile-accessories"],
+    description: "Precision iPhone laser back glass, 30-point verified pre-owned phones, and genuine fast chargers.",
   },
 ];
 
@@ -147,6 +147,7 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function PricingPage() {
+  const allServices = getLegacyCompatibleServices();
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-clip bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/70 backdrop-blur-xl">
@@ -269,7 +270,7 @@ function PricingPage() {
 
           <div className="mt-8 space-y-10">
             {SERVICE_CLUSTERS.map((cluster) => {
-              const clusterServices = SERVICES.filter((s) => cluster.slugs.includes(s.slug));
+              const clusterServices = allServices.filter((s) => cluster.slugs.includes(s.slug));
               return (
                 <div key={cluster.category} className="rounded-3xl border border-border/60 bg-card/20 p-6 sm:p-8">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border/40 pb-4">

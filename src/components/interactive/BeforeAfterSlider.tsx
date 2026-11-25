@@ -39,8 +39,8 @@ const CASE_STUDIES: CaseStudy[] = [
     tabLabel: "iPhone Glass Restoration",
     title: "iPhone Display Glass Refurbishment",
     description: "Shattered front gorilla glass replaced using precision cryo-separation & OCA vacuum debubbler, helping retain genuine factory OLED display and touch sensitivity.",
-    beforeImg: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=1200&q=80",
-    afterImg: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+    beforeImg: "/images/services/screen-before-cracked.webp",
+    afterImg: "/images/services/screen-after-restored.webp",
     damageTag: "CRACKED OUTER GLASS",
     restoredTag: "OCA REFURBISHED",
     specs: ["Factory OLED Panel Retained", "OCA Vacuum Lamination", "Touch Functionality Verified"],
@@ -61,8 +61,8 @@ const CASE_STUDIES: CaseStudy[] = [
     tabLabel: "AMOLED Display Restoration",
     title: "AMOLED Flexible Panel Inspection",
     description: "Screen panel flex circuit evaluation and precision micro-rework to address display artifact issues without unnecessary whole-unit replacement where viable.",
-    beforeImg: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80",
-    afterImg: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
+    beforeImg: "/images/services/display-amoled-repair.webp",
+    afterImg: "/images/services/screen-after-restored.webp",
     damageTag: "DISPLAY ANOMALY",
     restoredTag: "PANEL RESTORED",
     specs: ["Flex Trace Diagnostic", "Display Uniformity Restored", "Part-Grade Warranty Backed"],
@@ -83,8 +83,8 @@ const CASE_STUDIES: CaseStudy[] = [
     tabLabel: "Motherboard BGA Rework",
     title: "Multi-Layer Motherboard IC Reballing",
     description: "Thermal failure or short-circuit diagnostics on multi-layer PCBs. IC chips desoldered, cleaned, and micro-reballed with high-grade solder spheres under stereoscopic magnification.",
-    beforeImg: "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=1200&q=80",
-    afterImg: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=1200&q=80",
+    beforeImg: "/images/services/water-damage-revival.webp",
+    afterImg: "/images/services/motherboard-bga-repair.webp",
     damageTag: "NO POWER / BOARD SHORT",
     restoredTag: "CIRCUIT RECOVERED",
     specs: ["BGA Chip Reballing", "Micro-soldering Bench", "Thermal Compound Replaced"],
@@ -225,9 +225,12 @@ export const BeforeAfterSlider: React.FC = () => {
             {/* After Image (Background layer) */}
             <img
               src={activeCase.afterImg}
-              alt="Restored smartphone hardware at Super Telecom Giridih"
+              alt="Restored smartphone display and logic board at Super Telecom Barganda Road, Giridih"
+              width={800}
+              height={500}
               className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none"
               loading="lazy"
+              decoding="async"
             />
 
             {/* Before Image (Foreground layer - clipped by sliderPosition) */}
@@ -237,13 +240,16 @@ export const BeforeAfterSlider: React.FC = () => {
             >
               <img
                 src={activeCase.beforeImg}
-                alt="Damaged smartphone hardware before repair"
+                alt="Damaged smartphone hardware before repair at Super Telecom Giridih"
+                width={800}
+                height={500}
                 className="absolute inset-0 h-full w-full object-cover object-center pointer-events-none"
                 style={{
                   width: containerRef.current ? `${containerRef.current.clientWidth}px` : "100%",
                   maxWidth: "none",
                 }}
                 loading="lazy"
+                decoding="async"
               />
             </div>
 

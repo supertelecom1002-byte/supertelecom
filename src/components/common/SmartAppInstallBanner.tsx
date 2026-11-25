@@ -10,19 +10,19 @@ interface SmartAppInstallBannerProps {
 
 export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ className = "" }) => {
   const isStandalone = useIsStandalone();
-  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return sessionStorage.getItem("st_install_banner_dismissed") === "true";
-    } catch {
-      return false;
-    }
-  });
+  const [isDismissed, setIsDismissed] = useState<boolean>(false);
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    try {
+      if (sessionStorage.getItem("st_install_banner_dismissed") === "true") {
+        setIsDismissed(true);
+      }
+    } catch {
+      // ignore
+    }
 
     const handleBeforeInstall = (e: Event) => {
       e.preventDefault();
@@ -42,11 +42,11 @@ export const SmartAppInstallBanner: React.FC<SmartAppInstallBannerProps> = ({ cl
           setDeferredPrompt(null);
         }
       } catch {
-        // fallback to /app
-        window.location.href = "/app";
+        // fallback to /download
+        window.location.href = "/download";
       }
     } else {
-      window.location.href = "/app";
+      window.location.href = "/download";
     }
   };
 

@@ -264,6 +264,11 @@
       "permanent": true
     },
     {
+      "source": "/app",
+      "destination": "/download",
+      "permanent": true
+    },
+    {
       "source": "/services/display-replacement-giridih",
       "destination": "/services/screen-display-replacement",
       "permanent": true

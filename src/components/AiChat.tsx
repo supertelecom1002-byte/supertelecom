@@ -341,12 +341,13 @@ export function AiChat() {
         <div className="overflow-hidden rounded-3xl glass shadow-elegant">
           <div className="flex items-center gap-3 border-b border-border px-5 py-4">
             <img
-              src="/super-telecom-logo.png"
-              alt="Super Telecom logo"
+              src="/super-telecom-logo.webp"
+              alt="Super Telecom logo, Barganda Road, Giridih"
               width={36}
               height={36}
               className="h-9 w-9 rounded-lg object-contain bg-black/60 p-0.5 border border-white/10"
               loading="lazy"
+              decoding="async"
             />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">Super Telecom AI</p>

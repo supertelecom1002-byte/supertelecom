@@ -69,7 +69,7 @@ export const Route = createFileRoute("/services/")({
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/services` },
-      { property: "og:image", content: `${SITE_URL}/super-telecom-logo.png` },
+      { property: "og:image", content: `${SITE_URL}/og-image.png` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "geo.region", content: "IN-JH" },
       { name: "geo.placename", content: "Giridih" },

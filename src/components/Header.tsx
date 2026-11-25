@@ -84,10 +84,10 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
   const navLinks: Array<{ label: string; to?: string; onClick?: () => void }> = [
     { label: "Services", to: isHomePage ? "#services" : "/services" },
     { label: "SmartFinder AI", to: isHomePage ? "#smartfinder" : "/smartfinder" },
-    { label: "iPhone Lab", to: "/services/iphone-repair" },
-    { label: "Chip-Level / IC", to: "/services/motherboard-repair" },
+    { label: "iPhone Lab", to: "/services/iphone-back-glass-repair" },
+    { label: "Chip-Level / IC", to: "/services/motherboard-ic-repair" },
     { label: "Pricing Matrix", to: isHomePage ? "#pricing-matrix" : "/pricing" },
-    { label: "Track Repair", to: isHomePage ? "#contact" : "/services" },
+    { label: "Track Repair", to: isHomePage ? "#contact" : "/track" },
     { label: "Contact", to: isHomePage ? "#contact" : "/#contact" },
   ];
 

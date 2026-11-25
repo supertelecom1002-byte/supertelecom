@@ -1,7 +1,5 @@
 import React from "react";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { LauncherProvider } from "@/context/LauncherContext";
-import { GamingModeProvider } from "@/context/GamingModeContext";
 import { AdminAuthProvider } from "@/context/AdminAuthContext";
 import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
 import { VisualEditorProvider } from "@/context/VisualEditorContext";
@@ -20,25 +18,21 @@ export interface GlobalAppShellProps {
 export const GlobalAppShell: React.FC<GlobalAppShellProps> = ({ children }) => {
   return (
     <ThemeProvider>
-      <LauncherProvider>
-        <GamingModeProvider>
-          <AdminAuthProvider>
-            <CustomerAuthProvider>
-              <VisualEditorProvider>
-                <SmoothScrollProvider>
-                  {children}
-                </SmoothScrollProvider>
-                <LiveEditorBar />
-                <FloatingAiChat />
-                <BottomNav />
-                <UpdateBanner />
-                <VipPerksModal />
-                <Toaster position="top-center" richColors />
-              </VisualEditorProvider>
-            </CustomerAuthProvider>
-          </AdminAuthProvider>
-        </GamingModeProvider>
-      </LauncherProvider>
+      <AdminAuthProvider>
+        <CustomerAuthProvider>
+          <VisualEditorProvider>
+            <SmoothScrollProvider>
+              {children}
+            </SmoothScrollProvider>
+            <LiveEditorBar />
+            <FloatingAiChat />
+            <BottomNav />
+            <UpdateBanner />
+            <VipPerksModal />
+            <Toaster position="top-center" richColors />
+          </VisualEditorProvider>
+        </CustomerAuthProvider>
+      </AdminAuthProvider>
     </ThemeProvider>
   );
 };

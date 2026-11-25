@@ -34,8 +34,8 @@ import { GyroCompassModal } from "@/components/tools/GyroCompassModal";
 import { TorchControllerModal } from "@/components/tools/TorchControllerModal";
 import { AmbientLightTestModal } from "@/components/tools/AmbientLightTestModal";
 import { ImeiValidatorModal } from "@/components/tools/ImeiValidatorModal";
-import { DoctorDiagnosticModal } from "@/components/dashboard/DoctorDiagnosticModal";
-import { DeepScanEngine } from "@/components/scanner/DeepScanEngine";
+import { PowerTelemetryModal } from "@/components/tools/PowerTelemetryModal";
+import { BrowserStorageCleanerModal } from "@/components/tools/BrowserStorageCleanerModal";
 import { SITE_URL } from "@/data/site";
 
 interface ToolsSearchParams {
@@ -294,12 +294,12 @@ function ToolsPage() {
         onOpenSpeakerEjector={() => setActiveModal("speaker_cleaner")}
       />
 
-      <DoctorDiagnosticModal
+      <PowerTelemetryModal
         isOpen={activeModal === "doctor_diagnostic"}
         onClose={() => setActiveModal(null)}
       />
 
-      <DeepScanEngine
+      <BrowserStorageCleanerModal
         isOpen={scannerOpen}
         onClose={() => setScannerOpen(false)}
       />

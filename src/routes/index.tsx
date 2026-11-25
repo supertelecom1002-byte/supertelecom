@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { submitBooking } from "@/lib/booking.functions";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 
 import {
   Phone, MessageCircle, MapPin, Calendar, Star, Clock, Shield, Award, Wrench,
@@ -9,8 +9,6 @@ import {
   Fingerprint, RefreshCw, HardDrive, Headphones, Watch, Cable, ShieldCheck,
   Sparkles, ChevronDown, Mail, Send, ArrowRight, Check, Menu, X, Bot, Activity,
 } from "lucide-react";
-import heroVideoAsset from "@/assets/hero-video.mp4.asset.json";
-import logoAsset from "@/assets/super-telecom-logo.png.asset.json";
 import { DailyUpdatesSection } from "@/components/DailyUpdatesSection";
 import { Hero } from "@/components/Hero";
 import { LabTrustStrip } from "@/components/interactive/LabTrustStrip";
@@ -52,33 +50,62 @@ class SectionErrorBoundary extends React.Component<
   }
 }
 
-// Safe client-loaded 3D Smartphone Teardown Experience with instant fallback
+const LazySmartphoneTeardown3D = lazy(() => import("@/components/three/SmartphoneTeardown3D"));
+
+// Deferred 3D Teardown: strict React.lazy() + IntersectionObserver (zero Three.js download on mobile initial load)
 function SmartphoneTeardownSection() {
-  const [Component, setComponent] = useState<React.ComponentType | null>(null);
+  const [shouldLoad3D, setShouldLoad3D] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let active = true;
-    import("@/components/three/SmartphoneTeardown3D")
-      .then((m) => {
-        if (active) {
-          const Comp = m.default || m.SmartphoneTeardown3D || Smartphone3DFallback;
-          setComponent(() => Comp);
-        }
-      })
-      .catch((err) => {
-        console.warn("3D Teardown load failure:", err);
-        if (active) {
-          setComponent(() => Smartphone3DFallback);
-        }
-      });
-    return () => {
-      active = false;
-    };
+    if (typeof window === "undefined") return;
+    const desktopViewport = window.innerWidth >= 1024;
+    setIsDesktop(desktopViewport);
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!desktopViewport || prefersReducedMotion) return;
+
+    if ("IntersectionObserver" in window && containerRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setShouldLoad3D(true);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: "200px" }
+      );
+      observer.observe(containerRef.current);
+      return () => observer.disconnect();
+    } else {
+      setShouldLoad3D(true);
+    }
   }, []);
 
   return (
-    <div className="w-full">
-      {Component ? <Component /> : <Smartphone3DFallback />}
+    <div id="teardown-3d" ref={containerRef} className="w-full">
+      {shouldLoad3D ? (
+        <Suspense fallback={<Smartphone3DFallback />}>
+          <LazySmartphoneTeardown3D />
+        </Suspense>
+      ) : (
+        <div className="space-y-3">
+          <Smartphone3DFallback />
+          {!isDesktop && (
+            <div className="flex justify-center px-4 pb-2">
+              <button
+                type="button"
+                onClick={() => setShouldLoad3D(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-cyan-500/40 bg-slate-900 px-5 py-2.5 text-xs font-bold text-cyan-300 hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <Cpu className="h-3.5 w-3.5 text-cyan-400" />
+                <span>Load Interactive WebGL 3D Model</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -584,27 +611,31 @@ function Gallery() {
   const labPhotos = [
     {
       title: "Microscope Motherboard Soldering",
+      alt: "Trinocular 45X microscope BGA microchip soldering bench at Super Telecom Barganda Road, Giridih",
       sub: "BGA chip replacement & 0.02mm jumper micro-soldering",
       badge: "45X Trinocular Bench",
-      img: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=1200&q=80",
+      img: "/images/services/motherboard-bga-repair.webp",
     },
     {
-      title: "Precision Electronics Micro-rework",
+      title: "Type-C Sub-Board & IC Micro-rework",
+      alt: "Type-C fast charging port and PD IC micro-soldering workstation at Super Telecom Giridih",
       sub: "Hot-air reflow, CPU reballing, and ESD-safe chip servicing",
       badge: "Surface Mount IC Rework",
-      img: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1200&q=80",
+      img: "/images/services/charging-port-repair.webp",
     },
     {
-      title: "Clean Hardware Diagnostics",
-      sub: "Thermal imaging & digital multi-meter line short isolation",
-      badge: "Diagnostic Subsystem",
-      img: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=1200&q=80",
+      title: "Ultrasonic Water Damage Revival",
+      alt: "Stainless ultrasonic PCB liquid decontamination bench at Super Telecom Barganda Road, Giridih",
+      sub: "IPA ultrasonic cleaning & short-circuit thermal isolation",
+      badge: "Decontamination Lab",
+      img: "/images/services/water-damage-revival.webp",
     },
     {
       title: "Display Restoration Bench",
+      alt: "AMOLED display glass separation and OCA vacuum lamination machine at Super Telecom Giridih",
       sub: "Curved AMOLED touch glass separation & OCA lamination",
       badge: "Clean Bench Chamber",
-      img: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80",
+      img: "/images/services/display-amoled-repair.webp",
     },
   ];
 
@@ -614,7 +645,7 @@ function Gallery() {
         <SectionHeader
           eyebrow="Flagship Lab"
           title="Inside Super Telecom Workshop"
-          sub="Illustrative preview of our Barganda Road smartphone engineering laboratory, optical workstations, and micro-soldering equipment standards."
+          sub="Precision workstations at our Barganda Road smartphone engineering laboratory, Giridih."
         />
         <div className="mt-8 sm:mt-14 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6">
           {labPhotos.map((item, i) => (
@@ -622,12 +653,15 @@ function Gallery() {
               key={i}
               className="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="aspect-[4/3] w-full overflow-hidden bg-slate-950 relative">
+              <div className="aspect-[16/10] w-full overflow-hidden bg-slate-950 relative">
                 <img
                   src={item.img}
-                  alt={item.title}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  alt={item.alt}
+                  width={800}
+                  height={500}
                   loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <span className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-950/80 border border-cyan-500/40 text-cyan-300 text-[9px] sm:text-[10px] font-mono font-bold tracking-wider uppercase">

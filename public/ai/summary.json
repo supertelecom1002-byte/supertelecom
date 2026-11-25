@@ -9,6 +9,11 @@
   ],
   "description": "Giridih's #1 smartphone repair center and chip-level micro-soldering laboratory located on Barganda Road (Near Shivam Clinic), Giridih, Jharkhand 815301. Providing same-day 120Hz AMOLED display replacement, iPhone specialist repairs, motherboard IC reballing, battery fixes, water damage revival, and 16+ free hardware diagnostic tools.",
   "url": "https://www.supertelecom.shop",
+  "logo": "https://www.supertelecom.shop/logo.webp",
+  "image": "https://www.supertelecom.shop/images/services/motherboard-bga-repair.webp",
+  "downloadUrl": "https://www.supertelecom.shop/download",
+  "apkUrl": "https://www.supertelecom.shop/SuperTelecom.apk",
+  "appVersion": "3.14.0",
   "telephone": "+918002903643",
   "whatsapp": "https://wa.me/918002903643",
   "email": "supertelecom1002@gmail.com",
@@ -46,10 +51,10 @@
     "Motherboard Chip-Level Micro-Soldering (0.02mm Jumper, 350°C BGA)",
     "Poco X3 Pro / Redmi Note 10 CPU Reballing",
     "Apple iPhone Specialist Lab & Computerized Laser Back Glass",
-    "Original High-Density Battery Replacement (6 Months Warranty)",
+    "Original High-Density Battery Replacement (Up to 90 Days Written Warranty)",
     "Water Damage Ultrasonic Cleaning Chamber",
     "AMOLED Green Line / Pink Line Flex Bonding Fix",
     "Free Hardware Diagnostic Suite (16+ Lab Tools)"
   ],
-  "dateModified": "2026-11-10T18:20:00+05:30"
+  "dateModified": "2026-11-25T13:50:00+05:30"
 }

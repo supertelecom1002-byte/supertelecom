@@ -28,28 +28,25 @@ const DEFAULT_UPDATES: DailyUpdate[] = [
     title: "Microscope Motherboard Soldering",
     description:
       "Bench diagnosis of power management circuitry and microscopic jumper soldering under our 45X optical stereo microscope at Barganda Road.",
-    media_url:
-      "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=1200&q=80",
+    media_url: "/images/services/motherboard-bga-repair.webp",
     media_type: "image",
     created_at: new Date().toISOString(),
   },
   {
     id: "default-2",
-    title: "Precision Electronics Micro-rework",
+    title: "Type-C Charging Sub-Board & IC Rework",
     description:
-      "Hot-air BGA reflow and thermal IC desoldering workstation maintaining strict ESD safety protocols for iPhone and Android logic boards.",
-    media_url:
-      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80",
+      "Precision Type-C fast-charge port soldering and PD power IC rework maintaining strict ESD safety protocols for iPhone and Android boards.",
+    media_url: "/images/services/charging-port-repair.webp",
     media_type: "image",
     created_at: new Date(Date.now() - 86400000).toISOString(),
   },
   {
     id: "default-3",
-    title: "Clean Hardware Diagnostics",
+    title: "Ultrasonic Liquid Damage Revival",
     description:
-      "Digital multi-meter and DC power curve analysis isolating shorted capacitors and parasitic battery drain circuits.",
-    media_url:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      "Ultrasonic IPA chemical decontamination and thermal drying removing corrosion from water-damaged logic boards in Giridih.",
+    media_url: "/images/services/water-damage-revival.webp",
     media_type: "image",
     created_at: new Date(Date.now() - 172800000).toISOString(),
   },
@@ -57,9 +54,8 @@ const DEFAULT_UPDATES: DailyUpdate[] = [
     id: "default-4",
     title: "Display Restoration Bench",
     description:
-      "Heated vacuum separator and precision wire delamination bench restoring shattered outer glass while preserving original OLED panels.",
-    media_url:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+      "Heated vacuum separator and precision OCA lamination bench restoring shattered outer glass while preserving original OLED panels.",
+    media_url: "/images/services/display-amoled-repair.webp",
     media_type: "image",
     created_at: new Date(Date.now() - 259200000).toISOString(),
   },
@@ -196,7 +192,11 @@ export const DailyUpdatesSection: React.FC = () => {
                     >
                       <img
                         src={post.media_url}
-                        alt={post.title}
+                        alt={`${post.title} — Super Telecom Barganda Road, Giridih`}
+                        width={800}
+                        height={500}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-slate-950/80 border border-slate-700 text-[9px] font-mono text-slate-300">

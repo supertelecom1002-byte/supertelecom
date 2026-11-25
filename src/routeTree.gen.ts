@@ -846,8 +846,8 @@ export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from './G:/SUPER TELECOM/supertelecom-main/src/router.tsx'
-import type { startInstance } from './G:/SUPER TELECOM/supertelecom-main/src/start.ts'
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true

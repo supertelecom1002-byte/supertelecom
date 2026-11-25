@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { SERVICES } from "@/data/services";
-import { REPAIR_SERVICES_SILO_DATA } from "@/data/repairServicesSiloData";
+import { REPAIR_SERVICES_SILO_DATA, STORE_RETAIL_SERVICES } from "@/data/repairServicesSiloData";
 import { BRANDS } from "@/data/brands";
 import { POSTS } from "@/data/blog";
 import { SITE_URL } from "@/data/site";
@@ -51,7 +50,8 @@ function SitemapPage() {
             <li><Link to="/blog" className="text-primary hover:underline">Blog</Link></li>
             <li><Link to="/sitemap" className="text-primary hover:underline">Sitemap</Link></li>
             <li><Link to="/about" className="text-primary hover:underline">About Super Telecom Lab</Link></li>
-            <li><Link to="/app" className="text-primary hover:underline">Super Telecom App (Transfer, Recover &amp; Launcher)</Link></li>
+            <li><Link to="/download" className="text-primary hover:underline">Super Telecom Android App (APK Download)</Link></li>
+            <li><Link to="/smartfinder" className="text-primary hover:underline">SmartFinder AI &amp; Valuation</Link></li>
             <li><Link to="/tools" className="text-primary hover:underline">16+ Free Hardware Diagnostics Suite</Link></li>
             <li><Link to="/track" className="text-primary hover:underline">Live Repair Job Tracker</Link></li>
             <li><Link to="/privacy" className="text-primary hover:underline">Privacy Policy &amp; Permissions</Link></li>
@@ -88,9 +88,9 @@ function SitemapPage() {
         </section>
 
         <section className="mt-10">
-          <h2 className="font-display text-xl font-bold">Services in Giridih</h2>
+          <h2 className="font-display text-xl font-bold">Second-Hand Phones &amp; Accessories</h2>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {SERVICES.map((s) => (
+            {STORE_RETAIL_SERVICES.map((s) => (
               <li key={s.slug}>
                 <Link to="/services/$slug" params={{ slug: s.slug }} className="text-primary hover:underline">{s.name}</Link>
               </li>

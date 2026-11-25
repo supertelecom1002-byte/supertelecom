@@ -67,6 +67,8 @@ const sitemapContent = fs.readFileSync(sitemapPath, "utf-8");
 assert(sitemapContent.includes("<loc>https://www.supertelecom.shop/</loc>"), "Sitemap includes homepage");
 assert(sitemapContent.includes("<loc>https://www.supertelecom.shop/download</loc>"), "Sitemap includes official /download route");
 assert(!sitemapContent.includes("<loc>https://www.supertelecom.shop/apk</loc>"), "Sitemap excludes legacy /apk redirect route");
+assert(!sitemapContent.includes("<loc>https://www.supertelecom.shop/app</loc>"), "Sitemap excludes legacy /app redirect route");
+assert(!sitemapContent.includes("/admin"), "Sitemap excludes /admin routes");
 
 // Ensure all 16 canonical services are listed in sitemap
 for (const slug of uniqueSlugs) {
@@ -89,6 +91,7 @@ assert(llmsContent.includes("Barganda Road"), "llms.txt contains Barganda Road")
 assert(llmsContent.includes("Giridih"), "llms.txt contains Giridih");
 assert(llmsContent.includes("80029 03643") || llmsContent.includes("8002903643"), "llms.txt contains official phone");
 assert(llmsContent.includes("https://www.supertelecom.shop/download"), "llms.txt references /download");
+assert(!llmsContent.includes("https://www.supertelecom.shop/app"), "llms.txt excludes legacy /app showcase link");
 
 // Verify AI text file
 const aiTxtPath = path.join(ROOT, "public", ".well-known", "ai.txt");
@@ -159,6 +162,35 @@ for (const asset of assetsToCheck) {
   } else {
     warn(false, `${path.relative(ROOT, asset.path)} does not exist`);
   }
+}
+
+assert(
+  !fs.existsSync(path.join(ROOT, "src", "assets", "super-telecom-logo.jpg")),
+  "Uncompressed src/assets/super-telecom-logo.jpg has been removed"
+);
+
+// Check local service lab WebP visuals (<= 60KB each)
+const serviceImagesDir = path.join(ROOT, "public", "images", "services");
+assert(fs.existsSync(serviceImagesDir), "public/images/services/ directory exists");
+if (fs.existsSync(serviceImagesDir)) {
+  const webpFiles = fs.readdirSync(serviceImagesDir).filter((f) => f.endsWith(".webp"));
+  assert(webpFiles.length >= 6, `Found ${webpFiles.length} local lab WebP assets in public/images/services/ (expected >= 6)`);
+  for (const file of webpFiles) {
+    const sizeKb = fs.statSync(path.join(serviceImagesDir, file)).size / 1024;
+    assert(sizeKb <= 60, `public/images/services/${file} size ${sizeKb.toFixed(1)}KB <= 60KB`);
+  }
+}
+
+// Check Service Worker & Cache Exclusion Rules
+console.log("\n7. AUDITING SERVICE WORKER CACHE HYGIENE (public/sw.js)...");
+const swPath = path.join(ROOT, "public", "sw.js");
+assert(fs.existsSync(swPath), "public/sw.js exists");
+if (fs.existsSync(swPath)) {
+  const swContent = fs.readFileSync(swPath, "utf-8");
+  assert(swContent.includes("supertelecom-v2026-11-clean"), "sw.js bumped to cache version supertelecom-v2026-11-clean");
+  assert(swContent.includes(".apk"), "sw.js excludes .apk downloads from cache");
+  assert(swContent.includes(".glb"), "sw.js excludes .glb 3D assets from cache");
+  assert(swContent.includes("/admin"), "sw.js excludes /admin from cache");
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

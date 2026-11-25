@@ -12,6 +12,7 @@ import {
   MessageSquare,
   ChevronDown,
 } from "lucide-react";
+import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { lookupRepairStatus, type RepairStatusEntry } from "@/lib/repair-status.functions";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -113,6 +114,7 @@ function StatusCard({ entry }: { entry: RepairStatusEntry }) {
 }
 
 export const FloatingAiChat: React.FC = () => {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     { role: "assistant", content: GREETING },
@@ -343,7 +345,7 @@ export const FloatingAiChat: React.FC = () => {
     <>
       {/* Subpage Mobile Floating Trigger Button (Homepage uses Unified Floating Dock to prevent overlap) */}
       <div className="fixed bottom-20 right-4 z-40 md:hidden">
-        {!isOpen && typeof window !== "undefined" && window.location.pathname !== "/" && (
+        {!isOpen && pathname !== "/" && (
           <button
             type="button"
             onClick={() => setIsOpen(true)}

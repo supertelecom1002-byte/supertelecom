@@ -34,10 +34,11 @@ import {
 } from "lucide-react";
 import {
   REPAIR_SERVICES_SILO_DATA,
+  STORE_RETAIL_SERVICES,
   getServiceBySlugOrAlias,
   type DedicatedServiceData,
+  type ServiceInfo,
 } from "@/data/repairServicesSiloData";
-import { SERVICES, type ServiceInfo } from "@/data/services";
 import { SITE_URL } from "@/data/site";
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -85,10 +86,18 @@ export const Route = createFileRoute("/services/$slug")({
       return { service: siloService, isSilo: true as const };
     }
 
-    // 2. Fallback to legacy service list for zero breakage
-    const legacy = SERVICES.find((s) => s.slug === params.slug);
-    if (legacy) {
-      return { service: legacy, isSilo: false as const };
+    // 2. Fallback to retail store catalog offerings
+    const retail = STORE_RETAIL_SERVICES.find((s) => s.slug === params.slug);
+    if (retail) {
+      return { service: retail, isSilo: false as const };
+    }
+
+    if (params.slug === "second-hand-phones") {
+      throw redirect({
+        to: "/services/$slug",
+        params: { slug: "second-hand-mobile" },
+        statusCode: 301,
+      });
     }
 
     throw notFound();
@@ -108,6 +117,8 @@ export const Route = createFileRoute("/services/$slug")({
 
     if (isSilo) {
       const s = service as DedicatedServiceData;
+      const rawImg = s.authenticVisual?.image || "/logo.webp";
+      const ogImage = rawImg.startsWith("http") ? rawImg : `${SITE_URL}${rawImg}`;
       return {
         meta: [
           { title: `${s.title} | Super Telecom Giridih` },
@@ -117,7 +128,7 @@ export const Route = createFileRoute("/services/$slug")({
           { property: "og:description", content: s.metaDescription },
           { property: "og:type", content: "article" },
           { property: "og:url", content: url },
-          { property: "og:image", content: s.authenticVisual?.image || `${SITE_URL}/super-telecom-logo.png` },
+          { property: "og:image", content: ogImage },
           { property: "og:site_name", content: "Super Telecom Giridih" },
           { name: "twitter:card", content: "summary_large_image" },
           { name: "twitter:title", content: `${s.title} | Super Telecom Giridih` },
@@ -561,9 +572,12 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
             <div className="md:col-span-7 aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-slate-950 relative">
               <img
                 src={service.authenticVisual.image}
-                alt={service.authenticVisual.caption}
-                className="h-full w-full object-cover"
+                alt={`${service.authenticVisual.caption} — Super Telecom Barganda Road, Giridih`}
+                width={800}
+                height={500}
                 loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-slate-900" />
               <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-950/90 border border-cyan-500/40 text-cyan-300 text-[11px] font-mono font-bold uppercase tracking-wider">
@@ -744,7 +758,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function LegacyServicePage({ service }: { service: ServiceInfo }) {
-  const others = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 4);
+  const others = STORE_RETAIL_SERVICES.filter((s) => s.slug !== service.slug);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">

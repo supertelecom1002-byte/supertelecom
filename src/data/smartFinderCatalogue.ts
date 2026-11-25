@@ -102,7 +102,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "flagship",
     status: "active",
     primaryPrice: 119999,
-    imageThumbnail: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/display-amoled-repair.webp",
     variants: [
       { id: "v-s24u-1", ramGb: 12, storageGb: 256, colour: "Titanium Gray", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-S928BZTCINS", price: 119999 },
       { id: "v-s24u-2", ramGb: 12, storageGb: 512, colour: "Titanium Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-S928BZKCINS", price: 129999 },
@@ -153,7 +153,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "flagship",
     status: "active",
     primaryPrice: 79900,
-    imageThumbnail: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/camera-audio-repair.webp",
     variants: [
       { id: "v-ip16-1", ramGb: 8, storageGb: 128, colour: "Ultramarine", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "MYEE3HN/A", price: 79900 },
       { id: "v-ip16-2", ramGb: 8, storageGb: 256, colour: "Teal", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "MYEK3HN/A", price: 89900 },
@@ -204,7 +204,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "upper-mid",
     status: "active",
     primaryPrice: 58999,
-    imageThumbnail: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/display-amoled-repair.webp",
     variants: [
       { id: "v-ip15-1", ramGb: 6, storageGb: 128, colour: "Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "MTP03HN/A", price: 58999 },
       { id: "v-ip15-2", ramGb: 6, storageGb: 256, colour: "Blue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "MTP43HN/A", price: 68999 },
@@ -255,7 +255,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "flagship",
     status: "active",
     primaryPrice: 64999,
-    imageThumbnail: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/display-amoled-repair.webp",
     variants: [
       { id: "v-op12-1", ramGb: 12, storageGb: 256, colour: "Flowy Emerald", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "CPH2581_12_256", price: 64999 },
       { id: "v-op12-2", ramGb: 16, storageGb: 512, colour: "Silky Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "CPH2581_16_512", price: 69999 },
@@ -306,7 +306,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "mid-range",
     status: "active",
     primaryPrice: 22999,
-    imageThumbnail: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/screen-after-restored.webp",
     variants: [
       { id: "v-nordce4-1", ramGb: 8, storageGb: 128, colour: "Celadon Marble", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "CPH2613_8_128", price: 22999 },
       { id: "v-nordce4-2", ramGb: 8, storageGb: 256, colour: "Dark Chrome", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "CPH2613_8_256", price: 24999 },
@@ -357,7 +357,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "upper-mid",
     status: "active",
     primaryPrice: 36999,
-    imageThumbnail: "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/battery-replacement.webp",
     variants: [
       { id: "v-a55-1", ramGb: 8, storageGb: 128, colour: "Awesome Iceblue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-A556EZKBINS", price: 36999 },
       { id: "v-a55-2", ramGb: 12, storageGb: 256, colour: "Awesome Navy", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-A556EZKBINS2", price: 42999 },
@@ -408,7 +408,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "mid-range",
     status: "active",
     primaryPrice: 16999,
-    imageThumbnail: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/charging-port-repair.webp",
     variants: [
       { id: "v-m35-1", ramGb: 6, storageGb: 128, colour: "Moonlight Blue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-M356BDBGINS", price: 16999 },
       { id: "v-m35-2", ramGb: 8, storageGb: 128, colour: "Daybreak Blue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "SM-M356BDBGINS2", price: 18499 },
@@ -459,7 +459,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "upper-mid",
     status: "active",
     primaryPrice: 34999,
-    imageThumbnail: "https://images.unsplash.com/photo-1567581935884-3349723552ca?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/motherboard-bga-repair.webp",
     variants: [
       { id: "v-in9p-1", ramGb: 8, storageGb: 128, colour: "Fiery Red (Vegan Leather)", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "I2301_8_128", price: 34999 },
       { id: "v-in9p-2", ramGb: 12, storageGb: 256, colour: "Conqueror Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "I2301_12_256", price: 38999 },
@@ -509,7 +509,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "mid-range",
     status: "active",
     primaryPrice: 28999,
-    imageThumbnail: "https://images.unsplash.com/photo-1511707171634-5f897ff02560?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/camera-audio-repair.webp",
     variants: [
       { id: "v-rmx3840-1", ramGb: 8, storageGb: 128, colour: "Submarine Blue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "RMX3840_8_128", price: 28999 },
       { id: "v-rmx3840-2", ramGb: 12, storageGb: 256, colour: "Navigator Beige", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "RMX3840_12_256", price: 31999 },
@@ -559,7 +559,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "upper-mid",
     status: "active",
     primaryPrice: 29999,
-    imageThumbnail: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/display-amoled-repair.webp",
     variants: [
       { id: "v-rn13pp-1", ramGb: 8, storageGb: 256, colour: "Fusion Purple", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "23090RA98I_8_256", price: 29999 },
       { id: "v-rn13pp-2", ramGb: 12, storageGb: 512, colour: "Fusion Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "23090RA98I_12_512", price: 33999 },
@@ -610,7 +610,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "budget",
     status: "active",
     primaryPrice: 13999,
-    imageThumbnail: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/battery-replacement.webp",
     variants: [
       { id: "v-g64-1", ramGb: 8, storageGb: 128, colour: "Mint Green", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "XT2431-1_8_128", price: 13999 },
       { id: "v-g64-2", ramGb: 12, storageGb: 256, colour: "Pearl Blue", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "XT2431-1_12_256", price: 15999 },
@@ -660,7 +660,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "mid-range",
     status: "active",
     primaryPrice: 23999,
-    imageThumbnail: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/screen-after-restored.webp",
     variants: [
       { id: "v-np2a-1", ramGb: 8, storageGb: 128, colour: "Milk White", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "A142_8_128", price: 23999 },
       { id: "v-np2a-2", ramGb: 8, storageGb: 256, colour: "Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "A142_8_256", price: 25999 },
@@ -711,7 +711,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "mid-range",
     status: "active",
     primaryPrice: 24999,
-    imageThumbnail: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/charging-port-repair.webp",
     variants: [
       { id: "v-x6p-1", ramGb: 8, storageGb: 256, colour: "Poco Yellow (Vegan Leather)", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "2311DRK48I_8_256", price: 24999 },
       { id: "v-x6p-2", ramGb: 12, storageGb: 512, colour: "Spectre Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "2311DRK48I_12_512", price: 27999 },
@@ -761,7 +761,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     category: "budget",
     status: "active",
     primaryPrice: 9499,
-    imageThumbnail: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=400&q=80",
+    imageThumbnail: "/images/services/battery-replacement.webp",
     variants: [
       { id: "v-r13c-1", ramGb: 4, storageGb: 128, colour: "Starlight Black", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "2312DRA50I_4_128", price: 9499 },
       { id: "v-r13c-2", ramGb: 6, storageGb: 128, colour: "Startrail Green", region: "IN", supportedNetworks: ["5G", "4G"], variantIdentifier: "2312DRA50I_6_128", price: 10499 },

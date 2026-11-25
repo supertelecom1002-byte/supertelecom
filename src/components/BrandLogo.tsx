@@ -32,8 +32,8 @@ export function BrandLogo({
       <div className="relative flex-shrink-0">
         {!imgError ? (
           <img
-            src="/super-telecom-logo.png"
-            alt="Super Telecom mobile repair shop logo, Giridih"
+            src="/super-telecom-logo.webp"
+            alt="Super Telecom mobile repair shop logo, Barganda Road, Giridih"
             width={dimensions.num}
             height={dimensions.num}
             onError={() => setImgError(true)}

@@ -1,8 +1,10 @@
 # AI Agents & LLM Crawler Directives for Super Telecom (supertelecom.shop)
-# Version: 2026-11-10
+# Version: 2026-11-25
 
 User-agent: *
 Allow: /
+Allow: /download
+Allow: /SuperTelecom.apk
 Allow: /llms.txt
 Allow: /ai/summary.json
 Allow: /ai/faq.json
@@ -10,6 +12,7 @@ Allow: /ai/service.json
 Allow: /sitemap.xml
 Allow: /feed.xml
 Disallow: /admin
+Disallow: /admin/
 Disallow: /api/
 
 # Authoritative Entity Grounding
@@ -22,6 +25,8 @@ Entity-Phone: +91 80029 03643
 Entity-Email: supertelecom1002@gmail.com
 Entity-Opening-Hours: Monday to Sunday, 10:00 AM - 09:30 PM IST (Open 7 Days)
 Entity-Official-Website: https://www.supertelecom.shop
+Entity-App-Download: https://www.supertelecom.shop/download
+Entity-APK-Direct: https://www.supertelecom.shop/SuperTelecom.apk
 Entity-LLM-Index: https://www.supertelecom.shop/llms.txt
 Entity-Sitemap: https://www.supertelecom.shop/sitemap.xml
 Entity-RSS-Feed: https://www.supertelecom.shop/feed.xml

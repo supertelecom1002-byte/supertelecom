@@ -26,6 +26,8 @@ interface FaultItem {
   hindiTitle: string;
   englishTitle: string;
   icon: React.ComponentType<{ className?: string }>;
+  image: string;
+  imageAlt: string;
   symptoms: string[];
   solution: string;
   startingPrice: string;
@@ -42,6 +44,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "टूटी स्क्रीन या टच काम न करना",
     englishTitle: "Broken Display & Touch Screen Issue",
     icon: Smartphone,
+    image: "/images/services/display-amoled-repair.webp",
+    imageAlt: "Broken OLED smartphone display and OCA lamination workbench at Super Telecom Barganda Road, Giridih",
     symptoms: [
       "डिस्प्ले में हरी या सफेद लाइन (Green Lines)",
       "काले धब्बे (Black Ink Spots) फैलना",
@@ -61,6 +65,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "फोन ऑन नहीं हो रहा / डेड फोन",
     englishTitle: "Dead Phone & Motherboard IC Fault",
     icon: Zap,
+    image: "/images/services/motherboard-bga-repair.webp",
+    imageAlt: "Trinocular stereo microscope BGA microchip soldering lab at Super Telecom Giridih",
     symptoms: [
       "पावर बटन दबाने पर कोई रिस्पॉन्स न होना",
       "सिर्फ लोगो (Logo) पर फोन अटक जाना (Bootloop)",
@@ -80,6 +86,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "बैटरी जल्दी खत्म होना या फूलना",
     englishTitle: "Battery Drain, Heating & Swelling",
     icon: BatteryCharging,
+    image: "/images/services/battery-replacement.webp",
+    imageAlt: "Zero-cycle high-density smartphone battery replacement at Super Telecom Giridih",
     symptoms: [
       "100% से अचानक 30% पर बैटरी गिर जाना",
       "फोन का पिछला ढक्कन (Back Panel) ऊपर उठना",
@@ -99,6 +107,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "चार्जिंग पिन ढीला या स्लो चार्जिंग",
     englishTitle: "Loose Charging Jack & Slow Charging",
     icon: PlugZap,
+    image: "/images/services/charging-port-repair.webp",
+    imageAlt: "USB Type-C charging port micro-soldering bench at Super Telecom Giridih",
     symptoms: [
       "केबल को किसी खास एंगल पर दबाने से ही चार्ज होना",
       "चार्जिंग शो करना लेकिन पर्सेंटेज न बढ़ना (Fake Charging)",
@@ -118,6 +128,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "पानी या चाय में फोन गिर जाना",
     englishTitle: "Liquid Ingress & Water Damage",
     icon: Droplets,
+    image: "/images/services/water-damage-revival.webp",
+    imageAlt: "Ultrasonic water damage motherboard decontamination lab at Super Telecom Giridih",
     symptoms: [
       "कैमरा लेंस के अंदर भाप (Moisture) जमना",
       "डिस्प्ले में रंगीन धब्बे या स्क्रीन ब्लैंक होना",
@@ -137,6 +149,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "कैमरा धुंधला या लेंस शीशा टूटना",
     englishTitle: "Blurry Camera, OIS Shaking & Lens Crack",
     icon: Camera,
+    image: "/images/services/camera-audio-repair.webp",
+    imageAlt: "Cleanroom smartphone camera module and sapphire optical glass lens repair in Giridih",
     symptoms: [
       "फोटो खींचते समय कैमरा का कांपना (Vibrating / Buzzing)",
       "तस्वीरें धुंधली (Blurry) आना और फोकस न होना",
@@ -156,6 +170,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "माइक या स्पीकर से आवाज़ न आना",
     englishTitle: "No Sound, Muffled Mic & Earpiece Low",
     icon: Volume2,
+    image: "/images/services/camera-audio-repair.webp",
+    imageAlt: "Mobile loudspeaker and digital MEMS microphone repair at Super Telecom Giridih",
     symptoms: [
       "कॉल के दौरान सामने वाले को आपकी आवाज न जाना",
       "कान वाले स्पीकर (Earpiece) की आवाज बहुत धीमी होना",
@@ -175,6 +191,8 @@ const FAULTS: FaultItem[] = [
     hindiTitle: "बैक ग्लास टूटा या बॉडी डैमेज",
     englishTitle: "Cracked Back Glass & Frame Bend",
     icon: ShieldAlert,
+    image: "/images/services/screen-after-restored.webp",
+    imageAlt: "Restored flagship back glass and OLED chassis finish at Super Telecom Barganda Road, Giridih",
     symptoms: [
       "फोन का पिछला ग्लास टूट कर हाथ में चुभना",
       "फोन का फ्रेम मुड़ जाना (Bent Chassis)",
@@ -355,13 +373,25 @@ const VisualFaultFinder: React.FC = () => {
               </p>
             </div>
 
-            {/* Right Column: Pricing & Direct Action CTA (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl bg-slate-950 border border-slate-800/90 text-center lg:text-left space-y-4">
+            {/* Right Column: Lab Visual & Direct Action CTA (5 cols) */}
+            <div className="lg:col-span-5 flex flex-col justify-between p-5 sm:p-6 rounded-2xl bg-slate-950 border border-slate-800/90 text-center lg:text-left space-y-4">
+              <div className="aspect-[16/10] w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+                <img
+                  src={activeFault.image}
+                  alt={activeFault.imageAlt}
+                  width={800}
+                  height={500}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
               <div className="space-y-1">
                 <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
                   पारदर्शी अनुमानित खर्च (Transparent Estimate)
                 </span>
-                <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
                   {activeFault.startingPrice}
                 </div>
                 <p className="text-[11px] text-slate-400">

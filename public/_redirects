@@ -6,6 +6,7 @@
 
 # APK Alias Redirects
 /apk                    /download               301
+/app                    /download               301
 /download/android       /SuperTelecom.apk       302
 /download/apk           /SuperTelecom.apk       302
 

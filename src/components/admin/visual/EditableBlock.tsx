@@ -236,7 +236,7 @@ export const EditableBlock: React.FC<EditableBlockProps> = ({
                     type="url"
                     value={draftValue}
                     onChange={(e) => setDraftValue(e.target.value)}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="/images/services/display-amoled-repair.webp"
                     className="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:border-cyan-500 focus:outline-none font-mono"
                   />
                 </div>

@@ -51,7 +51,7 @@ export const LiveEditorBar: React.FC = () => {
 
   if (isCollapsed) {
     return (
-      <div className="fixed bottom-20 right-4 z-50">
+      <div className="fixed bottom-20 left-4 md:bottom-6 md:left-6 z-50">
         <button
           type="button"
           onClick={() => setIsCollapsed(false)}

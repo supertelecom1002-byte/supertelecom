@@ -4,6 +4,7 @@
     "name": "Super Telecom",
     "location": "Barganda Road, Near Shivam Clinic, Giridih, Jharkhand 815301",
     "telephone": "+918002903643",
+    "email": "supertelecom1002@gmail.com",
     "url": "https://www.supertelecom.shop",
     "gstCompliance": {
       "sacCode": "998713",
@@ -17,64 +18,180 @@
   "services": [
     {
       "id": "screen-display-replacement",
-      "name": "120Hz AMOLED & LCD Display Replacement",
-      "hindiName": "120Hz सुपर रेटिना AMOLED स्क्रीन रिप्लेसमेंट",
-      "turnaroundMinutes": 45,
-      "warrantyDays": 90,
-      "priceRangeInr": "899 - 13999",
+      "name": "Screen & 120Hz AMOLED Display Replacement in Giridih",
+      "hindiName": "मोबाइल स्क्रीन व 120Hz AMOLED डिस्प्ले रिप्लेसमेंट",
+      "turnaroundTime": "30–60 Minutes",
+      "warrantyPeriod": "90 Days Written Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
       "url": "https://www.supertelecom.shop/services/screen-display-replacement",
+      "image": "https://www.supertelecom.shop/images/services/display-amoled-repair.webp",
       "brandsCovered": ["Apple iPhone", "Samsung Galaxy", "OnePlus", "Xiaomi", "Realme", "Vivo", "Oppo", "Motorola", "Google Pixel"]
     },
     {
-      "id": "motherboard-ic-repair",
-      "name": "Chip-Level Motherboard IC & CPU Reballing",
-      "hindiName": "चिप-लेवल मदरबोर्ड आईसी व सीपीयू रीबॉलिंग",
-      "turnaroundMinutes": 180,
-      "warrantyDays": 90,
-      "priceRangeInr": "799 - 5499",
-      "url": "https://www.supertelecom.shop/services/motherboard-ic-repair",
-      "brandsCovered": ["Poco X3 Pro", "Redmi Note 10", "OnePlus 9/10/11", "iPhone Double-Decker", "Samsung Exynos/Snapdragon"]
-    },
-    {
       "id": "battery-replacement",
-      "name": "Original High-Density Battery Replacement",
+      "name": "Original Mobile Battery Replacement in Giridih",
       "hindiName": "ओरिजिनल मोबाइल बैटरी रिप्लेसमेंट",
-      "turnaroundMinutes": 30,
-      "warrantyDays": 180,
-      "priceRangeInr": "499 - 4499",
+      "turnaroundTime": "20–40 Minutes",
+      "warrantyPeriod": "Up to 90 Days Written Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
       "url": "https://www.supertelecom.shop/services/battery-replacement",
+      "image": "https://www.supertelecom.shop/images/services/battery-replacement.webp",
       "brandsCovered": ["iPhone", "Samsung", "OnePlus", "Xiaomi", "Realme", "Vivo", "Oppo"]
     },
     {
       "id": "charging-port-repair",
-      "name": "Type-C & Lightning Fast-Charging Port Repair",
-      "hindiName": "टाइप-सी व लाइटनिंग चार्जिंग सॉकेट रिपेयर",
-      "turnaroundMinutes": 30,
-      "warrantyDays": 90,
-      "priceRangeInr": "299 - 1899",
+      "name": "Mobile Charging Port & Fast-Charge Jack Repair in Giridih",
+      "hindiName": "चार्जिंग पोर्ट व टाइप-सी फास्ट-चार्ज जैक रिपेयर",
+      "turnaroundTime": "25–45 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
       "url": "https://www.supertelecom.shop/services/charging-port-repair",
-      "brandsCovered": ["All USB-C, Lightning, Micro-USB smartphones"]
+      "image": "https://www.supertelecom.shop/images/services/charging-port-repair.webp",
+      "brandsCovered": ["USB-C", "Apple Lightning", "Micro-USB smartphones"]
     },
     {
-      "id": "green-line-display-fix",
-      "name": "AMOLED Green Line & Pink Line Laser Flex Rework",
-      "hindiName": "AMOLED ग्रीन लाइन व पिंक लाइन रिपेयर",
-      "turnaroundMinutes": 60,
-      "warrantyDays": 90,
-      "priceRangeInr": "999 - 3999",
-      "url": "https://www.supertelecom.shop/services/green-line-display-fix",
-      "brandsCovered": ["OnePlus 8T/9/10/11", "Samsung S20/S21/S22 Ultra", "Vivo X-Series"]
+      "id": "motherboard-ic-repair",
+      "name": "Chip-Level Motherboard, Dead Phone & CPU Reballing in Giridih",
+      "hindiName": "मदरबोर्ड चिप-लेवल आईसी रिपेयर, डेड फोन व सीपीयू रीबॉलिंग",
+      "turnaroundTime": "2–6 Hours / Same Day",
+      "warrantyPeriod": "90 Days Written Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/motherboard-ic-repair",
+      "image": "https://www.supertelecom.shop/images/services/motherboard-bga-repair.webp",
+      "brandsCovered": ["Poco X3 Pro", "Redmi Note 10", "OnePlus 9/10/11", "iPhone Double-Decker", "Samsung Exynos/Snapdragon"]
     },
     {
       "id": "water-damage-revival",
-      "name": "Ultrasonic Chemical Decontamination & Revival",
-      "hindiName": "पानी में गिरे फोन का अल्ट्रासोनिक क्लीनिंग",
-      "turnaroundMinutes": 90,
-      "warrantyDays": 60,
-      "priceRangeInr": "499 - 2999",
+      "name": "Water Damaged Phone Ultrasonic Cleaning in Giridih",
+      "hindiName": "पानी में गिरे फोन का अल्ट्रासोनिक केमिकल क्लीनिंग व रिवाइवल",
+      "turnaroundTime": "1–3 Hours",
+      "warrantyPeriod": "60 Days Service Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
       "url": "https://www.supertelecom.shop/services/water-damage-revival",
-      "brandsCovered": ["All liquid ingress phones"]
+      "image": "https://www.supertelecom.shop/images/services/water-damage-revival.webp",
+      "brandsCovered": ["All liquid ingress smartphones"]
+    },
+    {
+      "id": "green-line-display-fix",
+      "name": "AMOLED Green Line & Pink Line Screen Fix in Giridih",
+      "hindiName": "AMOLED स्क्रीन ग्रीन लाइन व पिंक लाइन रिपेयर",
+      "turnaroundTime": "45–90 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/green-line-display-fix",
+      "image": "https://www.supertelecom.shop/images/services/display-amoled-repair.webp",
+      "brandsCovered": ["OnePlus 8T/9/10/11", "Samsung S20/S21/S22 Ultra", "Vivo X-Series"]
+    },
+    {
+      "id": "camera-lens-repair",
+      "name": "Front & Rear Camera Module & Lens Glass Repair in Giridih",
+      "hindiName": "फ्रंट व रियर कैमरा मॉड्यूल और लेंस ग्लास रिपेयर",
+      "turnaroundTime": "30–60 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/camera-lens-repair",
+      "image": "https://www.supertelecom.shop/images/services/camera-audio-repair.webp",
+      "brandsCovered": ["Apple iPhone", "Samsung", "Vivo", "Oppo", "Xiaomi", "Realme", "OnePlus"]
+    },
+    {
+      "id": "speaker-sound-repair",
+      "name": "Mobile Loudspeaker, Earpiece & Sound Fix in Giridih",
+      "hindiName": "मोबाइल लाउडस्पीकर, ईयरपीस और कम आवाज समाधान",
+      "turnaroundTime": "20–40 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/speaker-sound-repair",
+      "image": "https://www.supertelecom.shop/images/services/camera-audio-repair.webp",
+      "brandsCovered": ["All Android and iPhone smartphones"]
+    },
+    {
+      "id": "microphone-repair",
+      "name": "Mobile Mic & Call Voice Problem Repair in Giridih",
+      "hindiName": "मोबाइल माइक व कॉल आवाज समस्या समाधान",
+      "turnaroundTime": "20–40 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/microphone-repair",
+      "image": "https://www.supertelecom.shop/images/services/charging-port-repair.webp",
+      "brandsCovered": ["All Android and iPhone smartphones"]
+    },
+    {
+      "id": "network-5g-signal-repair",
+      "name": "No Service, 5G/4G Network IC & Antenna Repair in Giridih",
+      "hindiName": "नो सर्विस, 5G/4G नेटवर्क आईसी व एंटीना रिपेयर",
+      "turnaroundTime": "1–3 Hours",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/network-5g-signal-repair",
+      "image": "https://www.supertelecom.shop/images/services/motherboard-bga-repair.webp",
+      "brandsCovered": ["All 5G/4G Android and iPhone smartphones"]
+    },
+    {
+      "id": "software-flashing-unlock",
+      "name": "Mobile Software Flashing, Bootloop & OS Recovery in Giridih",
+      "hindiName": "मोबाइल सॉफ्टवेयर फ्लैशिंग, बूटलूप व ओएस रिकवरी",
+      "turnaroundTime": "20–45 Minutes",
+      "warrantyPeriod": "30 Days Software Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/software-flashing-unlock",
+      "image": "https://www.supertelecom.shop/images/services/charging-port-repair.webp",
+      "brandsCovered": ["All Android and iPhone smartphones"]
+    },
+    {
+      "id": "fingerprint-face-id-repair",
+      "name": "In-Display Fingerprint & iPhone Face ID Repair in Giridih",
+      "hindiName": "इन-डिस्प्ले फिंगरप्रिंट व आईफोन फेस आईडी रिपेयर",
+      "turnaroundTime": "45–90 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/fingerprint-face-id-repair",
+      "image": "https://www.supertelecom.shop/images/services/display-amoled-repair.webp",
+      "brandsCovered": ["Apple iPhone Face ID", "Optical & Ultrasonic In-Display Scanners"]
+    },
+    {
+      "id": "power-volume-button-repair",
+      "name": "Power Key, Volume Button & Side Flex Replacement in Giridih",
+      "hindiName": "पावर बटन, वॉल्यूम की और साइड फ्लेक्स रिप्लेसमेंट",
+      "turnaroundTime": "20–35 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/power-volume-button-repair",
+      "image": "https://www.supertelecom.shop/images/services/battery-replacement.webp",
+      "brandsCovered": ["All Android and iPhone smartphones"]
+    },
+    {
+      "id": "mobile-data-recovery",
+      "name": "Dead Phone Photo, Contact & Storage Data Recovery in Giridih",
+      "hindiName": "डेड फोन फोटो, कॉन्टैक्ट व मेमोरी डाटा रिकवरी",
+      "turnaroundTime": "2–6 Hours / Same Day",
+      "warrantyPeriod": "Strict Privacy Protocol",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/mobile-data-recovery",
+      "image": "https://www.supertelecom.shop/images/services/water-damage-revival.webp",
+      "brandsCovered": ["Dead, water-damaged, and bootloop Android/iPhone devices"]
+    },
+    {
+      "id": "phone-hanging-performance-fix",
+      "name": "Mobile Overheating, Lag & Thermal Optimization in Giridih",
+      "hindiName": "फोन हैंगिंग, ओवरहीटिंग व स्पीड ऑप्टिमाइज़ेशन",
+      "turnaroundTime": "30–60 Minutes",
+      "warrantyPeriod": "60 Days Service Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/phone-hanging-performance-fix",
+      "image": "https://www.supertelecom.shop/images/services/motherboard-bga-repair.webp",
+      "brandsCovered": ["All Android and iPhone smartphones"]
+    },
+    {
+      "id": "iphone-back-glass-repair",
+      "name": "iPhone & Flagship Back Glass Replacement in Giridih",
+      "hindiName": "आईफोन व फ्लैगशिप बैक ग्लास लेजर रिप्लेसमेंट",
+      "turnaroundTime": "45–90 Minutes",
+      "warrantyPeriod": "90 Days Warranty",
+      "pricingModel": "Free In-Store Bench Check & Written Consultation Estimate",
+      "url": "https://www.supertelecom.shop/services/iphone-back-glass-repair",
+      "image": "https://www.supertelecom.shop/images/services/screen-after-restored.webp",
+      "brandsCovered": ["Apple iPhone 8 to 16 Pro Max", "Samsung S-Series", "OnePlus Flagships"]
     }
   ],
-  "dateModified": "2026-11-10T18:20:00+05:30"
+  "dateModified": "2026-11-25T13:50:00+05:30"
 }

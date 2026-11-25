@@ -10,6 +10,45 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+function clientManualChunks(id: string): string | undefined {
+  const normalized = id.replace(/\\/g, "/");
+
+  if (
+    normalized.includes("/node_modules/react/") ||
+    normalized.includes("/node_modules/react-dom/") ||
+    normalized.includes("/node_modules/scheduler/") ||
+    normalized.includes("/node_modules/@tanstack/react-router/")
+  ) {
+    return "vendor-react";
+  }
+
+  if (
+    normalized.includes("/node_modules/three/") ||
+    normalized.includes("/node_modules/@react-three/") ||
+    normalized.includes("/node_modules/gsap/")
+  ) {
+    return "vendor-three";
+  }
+
+  if (
+    normalized.includes("/node_modules/@radix-ui/") ||
+    normalized.includes("/node_modules/lucide-react/") ||
+    normalized.includes("/node_modules/framer-motion/")
+  ) {
+    return "vendor-ui";
+  }
+
+  if (
+    normalized.includes("/src/data/smartFinderCatalogue.ts") ||
+    normalized.includes("/src/data/brands.ts") ||
+    normalized.includes("/src/data/repairServicesSiloData.ts")
+  ) {
+    return "data-catalog";
+  }
+
+  return undefined;
+}
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -25,6 +64,17 @@ export default defineConfig({
     resolve: {
       alias: {
         "react-use-measure": path.resolve(__dirname, "node_modules/react-use-measure/dist/index.js"),
+      },
+    },
+    environments: {
+      client: {
+        build: {
+          rollupOptions: {
+            output: {
+              manualChunks: clientManualChunks,
+            },
+          },
+        },
       },
     },
   },
