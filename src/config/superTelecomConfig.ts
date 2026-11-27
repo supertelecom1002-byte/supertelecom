@@ -133,10 +133,10 @@ export const DATA_SAFETY_AND_PRIVACY_SUMMARY = {
  */
 export const PROMOTIONS_CONFIG = {
   voucher150: {
-    code: "ST-LAB-150",
+    code: "ST-LAB-BEST",
     isActive: false, // Kept false until official store promotion is initiated
-    title: "Flat ₹150 Off Repair Voucher",
-    description: "Redeemable at Barganda Road workshop on eligible repairs.",
+    title: "Best Market Value Workshop Privilege",
+    description: "Lowest market rate service privilege at Barganda Road workshop.",
   },
   freePortCleaning: {
     code: "FREE-PORT-CLEAN",
@@ -152,9 +152,15 @@ export const PROMOTIONS_CONFIG = {
   },
 } as const;
 
+export const BEST_VALUE_LABELS = {
+  lowestRate: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
+  bestPriceGuarantee: "बेस्ट प्राइस गारंटी — WhatsApp पर तुरंत रेट जानें",
+  transparentFreeCheck: "100% पारदर्शी और किफ़ायती दाम • मुफ़्त जांच",
+} as const;
+
 /**
- * Master Services & Repair Pricing Catalog
- * Single Source of Truth for Estimators, Tables, and Detail Pages.
+ * Master Services & Quality Guarantee Catalog
+ * Single Source of Truth for Estimators, Tables, and Detail Pages (Zero Fixed Public Rates).
  */
 export interface PartTier {
   id: string;
@@ -180,7 +186,7 @@ export interface MasterCatalogService {
 }
 
 export const REPAIR_PRICE_DISCLAIMER =
-  "Consultation guidance only. Repair requirements and service options are confirmed in writing after physical device bench check before work begins.";
+  "सबसे कम दाम व बेस्ट क्वालिटी की गारंटी — हम बजट से लेकर महँगे फ्लैगशिप फ़ोन तक हर रिपेयर के लिए मुफ़्त 5-मिनट जांच के बाद गिरिडीह का सबसे कम और पक्का रेट लिखित में कन्फर्म करते हैं (बिना किसी छुपे चार्ज के)।";
 
 export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
   {
@@ -188,7 +194,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
     name: "Screen & Display Replacement",
     slug: "display-replacement",
     category: "screen",
-    basePriceRange: "₹899 – ₹14,999",
+    basePriceRange: BEST_VALUE_LABELS.lowestRate,
     turnaround: "30 to 45 Minutes",
     warranty: "Up to 90 Days Warranty",
     disclaimer: REPAIR_PRICE_DISCLAIMER,
@@ -203,7 +209,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "android-lcd",
         name: "Android IPS LCD Panel",
         partGrade: "Compatible Aftermarket",
-        priceRange: "₹899 – ₹2,499",
+        priceRange: BEST_VALUE_LABELS.transparentFreeCheck,
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
         description: "Tested IPS LCD assemblies with crisp touch response for budget & mid-range Android models.",
@@ -212,7 +218,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "android-amoled",
         name: "Android AMOLED & Curved Display",
         partGrade: "OEM-Grade",
-        priceRange: "₹2,499 – ₹8,999",
+        priceRange: BEST_VALUE_LABELS.lowestRate,
         turnaround: "30–45 Mins",
         warranty: "Up to 90 Days",
         description: "Vibrant high-contrast AMOLED/OLED screens matching native factory refresh rates & color reproduction.",
@@ -221,7 +227,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "iphone-oled",
         name: "iPhone Display & Retina OLED",
         partGrade: "Original Service Pack",
-        priceRange: "₹3,499 – ₹14,999",
+        priceRange: BEST_VALUE_LABELS.bestPriceGuarantee,
         turnaround: "30–60 Mins",
         warranty: "Up to 90 Days",
         description: "Precision Retina OLED assemblies with True Tone serialization programming and 3D Touch transfer.",
@@ -233,7 +239,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
     name: "Battery Replacement",
     slug: "battery-replacement",
     category: "battery",
-    basePriceRange: "₹699 – ₹3,499",
+    basePriceRange: BEST_VALUE_LABELS.lowestRate,
     turnaround: "20 to 45 Minutes",
     warranty: "90 Days Warranty",
     disclaimer: REPAIR_PRICE_DISCLAIMER,
@@ -248,7 +254,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "android-battery",
         name: "Android High-Density Battery",
         partGrade: "OEM-Grade",
-        priceRange: "₹699 – ₹2,499",
+        priceRange: BEST_VALUE_LABELS.lowestRate,
         turnaround: "20–35 Mins",
         warranty: "90 Days Warranty",
         description: "Zero-cycle high density lithium polymer cells certified for safe thermal stability.",
@@ -257,7 +263,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "iphone-battery",
         name: "iPhone Battery (BMS Calibration)",
         partGrade: "Original Service Pack",
-        priceRange: "₹1,899 – ₹4,999",
+        priceRange: BEST_VALUE_LABELS.bestPriceGuarantee,
         turnaround: "45–60 Mins",
         warranty: "90 Days Warranty",
         description: "Premium cells with micro-spot welding BMS transplantation to support native iOS health indicators.",
@@ -269,9 +275,9 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
     name: "Charging Port & Sub-Board Repair",
     slug: "charging-port-repair",
     category: "charging",
-    basePriceRange: "₹349 – ₹1,499",
+    basePriceRange: BEST_VALUE_LABELS.transparentFreeCheck,
     turnaround: "20 to 40 Minutes",
-    warranty: "30 Days Warranty",
+    warranty: "Up to 90 Days Warranty",
     disclaimer: REPAIR_PRICE_DISCLAIMER,
     commonSymptoms: [
       "Cable must be wiggled or held at an angle to charge",
@@ -284,9 +290,9 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "port-subboard",
         name: "Type-C / Lightning Port Assembly",
         partGrade: "OEM-Grade",
-        priceRange: "₹349 – ₹1,499",
+        priceRange: BEST_VALUE_LABELS.lowestRate,
         turnaround: "20–40 Mins",
-        warranty: "30 Days Warranty",
+        warranty: "Up to 90 Days Warranty",
         description: "Original fast-charge compliant sub-boards with integrated microphone and ESD protection.",
       },
     ],
@@ -296,9 +302,9 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
     name: "Motherboard & Chip-Level IC Repair",
     slug: "motherboard-repair",
     category: "motherboard",
-    basePriceRange: "₹899 – ₹5,999",
+    basePriceRange: BEST_VALUE_LABELS.bestPriceGuarantee,
     turnaround: "Same Day / 24–48 Hours",
-    warranty: "60 Days Warranty",
+    warranty: "Up to 90 Days Warranty",
     disclaimer: REPAIR_PRICE_DISCLAIMER,
     commonSymptoms: [
       "Completely dead phone with zero ampere pull on DC power supply",
@@ -311,9 +317,9 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "ic-micro-soldering",
         name: "BGA Reballing & Power IC Replacement",
         partGrade: "Original Service Pack",
-        priceRange: "₹899 – ₹5,999",
+        priceRange: BEST_VALUE_LABELS.lowestRate,
         turnaround: "Same Day / 24–48 Hours",
-        warranty: "60 Days Warranty",
+        warranty: "Up to 90 Days Warranty",
         description: "Stereomicroscope micro-soldering, short-circuit debugging, and dual-layer board splitting.",
       },
     ],
@@ -323,7 +329,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
     name: "Water Damage & Liquid Ultrasonic Revival",
     slug: "water-damage-repair",
     category: "water",
-    basePriceRange: "₹499 – ₹2,499",
+    basePriceRange: BEST_VALUE_LABELS.transparentFreeCheck,
     turnaround: "2 to 5 Hours / 24 Hours",
     warranty: "Tested & Bench Verified",
     disclaimer: REPAIR_PRICE_DISCLAIMER,
@@ -338,7 +344,7 @@ export const SERVICES_MASTER_CATALOG: MasterCatalogService[] = [
         id: "ultrasonic-bath",
         name: "Ultrasonic Chemical De-Oxidation & Board Re-Flow",
         partGrade: "OEM-Grade",
-        priceRange: "₹499 – ₹2,499",
+        priceRange: BEST_VALUE_LABELS.lowestRate,
         turnaround: "2–5 Hours",
         warranty: "Tested & Bench Verified",
         description: "Full PCB disassembly into specialized solvent bath to neutralize corrosive mineral salts.",
@@ -356,12 +362,12 @@ export function buildWhatsAppQuoteUrl(params: {
   serviceName?: string;
   issue?: string;
 }): string {
-  const parts: string[] = ["Hi Super Telecom Giridih, I would like to get a repair quote."];
+  const parts: string[] = ["Namaste Super Telecom Giridih! Mujhe sabse kam market rate aur best quality repair quote chahiye."];
   if (params.brand) parts.push(`Brand: ${params.brand}`);
   if (params.model) parts.push(`Model: ${params.model}`);
   if (params.serviceName) parts.push(`Service: ${params.serviceName}`);
   if (params.issue) parts.push(`Issue: ${params.issue}`);
-  parts.push("Please share price estimate & parts availability.");
+  parts.push("Kripya lowest rate aur parts availability batayein.");
   
   const text = parts.join("\n");
   return `${BUSINESS_MASTER.whatsappBaseUrl}?text=${encodeURIComponent(text)}`;

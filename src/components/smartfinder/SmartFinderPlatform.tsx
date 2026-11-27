@@ -64,13 +64,35 @@ const DEFAULT_INSPECTION_CHECKS: InspectionChecks = {
 };
 
 type ActiveTab = "recommender" | "scanner" | "resale" | "compare" | "admin";
+type BudgetSegment = "all" | SmartDevice["category"];
+
+const BUDGET_SEGMENTS: { id: BudgetSegment; label: string; cap: number; badge: string }[] = [
+  { id: "all", label: "All Segments (Budget to Flagship)", cap: 200000, badge: "All Tiers" },
+  { id: "budget", label: "Entry Budget", cap: 18000, badge: "Entry Budget" },
+  { id: "mid-range", label: "Value Mid-Range", cap: 30000, badge: "Value Mid-Range" },
+  { id: "upper-mid", label: "Performance Pro", cap: 55000, badge: "Performance Pro" },
+  { id: "flagship", label: "Flagship Premium", cap: 200000, badge: "Flagship Premium" },
+];
+
+function getSegmentLabel(cat: SmartDevice["category"]): string {
+  switch (cat) {
+    case "budget":
+      return "Entry Budget";
+    case "mid-range":
+      return "Value Mid-Range";
+    case "upper-mid":
+      return "Performance Pro";
+    case "flagship":
+      return "Flagship Premium";
+  }
+}
 
 export function SmartFinderPlatform() {
   // Search & Navigation States
   const [activeTab, setActiveTab] = useState<ActiveTab>("recommender");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<string>("All");
-  const [budgetCap, setBudgetCap] = useState<number>(130000);
+  const [selectedSegment, setSelectedSegment] = useState<BudgetSegment>("all");
   const [selectedUseCase, setSelectedUseCase] = useState<ParsedCriteria["targetUseCase"]>("all");
 
   // Comparison State (up to 3 devices)
@@ -121,7 +143,8 @@ export function SmartFinderPlatform() {
   const scoredDevices = useMemo(() => {
     const effectiveUseCase = parsedCriteria.targetUseCase !== "all" ? parsedCriteria.targetUseCase : selectedUseCase;
     const effectiveBrand = parsedCriteria.targetBrand || (selectedBrand !== "All" ? selectedBrand : undefined);
-    const effectiveBudget = parsedCriteria.budgetMax || budgetCap;
+    const segmentObj = BUDGET_SEGMENTS.find((s) => s.id === selectedSegment);
+    const effectiveBudget = parsedCriteria.budgetMax || (selectedSegment !== "all" ? segmentObj?.cap : undefined);
 
     return SMARTPHONE_CATALOGUE.map((dev) => {
       const criteria: ParsedCriteria = {
@@ -136,13 +159,13 @@ export function SmartFinderPlatform() {
         if (effectiveBrand && item.device.brand.toLowerCase() !== effectiveBrand.toLowerCase()) {
           return false;
         }
-        if (effectiveBudget && item.device.primaryPrice > effectiveBudget * 1.25) {
-          return false; // allow slight tolerance for recommendations
+        if (selectedSegment !== "all" && item.device.category !== selectedSegment) {
+          return false;
         }
         return true;
       })
       .sort((a, b) => b.overallFitScore - a.overallFitScore);
-  }, [parsedCriteria, selectedUseCase, selectedBrand, budgetCap]);
+  }, [parsedCriteria, selectedUseCase, selectedBrand, selectedSegment]);
 
   // Handle Quick Search Chips
   const handleChipClick = (prompt: string) => {
@@ -322,7 +345,7 @@ export function SmartFinderPlatform() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Ask anything in English or Hinglish (e.g. 'Best camera under 25000', 'S24 Ultra vs iPhone 16', 'Resale price of M35')..."
+                placeholder="Ask anything in English or Hinglish (e.g. 'Best camera performance pro phone', 'S24 Ultra vs iPhone 16', 'Resale check for Galaxy M35')..."
                 className="w-full bg-transparent px-3 py-2 text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none"
               />
               {searchQuery && (
@@ -342,11 +365,11 @@ export function SmartFinderPlatform() {
               <Flame className="w-3.5 h-3.5 text-amber-400" /> Trending queries:
             </span>
             {[
-              "Best camera under 25000",
-              "Gaming phone under 20k with good battery",
+              "Best camera value mid-range phone",
+              "Gaming 5G phone with strong battery",
               "S24 Ultra vs iPhone 16",
               "Check resale value of my M35",
-              "Clean stock Android with 5G under 15k",
+              "Clean stock Android 5G entry budget",
             ].map((chip) => (
               <button
                 key={chip}
@@ -398,8 +421,8 @@ export function SmartFinderPlatform() {
             }`}
           >
             <Scale className="w-5 h-5 mb-1.5 text-blue-400" />
-            <span className="text-xs sm:text-sm font-semibold text-white">Compare Prices</span>
-            <span className="text-[10px] text-slate-400">Matrix ({compareList.length} Selected)</span>
+            <span className="text-xs sm:text-sm font-semibold text-white">Compare Phones</span>
+            <span className="text-[10px] text-slate-400">Specs &amp; Value ({compareList.length} Selected)</span>
             {compareList.length > 0 && (
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-cyan-400" />
             )}
@@ -473,35 +496,27 @@ export function SmartFinderPlatform() {
                 </div>
               </div>
 
-              {/* Budget Slider */}
+              {/* Clean Budget Segment Pills (Zero Public Rupee Numbers) */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Max Budget:</span>
-                  <span className="text-base font-bold text-cyan-400">
-                    ₹{budgetCap >= 130000 ? "1,30,000+ (No Limit)" : budgetCap.toLocaleString("en-IN")}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Segment:</span>
+                  <span className="text-xs font-bold text-cyan-400">
+                    Budget to Flagship — Best Giridih Shop Deals
                   </span>
                 </div>
-                <div className="flex items-center gap-2 flex-1 max-w-md">
-                  <span className="text-xs text-slate-500">₹10k</span>
-                  <input
-                    type="range"
-                    min={10000}
-                    max={130000}
-                    step={2500}
-                    value={budgetCap}
-                    onChange={(e) => setBudgetCap(Number(e.target.value))}
-                    className="w-full accent-cyan-400 cursor-pointer"
-                  />
-                  <span className="text-xs text-slate-500">₹1.3L</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {[15000, 25000, 40000, 70000].map((preset) => (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {BUDGET_SEGMENTS.map((seg) => (
                     <button
-                      key={preset}
-                      onClick={() => setBudgetCap(preset)}
-                      className="px-2 py-0.5 text-[11px] rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
+                      key={seg.id}
+                      type="button"
+                      onClick={() => setSelectedSegment(seg.id)}
+                      className={`px-2.5 py-1 text-[11px] rounded-lg border transition cursor-pointer ${
+                        selectedSegment === seg.id
+                          ? "bg-emerald-500 text-slate-950 font-bold border-emerald-400"
+                          : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-slate-700"
+                      }`}
                     >
-                      Under ₹{preset / 1000}k
+                      {seg.label}
                     </button>
                   ))}
                 </div>
@@ -621,16 +636,15 @@ export function SmartFinderPlatform() {
                       </p>
                     </div>
 
-                    {/* Bottom Pricing & CTAs */}
-                    <div className="p-4 pt-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between gap-2">
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wide">Best Reference Price</span>
-                        <div className="text-lg font-extrabold text-white">
-                          ₹{device.primaryPrice.toLocaleString("en-IN")}
+                    {/* Bottom Value Tier & CTAs */}
+                    <div className="p-4 pt-3 bg-slate-900 border-t border-slate-800 flex flex-col gap-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <span className="text-[10px] text-slate-400 uppercase tracking-wide block">Market Segment</span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 mt-0.5">
+                            {getSegmentLabel(device.category)}
+                          </span>
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleCompare(device)}
                           className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
@@ -641,18 +655,18 @@ export function SmartFinderPlatform() {
                         >
                           {isCompared ? "✓ In Compare" : "+ Compare"}
                         </button>
-
-                        <a
-                          href={`https://wa.me/918002903643?text=${encodeURIComponent(
-                            `Hello Super Telecom Giridih, I am interested in ${device.marketingModelName} (${device.modelIdentifier}) priced at ₹${device.primaryPrice}. Please share availability and current store deals.`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1 transition shadow-sm"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" /> Inquire
-                        </a>
                       </div>
+
+                      <a
+                        href={`https://wa.me/918002903643?text=${encodeURIComponent(
+                          `Namaste Super Telecom Giridih! Mujhe ${device.marketingModelName} (${device.modelIdentifier} - ${getSegmentLabel(device.category)}) ke liye sabse kam market rate aur best store deal chahiye.`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center gap-1.5 transition shadow-sm"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" /> सबसे कम मार्केट रेट के लिए WhatsApp करें
+                      </a>
                     </div>
                   </div>
                 );
@@ -1005,7 +1019,7 @@ export function SmartFinderPlatform() {
                   >
                     {resaleDevice.variants.map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.ramGb}GB RAM + {v.storageGb}GB ({v.colour}) - ₹{v.price.toLocaleString("en-IN")}
+                        {v.ramGb}GB RAM + {v.storageGb}GB ({v.colour})
                       </option>
                     ))}
                   </select>
@@ -1109,51 +1123,51 @@ export function SmartFinderPlatform() {
                     </div>
 
                     <div className="text-right">
-                      <span className="text-xs text-slate-400 uppercase tracking-wider block">Launch Baseline</span>
-                      <strong className="text-base text-slate-300 font-mono">
-                        ₹{valuationResult.selectedVariant.price.toLocaleString("en-IN")}
+                      <span className="text-xs text-slate-400 uppercase tracking-wider block">Market Segment</span>
+                      <strong className="text-sm px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono">
+                        {getSegmentLabel(resaleDevice.category)}
                       </strong>
                     </div>
                   </div>
 
-                  {/* 3 Distinct Price Outputs */}
+                  {/* 3 Distinct Value Outputs (Zero Public Rupee Numbers) */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Output 1: Private Sale Range */}
+                    {/* Output 1: Private Sale Value */}
                     <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 relative">
                       <div className="text-xs font-semibold text-sky-400 flex items-center gap-1">
-                        <Smartphone className="w-3.5 h-3.5" /> Fair Private Sale Range
+                        <Smartphone className="w-3.5 h-3.5" /> Value Retention Index
                       </div>
                       <div className="text-xl font-black text-white">
-                        ₹{valuationResult.privateSaleMin.toLocaleString("en-IN")} – ₹{valuationResult.privateSaleMax.toLocaleString("en-IN")}
+                        ~{Math.round((valuationResult.privateSaleMax / Math.max(1, valuationResult.selectedVariant.price)) * 100)}% of MRP
                       </div>
                       <p className="text-[11px] text-slate-400">
-                        Typical peer-to-peer price on OLX or direct buyer sales (requires meeting buyer in person).
+                        Direct peer-to-peer benchmark retention based on your {deviceAgeMonths}-month age &amp; condition.
                       </p>
                     </div>
 
                     {/* Output 2: External Buyback Benchmark */}
                     <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1 relative">
                       <div className="text-xs font-semibold text-slate-400 flex items-center gap-1">
-                        <BadgePercent className="w-3.5 h-3.5" /> External Buyback Benchmark
+                        <BadgePercent className="w-3.5 h-3.5" /> Online Aggregator Grade
                       </div>
-                      <div className="text-xl font-bold text-slate-300 line-through">
-                        ₹{valuationResult.externalBuybackEstimate.toLocaleString("en-IN")}
+                      <div className="text-lg font-bold text-slate-300">
+                        Lower Pickup Cut (~{Math.round((valuationResult.externalBuybackEstimate / Math.max(1, valuationResult.selectedVariant.price)) * 100)}%)
                       </div>
                       <p className="text-[11px] text-slate-500">
-                        Standard corporate buyback portals (e.g. Cashify baseline before doorstep inspector cuts).
+                        Standard corporate buyback portals typically deduct extra doorstep inspection penalties.
                       </p>
                     </div>
 
                     {/* Output 3: Super Telecom Direct Store Offer */}
                     <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/50 space-y-1 relative">
                       <div className="text-xs font-bold text-emerald-400 flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5" /> Super Telecom Direct Quote
+                        <Sparkles className="w-3.5 h-3.5" /> Super Telecom Giridih Guarantee
                       </div>
-                      <div className="text-2xl font-black text-emerald-300">
-                        ₹{valuationResult.superTelecomInstantQuote.toLocaleString("en-IN")}
+                      <div className="text-base sm:text-lg font-black text-emerald-300">
+                        सबसे ज़्यादा कैश / एक्सचेंज वैल्यू (~{Math.round((valuationResult.superTelecomInstantQuote / Math.max(1, valuationResult.selectedVariant.price)) * 100)}%)
                       </div>
                       <p className="text-[11px] text-emerald-200/80">
-                        Instant cash payout or exchange value at Barganda Road, Giridih. Zero hidden deductions.
+                        Instant cash payout or best exchange upgrade deal at Barganda Road, Giridih. Zero hidden cuts.
                       </p>
                     </div>
                   </div>
@@ -1167,8 +1181,7 @@ export function SmartFinderPlatform() {
                           Repair-First Opportunity: Don't sell as a damaged phone!
                         </strong>
                         <p className="text-slate-300 leading-relaxed">
-                          Your inner AMOLED display and touch digitizer are 100% fine. Super Telecom's dust-free vacuum OCA laminating lab can replace solely the outer curved/flat glass for a fraction of the cost, restoring up to{" "}
-                          <strong className="text-amber-300">₹{valuationResult.repairSavingsOpportunity?.toLocaleString("en-IN")}</strong> in resale value!
+                          Your inner AMOLED display and touch digitizer are 100% fine. Super Telecom's dust-free vacuum OCA laminating lab can replace solely the outer curved/flat glass at the lowest rate in Giridih, boosting your exchange value by ~20–25%!
                         </p>
                       </div>
                     </div>
@@ -1200,19 +1213,19 @@ export function SmartFinderPlatform() {
                   {/* Lock Quote CTA */}
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <span className="text-xs text-slate-400">
-                      Quote valid for 7 days with free inspection at Super Telecom Giridih.
+                      100% पारदर्शी एक्सचेंज व बायबैक वैल्यू • Barganda Road, Giridih
                     </span>
 
                     {smartFinderConsent ? (
                       <a
                         href={`https://wa.me/918002903643?text=${encodeURIComponent(
-                          `Hi Super Telecom Giridih, I checked resale valuation for my ${resaleDevice.brand} ${resaleDevice.marketingModelName} (${deviceAgeMonths} months old). The estimated quote is ₹${valuationResult.superTelecomInstantQuote}. I would like to book a physical inspection at your Barganda Road workshop.`
+                          `Namaste Super Telecom Giridih! Maine apne ${resaleDevice.brand} ${resaleDevice.marketingModelName} (${deviceAgeMonths} months old, Grade: ${valuationResult.conditionGrade}) ka check kiya hai. Mujhe sabse best exchange / cash payout rate batayein.`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center gap-2 transition shadow-lg"
                       >
-                        <MessageCircle className="w-4 h-4" /> Lock In Quote via WhatsApp (+91 80029 03643)
+                        <MessageCircle className="w-4 h-4" /> सबसे बेस्ट एक्सचेंज रेट जानें (WhatsApp)
                       </a>
                     ) : (
                       <button
@@ -1307,36 +1320,36 @@ export function SmartFinderPlatform() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/60">
-                      {/* Price Row */}
+                      {/* Market Tier Row */}
                       <tr className="bg-slate-900/40">
-                        <td className="p-3 font-semibold text-slate-400">Lowest Price</td>
+                        <td className="p-3 font-semibold text-slate-400">Market Segment</td>
                         {compareList.map((dev) => (
                           <td key={dev.id} className="p-3">
-                            <span className="text-base font-extrabold text-cyan-400">
-                              ₹{dev.primaryPrice.toLocaleString("en-IN")}
+                            <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-950/80 border border-cyan-500/40 text-cyan-300">
+                              {getSegmentLabel(dev.category)}
                             </span>
                           </td>
                         ))}
                       </tr>
 
-                      {/* Retailer Offers Row */}
+                      {/* Giridih Store Deal Row */}
                       <tr>
-                        <td className="p-3 font-semibold text-slate-400">Retailer Prices</td>
+                        <td className="p-3 font-semibold text-slate-400">Super Telecom Deal</td>
                         {compareList.map((dev) => (
                           <td key={dev.id} className="p-3 space-y-1">
-                            {dev.retailerOffers.map((off, idx) => (
-                              <div key={idx} className="flex items-center justify-between text-[11px]">
-                                <span className="text-slate-400">{off.retailerName}:</span>
-                                <a
-                                  href={off.productUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-white hover:text-cyan-400 font-mono flex items-center gap-1"
-                                >
-                                  ₹{off.offerPrice.toLocaleString("en-IN")} <ExternalLink className="w-2.5 h-2.5" />
-                                </a>
-                              </div>
-                            ))}
+                            <div className="text-[11px] font-bold text-emerald-400">
+                              बेस्ट प्राइस गारंटी (Lowest Giridih Rate)
+                            </div>
+                            <a
+                              href={`https://wa.me/918002903643?text=${encodeURIComponent(
+                                `Namaste Super Telecom Giridih! Mujhe ${dev.marketingModelName} (${dev.modelIdentifier}) ka sabse kam market rate chahiye.`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-cyan-400 hover:underline text-[11px] inline-flex items-center gap-1"
+                            >
+                              सबसे कम मार्केट रेट के लिए WhatsApp करें <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
                           </td>
                         ))}
                       </tr>
@@ -1437,7 +1450,7 @@ export function SmartFinderPlatform() {
                           <td key={dev.id} className="p-3">
                             <a
                               href={`https://wa.me/918002903643?text=${encodeURIComponent(
-                                `Hello Super Telecom Giridih, I am comparing ${dev.marketingModelName} (${dev.modelIdentifier}) priced at ₹${dev.primaryPrice}. Can you provide expert advice on real-world durability and repair part availability in Giridih?`
+                                `Namaste Super Telecom Giridih! Main ${dev.marketingModelName} (${dev.modelIdentifier} - ${getSegmentLabel(dev.category)}) compare kar raha hoon — mujhe sabse kam market rate aur repair/durability guidance batayein.`
                               )}`}
                               target="_blank"
                               rel="noopener noreferrer"

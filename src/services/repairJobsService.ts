@@ -290,7 +290,6 @@ export async function updateRepairJobStage(id: string, stage: RepairStage, notes
 
 export function buildWhatsAppStatusUrl(job: RepairJob): string {
   const stageInfo = (job && STAGE_METADATA[job.current_stage]) || STAGE_METADATA.received;
-  const rawCost = typeof job?.estimated_cost === "number" ? job.estimated_cost.toLocaleString() : "TBD";
   const lines = [
     `*Super Telecom Repair Update - ${job?.id || "ST-JOB"}*`,
     `Customer: ${job?.customer_name || "Valued Customer"}`,
@@ -298,7 +297,7 @@ export function buildWhatsAppStatusUrl(job: RepairJob): string {
     `Current Status: *${stageInfo.label}*`,
     `Progress: ${stageInfo.description}`,
     job?.notes ? `Engineer Note: ${job.notes}` : "",
-    `Estimated Cost: ₹${rawCost}`,
+    "Rate Guarantee: Lowest Honest Market Rate & Genuine Quality",
     "",
     "Barganda Road Lab, Near Shivam Clinic, Giridih",
     "Call: +91 80029 03643",

@@ -4,9 +4,9 @@ import { SITE_URL, STORE_STREET_ADDRESS } from "@/data/site";
 
 const PHONE = "+918002903643";
 const PAGE_URL = `${SITE_URL}/locations/barganda-road-mobile-repair`;
-const TITLE = "Top Mobile Repair Shop in Barganda Road Giridih | Super Telecom";
+const TITLE = "Best & Most Affordable Mobile Repair in Barganda Road Giridih | Super Telecom";
 const DESCRIPTION =
-  "Visit Super Telecom on Barganda Road, Near Shivam Clinic, Giridih. Fast screen repair, iPhone service, motherboard micro-soldering & battery replacement. Call +91 80029 03643.";
+  "Lowest price mobile repair & smartphone store Barganda Road Giridih (Near Shivam Clinic). Budget to flagship iPhone & Android repair lab — fast screen repair, motherboard micro-soldering & battery replacement. Call +91 80029 03643.";
 
 export const Route = createFileRoute("/locations/barganda-road-mobile-repair")({
   head: () => ({
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/locations/barganda-road-mobile-repair")({
               url: PAGE_URL,
               telephone: PHONE,
               email: "supertelecom1002@gmail.com",
-              priceRange: "$$",
+              priceRange: "Affordable & Best Market Value",
               image: `${SITE_URL}/favicon.png`,
               address: {
                 "@type": "PostalAddress",

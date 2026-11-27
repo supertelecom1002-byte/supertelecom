@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BudgetToFlagshipPromise } from "@/components/BudgetToFlagshipPromise";
 import {
   REPAIR_SERVICES_SILO_DATA,
   GIRIDIH_AREAS_SERVED,
@@ -162,8 +163,13 @@ function ServicesIndex() {
             All 16 Dedicated Mobile Repair Services in Giridih
           </h1>
           <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-            सुपर टेलीकॉम गिरिडीह में सभी स्मार्टफोन समस्याओं के लिए 16 समर्पित रिपेयर सेवाएं उपलब्ध हैं। नीचे अपनी सेवा चुनें और विस्तृत गाइड, अनुमानित खर्च, समय व 90 दिन की लिखित वारंटी देखें:
+            सुपर टेलीकॉम गिरिडीह में सस्ते बजट फ़ोन से लेकर महँगे फ्लैगशिप तक सभी स्मार्टफोन समस्याओं के लिए 16 समर्पित रिपेयर सेवाएं सबसे कम दाम और बेस्ट क्वालिटी के साथ उपलब्ध हैं।
           </p>
+        </div>
+
+        {/* Budget to Flagship Promise Strip */}
+        <div className="-mx-4 sm:-mx-6">
+          <BudgetToFlagshipPromise context="services" />
         </div>
 
         {/* 16 Services Grid */}
@@ -205,7 +211,7 @@ function ServicesIndex() {
                   </p>
 
                   <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                    <span className="text-cyan-300 font-bold">Consultation Required</span>
+                    <span className="text-emerald-400 font-bold">सबसे कम दाम • बेस्ट क्वालिटी</span>
                     <span className="text-slate-400 flex items-center gap-1">
                       <Clock className="h-3 w-3 text-cyan-400" /> {service.turnaroundTime}
                     </span>

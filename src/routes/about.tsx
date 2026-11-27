@@ -73,7 +73,7 @@ export const Route = createFileRoute("/about")({
           name: "Super Telecom",
           image: `${SITE_URL}/icon-512.png`,
           telephone: PHONE,
-          priceRange: "$$",
+          priceRange: "Affordable & Best Market Value",
           address: {
             "@type": "PostalAddress",
             streetAddress: STORE_STREET_ADDRESS,
@@ -197,7 +197,7 @@ export default function AboutPage() {
               In 2016, smartphone users in Giridih had very few options when their premium iPhone, Samsung, or OnePlus device suffered a damaged display or a short-circuited motherboard. Authorized service centers routinely demanded exorbitant fees — often equal to the phone&apos;s cost — or recommended replacing the entire motherboard.
             </p>
             <p>
-              Super Telecom was established to offer an ethical, technologically advanced alternative. By investing directly in optical stereo microscopes, BGA reballing stations, and OCA clean-room lamination autoclaves, we made surgical component-level repair accessible in Giridih. Rather than replacing a whole ₹20,000 board, we replace the specific ₹800 shorted power IC or capacitor, saving our customers thousands of rupees.
+              Super Telecom was established to offer an ethical, technologically advanced alternative. By investing directly in optical stereo microscopes, BGA reballing stations, and OCA clean-room lamination autoclaves, we made surgical component-level repair accessible in Giridih. Rather than replacing an entire expensive motherboard, we replace only the specific shorted power IC or faulty capacitor at the chip level—saving our customers up to 80% with the lowest market rate in Giridih.
             </p>
           </div>
         </section>

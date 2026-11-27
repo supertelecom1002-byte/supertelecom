@@ -196,13 +196,13 @@ function TrackPage() {
 
                 <div className="text-left sm:text-right">
                   <span className="text-xs text-muted-foreground block font-mono">
-                    Estimated Quote
+                    Rate Guarantee
                   </span>
-                  <span className="text-2xl font-black text-foreground">
-                    ₹{job.estimated_cost.toLocaleString()}
+                  <span className="text-base sm:text-lg font-extrabold text-foreground">
+                    {job.estimated_cost > 0 ? "Best Rate Confirmed on Job Sheet" : "Free Inspection In-Store"}
                   </span>
                   <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block font-bold">
-                    Parts &amp; Labor Included
+                    Lowest Market Value &bull; Written Warranty
                   </span>
                 </div>
               </div>

@@ -187,7 +187,7 @@ export default function TermsPage() {
               {LEGAL_POLICY_CONFIG.unclaimedDevicePolicy.isOwnerAndLegallyConfirmed ? (
                 <ul className="list-disc pl-5 space-y-1.5">
                   <li>Customers must collect their repaired handset within <strong>45 days</strong> of initial completion notification.</li>
-                  <li>Devices remaining unclaimed after 45 days may incur a nominal storage fee of ₹20/day to cover inventory storage and insurance.</li>
+                  <li>Devices remaining unclaimed after 45 days may incur nominal inventory storage handling after prior customer notice.</li>
                   <li>Devices left unclaimed beyond <strong>90 days</strong> without prior written arrangement may be recycled or safely disposed of to defray bench part expenses in accordance with local commercial trade regulations in Jharkhand.</li>
                 </ul>
               ) : (

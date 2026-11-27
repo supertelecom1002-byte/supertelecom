@@ -70,7 +70,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "30–60 Min Express Fit • 90 Days Warranty • Data Privacy Protocol",
     heroSummary:
       "Super Telecom Giridih replaces broken, flickering, or green-line smartphone screens in 30–60 minutes on Barganda Road. We stock tested AMOLED and LCD panels for iPhone, Samsung, OnePlus, Xiaomi, and Vivo with written up to 90-day warranty and device backup advisory.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "90 Days Written Warranty",
@@ -125,7 +125,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi Note, Realme, Poco, Vivo Y-Series, Oppo A-Series",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -133,7 +133,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, Galaxy Note, OnePlus 11/12, Vivo X-Series",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "45–60 Mins",
         warranty: "90 Days Warranty",
@@ -141,7 +141,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11, 12, 13, 14, 15, 16 Pro / Pro Max",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "40–60 Mins",
         warranty: "90 Days Warranty + TrueTone Transfer",
@@ -152,7 +152,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         question: "गिरिडीह में स्क्रीन बदलने में कितना खर्च आता है?",
         answer:
-          "सामान्य एंड्रॉइड फोन (Redmi, Realme, Vivo), कर्व्ड AMOLED और iPhone डिस्प्ले का खर्च स्क्रीन टेक्नोलॉजी और मॉडल के अनुसार तय होता है। सुपर टेलीकॉम बरगंडा रोड पर सटीक मॉडल का मुफ्त अनुमान तुरंत मिलता है।",
+          "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या स्क्रीन बदलने पर मेरा फोटो और व्हाट्सएप डेटा डिलीट हो जाएगा?",
@@ -185,7 +185,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "High-Backup Zero-Cycle Cell • Up to 90 Days Warranty • 20–40 Mins",
     heroSummary:
       "Struggling with fast battery drain, random shutdowns, or swollen phone panels? Super Telecom on Barganda Road, Giridih provides certified high-capacity zero-cycle battery replacements for iPhone, Samsung, Xiaomi, and OnePlus with up to 90 days written replacement warranty.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
     warrantyPeriod: "Up to 90 Days Written Warranty",
@@ -239,7 +239,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Realme C/Narzo, Redmi 9/10/11, Poco, Vivo Y-Series",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "20–30 Mins",
         warranty: "Up to 90 Days Warranty",
@@ -247,7 +247,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung Galaxy S20/S21/S22/S23, OnePlus 8/9/10/11",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "Up to 90 Days Warranty",
@@ -255,7 +255,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone X, 11, 12, 13, 14, 15 (BMS Health notification sync)",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "Up to 90 Days Warranty",
@@ -295,7 +295,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "30-Min Fast Jack Fix • Moisture Bypass • 90 Days Warranty",
     heroSummary:
       "Phone not charging, loose cable connection, or moisture warning on screen? Super Telecom Giridih fixes Type-C, Lightning, and micro-USB sub-boards and charging pins within 25–45 minutes using genuine connector components and micro-soldering precision.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "25–45 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -349,7 +349,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Infinix, Vivo, Oppo Type-C Sub-boards",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "25–35 Mins",
         warranty: "90 Days Warranty",
@@ -357,7 +357,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus Warp/SuperVOOC Ports, Pixel",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -365,7 +365,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 14 Lightning / iPhone 15 & 16 Type-C Ports",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "35–50 Mins",
         warranty: "90 Days Warranty",
@@ -375,15 +375,15 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     faqs: [
       {
         question: "चार्जिंग जैक बदलने में कितना खर्च आता है?",
-        answer: "चार्जिंग पोर्ट रिपेयर का खर्च पोर्ट टाइप (टाइप-सी, माइक्रो-यूएसबी, लाइटनिंग) और सब-बोर्ड सर्किट के आधार पर तय होता है। हमारे वर्कशॉप पर मुफ्त जांच उपलब्ध है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या रिपेयर के बाद फास्ट-चार्जिंग (Fast Charging) काम करेगी?",
-        answer: "हाँ, हम ओरिजिनल सब-बोर्ड और पिन लगाते हैं जिससे 33W, 67W, 80W और 120W फास्ट चार्जिंग पूरी स्पीड से काम करती है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या चार्जिंग पिन रिपेयर में डेटा डिलीट होता है?",
-        answer: "नहीं, यह पूरी तरह सुरक्षित पेरिफेरल हार्डवेयर रिपेयर है, आपके डेटा को कोई खतरा नहीं होता।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "गिरिडीह में सुपर टेलीकॉम की दुकान कहाँ है?",
@@ -405,7 +405,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Microscope IC Rework • Poco/OnePlus CPU Reball • 90 Days Warranty",
     heroSummary:
       "Dead phone after update, Poco X3/M3 CPU reboot loop, or short-circuit on power lines? Super Telecom is Giridih's premier micro-soldering laboratory. We perform BGA CPU reballing, PMIC replacements, and line short clearance under a 45x optical microscope.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "2–6 Hours / Same Day",
     warrantyPeriod: "90 Days Written Warranty",
@@ -460,7 +460,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo Power IC & Charging IC Fix",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "2–4 Hours",
         warranty: "90 Days Warranty",
@@ -468,7 +468,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Poco X3/X3 Pro CPU Reballing, OnePlus 9/10/11 Board Rework",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "3–5 Hours",
         warranty: "90 Days Warranty",
@@ -476,7 +476,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone X to 15 Sandwich Board Separation, Audio IC, Baseband Repair",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "Same Day / 4–6 Hours",
         warranty: "90 Days Warranty",
@@ -490,7 +490,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "डेड फोन मदरबोर्ड रिपेयर में कितना खर्च आता है?",
-        answer: "मदरबोर्ड रिपेयर का खर्च फॉल्ट टाइप (पावर आईसी, चार्जिंग आईसी, शॉर्ट सर्किट या सीपीयू रीबॉलिंग) और फोन मॉडल पर निर्भर करता है। हमारे वर्कशॉप पर मुफ्त डायग्नोसिस के बाद ही अंतिम खर्च बताया जाता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या मदरबोर्ड रिपेयर के बाद डेटा सुरक्षित रहेगा?",
@@ -516,7 +516,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Ultrasonic Chemical Decontamination • Corrosion Removal • 85% Success",
     heroSummary:
       "Dropped your phone in water, rain, or tea? Turn it off immediately and bring it to Super Telecom on Barganda Road, Giridih. Our emergency chemical decontamination, ultrasonic PCB washing, and power-rail drying revive water-damaged smartphones and safeguard your data.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "1–3 Hours",
     warrantyPeriod: "60 Days Service Warranty",
@@ -570,7 +570,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo, Oppo Full Decontamination",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "1–2 Hours",
         warranty: "60 Days Warranty",
@@ -578,7 +578,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus, Pixel IP68 Seal Restoration",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "2–3 Hours",
         warranty: "60 Days Warranty",
@@ -586,7 +586,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Max Dual-Layer Board Decontamination",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "2–4 Hours",
         warranty: "60 Days Warranty",
@@ -604,7 +604,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "वॉटर डैमेज फोन क्लीनिंग में कितना खर्च आता है?",
-        answer: "वॉटर डैमेज क्लीनिंग और रिपेयर का खर्च नमी की स्थिति और बोर्ड के शॉर्ट-सर्किट स्तर पर निर्भर करता है। जांच के बाद सटीक परामर्श दिया जाता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या फोन में मौजूद फोटो और डेटा वापस मिल जाएगा?",
@@ -626,7 +626,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Save 70% Over Display Replacement • Laser & Flex Micro-Bonding",
     heroSummary:
       "Green line, pink line, or white vertical line appeared on your OnePlus, Samsung, or Vivo phone after a software update? Super Telecom on Barganda Road, Giridih offers advanced AMOLED flex trace repair and laser micro-bonding — saving you up to 70% compared to costly whole screen replacement.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -680,7 +680,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Realme Pro, Redmi Note Pro AMOLED Line Repairs",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "45–60 Mins",
         warranty: "90 Days Warranty",
@@ -688,7 +688,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "OnePlus 8T/9R/9/10 Pro, Samsung S20/S21/S22 Ultra, Vivo X-Series",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "60–90 Mins",
         warranty: "90 Days Warranty",
@@ -696,7 +696,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 12, 13, 14, 15 Pro / Pro Max OLED Vertical Lines",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "60–90 Mins",
         warranty: "90 Days Warranty",
@@ -736,7 +736,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Blurry Photos Fixed • Sapphire Glass Replacement • 30–60 Mins",
     heroSummary:
       "Cracked outer camera glass, blurry focus, shaky OIS jitter, or black camera screen? Super Telecom Giridih stocks original sapphire camera lens glass and replacement camera sensor modules for iPhone, Samsung, OnePlus, and Vivo at our Barganda Road workshop.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -790,7 +790,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Vivo, Poco Outer Glass & Sensor Modules",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "25–40 Mins",
         warranty: "90 Days Warranty",
@@ -798,7 +798,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus Hasselblad Modules, Vivo Zeiss Lenses",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "30–50 Mins",
         warranty: "90 Days Warranty",
@@ -806,7 +806,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Max Sapphire Lens Glass & 48MP Modules",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "35–60 Mins",
         warranty: "90 Days Warranty",
@@ -846,7 +846,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Muffled Audio Solved • Genuine Speaker Coils • 20–40 Mins",
     heroSummary:
       "Can't hear the caller on ear speaker, distorted ringtone sound, or completely dead speaker? Super Telecom on Barganda Road, Giridih restores crystal-clear audio with ultrasonic mesh de-clogging and original speaker module replacements within 30 minutes.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -900,7 +900,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo, Oppo Ear Speaker & Loudspeaker",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "20–30 Mins",
         warranty: "90 Days Warranty",
@@ -908,7 +908,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series Stereo Speakers, OnePlus Dolby Atmos Units",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "25–40 Mins",
         warranty: "90 Days Warranty",
@@ -916,7 +916,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Earpiece & Bottom Taptic Speaker Modules",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -956,7 +956,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Clear Call Audio • Noise-Cancelling Mic Fix • 20–40 Mins",
     heroSummary:
       "Caller can't hear you, WhatsApp voice notes are silent, or video recordings have loud static noise? Super Telecom on Barganda Road, Giridih repairs digital silicon MEMS microphones and secondary noise-cancellation mics for all smartphone brands in 20–40 minutes.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "20–40 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -1010,7 +1010,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo Primary Call Mic",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "20–30 Mins",
         warranty: "90 Days Warranty",
@@ -1018,7 +1018,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus Quad-Mic Array, Pixel",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "25–40 Mins",
         warranty: "90 Days Warranty",
@@ -1026,7 +1026,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Triple-Mic & Siri Flex Arrays",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -1036,7 +1036,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     faqs: [
       {
         question: "कॉल पर मेरी आवाज सामने वाले को नहीं जाती, इसे ठीक कराने में कितना खर्च आएगा?",
-        answer: "सामान्य एंड्रॉइड फोन में माइक रिपेयर या सब-बोर्ड चेंज का खर्च मॉडल अनुसार के बीच होता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "माइक ठीक करने में कितना समय लगता है?",
@@ -1066,7 +1066,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Fix 'No Service' • Baseband & WTR IC Rework • 90 Days Warranty",
     heroSummary:
       "Phone showing 'No Service', 'Emergency Calls Only', fluctuating 5G signal, or missing IMEI? Super Telecom Giridih specializes in RF transceiver WTR IC replacement, baseband chip reballing, and coaxial antenna flex repair on Barganda Road.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "1–3 Hours",
     warrantyPeriod: "90 Days Warranty",
@@ -1120,7 +1120,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo Antenna Cable & WTR Chip",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "1–2 Hours",
         warranty: "90 Days Warranty",
@@ -1128,7 +1128,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus 5G RF Power Amp & Antenna Switch",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "2–3 Hours",
         warranty: "90 Days Warranty",
@@ -1136,7 +1136,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 15 Baseband CPU Reballing & Sandwich Board Separation",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "Same Day / 2–4 Hours",
         warranty: "90 Days Warranty",
@@ -1150,7 +1150,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "नेटवर्क आईसी रिपेयर में कितना खर्च आता है?",
-        answer: "नेटवर्क रिपेयर का खर्च एंटीना केबल, सिम स्लॉट या WTR/बेसकैंड आईसी की स्थिति के अनुसार तय होता है। सुपर टेलीकॉम पर फ्री टेस्टिंग उपलब्ध है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या रिपेयर के बाद 5G स्पीड पहले जैसी मिलेगी?",
@@ -1176,7 +1176,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Stock ROM Flashing • FRP Lock Unlock • Fast 30-Min Recovery",
     heroSummary:
       "Phone stuck on company logo, failed update bootloop, forgot screen lock, or FRP Google account lock? Super Telecom Giridih provides authorized EDL box flashing, official stock firmware restoration, and rapid Android/iOS software troubleshooting on Barganda Road.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "20–45 Minutes",
     warrantyPeriod: "30 Days Software Warranty",
@@ -1230,7 +1230,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo, Oppo Bootloop & Stock ROM Flash",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "20–35 Mins",
         warranty: "30 Days Warranty",
@@ -1238,7 +1238,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung Odin Flash, OnePlus MSM Tool Unbrick, Pixel Factory Image",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "30 Days Warranty",
@@ -1246,7 +1246,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone DFU Mode Restore, iTunes Error 4013/1110 Bypass, iOS Downgrade",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "30–60 Mins",
         warranty: "30 Days Warranty",
@@ -1264,7 +1264,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "सॉफ्टवेयर फ्लैशिंग में कितना खर्च आता है?",
-        answer: "सॉफ्टवेयर और बूटलूप ठीक करने का खर्च फोन मॉडल और आवश्यक फर्मवेयर फ्लैशिंग प्रक्रिया के अनुसार तय होता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या सॉफ्टवेयर कराने से फोन हैंग होना बंद हो जाएगा?",
@@ -1286,7 +1286,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Biometric Dot Projector Alignment • Optical Sensor Calibration",
     heroSummary:
       "Face ID showing 'Move iPhone a little lower', TrueDepth camera unavailable, or in-display optical fingerprint failing after screen replacement? Super Telecom on Barganda Road, Giridih performs dot projector micro-soldering and optical sensor re-calibration.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -1340,7 +1340,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco Side-Mounted Fingerprint Flex Swap",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "25–40 Mins",
         warranty: "90 Days Warranty",
@@ -1348,7 +1348,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series Ultrasonic Sensor, OnePlus Optical Calibration",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "40–60 Mins",
         warranty: "90 Days Warranty",
@@ -1356,7 +1356,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone X through 15 Pro Max Face ID Dot Projector & TrueDepth Rework",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "60–90 Mins",
         warranty: "90 Days Warranty",
@@ -1374,7 +1374,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "फेस आईडी रिपेयर में कितना खर्च आता है?",
-        answer: "आईफोन मॉडल के आधार पर फेस आईडी रिपेयर का खर्च मॉडल अनुसार के बीच आता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या इस प्रक्रिया में फोन का डेटा सेफ रहता है?",
@@ -1396,7 +1396,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Sticky Buttons Restored • 20–30 Mins Express Swap • 90 Days Warranty",
     heroSummary:
       "Power button jammed, volume keys not clicking, or phone stuck in fastboot mode because of a shorted volume key? Super Telecom on Barganda Road, Giridih replaces tactile micro-switches and internal side flex cables for all phone models in 20–30 minutes.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "20–35 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -1450,7 +1450,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo, Oppo Power & Volume Flex",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "20–30 Mins",
         warranty: "90 Days Warranty",
@@ -1458,7 +1458,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S-Series, OnePlus Alert Slider & Button Flex",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "25–35 Mins",
         warranty: "90 Days Warranty",
@@ -1466,7 +1466,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Power/Flash/Volume Action Flex",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -1476,7 +1476,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     faqs: [
       {
         question: "पावर बटन बदलने में कितना खर्च आता है?",
-        answer: "सामान्य एंड्रॉइड फोन का पावर या वॉल्यूम बटन फ्लेक्स केवल मॉडल अनुसार के बीच बदल जाता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "बटन बदलने में कितना समय लगता है?",
@@ -1506,7 +1506,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "100% Confidential • Zero-Snooping Pledge • Hardware Chip-Off Tech",
     heroSummary:
       "Phone completely smashed, dropped in water, or dead with priceless photos, family videos, and WhatsApp chats inside? Super Telecom Giridih specializes in hardware-level data extraction, temporary board revival, and chip-off memory reads with strict डेटा सुरक्षा प्रोटोकॉल privacy.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "2–6 Hours / Same Day",
     warrantyPeriod: "Strict Privacy Protocol",
@@ -1560,7 +1560,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo Dead Phone Full Data Extraction",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "2–4 Hours",
         warranty: "No Data = No Charge Policy",
@@ -1568,7 +1568,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung UFS 3.1/4.0 Storage Extraction, OnePlus Dead Recovery",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "3–5 Hours",
         warranty: "No Data = No Charge Policy",
@@ -1576,7 +1576,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 15 Smashed / Dead Logic Board Data Recovery",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "Same Day / 4–6 Hours",
         warranty: "No Data = No Charge Policy",
@@ -1616,7 +1616,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "Deep Storage Flush • Thermal Paste Reapplication • 30–60 Mins",
     heroSummary:
       "Is your phone lagging, taking seconds to open apps, or burning your hands during charging and gaming? Super Telecom on Barganda Road, Giridih performs hardware thermal paste reapplication, heat dissipation copper cleaning, and deep OS cache optimization.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "30–60 Minutes",
     warrantyPeriod: "60 Days Service Warranty",
@@ -1670,7 +1670,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Redmi, Realme, Poco, Vivo Deep Clean & Thermal Care",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "60 Days Warranty",
@@ -1678,7 +1678,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "OnePlus, Samsung Galaxy S-Series, iQOO Gaming Thermal Optimization",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "35–50 Mins",
         warranty: "60 Days Warranty",
@@ -1686,7 +1686,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 15 Battery Throttling Fix & Thermal Service",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "40–60 Mins",
         warranty: "60 Days Warranty",
@@ -1704,7 +1704,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "इस सर्विसिंग में कितना खर्च आता है?",
-        answer: "सामान्य फोन क्लीनिंग और थर्मल सर्विस केवल डिवाइस मॉडल और पार्ट्स के अनुसार तय होती है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "क्या इसके बाद फोन की बैटरी बैकअप में भी सुधार होगा?",
@@ -1726,7 +1726,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
     shortTagline: "High-Precision Laser Separation • Zero Frame Scratch • 45–90 Mins",
     heroSummary:
       "Shattered back glass on your iPhone 11, 12, 13, 14, 15, or 16? Super Telecom on Barganda Road, Giridih utilizes high-precision laser separation technology to cleanly disintegrate factory glue without damaging the wireless charging coil or camera rings.",
-    priceRangeInr: "Consultation Required",
+    priceRangeInr: "सबसे कम दाम (Lowest Market Rate)",
     startingPrice: 0,
     turnaroundTime: "45–90 Minutes",
     warrantyPeriod: "90 Days Warranty",
@@ -1780,7 +1780,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Budget",
         modelsExample: "Realme, Redmi, Poco, OnePlus Nord Glass & Polycarbonate Backs",
-        priceRange: "Consultation Required",
+        priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
         startingPrice: 0,
         turnaroundTime: "30–45 Mins",
         warranty: "90 Days Warranty",
@@ -1788,7 +1788,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Android Flagship & Curved",
         modelsExample: "Samsung S21/S22/S23 Ultra Gorilla Glass Victus Back Covers",
-        priceRange: "Consultation Required",
+        priceRange: "Free Inspection + Instant Best Quote",
         startingPrice: 0,
         turnaroundTime: "40–60 Mins",
         warranty: "90 Days Warranty",
@@ -1796,7 +1796,7 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       {
         category: "Apple iPhone",
         modelsExample: "iPhone 11 through 16 Pro Max Frosted Matte & Ceramic Glass",
-        priceRange: "Consultation Required",
+        priceRange: "Best Quality OEM / Original Grade",
         startingPrice: 0,
         turnaroundTime: "45–90 Mins",
         warranty: "90 Days Warranty",
@@ -1814,11 +1814,11 @@ export const REPAIR_SERVICES_SILO_DATA: DedicatedServiceData[] = [
       },
       {
         question: "क्या रिपेयर के बाद MagSafe और वायरलेस चार्जिंग काम करेगी?",
-        answer: "हाँ! लेजर तकनीक वायरलेस कॉइल को बिल्कुल नहीं छूती। रिपेयर के बाद MagSafe और वायरलेस चार्जिंग 100% सही काम करती है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
       {
         question: "आईफोन बैक ग्लास रिप्लेसमेंट का क्या खर्च है?",
-        answer: "आईफोन 11 से लेकर आईफोन 16 प्रो मैक्स तक का खर्च मॉडल के आधार पर मॉडल अनुसार के बीच आता है।",
+        answer: "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original) पर निर्भर करता है — मुफ़्त जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
       },
     ],
     aliases: ["back-glass-repair", "iphone-glass-back", "rear-glass-repair", "iphone-repair-specialist-giridih", "iphone-repair"],
@@ -1876,7 +1876,7 @@ export const STORE_RETAIL_SERVICES: ServiceInfo[] = [
       ["Are your second hand phones original?", "100% original verified devices with bill and warranty — never fake or replica handsets."],
       ["Do second hand iPhones come with warranty?", "Yes, every pre-owned smartphone from Super Telecom Giridih includes a written store warranty."],
     ],
-    priceRange: "Consultation Required",
+    priceRange: "सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)",
     duration: "Same day",
   },
   {
@@ -1903,7 +1903,7 @@ export const STORE_RETAIL_SERVICES: ServiceInfo[] = [
     faqs: [
       ["Do you install tempered glass for free?", "Yes, bubble-free installation is complimentary with every purchase at our Giridih workshop."],
     ],
-    priceRange: "Consultation Required",
+    priceRange: "Free Inspection + Instant Best Quote",
     duration: "In-store",
   },
 ];

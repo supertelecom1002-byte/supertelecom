@@ -181,8 +181,8 @@ function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   );
 }
 
-const SITE_TITLE = "Super Telecom | Mobile Repair Shop in Giridih, Jharkhand";
-const SITE_DESC = "Trusted mobile repair shop on Barganda Road, Giridih, Jharkhand. Same-day screen replacement, battery replacement, motherboard chip-level repair, and quality mobile accessories.";
+const SITE_TITLE = "Super Telecom | Best & Most Affordable Mobile Repair in Giridih";
+const SITE_DESC = "Lowest price mobile repair & smartphone store Barganda Road Giridih (Near Shivam Clinic). Budget to flagship iPhone & Android repair lab with free inspection, genuine parts, and 90-day warranty.";
 
 const globalCacheBusterScript = `(function(){if(typeof window==='undefined')return;var VER='st_v2026_11_clean';try{if(localStorage.getItem('st_cache_gen')!==VER){localStorage.setItem('st_cache_gen',VER);if('caches' in window){caches.keys().then(function(keys){keys.forEach(function(k){if(k!=='supertelecom-v2026-11-clean'){caches.delete(k);}});});}}}catch(e){}window.addEventListener('error',function(e){var msg=(e&&(e.message||(e.error&&e.error.message)))||'';if(typeof msg==='string'&&(msg.indexOf('inView')!==-1||msg.indexOf('routes-')!==-1||msg.indexOf('Loading chunk')!==-1||msg.indexOf('is not defined')!==-1)){var key='st_auto_wipe_ts';var last=parseInt(sessionStorage.getItem(key)||'0',10);var now=Date.now();if(now-last>10000){sessionStorage.setItem(key,String(now));if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(regs){regs.forEach(function(r){r.unregister();});});}if('caches' in window){caches.keys().then(function(keys){Promise.all(keys.map(function(k){return caches.delete(k);})).finally(function(){window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);});});}else{window.location.replace(window.location.origin+window.location.pathname+'?_fresh='+now);}}}});})();`;
 const extensionShieldScript = `(function(){if(typeof window==='undefined')return;window.addEventListener('unhandledrejection',function(e){var r=e&&e.reason;var m=(r&&(r.message||r))||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1||m.indexOf('message port closed')!==-1)){e.preventDefault();}});window.addEventListener('error',function(e){var m=(e&&e.message)||'';if(typeof m==='string'&&(m.indexOf('Could not establish connection')!==-1||m.indexOf('Receiving end does not exist')!==-1)){e.preventDefault();}});})();`;
@@ -270,8 +270,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           telephone: "+918002903643",
           email: "supertelecom1002@gmail.com",
           description: SITE_DESC,
-          priceRange: "$$",
-          currenciesAccepted: "INR",
+          priceRange: "Affordable & Best Market Value",
           paymentAccepted: "Cash, UPI (GPay/PhonePe/Paytm), Debit Card, Credit Card, Net Banking",
           address: {
             "@type": "PostalAddress",
@@ -304,58 +303,42 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             itemListElement: [
               {
                 "@type": "Offer",
+                description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
+                availability: "https://schema.org/InStock",
                 itemOffered: {
                   "@type": "Service",
                   name: "Smartphone Display & Screen Replacement",
-                  description: "Same-day cracked screen replacement with 90-day warranty.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "799",
-                  maxPrice: "9999",
+                  description: "Same-day cracked screen replacement for budget Android to flagship iPhone/Samsung Ultra with 90-day warranty.",
                 },
               },
               {
                 "@type": "Offer",
+                description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
+                availability: "https://schema.org/InStock",
                 itemOffered: {
                   "@type": "Service",
                   name: "Chip-Level Motherboard Micro-Soldering",
                   description: "Trinocular microscope BGA IC reballing and short circuit recovery.",
                 },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "799",
-                  maxPrice: "3500",
-                },
               },
               {
                 "@type": "Offer",
+                description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
+                availability: "https://schema.org/InStock",
                 itemOffered: {
                   "@type": "Service",
                   name: "Battery & Charging Port Replacement",
-                  description: "Original capacity high-grade lithium cells with 90-day warranty.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "499",
-                  maxPrice: "2499",
+                  description: "Original capacity high-grade lithium cells and fast charging ports with 90-day warranty.",
                 },
               },
               {
                 "@type": "Offer",
+                description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
+                availability: "https://schema.org/InStock",
                 itemOffered: {
                   "@type": "Service",
                   name: "Water Damage Diagnostics & Ultrasonic Revival",
                   description: "Precision chemical wash and motherboard oxidation clearing.",
-                },
-                priceSpecification: {
-                  "@type": "PriceSpecification",
-                  priceCurrency: "INR",
-                  minPrice: "499",
-                  maxPrice: "2500",
                 },
               },
             ],
@@ -421,10 +404,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           name: "Super Telecom Mobile Hardware Diagnostics & Repair Hub",
           operatingSystem: "Android, iOS, Web",
           applicationCategory: "UtilitiesApplication",
+          isAccessibleForFree: true,
           offers: {
             "@type": "Offer",
-            price: "0",
-            priceCurrency: "INR",
+            description: "100% Free Offline Hardware Diagnostics Suite",
+            availability: "https://schema.org/InStock",
           },
           description: "100% offline-first client-side smartphone hardware diagnostic suite with 165Hz Speaker Dust Ejector, Touch Matrix 10x15 Digitizer, Display FPS Meter, and Browser Storage Cleaner.",
           featureList: [

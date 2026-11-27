@@ -80,7 +80,12 @@ export const Route = createFileRoute("/download")({
           name: "Super Telecom Android App",
           operatingSystem: "Android 7.0 and up (SDK 34)",
           applicationCategory: "UtilitiesApplication",
-          offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+          isAccessibleForFree: true,
+          offers: {
+            "@type": "Offer",
+            description: "Free Native Android App APK (v3.14.0)",
+            availability: "https://schema.org/InStock",
+          },
           downloadUrl: `${SITE_URL}${KNOWN_RELEASE_APK.downloadUrl}`,
           fileSize: KNOWN_RELEASE_APK.fileSizeHuman,
           softwareVersion: KNOWN_RELEASE_APK.versionName,

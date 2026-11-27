@@ -21,11 +21,11 @@ export function getServiceSchemaGraph(service: DedicatedServiceData) {
         name: "Super Telecom",
         legalName: "Super Telecom Mobile Sales & Repair Laboratory",
         description:
-          "Giridih's premier smartphone and iPhone repair laboratory with 10+ years experience, 45X optical stereo soldering workstations, strict customer data privacy protection, and same-day service.",
+          "Best & most affordable mobile repair in Giridih — budget to flagship iPhone & Android repair lab on Barganda Road with lowest honest rates, genuine parts, 45X optical stereo soldering workstations & same-day service.",
         url: SITE_URL,
         telephone: BUSINESS_MASTER.phoneRaw,
         image: `${SITE_URL}/logo.webp`,
-        priceRange: "$$",
+        priceRange: "Affordable & Best Market Value",
         hasMap: BUSINESS_MASTER.mapsUrl,
         address: {
           "@type": "PostalAddress",
@@ -76,18 +76,20 @@ export function getServiceSchemaGraph(service: DedicatedServiceData) {
           name: `${service.title} Brand Packages`,
           itemListElement: service.brandPricingTable.map((item, idx) => ({
             "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: `${item.category} — ${service.title}`,
-              description: `Models: ${item.modelsExample}. Estimated time: ${item.turnaroundTime}. ${item.warranty}. Service consultation required.`,
-            },
+            description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
             availability: "https://schema.org/InStock",
             url: canonicalUrl,
             position: idx + 1,
+            itemOffered: {
+              "@type": "Service",
+              name: `${item.category} — ${service.title}`,
+              description: `Models: ${item.modelsExample}. Estimated time: ${item.turnaroundTime}. ${item.warranty}. Lowest honest market rate after free inspection.`,
+            },
           })),
         },
         offers: {
           "@type": "Offer",
+          description: "Lowest honest price in Giridih with genuine quality parts and free inspection",
           availability: "https://schema.org/InStock",
           url: canonicalUrl,
         },

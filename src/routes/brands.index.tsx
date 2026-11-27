@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight, ArrowRight, MapPin, Phone, MessageCircle, ShieldCheck, Wrench, Clock } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
+import { BudgetToFlagshipPromise } from "@/components/BudgetToFlagshipPromise";
 import { BRANDS } from "@/data/brands";
 import { SITE_URL, STORE_ADDRESS } from "@/data/site";
 
@@ -151,6 +152,11 @@ function BrandsIndexPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Budget to Flagship Value Section */}
+        <div className="mt-14 -mx-4 sm:-mx-6">
+          <BudgetToFlagshipPromise context="brands" />
         </div>
 
         {/* Workshop Trust Banner */}

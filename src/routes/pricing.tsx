@@ -6,24 +6,27 @@ import { ChevronRight, Phone, MessageCircle, MapPin, AlertCircle, ArrowRight, Sh
 import { BrandLogo } from "@/components/BrandLogo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RepairConsultationAction } from "@/components/consultation/RepairConsultationAction";
+import { PricingMatrix } from "@/components/PricingMatrix";
+import { RepairEstimator } from "@/components/interactive/RepairEstimator";
+import { BudgetToFlagshipPromise } from "@/components/BudgetToFlagshipPromise";
 
 const PHONE = "+918002903643";
 const PHONE_DISPLAY = "+91 80029 03643";
 const WHATSAPP = "918002903643";
 const MAPS = "https://maps.app.goo.gl/mu5XXCehEpocaZWY9";
 
-const TITLE = "Mobile Repair Services & Consultation Giridih | Super Telecom";
+const TITLE = "सबसे कम दाम, सबसे बेस्ट क्वालिटी — Super Telecom Best Price Promise (Giridih)";
 const DESC =
-  "Comprehensive mobile repair services in Giridih — screen, display, battery, charging port, camera, and motherboard chip-level repair consultation for iPhone, Samsung, Xiaomi, Realme, OPPO, Vivo, OnePlus.";
+  "सस्ते बजट फ़ोन से लेकर महँगे फ्लैगशिप (iPhone, Samsung Ultra, OnePlus) तक — गिरिडीह के सबसे कम दामों में 100% जेनुइन मोबाइल रिपेयरिंग, मुफ़्त जांच और लिखित वारंटी। Barganda Road, Giridih.";
 
 const BRAND_SERVICES: { brand: string; screen: string; battery: string; charging: string; motherboard: string; slug: string }[] = [
-  { brand: "Apple iPhone", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "iphone" },
-  { brand: "Samsung Galaxy", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "samsung" },
-  { brand: "Xiaomi / POCO", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "xiaomi-redmi" },
-  { brand: "Realme", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "realme" },
-  { brand: "Vivo", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "vivo" },
-  { brand: "OPPO", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "oppo" },
-  { brand: "OnePlus", screen: "Consultation Required", battery: "Consultation Required", charging: "Consultation Required", motherboard: "Consultation Required", slug: "oneplus" },
+  { brand: "Apple iPhone", screen: "सबसे कम दाम • OEM OLED", battery: "BMS 100% हेल्थ सिंक", charging: "तेज़ पोर्ट रिपेयर", motherboard: "45X BGA लैब", slug: "iphone" },
+  { brand: "Samsung Galaxy", screen: "AMOLED व कर्व्ड ग्लास", battery: "बेस्ट क्वालिटी बैटरी", charging: "सुपर-फास्ट पोर्ट", motherboard: "IC और CPU रीबॉल", slug: "samsung" },
+  { brand: "Xiaomi / POCO", screen: "सबसे कम मार्केट रेट", battery: "ज़ीरो-साइकिल बैटरी", charging: "TurboCharge पोर्ट", motherboard: "Poco CPU स्पेशलिस्ट", slug: "xiaomi-redmi" },
+  { brand: "Realme", screen: "IPS व AMOLED पैनल", battery: "100% जेनुइन बैकअप", charging: "SuperDart सब-बोर्ड", motherboard: "मदरबोर्ड चिप-लेवल", slug: "realme" },
+  { brand: "Vivo", screen: "कर्व्ड व फ्लैट AMOLED", battery: "लिखित वारंटी बैटरी", charging: "FlashCharge पोर्ट", motherboard: "डेड फोन रिकवरी", slug: "vivo" },
+  { brand: "OPPO", screen: "Reno & A-Series पैनल", battery: "ओरिजिनल ग्रेड सेल", charging: "SuperVOOC पोर्ट", motherboard: "नेटवर्क व पावर IC", slug: "oppo" },
+  { brand: "OnePlus", screen: "ग्रीन लाइन व OLED फिक्स", battery: "फास्ट Warp बैटरी", charging: "Type-C पोर्ट रिपेयर", motherboard: "फ्लैगशिप बोर्ड लैब", slug: "oneplus" },
 ];
 
 const SERVICE_CLUSTERS = [
@@ -184,10 +187,10 @@ function PricingPage() {
             <MapPin className="h-3.5 w-3.5 text-primary" /> Barganda Road, Giridih
           </span>
           <h1 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-5xl">
-            Mobile Repair Services &amp; Consultation Directory
+            सबसे कम दाम, सबसे बेस्ट क्वालिटी — Super Telecom Best Price Promise (Giridih)
           </h1>
           <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-            Direct repair consultation from Super Telecom. Every repair includes free bench diagnosis, genuine quality components, and a written warranty.
+            सस्ते बजट फ़ोन से लेकर महँगे फ्लैगशिप (iPhone, Samsung Ultra, OnePlus) तक — हर तरह की मोबाइल रिपेयरिंग और स्मार्टफ़ोन डील गिरिडीह के सबसे कम दामों में, 100% जेनुइन क्वालिटी और लिखित वारंटी के साथ।
           </p>
         </div>
 
@@ -195,9 +198,16 @@ function PricingPage() {
         <div className="mt-8 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-xs sm:text-sm text-slate-300">
           <AlertCircle className="h-5 w-5 flex-none text-primary mt-0.5" />
           <div>
-            <strong className="text-foreground block mb-0.5">Bench Consultation Policy:</strong>
+            <strong className="text-foreground block mb-0.5">100% पारदर्शी और किफ़ायती दाम • मुफ़्त जांच:</strong>
             {REPAIR_PRICE_DISCLAIMER}
           </div>
+        </div>
+
+        {/* Quality & Value Comparison Matrix + Instant Best-Price Quote Engine */}
+        <div className="mt-10 -mx-4 sm:-mx-6">
+          <PricingMatrix />
+          <RepairEstimator />
+          <BudgetToFlagshipPromise context="pricing" />
         </div>
 
         {/* Brand vs Repair Type Comparison Table */}
@@ -241,12 +251,12 @@ function PricingPage() {
                     <td className="px-4 py-3.5 text-cyan-400 font-mono text-xs">{r.motherboard}</td>
                     <td className="px-4 py-3.5 text-right">
                       <a
-                        href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hello Super Telecom Giridih, I need a repair consultation for my ${r.brand} phone.`)}`}
+                        href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Namaste Super Telecom Giridih! Mujhe ${r.brand} repair ke liye sabse kam rate chahiye.`)}`}
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 rounded-md bg-emerald-600/20 px-2.5 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-600/30"
                       >
-                        <MessageCircle className="h-3 w-3" /> Enquiry
+                        <MessageCircle className="h-3 w-3" /> सबसे कम रेट जानें
                       </a>
                     </td>
                   </tr>
@@ -293,7 +303,7 @@ function PricingPage() {
                           <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2">{s.short}</p>
                         </div>
                         <div className="mt-4 pt-3 border-t border-border/30 flex items-center justify-between text-xs">
-                          <span className="font-display font-bold text-cyan-400">Consultation Required</span>
+                          <span className="font-display font-bold text-cyan-400">सबसे कम दाम • बेस्ट क्वालिटी</span>
                           <span className="font-mono text-muted-foreground">{s.duration}</span>
                         </div>
                       </div>

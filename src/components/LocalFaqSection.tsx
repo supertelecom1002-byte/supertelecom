@@ -51,10 +51,10 @@ export const LOCAL_AEO_FAQS: FaqItem[] = [
     category: "Motherboard / Dead Phones",
   },
   {
-    question: "How do I get a consultation for phone display replacement in Giridih?",
+    question: "How much does mobile repair or screen replacement cost in Giridih?",
     answer:
-      "Mobile display replacement depends on the panel technology (IPS LCD, AMOLED, or Original Service Pack) and the phone model. We perform a free on-the-spot physical bench inspection at our Barganda Road shop and provide a clear consultation before repair work begins. All replacements are backed by up to 90 days warranty.",
-    category: "Consultation & Services",
+      "सुपर टेलीकॉम (बरगंडा रोड, गिरिडीह) पर सस्ते से लेकर महँगे हर मॉडल के लिए सबसे कम और पारदर्शी दामों में बेस्ट क्वालिटी रिपेयर किया जाता है। सही रेट मॉडल और पार्ट ग्रेड (Compatible / OEM / Original Service Pack) पर निर्भर करता है — मुफ़्त 5-मिनट जांच या तुरंत सबसे कम रेट जानने के लिए +91 80029 03643 पर कॉल या WhatsApp करें।",
+    category: "Best Value & Warranty",
   },
   {
     question: "Is customer personal data safe during phone repair at Super Telecom?",

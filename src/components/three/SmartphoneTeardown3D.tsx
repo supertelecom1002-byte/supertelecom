@@ -90,7 +90,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     hindiTitle: "120Hz AMOLED डिस्प्ले व टच डिजिटाइज़र",
     englishTitle: "120Hz Super Retina AMOLED & Touch Digitizer",
     symptoms: "टूटी स्क्रीन, ग्रीन/पिंक लाइन, ब्लैक स्पॉट, टच अनरेस्पॉन्सिव या फ्लिकरिंग।",
-    startingPrice: "परामर्श उपलब्ध",
+    startingPrice: "सबसे कम दाम • बेस्ट क्वालिटी",
     timeEstimate: "30–60 मिनट",
     warranty: "90 दिन वारंटी",
     sceneRange: [0.10, 0.32],
@@ -103,7 +103,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     hindiTitle: "मदरबोर्ड, BGA चिप व पावर IC",
     englishTitle: "Chip-Level Logic Board & BGA PMIC",
     symptoms: "डेड फोन, ऑटो-रीस्टार्ट, नो नेटवर्क/नो सिम, चार्जिंग एरर, शार्ट सर्किट।",
-    startingPrice: "परामर्श उपलब्ध",
+    startingPrice: "सबसे कम दाम • बेस्ट क्वालिटी",
     timeEstimate: "2–4 घंटे",
     warranty: "60–90 दिन वारंटी",
     sceneRange: [0.26, 0.50],
@@ -116,9 +116,9 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     hindiTitle: "5,000mAh लिथियम बैटरी पैक",
     englishTitle: "High-Density Li-Ion Battery & Thermal Guard",
     symptoms: "बैटरी जल्दी ड्रेन होना, 40% पर फोन बंद होना, हीटिंग या बैटरी फूलना।",
-    startingPrice: "परामर्श उपलब्ध",
+    startingPrice: "सबसे कम दाम • बेस्ट क्वालिटी",
     timeEstimate: "30–45 मिनट",
-    warranty: "6 महीने वारंटी",
+    warranty: "90 दिन वारंटी",
     sceneRange: [0.44, 0.68],
     badgeText: "Battery Pack",
     icon: "zap",
@@ -129,7 +129,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     hindiTitle: "ट्रिपल OIS कैमरा व सफायर लेंस",
     englishTitle: "Triple OIS Camera Array & Sapphire Lens",
     symptoms: "धुंधली फोटो, कैमरा शेकिंग/वाइब्रेशन, टूटा लेंस शीशा, ब्लैक कैमरा ऐप।",
-    startingPrice: "परामर्श उपलब्ध",
+    startingPrice: "सबसे कम दाम • बेस्ट क्वालिटी",
     timeEstimate: "45 मिनट",
     warranty: "90 दिन वारंटी",
     sceneRange: [0.60, 0.82],
@@ -142,7 +142,7 @@ const GUIDED_CALLOUTS: GuidedCallout[] = [
     hindiTitle: "USB-C चार्जिंग सब-बोर्ड व माइक",
     englishTitle: "Reinforced Type-C Sub-Board & MEMS Mic",
     symptoms: "ढीला चार्जर, स्लो चार्जिंग, कॉल में आवाज़ कटना या नो साउंड।",
-    startingPrice: "परामर्श उपलब्ध",
+    startingPrice: "सबसे कम दाम • बेस्ट क्वालिटी",
     timeEstimate: "30 मिनट",
     warranty: "90 दिन वारंटी",
     sceneRange: [0.62, 0.88],
@@ -938,7 +938,7 @@ export const SmartphoneTeardown3D: React.FC = () => {
                       rel="noopener noreferrer"
                       className="mt-3 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold text-xs shadow-lg hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
                     >
-                      <MessageCircle className="h-3.5 w-3.5" /> WhatsApp पर बुक करें
+                      <MessageCircle className="h-3.5 w-3.5" /> सबसे कम दाम में रिपेयर — WhatsApp पर रेट जानें
                     </a>
                   </div>
                 );

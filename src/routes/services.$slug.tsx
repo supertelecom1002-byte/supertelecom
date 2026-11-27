@@ -202,7 +202,7 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
   const ServiceIcon = ICON_MAP[service.iconName] || Wrench;
 
   const whatsappHref = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
-    `Namaste Super Telecom! I need information about "${service.title}" (${service.hindiTitle}) in Giridih. Starting price is showing ${service.priceRangeInr}. Please share availability and exact quote for my phone.`
+    `Namaste Super Telecom Giridih! Mujhe "${service.title}" (${service.hindiTitle}) ke liye sabse kam rate aur best quality quote chahiye. Kripya availability batayein.`
   )}`;
 
   const relatedServices = REPAIR_SERVICES_SILO_DATA.filter((s) =>
@@ -309,13 +309,13 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 space-y-1">
                   <span className="text-[11px] font-mono text-slate-400 block uppercase">
-                    सेवा परामर्श (Service Consultation)
+                    बेस्ट वैल्यू गारंटी (Best Rate)
                   </span>
-                  <div className="text-base sm:text-xl font-bold text-cyan-300 font-display">
-                    Consultation Required
+                  <div className="text-sm sm:text-base font-bold text-cyan-300 font-display leading-snug">
+                    सबसे कम दाम • बेस्ट क्वालिटी (Lowest Market Rate)
                   </div>
-                  <span className="text-[10px] text-slate-400 block">
-                    Free In-Store Bench Check
+                  <span className="text-[10px] text-emerald-400 block font-medium">
+                    100% पारदर्शी व किफ़ायती दाम • मुफ़्त जांच
                   </span>
                 </div>
 
@@ -500,11 +500,11 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                   </div>
 
                   <div className="space-y-1">
-                    <div className="text-xl sm:text-2xl font-extrabold text-cyan-400 font-display">
-                      Consultation Required
+                    <div className="text-base sm:text-lg font-extrabold text-cyan-400 font-display leading-snug">
+                      {item.priceRange}
                     </div>
-                    <span className="text-[11px] text-slate-400 block font-mono">
-                      Bench Check &amp; Written Estimate
+                    <span className="text-[11px] text-emerald-400 block font-mono">
+                      100% पारदर्शी और किफ़ायती दाम • मुफ़्त जांच
                     </span>
                   </div>
 
@@ -683,8 +683,8 @@ function DedicatedSingleServicePage({ service }: DedicatedServicePageProps) {
                     <span className="text-xs font-bold text-white group-hover:text-cyan-400 transition-colors block line-clamp-1">
                       {rel.title}
                     </span>
-                    <span className="text-[11px] text-slate-400 block mt-1">
-                      परामर्श आवश्यक (Consultation Required) • {rel.turnaroundTime}
+                    <span className="text-[11px] text-cyan-300 block mt-1">
+                      सबसे कम दाम • बेस्ट क्वालिटी • {rel.turnaroundTime}
                     </span>
                   </Link>
                 ))}

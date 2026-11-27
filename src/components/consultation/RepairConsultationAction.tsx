@@ -12,6 +12,7 @@ interface RepairConsultationActionProps {
   buttonSize?: "sm" | "md" | "lg";
   layout?: "row" | "column";
   noteText?: string;
+  whatsappLabel?: string;
 }
 
 export function buildConsultationWhatsAppUrl(details: {
@@ -25,11 +26,13 @@ export function buildConsultationWhatsAppUrl(details: {
     parts.push(`${details.brand} ${details.model}`);
   } else if (details.brand) {
     parts.push(details.brand);
+  } else if (details.model) {
+    parts.push(details.model);
   }
 
   const topic = details.issue || details.serviceName || "phone repair";
-  const devicePart = parts.length > 0 ? ` for my ${parts.join(" ")}` : "";
-  const message = `Hello Super Telecom, I need consultation for ${topic}${devicePart}. Please share details and availability.`;
+  const devicePart = parts.length > 0 ? ` (${parts.join(" ")})` : "";
+  const message = `Namaste Super Telecom Giridih! Mujhe ${topic}${devicePart} ke liye sabse kam rate aur best quality quote chahiye. Kripya availability batayein.`;
 
   return `https://wa.me/${BUSINESS_MASTER.phoneDigits}?text=${encodeURIComponent(message)}`;
 }
@@ -43,7 +46,8 @@ export const RepairConsultationAction: React.FC<RepairConsultationActionProps> =
   compact = false,
   buttonSize = "md",
   layout = "row",
-  noteText = "Physical inspection required for accurate fault diagnosis",
+  noteText = "100% पारदर्शी और किफ़ायती दाम • मुफ़्त जांच (Free In-Store Check)",
+  whatsappLabel = "सबसे कम रेट जानें (WhatsApp)",
 }) => {
   const whatsappUrl = buildConsultationWhatsAppUrl({ serviceName, brand, model, issue });
   const phoneCallUrl = BUSINESS_MASTER.phoneCallHref;
@@ -65,10 +69,10 @@ export const RepairConsultationAction: React.FC<RepairConsultationActionProps> =
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-medium transition-all shadow-md ${sizeClasses}`}
+          className={`inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-semibold transition-all shadow-md ${sizeClasses}`}
         >
           <MessageCircle className="h-4 w-4 shrink-0" />
-          <span>WHATSAPP ENQUIRY</span>
+          <span>{whatsappLabel}</span>
         </a>
 
         <a
@@ -76,7 +80,7 @@ export const RepairConsultationAction: React.FC<RepairConsultationActionProps> =
           className={`inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-white border border-slate-700 font-medium transition-all shadow-sm ${sizeClasses}`}
         >
           <Phone className="h-4 w-4 shrink-0 text-cyan-400" />
-          <span>CALL NOW</span>
+          <span>सीधे कॉल करें</span>
         </a>
       </div>
 

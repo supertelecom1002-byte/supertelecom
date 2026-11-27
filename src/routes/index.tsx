@@ -31,6 +31,7 @@ import { Smartphone3DFallback } from "@/components/three/Smartphone3DFallback";
 import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
 import { getCombinedLocalSeoSchema } from "@/components/seo/LocalSeoSchema";
 import { DpdpConsentCheckbox } from "@/components/compliance/DpdpComplianceHub";
+import { BudgetToFlagshipPromise } from "@/components/BudgetToFlagshipPromise";
 import React from "react";
 
 class SectionErrorBoundary extends React.Component<
@@ -114,25 +115,25 @@ function SmartphoneTeardownSection() {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Super Telecom | Best Mobile Repair in Giridih | Barganda Road Chip-Level Lab" },
-      { name: "description", content: "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools. Call +91 80029 03643." },
-      { name: "keywords", content: "Best Mobile Repair in Giridih, iPhone Screen Repair Barganda Road, Chip Level Lab Giridih, Mobile Repair Shop Giridih, Display Replacement Giridih, Motherboard Micro-Soldering Giridih, Phone Battery Replacement Giridih, Water Damage Repair Giridih, Super Telecom Giridih" },
+      { title: "Super Telecom | Best & Most Affordable Mobile Repair in Giridih | Barganda Road Lab" },
+      { name: "description", content: "Best & most affordable mobile repair in Giridih on Barganda Road (Near Shivam Clinic). Budget to flagship iPhone & Android repair lab with lowest honest rates, genuine parts, free inspection & 90-day warranty. Call +91 80029 03643." },
+      { name: "keywords", content: "Best & Most Affordable Mobile Repair in Giridih, Lowest Price Mobile Repair & Smartphone Store Barganda Road Giridih, Budget to Flagship iPhone & Android Repair Lab Giridih, Mobile Repair Shop Giridih, Display Replacement Giridih, Motherboard Micro-Soldering Giridih, Phone Battery Replacement Giridih, Super Telecom Giridih" },
       { name: "geo.region", content: "IN-JH" },
       { name: "geo.placename", content: "Giridih, Jharkhand" },
       { name: "geo.position", content: "24.1843;86.3075" },
       { name: "ICBM", content: "24.1843, 86.3075" },
-      { property: "og:title", content: "Super Telecom | Best Mobile Repair in Giridih | Barganda Road Chip-Level Lab" },
-      { property: "og:description", content: "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools. Call +91 80029 03643." },
+      { property: "og:title", content: "Super Telecom | Best & Most Affordable Mobile Repair in Giridih | Barganda Road Lab" },
+      { property: "og:description", content: "Lowest price mobile repair & smartphone store Barganda Road Giridih. Budget to flagship iPhone & Android repair lab with free inspection & 90-day warranty." },
       { property: "og:url", content: `${SITE_URL}/` },
       { property: "og:type", content: "business.business" },
-      { property: "article:modified_time", content: "2026-11-10T18:20:00+05:30" },
+      { property: "article:modified_time", content: "2026-11-27T14:00:00+05:30" },
       { property: "article:published_time", content: "2026-01-01T00:00:00+05:30" },
-      { property: "og:updated_time", content: "2026-11-10T18:20:00+05:30" },
-      { name: "date", content: "2026-11-10" },
-      { name: "DC.date.modified", content: "2026-11-10T18:20:00+05:30" },
+      { property: "og:updated_time", content: "2026-11-27T14:00:00+05:30" },
+      { name: "date", content: "2026-11-27" },
+      { name: "DC.date.modified", content: "2026-11-27T14:00:00+05:30" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Super Telecom | Best Mobile Repair in Giridih | Barganda Road Chip-Level Lab" },
-      { name: "twitter:description", content: "Giridih's premier smartphone repair lab on Barganda Road (Near Shivam Clinic). Same-day display replacement, iPhone repair, motherboard chip-level micro-soldering, battery fixes & 16+ free hardware diagnostic tools. Call +91 80029 03643." },
+      { name: "twitter:title", content: "Super Telecom | Best & Most Affordable Mobile Repair in Giridih | Barganda Road Lab" },
+      { name: "twitter:description", content: "Budget to flagship iPhone & Android repair lab Giridih — lowest honest market rates, best quality OEM parts & written warranty. Call +91 80029 03643." },
     ],
     links: [
       { rel: "canonical", href: `${SITE_URL}/` },
@@ -198,9 +199,10 @@ export const Route = createFileRoute("/")({
           applicationCategory: "UtilitiesApplication",
           offers: {
             "@type": "Offer",
-            price: "0",
-            priceCurrency: "INR",
+            description: "100% Free Offline Diagnostic Suite & Native Android Utility",
+            availability: "https://schema.org/InStock",
           },
+          isAccessibleForFree: true,
           description: "100% offline-first client-side smartphone hardware diagnostic suite with 165Hz Speaker Dust Ejector, Touch Matrix 10x15 Digitizer, Display FPS Meter, and Browser Storage Cleaner.",
           featureList: [
             "165Hz Sonic Dust & Water Ejector",
@@ -280,6 +282,9 @@ function HomePage() {
 
           <SmoothSectionReveal delayMs={100}>
             <RepairEstimator />
+          </SmoothSectionReveal>
+          <SmoothSectionReveal delayMs={80}>
+            <BudgetToFlagshipPromise context="home" />
           </SmoothSectionReveal>
           <SmoothSectionReveal delayMs={50}>
             <TrustBar />
@@ -511,7 +516,7 @@ function Services({
                     params={{ slug }}
                     className="font-bold text-cyan-400 hover:text-cyan-300 hover:underline inline-flex items-center gap-1 text-[11px] sm:text-xs"
                   >
-                    <span>View Full Guide & Price</span> <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                    <span>सबसे कम रेट व गाइड</span> <ArrowRight className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                   </Link>
                   <a
                     href={`https://wa.me/${WHATSAPP}?text=Hi%20Super%20Telecom,%20I%20need%20help%20with%20${encodeURIComponent(title)}`}

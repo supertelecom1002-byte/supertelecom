@@ -186,9 +186,9 @@ export const RepairTrackerModal: React.FC<RepairTrackerModalProps> = ({
               </div>
 
               <div className="text-left sm:text-right border-t sm:border-t-0 border-slate-800 pt-2 sm:pt-0">
-                <div className="text-[10px] font-mono uppercase text-slate-400">Estimated Cost</div>
-                <div className="text-xl font-mono font-black text-emerald-400">
-                  ₹{(job.estimated_cost ?? 0).toLocaleString()}
+                <div className="text-[10px] font-mono uppercase text-slate-400">Rate Status</div>
+                <div className="text-sm font-mono font-bold text-emerald-400">
+                  {job.estimated_cost ? "Best Value Confirmed on Job Sheet" : "Free Bench Inspection Pending"}
                 </div>
               </div>
             </div>

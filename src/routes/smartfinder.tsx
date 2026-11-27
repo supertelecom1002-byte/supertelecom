@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SmartFinderPlatform } from "@/components/smartfinder/SmartFinderPlatform";
+import { BudgetToFlagshipPromise } from "@/components/BudgetToFlagshipPromise";
 import { SITE_URL } from "@/data/site";
 import { Sparkles, Shield, ArrowLeft } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -60,10 +61,11 @@ export const Route = createFileRoute("/smartfinder")({
           name: "Super Telecom SmartFinder AI",
           applicationCategory: "ShoppingApplication, UtilitiesApplication",
           operatingSystem: "Web, Android, iOS",
+          isAccessibleForFree: true,
           offers: {
             "@type": "Offer",
-            price: "0",
-            priceCurrency: "INR",
+            description: "Free Budget to Flagship Smartphone Discovery & Best Rate Tool in Giridih",
+            availability: "https://schema.org/InStock",
           },
           description:
             "AI-powered multi-factor smartphone recommendation, 14-point resale valuation, client-side hardware scanner, and multi-retailer price comparison engine.",
@@ -161,6 +163,8 @@ export function SmartFinderPage() {
             <SmartFinderPlatform />
           </Suspense>
         </SmartFinderErrorBoundary>
+
+        <BudgetToFlagshipPromise context="smartfinder" />
       </main>
 
       <SiteFooter />

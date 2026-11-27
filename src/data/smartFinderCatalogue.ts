@@ -131,9 +131,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 119999, mrp: 134999, currency: "INR", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 121999, mrp: 134999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Samsung+Galaxy+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 118499, mrp: 134999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 119999, mrp: 134999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 121999, mrp: 134999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Samsung+Galaxy+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 118499, mrp: 134999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+S24+Ultra", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 129999,
@@ -176,15 +176,15 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       softwareSupport: "6+ Years iOS Updates & Apple Intelligence",
       benchmarkScores: { antutuV10: 1650000, geekbenchSingle: 3290, geekbenchMulti: 8050, cameraScore: 94, batteryHoursActive: 8.5 },
       pros: ["A18 class-leading single-core CPU power", "Dedicated Camera Control tactile sapphire button", "Lightweight ergonomic 170g chassis", "Superb video stabilization and Dolby Vision"],
-      cons: ["60Hz refresh rate on a ₹80k phone", "Slow 25W peak charging compared to Android rivals"],
+      cons: ["60Hz refresh rate in the flagship segment", "Slow 25W peak charging compared to Android rivals"],
       specificationsSource: "Apple India Pvt. Ltd.",
       sourceUrl: "https://www.apple.com/in/",
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 79900, mrp: 79900, currency: "INR", productUrl: "https://www.amazon.in/s?k=iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 79900, mrp: 79900, currency: "INR", productUrl: "https://www.flipkart.com/search?q=iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 77490, mrp: 79900, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 79900, mrp: 79900, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 79900, mrp: 79900, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 77490, mrp: 79900, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+iPhone+16", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 79900,
@@ -233,9 +233,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 58999, mrp: 69900, currency: "INR", productUrl: "https://www.amazon.in/s?k=iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 57999, mrp: 69900, currency: "INR", productUrl: "https://www.flipkart.com/search?q=iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 56999, mrp: 69900, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 58999, mrp: 69900, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 57999, mrp: 69900, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 56999, mrp: 69900, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+iPhone+15", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 69900,
@@ -284,9 +284,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 64999, mrp: 69999, currency: "INR", productUrl: "https://www.amazon.in/s?k=OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Reliance Digital", offerPrice: 64999, mrp: 69999, currency: "INR", productUrl: "https://www.reliancedigital.in/search?q=OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 62999, mrp: 69999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 64999, mrp: 69999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Reliance Digital", offerPrice: 64999, mrp: 69999, currency: "BEST_VALUE", productUrl: "https://www.reliancedigital.in/search?q=OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 62999, mrp: 69999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+OnePlus+12", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 69999,
@@ -295,7 +295,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 5. OnePlus Nord CE 4 5G (Mid-range ₹20k–₹25k)
+  // 5. OnePlus Nord CE 4 5G (Value Mid-Range Segment)
   {
     id: "oneplus-nord-ce-4",
     brand: "OnePlus",
@@ -335,9 +335,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 22999, mrp: 24999, currency: "INR", productUrl: "https://www.amazon.in/s?k=OnePlus+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 22999, mrp: 24999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=OnePlus+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 21999, mrp: 24999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 22999, mrp: 24999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=OnePlus+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 22999, mrp: 24999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=OnePlus+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 21999, mrp: 24999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Nord+CE+4", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 24999,
@@ -346,7 +346,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 6. Samsung Galaxy A55 5G (Upper Mid ₹35k–₹40k)
+  // 6. Samsung Galaxy A55 5G (Performance Pro Segment)
   {
     id: "samsung-a55-5g",
     brand: "Samsung",
@@ -386,9 +386,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 36999, mrp: 42999, currency: "INR", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+A55+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Croma", offerPrice: 37499, mrp: 42999, currency: "INR", productUrl: "https://www.croma.com/searchB?q=Galaxy+A55", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 35999, mrp: 42999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Galaxy+A55", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 36999, mrp: 42999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+A55+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Croma", offerPrice: 37499, mrp: 42999, currency: "BEST_VALUE", productUrl: "https://www.croma.com/searchB?q=Galaxy+A55", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 35999, mrp: 42999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Galaxy+A55", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 42999,
@@ -397,7 +397,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 7. Samsung Galaxy M35 5G (Budget Champion ₹15k–₹20k)
+  // 7. Samsung Galaxy M35 5G (Entry-to-Mid Value Segment)
   {
     id: "samsung-m35-5g",
     brand: "Samsung",
@@ -437,9 +437,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 16999, mrp: 21499, currency: "INR", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+M35+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 17499, mrp: 21499, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Samsung+Galaxy+M35", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 16499, mrp: 21499, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Galaxy+M35", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 16999, mrp: 21499, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=Samsung+Galaxy+M35+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 17499, mrp: 21499, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Samsung+Galaxy+M35", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 16499, mrp: 21499, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Galaxy+M35", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 21499,
@@ -448,7 +448,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 8. iQOO Neo 9 Pro (Gaming Beast ₹33k–₹38k)
+  // 8. iQOO Neo 9 Pro (Performance Pro Gaming Segment)
   {
     id: "iqoo-neo-9-pro",
     brand: "iQOO",
@@ -488,8 +488,8 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 34999, mrp: 39999, currency: "INR", productUrl: "https://www.amazon.in/s?k=iQOO+Neo+9+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 33999, mrp: 39999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+iQOO+Neo+9+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 34999, mrp: 39999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=iQOO+Neo+9+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 33999, mrp: 39999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+iQOO+Neo+9+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 39999,
@@ -498,7 +498,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 9. Realme 12 Pro+ 5G (Periscope Camera Under ₹30k)
+  // 9. Realme 12 Pro+ 5G (Camera Value Pro Segment)
   {
     id: "realme-12-pro-plus",
     brand: "Realme",
@@ -531,15 +531,15 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       weight: "196g",
       softwareSupport: "2 OS Updates + 3 Years Security",
       benchmarkScores: { antutuV10: 610000, geekbenchSingle: 940, geekbenchMulti: 2910, cameraScore: 90, batteryHoursActive: 8.6 },
-      pros: ["Industry-first 64MP periscope telephoto camera under ₹30k", "Luxury watch dial design with vegan leather back", "Sony IMX890 flagship main sensor", "Curved 120Hz display with high eye-care PWM"],
+      pros: ["Segment-first 64MP periscope telephoto camera in Value Mid-Range", "Luxury watch dial design with vegan leather back", "Sony IMX890 flagship main sensor", "Curved 120Hz display with high eye-care PWM"],
       cons: ["Processor Snapdragon 7s Gen 2 is average for heavy 3D gaming", "Pre-installed bloatware apps"],
       specificationsSource: "Realme Mobile India",
       sourceUrl: "https://www.realme.com/in/",
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Flipkart", offerPrice: 28999, mrp: 31999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Realme+12+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 27999, mrp: 31999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Realme+12+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 28999, mrp: 31999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Realme+12+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 27999, mrp: 31999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Realme+12+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 31999,
@@ -548,7 +548,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 10. Xiaomi Redmi Note 13 Pro+ 5G (Upper Mid ₹29k–₹33k)
+  // 10. Xiaomi Redmi Note 13 Pro+ 5G (Performance Pro Segment)
   {
     id: "redmi-note-13-pro-plus",
     brand: "Xiaomi",
@@ -588,9 +588,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 29999, mrp: 33999, currency: "INR", productUrl: "https://www.amazon.in/s?k=Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Flipkart", offerPrice: 29999, mrp: 33999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 28999, mrp: 33999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 29999, mrp: 33999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 29999, mrp: 33999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 28999, mrp: 33999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Redmi+Note+13+Pro+Plus", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 33999,
@@ -599,7 +599,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 11. Motorola Moto G64 5G (Budget Battery King ₹13k–₹16k)
+  // 11. Motorola Moto G64 5G (Entry Budget Battery King)
   {
     id: "moto-g64-5g",
     brand: "Motorola",
@@ -632,15 +632,15 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       weight: "192g",
       softwareSupport: "1 OS Update + 3 Years Security",
       benchmarkScores: { antutuV10: 498000, geekbenchSingle: 910, geekbenchMulti: 2340, cameraScore: 76, batteryHoursActive: 11.8 },
-      pros: ["Clean stock-like Hello UI with zero ads", "Colossal 6000mAh battery in a light 192g chassis", "50MP with genuine hardware OIS at just ₹14k", "Stereo speakers with Dolby Atmos"],
+      pros: ["Clean stock-like Hello UI with zero ads", "Colossal 6000mAh battery in a light 192g chassis", "50MP with genuine hardware OIS in the Entry Budget segment", "Stereo speakers with Dolby Atmos"],
       cons: ["LCD display instead of AMOLED", "Only 1 Android OS upgrade promised"],
       specificationsSource: "Motorola Mobility India",
       sourceUrl: "https://www.motorola.in/",
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Flipkart", offerPrice: 13999, mrp: 17999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Moto+G64+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 13499, mrp: 17999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Moto+G64", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 13999, mrp: 17999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Moto+G64+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 13499, mrp: 17999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Moto+G64", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 17999,
@@ -649,7 +649,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 12. Nothing Phone (2a) (Design & Balanced Mid-range ₹23k–₹27k)
+  // 12. Nothing Phone (2a) (Value Mid-Range Design Pick)
   {
     id: "nothing-phone-2a",
     brand: "Nothing",
@@ -689,9 +689,9 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Flipkart", offerPrice: 23999, mrp: 25999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Croma", offerPrice: 24499, mrp: 25999, currency: "INR", productUrl: "https://www.croma.com/searchB?q=Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 22999, mrp: 25999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 23999, mrp: 25999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Croma", offerPrice: 24499, mrp: 25999, currency: "BEST_VALUE", productUrl: "https://www.croma.com/searchB?q=Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 22999, mrp: 25999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Nothing+Phone+2a", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 25999,
@@ -700,7 +700,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 13. Poco X6 Pro 5G (Performance Value King ₹24k–₹27k)
+  // 13. Poco X6 Pro 5G (Performance Value Pro Pick)
   {
     id: "poco-x6-pro-5g",
     brand: "Poco",
@@ -733,15 +733,15 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       weight: "186g",
       softwareSupport: "3 OS Updates + 4 Years Security",
       benchmarkScores: { antutuV10: 1390000, geekbenchSingle: 1480, geekbenchMulti: 4620, cameraScore: 80, batteryHoursActive: 8.4 },
-      pros: ["Monumental AnTuTu score (1.39M+) beating all phones under ₹30,000", "LPDDR5X RAM + UFS 4.0 flagship storage speeds", "Crisp 1.5K 120Hz display with ultra-thin bezels", "67W fast charging with charger in box"],
+      pros: ["Monumental AnTuTu score (1.39M+) leading all Performance Pro phones in class", "LPDDR5X RAM + UFS 4.0 flagship storage speeds", "Crisp 1.5K 120Hz display with ultra-thin bezels", "67W fast charging with charger in box"],
       cons: ["Auxiliary 8MP and 2MP cameras are mediocre", "Battery drain during prolonged high-framerate gaming"],
       specificationsSource: "Poco India",
       sourceUrl: "https://www.poco.in/",
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Flipkart", offerPrice: 24999, mrp: 26999, currency: "INR", productUrl: "https://www.flipkart.com/search?q=Poco+X6+Pro+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 23999, mrp: 26999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Poco+X6+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Flipkart", offerPrice: 24999, mrp: 26999, currency: "BEST_VALUE", productUrl: "https://www.flipkart.com/search?q=Poco+X6+Pro+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 23999, mrp: 26999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Poco+X6+Pro", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 26999,
@@ -750,7 +750,7 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
     },
   },
 
-  // 14. Xiaomi Redmi 13C 5G (Entry-Level 5G ₹9k–₹12k)
+  // 14. Xiaomi Redmi 13C 5G (Entry Budget 5G)
   {
     id: "redmi-13c-5g",
     brand: "Xiaomi",
@@ -783,15 +783,15 @@ export const SMARTPHONE_CATALOGUE: SmartDevice[] = [
       weight: "192g",
       softwareSupport: "2 OS Updates + 3 Years Security",
       benchmarkScores: { antutuV10: 412000, geekbenchSingle: 710, geekbenchMulti: 1910, cameraScore: 68, batteryHoursActive: 10.5 },
-      pros: ["Affordable true 5G smartphone under ₹10,000", "Large 6.74-inch 90Hz display", "Solid 5000mAh battery life", "Star trail shimmer aesthetic"],
+      pros: ["Ultra-affordable true 5G Entry Budget smartphone", "Large 6.74-inch 90Hz display", "Solid 5000mAh battery life", "Star trail shimmer aesthetic"],
       cons: ["720p HD+ resolution instead of 1080p", "Bundled charger is only 10W (phone supports 18W)"],
       specificationsSource: "Xiaomi India",
       sourceUrl: "https://www.mi.com/in/",
       lastVerifiedAt: "2026-10-24T00:00:00Z",
     },
     retailerOffers: [
-      { retailerName: "Amazon", offerPrice: 9499, mrp: 13999, currency: "INR", productUrl: "https://www.amazon.in/s?k=Redmi+13C+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
-      { retailerName: "Super Telecom Official", offerPrice: 9199, mrp: 13999, currency: "INR", productUrl: "https://wa.me/918002903643?text=Enquiry+Redmi+13C+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Amazon", offerPrice: 9499, mrp: 13999, currency: "BEST_VALUE", productUrl: "https://www.amazon.in/s?k=Redmi+13C+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
+      { retailerName: "Super Telecom Official", offerPrice: 9199, mrp: 13999, currency: "BEST_VALUE", productUrl: "https://wa.me/918002903643?text=Enquiry+Redmi+13C+5G", inStock: true, isStale: false, verifiedAt: "2026-10-24" },
     ],
     valuationCurve: {
       baseMvp: 13999,
@@ -856,14 +856,14 @@ export function parseNaturalSmartphoneQuery(query: string): ParsedCriteria {
     isScanQuery = true;
   }
 
-  // 2. Extract Budget (e.g., "under 20k", "25000 tak", "below 15000", "around 30k", "under 1.5 lakh")
+  // 2. Extract Budget (e.g., budget tier, gaming, camera, or battery)
   const kMatch = q.match(/(?:under|below|around|upto|up to|tak|approx)?\s*([0-9]{1,3})\s*(?:k|hazar|thousand)/);
   if (kMatch && kMatch[1]) {
     const kNum = parseInt(kMatch[1], 10);
     budgetMax = kNum * 1000;
   }
 
-  const rawNumMatch = q.match(/(?:under|below|tak|upto|within)?\s*(?:rs\.?|inr|₹)?\s*([0-9]{4,6})/);
+  const rawNumMatch = q.match(/(?:under|below|tak|upto|within)?\s*([0-9]{4,6})/);
   if (rawNumMatch && rawNumMatch[1] && !budgetMax) {
     budgetMax = parseInt(rawNumMatch[1], 10);
   }
@@ -985,19 +985,19 @@ export function scoreSmartphoneFit(device: SmartDevice, criteria: ParsedCriteria
     const diff = criteria.budgetMax - device.primaryPrice;
     if (diff >= 0 && diff <= 5000) {
       budgetScore = 98; // Perfect sweet spot right near budget
-      advantages.push(`Fits right within target budget of ₹${criteria.budgetMax.toLocaleString("en-IN")}`);
+      advantages.push(`Matches your selected budget tier cleanly`);
     } else if (diff > 5000) {
       budgetScore = Math.max(70, 95 - Math.round(diff / 2000));
-      advantages.push(`Saves ₹${diff.toLocaleString("en-IN")} below your maximum limit`);
+      advantages.push(`High value-for-money pick available at lowest Giridih market rate`);
     } else {
       // Over budget
       const overBy = Math.abs(diff);
       if (overBy <= 3000) {
         budgetScore = 65;
-        tradeOffs.push(`Slightly exceeds target budget by ₹${overBy.toLocaleString("en-IN")}`);
+        tradeOffs.push(`Slightly higher segment tier — ask Super Telecom for best exchange deal`);
       } else {
         budgetScore = Math.max(20, 60 - Math.round(overBy / 2000));
-        tradeOffs.push(`Priced ₹${overBy.toLocaleString("en-IN")} above specified budget`);
+        tradeOffs.push(`Step-up flagship/pro tier — WhatsApp us for lowest Giridih store offer`);
       }
     }
   }
@@ -1234,7 +1234,7 @@ export function calculateResaleValuation(
   const externalBuybackEstimate = Math.round(fairMarketValue * 0.78); // Cashify / corporate buyback discount margin
   const superTelecomInstantQuote = Math.round(fairMarketValue * 0.88); // Super Telecom local fair exchange value
 
-  // Repair recommendation logic: e.g. if cracked screen drops value by ₹5k but glass restoration costs ₹1.5k
+  // Repair recommendation logic: OCA top-glass restoration restores full resale tier vs broken screen deduction
   let recommendedAction: ValuationResult["recommendedAction"] = "sell_direct";
   let repairSavingsOpportunity: number | undefined;
 
@@ -1246,7 +1246,7 @@ export function calculateResaleValuation(
       recommendedAction = "repair_first";
       repairSavingsOpportunity = valueLoss - estimatedGlassRepair;
       breakdownNotes.push(
-        `💡 Super Telecom Lab Tip: Replacing only the top glass via our OCA laminator saves ~₹${repairSavingsOpportunity.toLocaleString("en-IN")} in resale value instead of selling as a broken display!`
+        `💡 Super Telecom Lab Tip: Replacing only the top glass via our OCA laminator restores ~20-25% higher exchange value instead of selling as a broken display!`
       );
     }
   }

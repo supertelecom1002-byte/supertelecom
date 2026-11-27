@@ -314,10 +314,10 @@ function BrandDetailPage() {
               Service Matrix
             </span>
             <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl text-foreground">
-              {brand.name} Repair Services &amp; Working Estimates
+              {brand.name} Repair Services &amp; Best Value Guarantee
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Transparent rates for our Giridih bench services. Free physical diagnosis before commitment.
+              100% पारदर्शी और किफ़ायती दाम • मुफ़्त जांच — गिरिडीह का सबसे कम रेट और बेस्ट क्वालिटी पार्ट्स।
             </p>
           </div>
 
@@ -351,12 +351,12 @@ function BrandDetailPage() {
                     Service details <ArrowRight className="h-3 w-3" />
                   </Link>
                   <a
-                    href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Super Telecom, what is the exact price for ${rep.title} for ${brand.name}?`)}`}
+                    href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Namaste Super Telecom Giridih! Mujhe ${brand.name} ${rep.title} ke liye sabse kam rate chahiye.`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-semibold text-primary hover:underline"
+                    className="font-semibold text-emerald-400 hover:underline"
                   >
-                    Get Exact Quote
+                    सबसे कम रेट जानें (WhatsApp)
                   </a>
                 </div>
               </div>
