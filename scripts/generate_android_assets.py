@@ -61,18 +61,18 @@ for folder, canvas_size in fg_densities.items():
 drawable_dir = os.path.join(res_dir, "drawable")
 os.makedirs(drawable_dir, exist_ok=True)
 
-# Copy/save app icon
-src_icon.save(os.path.join(drawable_dir, "super_telecom_icon.png"), "PNG")
-print("Saved drawable/super_telecom_icon.png")
+# Copy/save app icon as compact WebP
+src_icon.save(os.path.join(drawable_dir, "super_telecom_icon.webp"), "WEBP", quality=82, method=6)
+print("Saved drawable/super_telecom_icon.webp")
 
-# Copy/save full logo
+# Copy/save full logo as compact WebP
 src_logo = Image.open(src_logo_path)
-src_logo.save(os.path.join(drawable_dir, "super_telecom_logo.png"), "PNG")
-print("Saved drawable/super_telecom_logo.png")
+src_logo.save(os.path.join(drawable_dir, "super_telecom_logo.webp"), "WEBP", quality=82, method=6)
+print("Saved drawable/super_telecom_logo.webp")
 
-# Copy/save hero lab repair image
+# Copy/save hero lab repair image as compact WebP
 src_hero = Image.open(src_hero_path)
-src_hero.save(os.path.join(drawable_dir, "hero_repair.jpg"), "JPEG", quality=90)
-print("Saved drawable/hero_repair.jpg")
+src_hero.save(os.path.join(drawable_dir, "hero_repair.webp"), "WEBP", quality=80, method=6)
+print("Saved drawable/hero_repair.webp")
 
 print("SUCCESS: All branding & designer assets successfully placed in app/src/main/res!")

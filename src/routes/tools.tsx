@@ -1,42 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { SiteFooter } from "@/components/SiteFooter";
 import {
   TOOLS,
   type ToolId,
   type ToolCategory,
-} from "@/components/tools/LabToolsHub";
+} from "@/data/labToolsRegistry";
 import {
-  Wrench,
   Search,
-  Sparkles,
-  ShieldCheck,
   Zap,
   ArrowRight,
-  ExternalLink,
 } from "lucide-react";
-import { SpeakerCleanerModal } from "@/components/tools/SpeakerCleanerModal";
-import { TouchTestModal } from "@/components/tools/TouchTestModal";
-import { AntiTheftModal } from "@/components/tools/AntiTheftModal";
-import { BatteryGuardModal } from "@/components/tools/BatteryGuardModal";
-import { SecretCodesModal } from "@/components/tools/SecretCodesModal";
-import { LockScreenGenModal } from "@/components/tools/LockScreenGenModal";
-import { UsedPhoneAuditModal } from "@/components/tools/UsedPhoneAuditModal";
-import { AudioHardwareTestModal } from "@/components/tools/AudioHardwareTestModal";
-import { VibrationTesterModal } from "@/components/tools/VibrationTesterModal";
-import { DisplayFpsMeterModal } from "@/components/tools/DisplayFpsMeterModal";
-import { WaterRescueWizardModal } from "@/components/tools/WaterRescueWizardModal";
-import { DeadPixelTestModal } from "@/components/tools/DeadPixelTestModal";
-import { MultiTouchTesterModal } from "@/components/tools/MultiTouchTesterModal";
-import { BurnInHealerModal } from "@/components/tools/BurnInHealerModal";
-import { GyroCompassModal } from "@/components/tools/GyroCompassModal";
-import { TorchControllerModal } from "@/components/tools/TorchControllerModal";
-import { AmbientLightTestModal } from "@/components/tools/AmbientLightTestModal";
-import { ImeiValidatorModal } from "@/components/tools/ImeiValidatorModal";
-import { PowerTelemetryModal } from "@/components/tools/PowerTelemetryModal";
-import { BrowserStorageCleanerModal } from "@/components/tools/BrowserStorageCleanerModal";
+import { LazyToolModalRenderer } from "@/components/tools/LazyToolModalRenderer";
 import { SITE_URL } from "@/data/site";
+
+const LazyBrowserStorageCleanerModal = lazy(() =>
+  import("@/components/tools/BrowserStorageCleanerModal").then((m) => ({
+    default: m.BrowserStorageCleanerModal,
+  }))
+);
 
 interface ToolsSearchParams {
   tool?: string;
@@ -219,90 +202,21 @@ function ToolsPage() {
 
         <SiteFooter />
 
-      {/* Diagnostic Modals */}
-      <SpeakerCleanerModal
-        isOpen={activeModal === "speaker_cleaner"}
+      {/* Lazy-Loaded Diagnostic Modals */}
+      <LazyToolModalRenderer
+        activeModal={activeModal}
         onClose={() => setActiveModal(null)}
-      />
-      <AudioHardwareTestModal
-        isOpen={activeModal === "audio_test"}
-        onClose={() => setActiveModal(null)}
-      />
-      <VibrationTesterModal
-        isOpen={activeModal === "vibration_test"}
-        onClose={() => setActiveModal(null)}
-      />
-      <TouchTestModal
-        isOpen={activeModal === "touch_test"}
-        onClose={() => setActiveModal(null)}
-      />
-      <DeadPixelTestModal
-        isOpen={activeModal === "dead_pixel"}
-        onClose={() => setActiveModal(null)}
-      />
-      <MultiTouchTesterModal
-        isOpen={activeModal === "multi_touch"}
-        onClose={() => setActiveModal(null)}
-      />
-      <BurnInHealerModal
-        isOpen={activeModal === "burnin_healer"}
-        onClose={() => setActiveModal(null)}
-      />
-      <DisplayFpsMeterModal
-        isOpen={activeModal === "fps_meter"}
-        onClose={() => setActiveModal(null)}
-      />
-      <GyroCompassModal
-        isOpen={activeModal === "gyro"}
-        onClose={() => setActiveModal(null)}
-      />
-      <TorchControllerModal
-        isOpen={activeModal === "torch"}
-        onClose={() => setActiveModal(null)}
-      />
-      <AmbientLightTestModal
-        isOpen={activeModal === "ambient_light"}
-        onClose={() => setActiveModal(null)}
-      />
-      <AntiTheftModal
-        isOpen={activeModal === "anti_theft"}
-        onClose={() => setActiveModal(null)}
-      />
-      <BatteryGuardModal
-        isOpen={activeModal === "battery_guard"}
-        onClose={() => setActiveModal(null)}
-      />
-      <SecretCodesModal
-        isOpen={activeModal === "secret_codes"}
-        onClose={() => setActiveModal(null)}
-      />
-      <ImeiValidatorModal
-        isOpen={activeModal === "imei_validator"}
-        onClose={() => setActiveModal(null)}
-      />
-      <LockScreenGenModal
-        isOpen={activeModal === "lockscreen_gen"}
-        onClose={() => setActiveModal(null)}
-      />
-      <UsedPhoneAuditModal
-        isOpen={activeModal === "used_phone_audit"}
-        onClose={() => setActiveModal(null)}
-      />
-      <WaterRescueWizardModal
-        isOpen={activeModal === "water_wizard"}
-        onClose={() => setActiveModal(null)}
-        onOpenSpeakerEjector={() => setActiveModal("speaker_cleaner")}
+        onSelectTool={setActiveModal}
       />
 
-      <PowerTelemetryModal
-        isOpen={activeModal === "doctor_diagnostic"}
-        onClose={() => setActiveModal(null)}
-      />
-
-      <BrowserStorageCleanerModal
-        isOpen={scannerOpen}
-        onClose={() => setScannerOpen(false)}
-      />
+      {scannerOpen && (
+        <Suspense fallback={null}>
+          <LazyBrowserStorageCleanerModal
+            isOpen={scannerOpen}
+            onClose={() => setScannerOpen(false)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

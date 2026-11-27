@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Clock,
@@ -32,7 +32,7 @@ import {
   type AppConfig,
   DEFAULT_APP_CONFIG,
 } from "@/services/appConfigService";
-import { LabToolsHub } from "@/components/tools/LabToolsHub";
+const LazyLabToolsHub = lazy(() => import("@/components/tools/LabToolsHub"));
 import { BUSINESS_MASTER } from "@/config/superTelecomConfig";
 
 interface HeaderProps {
@@ -526,11 +526,15 @@ export const Header: React.FC<HeaderProps> = ({ isHomePage = false }) => {
           </div>
         </div>
       )}
-      {/* Lab Tools Launchpad Modal */}
-      <LabToolsHub
-        isOpen={toolsHubOpen}
-        onClose={() => setToolsHubOpen(false)}
-      />
+      {/* Lab Tools Launchpad Modal (strictly lazy-loaded on open) */}
+      {toolsHubOpen && (
+        <Suspense fallback={null}>
+          <LazyLabToolsHub
+            isOpen={toolsHubOpen}
+            onClose={() => setToolsHubOpen(false)}
+          />
+        </Suspense>
+      )}
     </header>
   );
 };

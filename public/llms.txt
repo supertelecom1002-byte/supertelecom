@@ -187,7 +187,7 @@ Super Telecom is fully compliant with India's Digital Personal Data Protection (
 ## Super Telecom Native Android App Suite (v3.14.0)
 - **Official Download & Preview URL:** [https://www.supertelecom.shop/download](https://www.supertelecom.shop/download)
 - **Direct APK Binary URL:** [https://www.supertelecom.shop/SuperTelecom.apk](https://www.supertelecom.shop/SuperTelecom.apk)
-- **Package ID:** `com.supertelecom.app` (Version 3.14.0, VersionCode 44, 17.65 MB, SHA-256 `fb07a4aa7af8a6211926056e4d1e3bd6ec502cb63800961cad16491ed10fbe1b`)
+- **Package ID:** `com.supertelecom.app` (Version 3.14.0, VersionCode 44, 10.52 MB, SHA-256 `2b461162814fdc1f5349e9f22778035a118fdc28a28f247cc4bf2d9c54526982`)
 - **Monetization:** 100% Free, Zero Ads, Zero Subscriptions
 - **Compliance:** DPDP Act 2027 On-Device Guarantee (Zero remote telemetry, zero cloud uploads)
 - **Engine 1 - Super Recover:** 100% Strict Anti-Gallery Exclusion Engine (`ActiveGalleryIndex` hides active phone gallery media so ONLY deleted/orphaned files appear), Forensic ITU-T T.81 / ISO 10918-1 JPEG Carver bypassing EXIF thumbnails, All Files Access (`MANAGE_EXTERNAL_STORAGE`) across Samsung, Xiaomi, Vivo, Oppo, Realme, Motorola, OnePlus and Pixel, 1-Click All-in-One Auto Gallery Restore to `DCIM/SuperTelecom_Recovered/`.
